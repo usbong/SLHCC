@@ -1,0 +1,29 @@
+Sub UnpaidWI()
+Dim UnpaidWI2017 As Worksheet
+Dim output As Worksheet
+Dim row As Range
+Dim RowCount As Integer
+
+RowCount = 1
+
+Set UnpaidWI2017 = Sheets("unpaidWI2017")
+Set output = Sheets("unpaidWI2017Output")
+
+For Each row In UnpaidWI2017.Rows       
+    If ((UnpaidWI2017.Cells(RowCount, 2).Value <> "Mike")) Then        
+       row.EntireRow.Copy
+       output.Select
+       Rows(RowCount).PasteSpecial
+    End If
+        
+    If RowCount = 1370 Then
+      Exit For
+    Else
+      RowCount = RowCount + 1
+    End If
+
+Next row
+
+MsgBox (RowCount)
+
+End Sub

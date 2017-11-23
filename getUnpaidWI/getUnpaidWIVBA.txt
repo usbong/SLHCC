@@ -31,6 +31,9 @@ For Each row In UnpaidWI2017.Rows
     End If
 Next row
 
+Range("D1").Value = 1
+Range("F1").Value = 1
+
 MsgBox (RowCount)
 
 End Sub

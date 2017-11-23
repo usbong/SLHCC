@@ -1,7 +1,9 @@
 Sub UnpaidWI()
 Dim UnpaidWI2017 As Worksheet
+'Dim UnpaidWI2017Output As Worksheet
 Dim output As Worksheet
 Dim row As Range
+Dim row2 As Range
 Dim RowCount As Integer
 
 RowCount = 1
@@ -9,19 +11,18 @@ RowCount = 1
 Set UnpaidWI2017 = Sheets("unpaidWI2017")
 Set output = Sheets("unpaidWI2017Output")
 
-For Each row In UnpaidWI2017.Rows       
-    If ((UnpaidWI2017.Cells(RowCount, 2).Value <> "Mike")) Then        
-       row.EntireRow.Copy
+For Each row In UnpaidWI2017.Rows
+    If ((UnpaidWI2017.Cells(RowCount, 2).Value <> "Mike")) Then
+       UnpaidWI2017.Range("A" & RowCount, "CB" & RowCount).Columns.Copy
        output.Select
        Rows(RowCount).PasteSpecial
     End If
-        
+
     If RowCount = 1370 Then
       Exit For
     Else
       RowCount = RowCount + 1
     End If
-
 Next row
 
 MsgBox (RowCount)

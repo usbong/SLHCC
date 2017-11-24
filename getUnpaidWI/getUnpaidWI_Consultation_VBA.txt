@@ -5,6 +5,8 @@ Dim row As Range
 Dim RowCount As Integer
 Dim RowCountOutput As Integer
 Dim CurrentDate As String
+Dim TempCurrentDate As String
+
 
 RowCount = 1
 RowCountOutput = 1
@@ -13,10 +15,16 @@ Set UnpaidWI2017 = Sheets("unpaidWI2017")
 Set output = Sheets("unpaidWI2017ConsultationOutput")
 
 For Each row In UnpaidWI2017.Rows
-        'added by Mike, 20171124
-       If CurrentDate <> UnpaidWI2017.Range("E" & RowCount).Value And Not IsEmpty(UnpaidWI2017.Range("E" & RowCount).Value) Then
-            CurrentDate = UnpaidWI2017.Range("E" & RowCount).Value
-       End If
+     'added by Mike, 20171124
+    If CurrentDate <> UnpaidWI2017.Range("E" & RowCount).Value And Not IsEmpty(UnpaidWI2017.Range("E" & RowCount).Value) Then
+        TempCurrentDate = CurrentDate
+        CurrentDate = UnpaidWI2017.Range("E" & RowCount).Value
+        
+        If CurrentDate = "P" Or CurrentDate = "p" Or CurrentDate = "58/P" Or CurrentDate = "DATE:" Or CurrentDate = "41/P" Or CurrentDate = "CONSULTATION:" Then
+          CurrentDate = TempCurrentDate
+        End If
+    End If
+       
 
     If ((UnpaidWI2017.Cells(RowCount, 2).Value <> "Mike") And ((UnpaidWI2017.Cells(RowCount, 14).Value = "SC") Or (UnpaidWI2017.Cells(RowCount, 14).Value = "WI") Or (UnpaidWI2017.Cells(RowCount, 14).Value = "SLC") Or (UnpaidWI2017.Cells(RowCount, 14).Value = "PWD"))) Then
        UnpaidWI2017.Range("A" & RowCount, "AY" & RowCount).Columns.Copy

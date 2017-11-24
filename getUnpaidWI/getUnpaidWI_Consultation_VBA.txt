@@ -2,7 +2,6 @@ Sub UnpaidWI()
 Dim UnpaidWI2017 As Worksheet
 Dim output As Worksheet
 Dim row As Range
-Dim row2 As Range
 Dim RowCount As Integer
 Dim RowCountOutput As Integer
 
@@ -15,7 +14,7 @@ Set output = Sheets("unpaidWI2017Output")
 For Each row In UnpaidWI2017.Rows
     If ((UnpaidWI2017.Cells(RowCount, 2).Value <> "Mike") And ((UnpaidWI2017.Cells(RowCount, 14).Value = "SC") Or (UnpaidWI2017.Cells(RowCount, 14).Value = "WI") Or (UnpaidWI2017.Cells(RowCount, 14).Value = "SLC") Or (UnpaidWI2017.Cells(RowCount, 14).Value = "PWD"))) Then
         
-       UnpaidWI2017.Range("A" & RowCount, "CB" & RowCount).Columns.Copy
+       UnpaidWI2017.Range("A" & RowCount, "AY" & RowCount).Columns.Copy
        
        output.Select
        Rows(RowCountOutput).PasteSpecial

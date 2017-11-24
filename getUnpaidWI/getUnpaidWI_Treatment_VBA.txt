@@ -2,7 +2,6 @@ Sub UnpaidWITreatment()
 Dim UnpaidWI2017 As Worksheet
 Dim output As Worksheet
 Dim row As Range
-Dim row2 As Range
 Dim RowCount As Integer
 Dim RowCountOutput As Integer
 
@@ -14,7 +13,7 @@ Set output = Sheets("unpaidWI2017TreatmentOutput")
 
 For Each row In UnpaidWI2017.Rows
     If ((UnpaidWI2017.Cells(RowCount, 81).Value <> "Mike") And ((UnpaidWI2017.Cells(RowCount, 96).Value = "SC") Or (UnpaidWI2017.Cells(RowCount, 96).Value = "WI") Or (UnpaidWI2017.Cells(RowCount, 96).Value = "SLC") Or (UnpaidWI2017.Cells(RowCount, 96).Value = "PWD"))) Then
-       UnpaidWI2017.Range("CC" & RowCount, "FN" & RowCount).Columns.Copy
+       UnpaidWI2017.Range("CC" & RowCount, "EL" & RowCount).Columns.Copy
        output.Select
        Rows(RowCountOutput).PasteSpecial
        

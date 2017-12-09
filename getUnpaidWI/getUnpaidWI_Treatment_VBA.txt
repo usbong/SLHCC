@@ -4,6 +4,10 @@ Dim output As Worksheet
 Dim row As Range
 Dim RowCount As Integer
 Dim RowCountOutput As Integer
+Dim PrevRowCountOutput As Integer
+Dim CurrentDate As String
+Dim TempCurrentDate As String
+
 
 RowCount = 1
 RowCountOutput = 1
@@ -12,13 +16,27 @@ Set UnpaidWI2017 = Sheets("unpaidWI2017")
 Set output = Sheets("unpaidWI2017TreatmentOutput")
 
 For Each row In UnpaidWI2017.Rows
+    'added by Mike, 20171124
+    If CurrentDate <> UnpaidWI2017.Range("CF" & RowCount).Value And Not IsEmpty(UnpaidWI2017.Range("CF" & RowCount).Value) Then
+        TempCurrentDate = CurrentDate
+        CurrentDate = UnpaidWI2017.Range("CF" & RowCount).Value
+        
+        If CurrentDate = "P" Or CurrentDate = "p" Or CurrentDate = "58/P" Or CurrentDate = "DATE:" Or CurrentDate = "41/P" Or CurrentDate = "TREATMENT:" Then
+          CurrentDate = TempCurrentDate
+        End If
+    End If
+
+
     If ((UnpaidWI2017.Cells(RowCount, 81).Value <> "Mike") And ((UnpaidWI2017.Cells(RowCount, 96).Value = "SC") Or (UnpaidWI2017.Cells(RowCount, 96).Value = "WI") Or (UnpaidWI2017.Cells(RowCount, 96).Value = "SLC") Or (UnpaidWI2017.Cells(RowCount, 96).Value = "PWD"))) Then
        UnpaidWI2017.Range("CC" & RowCount, "EL" & RowCount).Columns.Copy
+       
        output.Select
        Rows(RowCountOutput).PasteSpecial
        
+       output.Cells(RowCountOutput, 4) = CurrentDate
+       
        'remove blank space
-       RowCountOutput = RowCountOutput + 1
+       RowCountOutput = RowCountOutput + 1       
     End If
 
     If RowCount = 3193 Then

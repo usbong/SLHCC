@@ -36,14 +36,14 @@ For Each row In UnpaidWI2017.Rows
        output.Cells(RowCountOutput, 5) = CurrentDate
        
        'updated numbering
-       If RowCountOutput = 1 Then
-        output.Cells(RowCountOutput, 4) = "1"
-        output.Cells(RowCountOutput, 6) = "1"
-       Else
-        PrevRowCountOutput = RowCountOutput - 1
-        output.Cells(RowCountOutput, 4) = "=" & PrevRowCountOutput & "+1"
-        output.Cells(RowCountOutput, 6) = "=" & PrevRowCountOutput & "+1"
-       End If
+'       If RowCountOutput = 1 Then
+'        output.Cells(RowCountOutput, 4) = "1"
+'        output.Cells(RowCountOutput, 6) = "1"
+'       Else
+'        PrevRowCountOutput = RowCountOutput - 1
+'        output.Cells(RowCountOutput, 4) = "=" & PrevRowCountOutput & "+1"
+'        output.Cells(RowCountOutput, 6) = "=" & PrevRowCountOutput & "+1"
+'       End If
               
        'remove blank space
        RowCountOutput = RowCountOutput + 1

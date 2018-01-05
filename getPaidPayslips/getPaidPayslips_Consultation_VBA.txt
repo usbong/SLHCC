@@ -28,7 +28,8 @@ For Each row In UnpaidWI2017.Rows
        
     '<> "Mike"
 '    If ((UnpaidWI2017.Cells(RowCount, 2).Value <> "Mike") And (UnpaidWI2017.Cells(RowCount, 41).Value = "Dr. Syson") And ((UnpaidWI2017.Cells(RowCount, 14).Value = "SC") Or (UnpaidWI2017.Cells(RowCount, 14).Value = "WI") Or (UnpaidWI2017.Cells(RowCount, 14).Value = "SLC") Or (UnpaidWI2017.Cells(RowCount, 14).Value = "PWD"))) Then
-    If ((UnpaidWI2017.Cells(RowCount, 2).Value = "Mike") And (UnpaidWI2017.Cells(RowCount, 41).Value = "Dr. Syson")) Then
+'    If ((UnpaidWI2017.Cells(RowCount, 2).Value = "Mike") And (UnpaidWI2017.Cells(RowCount, 41).Value = "Dr. Syson")) Then
+	If ((UnpaidWI2017.Cells(RowCount, 2).Value = "Mike")) Then
        UnpaidWI2017.Range("A" & RowCount, "AY" & RowCount).Columns.Copy
        
        output.Select

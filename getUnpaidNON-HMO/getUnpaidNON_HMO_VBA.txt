@@ -19,7 +19,7 @@ Dim RowCountOutput As Integer
 
 
 RowCount = 1
-RowCountOutput = 1
+RowCountOutput = 2
 
 Set myInput = Sheets(ActiveSheet.Name)
 
@@ -30,6 +30,27 @@ Else
     Set myOutput = Sheets.Add(After:=Sheets(Sheets.Count))
     ActiveSheet.Name = "Output"
 End If
+
+'Clean the Worksheet
+'remove all borders
+myOutput.Range("A" & 1, "H" & RowCountOutput).Borders.LineStyle = xlNone
+'remove all colors
+myOutput.Range("A" & 1, "H" & RowCountOutput).Interior.ColorIndex = 0
+
+
+myOutput.Range("A" & 1) = "TREATMENT"
+myOutput.Range("A" & 1).Font.Size = 16
+myOutput.Range("A" & 1).HorizontalAlignment = xlLeft
+
+'STA LUCIA PRICE: Header of Column
+myInput.Range("K" & RowCount).Columns.Copy
+myOutput.Select
+myOutput.Range("G" & RowCountOutput).PasteSpecial
+
+'DATE: Header of Column
+myInput.Range("B" & RowCount).Columns.Copy
+myOutput.Select
+myOutput.Range("A" & RowCountOutput).PasteSpecial
 
 For Each row In myInput.Rows
         
@@ -118,7 +139,7 @@ Next row
 
 myOutput.Columns("A:I").AutoFit
 
-myOutput.Range("A" & 2, "H" & RowCountOutput).Interior.ColorIndex = 0
+myOutput.Range("A" & 3, "H" & RowCountOutput).Interior.ColorIndex = 0
 
 
 RowCountOutput = RowCountOutput - 1
@@ -133,6 +154,9 @@ myOutput.Range("F" & RowCountOutput).Formula = "=Sum(F2:F" & RowCountOutputSum &
 
 'get total of STA LUCIA PRICE
 myOutput.Range("G" & RowCountOutput).Formula = "=Sum(G2:G" & RowCountOutputSum & ")"
+
+'consistently put borders in the table
+myOutput.Range("A" & 2, "H" & RowCountOutput).Borders.LineStyle = 1 'xlNone
 
 End Sub
 

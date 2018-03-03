@@ -33,9 +33,11 @@ End If
 
 'Clean the Worksheet
 'remove all borders
-myOutput.Range("A" & 1, "H" & RowCountOutput).Borders.LineStyle = xlNone
+myOutput.Columns("A:I").Borders.LineStyle = xlNone
 'remove all colors
-myOutput.Range("A" & 1, "H" & RowCountOutput).Interior.ColorIndex = 0
+myOutput.Columns("A:I").Interior.ColorIndex = 0
+'remove all cell values
+myOutput.Columns("A:I").Value = ""
 
 
 myOutput.Range("A" & 1) = "TREATMENT"
@@ -138,7 +140,6 @@ For Each row In myInput.Rows
 Next row
 
 myOutput.Columns("A:I").AutoFit
-
 myOutput.Range("A" & 3, "H" & RowCountOutput).Interior.ColorIndex = 0
 
 
@@ -154,6 +155,14 @@ myOutput.Range("F" & RowCountOutput).Formula = "=Sum(F2:F" & RowCountOutputSum &
 
 'get total of STA LUCIA PRICE
 myOutput.Range("G" & RowCountOutput).Formula = "=Sum(G2:G" & RowCountOutputSum & ")"
+
+
+RowCountOutput = RowCountOutput + 1
+myOutput.Range("E" & RowCountOutput) = "COUNT:"
+'get total COUNT
+RowCountOutputCount = RowCountOutput - 2
+myOutput.Range("F" & RowCountOutput).Formula = "=Count(F2:F" & RowCountOutputCount & ")"
+
 
 'consistently put borders in the table
 myOutput.Range("A" & 2, "H" & RowCountOutput).Borders.LineStyle = 1 'xlNone

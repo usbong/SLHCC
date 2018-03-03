@@ -1,0 +1,120 @@
+Sub getUnpaidNON_HMO()
+' Input:
+' 1) Monthly Report Worksheet ("input")
+' --> Copy-paste all the patient data for the day.
+' Output:
+' 1) Unpaid NON-HMO Monthly Report Worksheet ("output")
+' --> This will be where the VBA script will output and generate the report.
+'
+' Note:
+' I added an additional column, i.e. column A, for comments in the Rehab/Clinic Report (Workbook, not Worksheet)
+
+
+Dim myInput As Worksheet
+Dim myOutput As Worksheet
+Dim row As Range
+Dim RowCount As Integer
+Dim RowCountOutput As Integer
+
+
+RowCount = 1
+RowCountOutput = 1
+
+Set myInput = Sheets(ActiveSheet.Name)
+
+'Create a new Worksheet called "Output" if it does not yet exist
+If sheetExists("Output") Then
+    Set myOutput = Sheets("Output")
+Else
+    Set myOutput = Sheets.Add(After:=Sheets(Sheets.Count))
+    ActiveSheet.Name = "Output"
+End If
+
+For Each row In myInput.Rows
+        
+       'Select only NON-HMO patients, e.g. WI, PWD, SC, SLC
+       If InStr(myInput.Range("I" & RowCount).Value, "HMO") = 0 Then
+            'Copy and paste only pertinent columns
+       
+            'DATE: Column
+            myInput.Range("B" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("A" & RowCountOutput).PasteSpecial
+                        
+            'NAME: Column
+            myInput.Range("D" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("B" & RowCountOutput).PasteSpecial
+            
+            'CLASS: Column
+            myInput.Range("I" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("C" & RowCountOutput).PasteSpecial
+            
+            'OR#: Column
+            myInput.Range("O" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("D" & RowCountOutput).PasteSpecial
+            
+            'SR#: Column
+            myInput.Range("N" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("E" & RowCountOutput).PasteSpecial
+            
+            'AMT. PAID Column
+            myInput.Range("J" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("F" & RowCountOutput).PasteSpecial
+            
+            'STA LUCIA PRICE Column
+            myInput.Range("K" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("G" & RowCountOutput).PasteSpecial
+            
+            'DOCTOR Column
+            myInput.Range("P" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("H" & RowCountOutput).PasteSpecial
+            
+'            myOutput.Range("A" & RowCountOutput, "I" & RowCountOutput).Font.Size = 16
+                       
+            RowCountOutput = RowCountOutput + 1
+       End If
+       
+       If IsEmpty(myInput.Range("D" & RowCount).Value) Then
+            Exit For
+       Else
+            RowCount = RowCount + 1
+       End If
+Next row
+
+myOutput.Columns("A:I").AutoFit
+
+myOutput.Range("A" & 2, "H" & RowCountOutput).Interior.ColorIndex = 0
+
+
+RowCountOutput = RowCountOutput - 1
+
+'get total of AMT. PAID
+RowCountOutputSum = RowCountOutput - 1
+myOutput.Range("F" & RowCountOutput).Formula = "=Sum(F2:F" & RowCountOutputSum & ")"
+
+'get total of STA LUCIA PRICE
+myOutput.Range("G" & RowCountOutput).Formula = "=Sum(G2:G" & RowCountOutputSum & ")"
+
+End Sub
+
+Function sheetExists(sheetToFind As String) As Boolean
+' Reference: https://stackoverflow.com/questions/6040164/excel-vba-if-worksheetwsname-exists;
+' last accessed: 20180303
+' answer by: Dante is not a Geek
+' edited by: Tomas Zubiri
+    
+    sheetExists = False
+    For Each Sheet In Worksheets
+        If sheetToFind = Sheet.Name Then
+            sheetExists = True
+            Exit Function
+        End If
+    Next Sheet
+End Function

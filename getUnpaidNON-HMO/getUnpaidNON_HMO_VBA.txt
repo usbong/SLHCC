@@ -1,13 +1,14 @@
 Sub getUnpaidNON_HMO()
 ' Input:
 ' 1) Monthly Report Worksheet ("input")
-' --> Copy-paste all the patient data for the day.
+' --> Copy-paste all the patient data for the month.
 ' Output:
 ' 1) Unpaid NON-HMO Monthly Report Worksheet ("output")
-' --> This will be where the VBA script will output and generate the report.
+' --> This will be automatically created, and will be where the VBA script will output and generate the report.
 '
-' Note:
-' I added an additional column, i.e. column A, for comments in the Rehab/Clinic Report (Workbook, not Worksheet)
+' Notes:
+' 1) I added an additional column, i.e. column A, for comments in the Rehab/Clinic Report (Workbook, not Worksheet)
+' 2) The Sta Lucia computations here are for March 2018 onwards.
 
 
 Dim myInput As Worksheet
@@ -37,9 +38,18 @@ For Each row In myInput.Rows
             'Copy and paste only pertinent columns
        
             'DATE: Column
-            myInput.Range("B" & RowCount).Columns.Copy
+'            myInput.Range("B" & RowCount).Columns.Copy
+'            myOutput.Select
+'            myOutput.Range("A" & RowCountOutput).PasteSpecial
+                        
+            CurrentDate = myInput.Range("B" & RowCount).Value
+                        
+            If CurrentDate <> "" Then
+                TempCurrentDate = CurrentDate
+            End If
+            
             myOutput.Select
-            myOutput.Range("A" & RowCountOutput).PasteSpecial
+            myOutput.Range("A" & RowCountOutput).Value = TempCurrentDate
                         
             'NAME: Column
             myInput.Range("D" & RowCount).Columns.Copy
@@ -67,16 +77,34 @@ For Each row In myInput.Rows
             myOutput.Range("F" & RowCountOutput).PasteSpecial
             
             'STA LUCIA PRICE Column
-            myInput.Range("K" & RowCount).Columns.Copy
-            myOutput.Select
-            myOutput.Range("G" & RowCountOutput).PasteSpecial
+'            myInput.Range("K" & RowCount).Columns.Copy
+'            myOutput.Select
+'            myOutput.Range("G" & RowCountOutput).PasteSpecial
+            
+            If myInput.Range("I" & RowCount).Value = "WI" Then
+                myOutput.Select
+                myOutput.Range("G" & RowCountOutput).Value = myInput.Range("J" & RowCount).Value / 1.12 * 0.7 * 0.92
+            ElseIf myInput.Range("I" & RowCount).Value = "SC" Then
+                myOutput.Select
+                myOutput.Range("G" & RowCountOutput).Value = myInput.Range("J" & RowCount).Value * 0.7 * 0.92
+            ElseIf myInput.Range("I" & RowCount).Value = "PWD" Then
+                myOutput.Select
+                myOutput.Range("G" & RowCountOutput).Value = myInput.Range("J" & RowCount).Value * 0.7 * 0.92
+            ElseIf myInput.Range("I" & RowCount).Value = "SLC" Then
+                myOutput.Select
+                myOutput.Range("G" & RowCountOutput).Value = myInput.Range("J" & RowCount).Value / 1.12 * 0.7 * 0.92
+            End If
+            
+            myOutput.Range("G" & RowCountOutput).NumberFormat = "0.00"
+            
             
             'DOCTOR Column
             myInput.Range("P" & RowCount).Columns.Copy
             myOutput.Select
             myOutput.Range("H" & RowCountOutput).PasteSpecial
             
-'            myOutput.Range("A" & RowCountOutput, "I" & RowCountOutput).Font.Size = 16
+            myOutput.Range("A" & RowCountOutput, "I" & RowCountOutput).Font.Size = 11
+            myOutput.Range("A" & RowCountOutput, "I" & RowCountOutput).Font.FontStyle = "Calibiri"
                        
             RowCountOutput = RowCountOutput + 1
        End If
@@ -94,6 +122,10 @@ myOutput.Range("A" & 2, "H" & RowCountOutput).Interior.ColorIndex = 0
 
 
 RowCountOutput = RowCountOutput - 1
+myOutput.Range("A" & RowCountOutput) = "" 'remove the date in the last row
+
+myOutput.Range("E" & RowCountOutput) = "TOTAL:"
+
 
 'get total of AMT. PAID
 RowCountOutputSum = RowCountOutput - 1

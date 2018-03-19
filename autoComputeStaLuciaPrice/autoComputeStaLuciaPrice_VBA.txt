@@ -33,4 +33,7 @@ For Each row In myInput.Rows
        End If
 Next row
 
+myOutput.Range("J" & 1, "J" & RowCount).Font.Size = 11
+myOutput.Range("J" & 1, "J" & RowCount).Font.Name = "Calibri"
+
 End Sub

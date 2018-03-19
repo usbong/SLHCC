@@ -127,7 +127,7 @@ For Each row In myInput.Rows
             myOutput.Range("H" & RowCountOutput).PasteSpecial
             
             myOutput.Range("A" & RowCountOutput, "I" & RowCountOutput).Font.Size = 11
-            myOutput.Range("A" & RowCountOutput, "I" & RowCountOutput).Font.FontStyle = "Calibiri"
+            myOutput.Range("A" & RowCountOutput, "I" & RowCountOutput).Font.Name = "Calibri"
                        
             RowCountOutput = RowCountOutput + 1
        End If

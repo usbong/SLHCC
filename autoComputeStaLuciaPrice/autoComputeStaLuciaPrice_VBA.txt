@@ -18,12 +18,17 @@ Set myInput = Sheets(ActiveSheet.Name)
 Set myOutput = Sheets(ActiveSheet.Name)
 
 For Each row In myInput.Rows
+	   'In the event that the EWT (Expanded Withholding Tax) needs to be changed, e.g. 10% to 8%, simply update 0.9 to 0.92
+	   'Example:        
+	   ' myOutput.Range("J" & RowCount) = myInput.Range("I" & RowCount).Value * 0.7 * 0.9
+	   ' myOutput.Range("J" & RowCount) = myInput.Range("I" & RowCount).Value * 0.7 * 0.92
+
        If myInput.Range("H" & RowCount).Value = "SC" Or myInput.Range("H" & RowCount).Value = "PWD" Then
-            myOutput.Range("J" & RowCount) = myInput.Range("I" & RowCount).Value * 0.7 * 0.92
+            myOutput.Range("J" & RowCount) = myInput.Range("I" & RowCount).Value * 0.7 * 0.9
        ElseIf myInput.Range("H" & RowCount).Value = "WI" Then
-            myOutput.Range("J" & RowCount) = myInput.Range("I" & RowCount).Value / 1.12 * 0.7 * 0.92
+            myOutput.Range("J" & RowCount) = myInput.Range("I" & RowCount).Value / 1.12 * 0.7 * 0.9
        ElseIf myInput.Range("H" & RowCount).Value = "SLC" Then
-            myOutput.Range("J" & RowCount) = myInput.Range("I" & RowCount).Value / 1.12 * 0.7 * 0.92
+            myOutput.Range("J" & RowCount) = myInput.Range("I" & RowCount).Value / 1.12 * 0.7 * 0.9
        End If
        
        If IsEmpty(myInput.Range("C" & RowCount).Value) Then

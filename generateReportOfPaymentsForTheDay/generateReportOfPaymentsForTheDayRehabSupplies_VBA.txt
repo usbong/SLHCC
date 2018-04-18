@@ -1,0 +1,90 @@
+Sub generateReportOfPaymentsForTheDayRehabSupplies()
+' Given:
+' 1) Report Today Input Worksheet
+' --> Copy-paste all the purchased rehab supply data for the day.
+' Output:
+' 1) Report Today Output Worksheet
+' --> This will be where the VBA script will output and generate the report.
+
+
+Dim myInput As Worksheet
+Dim myOutput As Worksheet
+Dim row As Range
+Dim RowCount As Integer
+Dim RowCountOutput As Integer
+
+RowCount = 1
+RowCountOutput = 2
+
+Set myInput = Sheets("Report_Today_Input")
+Set myOutput = Sheets("Report_Today_Output")
+
+' add the headers of the table
+myOutput.Range("A" & 1) = "Date:"
+' skip column B
+myOutput.Range("C" & 1) = "NAME:"
+myOutput.Range("D" & 1) = "FEE:"
+myOutput.Range("E" & 1) = "PARTICULARS:"
+myOutput.Range("F" & 1) = "AMT. PAID:"
+myOutput.Range("G" & 1) = "STA LUCIA PRICE:"
+
+myOutput.Range("A" & 1, "G" & 1).Font.Size = 16
+myOutput.Range("A" & 1, "G" & 1).Interior.Color = vbGreen
+
+
+For Each row In myInput.Rows
+            'DATE value
+            myInput.Range("A" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("A" & RowCountOutput).PasteSpecial
+            
+            myOutput.Range("B" & RowCountOutput) = RowCountOutput - 1
+            
+            'Patient name value
+            myInput.Range("H" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("C" & RowCountOutput).PasteSpecial
+            
+            'FEE value
+            myInput.Range("F" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("D" & RowCountOutput).PasteSpecial
+                        
+            'Particulars value, i.e. REHAB SUPPLIES
+            myOutput.Range("E" & RowCountOutput) = "REHAB SUPPLIES"
+            'myOutput.Range("E" & RowCountOutput).Borders.LineStyle = xlContinuous
+            
+            myInput.Range("F" & RowCount, "G" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("F" & RowCountOutput, "G" & RowCountOutput).PasteSpecial
+            
+            myOutput.Range("A" & RowCountOutput, "G" & RowCountOutput).Font.Size = 16
+            
+            If RowCountOutput Mod 2 = 0 Then 'even number
+             myOutput.Range("A" & RowCountOutput, "G" & RowCountOutput).Interior.Color = vbYellow
+            Else
+             myOutput.Range("A" & RowCountOutput, "G" & RowCountOutput).Interior.Color = vbGreen
+            End If
+            
+            RowCountOutput = RowCountOutput + 1
+       
+       If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+            Exit For
+       Else
+            RowCount = RowCount + 1
+       End If
+Next row
+
+myOutput.Columns("A:G").AutoFit
+
+RowCountOutput = RowCountOutput - 1
+myOutput.Range("B" & RowCountOutput) = "" 'remove the number in the last row
+
+'get total of AMT. PAID
+RowCountOutputSum = RowCountOutput - 1
+myOutput.Range("F" & RowCountOutput).Formula = "=Sum(F2:F" & RowCountOutputSum & ")"
+
+'get total of STA LUCIA PRICE
+myOutput.Range("G" & RowCountOutput).Formula = "=Sum(G2:G" & RowCountOutputSum & ")"
+
+End Sub

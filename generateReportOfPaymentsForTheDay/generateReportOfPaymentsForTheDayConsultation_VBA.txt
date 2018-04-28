@@ -27,10 +27,10 @@ myOutput.Range("C" & 1) = "NAME:"
 myOutput.Range("D" & 1) = "FEE:"
 myOutput.Range("E" & 1) = "CLASS:"
 myOutput.Range("F" & 1) = "AMT. PAID:"
-'myOutput.Range("G" & 1) = "STA LUCIA PRICE:"
+myOutput.Range("G" & 1) = "NET PF:"
 
-myOutput.Range("A" & 1, "F" & 1).Font.Size = 16
-myOutput.Range("A" & 1, "F" & 1).Interior.Color = vbGreen
+myOutput.Range("A" & 1, "G" & 1).Font.Size = 16
+myOutput.Range("A" & 1, "G" & 1).Interior.Color = vbGreen
 
 
 For Each row In myInput.Rows
@@ -45,16 +45,16 @@ For Each row In myInput.Rows
             myOutput.Select
             myOutput.Range("C" & RowCountOutput).PasteSpecial
             
-            myInput.Range("H" & RowCount, "J" & RowCount).Columns.Copy
+            myInput.Range("H" & RowCount, "K" & RowCount).Columns.Copy
             myOutput.Select
-            myOutput.Range("D" & RowCountOutput, "F" & RowCountOutput).PasteSpecial
+            myOutput.Range("D" & RowCountOutput, "G" & RowCountOutput).PasteSpecial
             
-            myOutput.Range("A" & RowCountOutput, "F" & RowCountOutput).Font.Size = 16
+            myOutput.Range("A" & RowCountOutput, "G" & RowCountOutput).Font.Size = 16
             
             If RowCountOutput Mod 2 = 0 Then 'even number
-             myOutput.Range("A" & RowCountOutput, "F" & RowCountOutput).Interior.Color = vbYellow
+             myOutput.Range("A" & RowCountOutput, "G" & RowCountOutput).Interior.Color = vbYellow
             Else
-             myOutput.Range("A" & RowCountOutput, "F" & RowCountOutput).Interior.Color = vbGreen
+             myOutput.Range("A" & RowCountOutput, "G" & RowCountOutput).Interior.Color = vbGreen
             End If
             
             RowCountOutput = RowCountOutput + 1
@@ -67,7 +67,7 @@ For Each row In myInput.Rows
        End If
 Next row
 
-myOutput.Columns("A:F").AutoFit
+myOutput.Columns("A:G").AutoFit
 
 RowCountOutput = RowCountOutput - 1
 myOutput.Range("B" & RowCountOutput) = "" 'remove the number in the last row
@@ -76,8 +76,7 @@ myOutput.Range("B" & RowCountOutput) = "" 'remove the number in the last row
 RowCountOutputSum = RowCountOutput - 1
 myOutput.Range("F" & RowCountOutput).Formula = "=Sum(F2:F" & RowCountOutputSum & ")"
 
-'get total of STA LUCIA PRICE
-'myOutput.Range("G" & RowCountOutput).Formula = "=Sum(G2:G" & RowCountOutputSum & ")"
+'get total of NET PF
+myOutput.Range("G" & RowCountOutput).Formula = "=Sum(G2:G" & RowCountOutputSum & ")"
 
 End Sub
-

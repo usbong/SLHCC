@@ -1,10 +1,10 @@
-Sub autoComputeStaLuciaPriceConsultation()
+Sub autoComputeNetPFPriceConsultation()
 ' Given:
 ' 1) Class, i.e. SC, WI, SLC, PWD (Column I)
 ' 2) AMT.PAID (Column J)
 
 'Output:
-' 1) Auto-computed Sta. Lucia Price based on PF distribution (Column K)
+' 1) Auto-computed Net PF based on Sta. Lucia's PF distribution (Column K)
 
 
 Dim myInput As Worksheet
@@ -18,7 +18,7 @@ Set myInput = Sheets(ActiveSheet.Name)
 Set myOutput = Sheets(ActiveSheet.Name)
 
 For Each row In myInput.Rows
-       'The Sta. Lucia price computation appears to be the same for Senior Citizen, People With Disabilities, Walk-In, and Sta. Lucia patient.
+       'The Net PF computation appears to be the same for Senior Citizen, People With Disabilities, Walk-In, and Sta. Lucia patient.
        'I have written the code in this manner similar to the VBA instructions for Treatment's to make it easier to modify if necessary
        If myInput.Range("I" & RowCount).Value = "SC" Or myInput.Range("I" & RowCount).Value = "PWD" Then
             myOutput.Range("K" & RowCount) = Round(myInput.Range("J" & RowCount).Value * 0.7, 2)

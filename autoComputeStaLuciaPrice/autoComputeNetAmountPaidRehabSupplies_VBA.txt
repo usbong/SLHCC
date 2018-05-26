@@ -1,0 +1,35 @@
+Sub autoComputeNetAmountPaidRehabSupplies()
+' Given:
+' 1) FEE (Column G)
+
+'Output:
+' 1) Auto-computed AMT.PAID based on Sta. Lucia's PF distribution (Column H)
+
+
+Dim myInput As Worksheet
+Dim myOutput As Worksheet 'the same as myInput
+Dim row As Range
+Dim RowCount As Integer
+
+RowCount = 2 'RowCount 1 is for the table header
+
+Set myInput = Sheets(ActiveSheet.Name)
+Set myOutput = Sheets(ActiveSheet.Name)
+
+For Each row In myInput.Rows
+       myOutput.Range("H" & RowCount) = Round(myInput.Range("G" & RowCount).Value / 1.12 * 0.9 * 0.99, 2)
+                           
+       If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+            Exit For
+       Else
+            RowCount = RowCount + 1
+       End If
+Next row
+
+myOutput.Range("H" & 1, "H" & RowCount).Font.Size = 11
+myOutput.Range("H" & 1, "H" & RowCount).Font.Name = "Calibri"
+myOutput.Range("H" & 1, "H" & RowCount).NumberFormat = "0.00"
+
+myOutput.Range("H" & RowCount).Value = ""
+
+End Sub

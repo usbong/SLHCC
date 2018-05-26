@@ -1,4 +1,4 @@
-Sub autoComputeNetPFPriceConsultation()
+Sub autoComputeNetPFConsultation()
 ' Given:
 ' 1) Class, i.e. SC, WI, SLC, PWD (Column I)
 ' 2) AMT.PAID (Column J)

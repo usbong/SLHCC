@@ -26,14 +26,16 @@ myOutput.Range("C" & 1) = "NAME:"
 myOutput.Range("D" & 1) = "FEE:"
 myOutput.Range("E" & 1) = "CLASS:"
 myOutput.Range("F" & 1) = "AMT. PAID:"
-myOutput.Range("G" & 1) = "STA LUCIA PRICE:"
+myOutput.Range("G" & 1) = "PF:"
 
 myOutput.Range("A" & 1, "G" & 1).Font.Size = 16
 myOutput.Range("A" & 1, "G" & 1).Interior.Color = vbGreen
 
 
 For Each row In myInput.Rows
-       If InStr(myInput.Range("H" & RowCount).Value, "HMO") = 0 Then
+       'SLR stands for "Sta. Lucia Reality", which is a corporate client of the Sta. Lucia Health Care Center, Inc. (SLHCC).
+       'SLR's payment procedure to the Marikina Orthopedic Specialty Clinic (MOSC)'s Rehab/Clinic is similar to a Health Maintenance Organization (HMO)'s as well as PhilHealth's.
+       If InStr(myInput.Range("H" & RowCount).Value, "HMO") = 0 And myInput.Range("H" & RowCount).Value <> "SLR" Then
             myInput.Range("A" & RowCount).Columns.Copy
             myOutput.Select
             myOutput.Range("A" & RowCountOutput).PasteSpecial
@@ -79,3 +81,4 @@ myOutput.Range("F" & RowCountOutput).Formula = "=Sum(F2:F" & RowCountOutputSum &
 myOutput.Range("G" & RowCountOutput).Formula = "=Sum(G2:G" & RowCountOutputSum & ")"
 
 End Sub
+

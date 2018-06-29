@@ -34,7 +34,10 @@ myOutput.Range("A" & 1, "G" & 1).Interior.Color = vbGreen
 
 
 For Each row In myInput.Rows
-       If InStr(myInput.Range("I" & RowCount).Value, "HMO") = 0 Then
+       'SLR stands for "Sta. Lucia Reality", which is a corporate client of the Sta. Lucia Health Care Center, Inc. (SLHCC).
+       'SLR's payment procedure to the Marikina Orthopedic Specialty Clinic (MOSC)'s Rehab/Clinic is similar to a Health Maintenance Organization (HMO)'s as well as PhilHealth's.
+       If InStr(myInput.Range("H" & RowCount).Value, "HMO") = 0 And myInput.Range("H" & RowCount).Value <> "SLR" Then
+       'If InStr(myInput.Range("I" & RowCount).Value, "HMO") = 0 Then
             myInput.Range("A" & RowCount).Columns.Copy
             myOutput.Select
             myOutput.Range("A" & RowCountOutput).PasteSpecial

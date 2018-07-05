@@ -20,44 +20,60 @@ RowCountOutput = 2
 Set myInput = Sheets("Report_Today_Input")
 Set myOutput = Sheets("Report_Today_Output")
 
+'added by Mike, 20180705
+'clear/delete the contents, background color, and border of all used cells first
+myOutput.UsedRange.ClearContents
+myOutput.UsedRange.Interior.ColorIndex = 0
+myOutput.UsedRange.Borders.LineStyle = xlNone
+
 ' add the headers of the table
-myOutput.Range("A" & 1) = "Date:"
+myOutput.Range("A" & 1) = "DATE:"
 ' skip column B
-myOutput.Range("C" & 1) = "NAME:"
-myOutput.Range("D" & 1) = "FEE:"
-myOutput.Range("E" & 1) = "CLASS:"
-myOutput.Range("F" & 1) = "AMT. PAID:"
-myOutput.Range("G" & 1) = "NET PF:"
+myOutput.Range("C" & 1) = "OR#:"
+myOutput.Range("D" & 1) = "NAME:"
+myOutput.Range("E" & 1) = "FEE:"
+myOutput.Range("F" & 1) = "CLASS:"
+myOutput.Range("G" & 1) = "AMT. PAID:"
+myOutput.Range("H" & 1) = "PF:"
 
-myOutput.Range("A" & 1, "G" & 1).Font.Size = 16
-myOutput.Range("A" & 1, "G" & 1).Interior.Color = vbGreen
-
+myOutput.Range("A" & 1, "H" & 1).Font.Size = 16
+myOutput.Range("A" & 1, "H" & 1).Interior.Color = vbGreen
 
 For Each row In myInput.Rows
        'SLR stands for "Sta. Lucia Reality", which is a corporate client of the Sta. Lucia Health Care Center, Inc. (SLHCC).
        'SLR's payment procedure to the Marikina Orthopedic Specialty Clinic (MOSC)'s Rehab/Clinic is similar to a Health Maintenance Organization (HMO)'s as well as PhilHealth's.
-       If InStr(myInput.Range("H" & RowCount).Value, "HMO") = 0 And myInput.Range("H" & RowCount).Value <> "SLR" Then
+       If InStr(myInput.Range("I" & RowCount).Value, "HMO") = 0 And myInput.Range("I" & RowCount).Value <> "SLR" Then
        'If InStr(myInput.Range("I" & RowCount).Value, "HMO") = 0 Then
+
+            'Date:
             myInput.Range("A" & RowCount).Columns.Copy
             myOutput.Select
             myOutput.Range("A" & RowCountOutput).PasteSpecial
             
+            'Transaction Row #
             myOutput.Range("B" & RowCountOutput) = RowCountOutput - 1
             
-            myInput.Range("C" & RowCount).Columns.Copy
+            'OR#
+            myInput.Range("N" & RowCount).Columns.Copy
             myOutput.Select
             myOutput.Range("C" & RowCountOutput).PasteSpecial
+
+            'NAME:
+            myInput.Range("C" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("D" & RowCountOutput).PasteSpecial
             
+            'FEE
             myInput.Range("H" & RowCount, "K" & RowCount).Columns.Copy
             myOutput.Select
-            myOutput.Range("D" & RowCountOutput, "G" & RowCountOutput).PasteSpecial
+            myOutput.Range("E" & RowCountOutput, "H" & RowCountOutput).PasteSpecial
             
-            myOutput.Range("A" & RowCountOutput, "G" & RowCountOutput).Font.Size = 16
+            myOutput.Range("A" & RowCountOutput, "H" & RowCountOutput).Font.Size = 16
             
             If RowCountOutput Mod 2 = 0 Then 'even number
-             myOutput.Range("A" & RowCountOutput, "G" & RowCountOutput).Interior.Color = vbYellow
+             myOutput.Range("A" & RowCountOutput, "H" & RowCountOutput).Interior.Color = vbYellow
             Else
-             myOutput.Range("A" & RowCountOutput, "G" & RowCountOutput).Interior.Color = vbGreen
+             myOutput.Range("A" & RowCountOutput, "H" & RowCountOutput).Interior.Color = vbGreen
             End If
             
             RowCountOutput = RowCountOutput + 1
@@ -70,16 +86,18 @@ For Each row In myInput.Rows
        End If
 Next row
 
-myOutput.Columns("A:G").AutoFit
-
 RowCountOutput = RowCountOutput - 1
 myOutput.Range("B" & RowCountOutput) = "" 'remove the number in the last row
 
 'get total of AMT. PAID
 RowCountOutputSum = RowCountOutput - 1
-myOutput.Range("F" & RowCountOutput).Formula = "=Sum(F2:F" & RowCountOutputSum & ")"
-
-'get total of NET PF
 myOutput.Range("G" & RowCountOutput).Formula = "=Sum(G2:G" & RowCountOutputSum & ")"
+
+'get total of PF (Professional Fee)
+myOutput.Range("H" & RowCountOutput).Formula = "=Sum(H2:H" & RowCountOutputSum & ")"
+
+myOutput.Columns("A:H").AutoFit
+'TODO: -add: border to all used cells; the instruction below adds borders even to column I, which is the column to the right of the right-most column, i.e. "PF:" column, which may likely be due to column I's left border also being used
+'myOutput.UsedRange.Borders.LineStyle = 1
 
 End Sub

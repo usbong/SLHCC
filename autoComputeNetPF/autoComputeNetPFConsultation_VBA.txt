@@ -37,10 +37,9 @@ For Each row In myInput.Rows
        End If
 Next row
 
-myOutput.Range("J" & 1, "J" & RowCount).Font.Size = 11
-myOutput.Range("J" & 1, "J" & RowCount).Font.Name = "Calibri"
-myOutput.Range("K" & 1, "K" & RowCount).NumberFormat = "0.00"
-
+myOutput.Range("J" & 1, "K" & RowCount).Font.Size = 11
+myOutput.Range("J" & 1, "K" & RowCount).Font.Name = "Calibri"
+myOutput.Range("J" & 1, "K" & RowCount).NumberFormat = "0.00"
 End Sub
 
 

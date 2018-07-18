@@ -18,17 +18,29 @@ Set myInput = Sheets(ActiveSheet.Name)
 Set myOutput = Sheets(ActiveSheet.Name)
 
 For Each row In myInput.Rows
-	   'In the event that the EWT (Expanded Withholding Tax) needs to be changed, e.g. 10% to 8%, simply update 0.9 to 0.92
-	   'Example:        
-	   ' myOutput.Range("J" & RowCount) = myInput.Range("I" & RowCount).Value * 0.7 * 0.9
-	   ' myOutput.Range("J" & RowCount) = myInput.Range("I" & RowCount).Value * 0.7 * 0.92
+       'In the event that the EWT (Expanded Withholding Tax) needs to be changed, e.g. 10% to 8%, simply update 0.9 to 0.92
+       'Example:
+       ' myOutput.Range("J" & RowCount) = myInput.Range("I" & RowCount).Value * 0.7 * 0.9
+       ' myOutput.Range("J" & RowCount) = myInput.Range("I" & RowCount).Value * 0.7 * 0.92
+
+'       I've removed the Round(..., 2) function, because as it turned out,
+'       doing ...NumberFormat = "0.00" on the cell would automatically round
+'       the value to the hundredths.
+
+'       If myInput.Range("H" & RowCount).Value = "SC" Or myInput.Range("H" & RowCount).Value = "PWD" Then
+'            myOutput.Range("J" & RowCount) = Round(myInput.Range("I" & RowCount).Value * 0.7 * 0.9, 2)
+'       ElseIf myInput.Range("H" & RowCount).Value = "WI" Then
+'            myOutput.Range("J" & RowCount) = Round(myInput.Range("I" & RowCount).Value / 1.12 * 0.7 * 0.9, 2)
+'       ElseIf myInput.Range("H" & RowCount).Value = "SLC" Then
+'            myOutput.Range("J" & RowCount) = Round(myInput.Range("I" & RowCount).Value / 1.12 * 0.7 * 0.9, 2)
+'       End If
 
        If myInput.Range("H" & RowCount).Value = "SC" Or myInput.Range("H" & RowCount).Value = "PWD" Then
-            myOutput.Range("J" & RowCount) = Round(myInput.Range("I" & RowCount).Value * 0.7 * 0.9, 2)
+            myOutput.Range("J" & RowCount) = myInput.Range("I" & RowCount).Value * 0.7 * 0.9
        ElseIf myInput.Range("H" & RowCount).Value = "WI" Then
-            myOutput.Range("J" & RowCount) = Round(myInput.Range("I" & RowCount).Value / 1.12 * 0.7 * 0.9, 2)
+            myOutput.Range("J" & RowCount) = myInput.Range("I" & RowCount).Value / 1.12 * 0.7 * 0.9
        ElseIf myInput.Range("H" & RowCount).Value = "SLC" Then
-            myOutput.Range("J" & RowCount) = Round(myInput.Range("I" & RowCount).Value / 1.12 * 0.7 * 0.9, 2)
+            myOutput.Range("J" & RowCount) = myInput.Range("I" & RowCount).Value / 1.12 * 0.7 * 0.9
        End If
        
        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
@@ -43,3 +55,4 @@ myOutput.Range("I" & 1, "J" & RowCount).Font.Name = "Calibri"
 myOutput.Range("I" & 1, "J" & RowCount).NumberFormat = "0.00"
 
 End Sub
+

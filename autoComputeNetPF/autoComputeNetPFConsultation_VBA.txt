@@ -19,17 +19,32 @@ Set myOutput = Sheets(ActiveSheet.Name)
 
 For Each row In myInput.Rows
        'The Net PF computation appears to be the same for Senior Citizen, People With Disabilities, Walk-In, and Sta. Lucia patient.
-       'I have written the code in this manner similar to the VBA instructions for Treatment's to make it easier to modify if necessary
-       If myInput.Range("I" & RowCount).Value = "SC" Or myInput.Range("I" & RowCount).Value = "PWD" Then
-            myOutput.Range("K" & RowCount) = Round(myInput.Range("J" & RowCount).Value * 0.7, 2)
-       ElseIf myInput.Range("I" & RowCount).Value = "WI" Then
-            myOutput.Range("K" & RowCount) = Round(myInput.Range("J" & RowCount).Value * 0.7, 2)
-       ElseIf myInput.Range("I" & RowCount).Value = "SLC" Then
-            myOutput.Range("K" & RowCount) = Round(myInput.Range("J" & RowCount).Value * 0.7, 2)
-       ElseIf myInput.Range("I" & RowCount).Value = "Medical Certificate" Then
-            myOutput.Range("K" & RowCount) = Round(myInput.Range("J" & RowCount).Value * 0.7, 2)
-       End If
+       'I have written the code in this manner similar to the VBA instructions for Treatment's to make it easier to modify if necessary.
        
+       'I've removed the Round(..., 2) function, because as it turned out,
+       'doing ...NumberFormat = "0.00" on the cell would automatically round
+       'the value to the hundredths.
+       
+       'If myInput.Range("I" & RowCount).Value = "SC" Or myInput.Range("I" & RowCount).Value = "PWD" Then
+       '     myOutput.Range("K" & RowCount) = Round(myInput.Range("J" & RowCount).Value * 0.7, 2)
+       'ElseIf myInput.Range("I" & RowCount).Value = "WI" Then
+       '     myOutput.Range("K" & RowCount) = Round(myInput.Range("J" & RowCount).Value * 0.7, 2)
+       'ElseIf myInput.Range("I" & RowCount).Value = "SLC" Then
+       '     myOutput.Range("K" & RowCount) = Round(myInput.Range("J" & RowCount).Value * 0.7, 2)
+       'ElseIf myInput.Range("I" & RowCount).Value = "Medical Certificate" Then
+       '     myOutput.Range("K" & RowCount) = Round(myInput.Range("J" & RowCount).Value * 0.7, 2)
+       'End If
+       
+       If myInput.Range("I" & RowCount).Value = "SC" Or myInput.Range("I" & RowCount).Value = "PWD" Then
+            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7
+       ElseIf myInput.Range("I" & RowCount).Value = "WI" Then
+            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7
+       ElseIf myInput.Range("I" & RowCount).Value = "SLC" Then
+            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7
+       ElseIf myInput.Range("I" & RowCount).Value = "Medical Certificate" Then
+            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7
+       End If
+
        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
             Exit For
        Else
@@ -41,5 +56,3 @@ myOutput.Range("J" & 1, "K" & RowCount).Font.Size = 11
 myOutput.Range("J" & 1, "K" & RowCount).Font.Name = "Calibri"
 myOutput.Range("J" & 1, "K" & RowCount).NumberFormat = "0.00"
 End Sub
-
-

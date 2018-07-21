@@ -82,7 +82,12 @@ For Each row In myInput.Rows
        
        'The computation of the Net PF takes in as input the correct FEE (Column I), which is based on the HMO (Column J).
        If (InStr(myInput.Range("J" & RowCount).Value, "HMO")) Then
-            myOutput.Range("L" & RowCount) = Round((myInput.Range("I" & RowCount).Value - myInput.Range("I" & RowCount).Value * 0.02) / 1.12 * 0.7 * 0.9, 2)
+            'I've removed the Round(..., 2) function, because as it turned out,
+            'doing ...NumberFormat = "0.00" on the cell would automatically round
+            'the value to the hundredths.
+            'myOutput.Range("L" & RowCount) = Round((myInput.Range("I" & RowCount).Value - myInput.Range("I" & RowCount).Value * 0.02) / 1.12 * 0.7 * 0.9, 2)
+
+            myOutput.Range("L" & RowCount) = (myInput.Range("I" & RowCount).Value - myInput.Range("I" & RowCount).Value * 0.02) / 1.12 * 0.7 * 0.9
        End If
            
        If IsEmpty(myInput.Range("D" & RowCount).Value) Then
@@ -97,3 +102,4 @@ myOutput.Range("L" & 1, "L" & RowCount).Font.Name = "Calibri"
 myOutput.Range("L" & 1, "L" & RowCount).NumberFormat = "0.00"
 
 End Sub
+

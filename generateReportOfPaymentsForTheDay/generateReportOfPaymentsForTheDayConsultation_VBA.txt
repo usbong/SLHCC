@@ -40,9 +40,11 @@ myOutput.Range("A" & 1, "H" & 1).Font.Size = 16
 myOutput.Range("A" & 1, "H" & 1).Interior.Color = vbGreen
 
 For Each row In myInput.Rows
-       'SLR stands for "Sta. Lucia Reality", which is a corporate client of the Sta. Lucia Health Care Center, Inc. (SLHCC).
+       '1) SLR stands for "Sta. Lucia Reality", which is a corporate client of the Sta. Lucia Health Care Center, Inc. (SLHCC).
        'SLR's payment procedure to the Marikina Orthopedic Specialty Clinic (MOSC)'s Rehab/Clinic is similar to a Health Maintenance Organization (HMO)'s as well as PhilHealth's.
-       If InStr(myInput.Range("I" & RowCount).Value, "HMO") = 0 And myInput.Range("I" & RowCount).Value <> "SLR" Then
+	   '2) NC stands for "No Charge", which means that the medical doctor did not charge the patient a fee for the consultation	   
+	   If InStr(myInput.Range("I" & RowCount).Value, "HMO") = 0 And myInput.Range("I" & RowCount).Value <> "SLR" And myInput.Range("I" & RowCount).Value <> "NC" Then
+       'If InStr(myInput.Range("I" & RowCount).Value, "HMO") = 0 And myInput.Range("I" & RowCount).Value <> "SLR" Then
        'If InStr(myInput.Range("I" & RowCount).Value, "HMO") = 0 Then
 
             'Date:

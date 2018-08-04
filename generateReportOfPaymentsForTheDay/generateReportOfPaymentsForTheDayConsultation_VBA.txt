@@ -56,7 +56,7 @@ For Each row In myInput.Rows
             myOutput.Range("B" & RowCountOutput) = RowCountOutput - 1
             
             'OR#
-            myInput.Range("N" & RowCount).Columns.Copy
+            myInput.Range("O" & RowCount).Columns.Copy
             myOutput.Select
             myOutput.Range("C" & RowCountOutput).PasteSpecial
 

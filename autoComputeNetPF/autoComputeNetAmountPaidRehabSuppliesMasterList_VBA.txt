@@ -1,9 +1,9 @@
 Sub autoComputeNetAmountPaidRehabSupplies()
 ' Given:
-' 1) FEE (Column F)
+' 1) FEE (Column G)
 
 'Output:
-' 1) Auto-computed AMT.PAID based on Sta. Lucia's PF distribution (Column G)
+' 1) Auto-computed AMT.PAID based on Sta. Lucia's PF distribution (Column H)
 
 
 Dim myInput As Worksheet
@@ -17,8 +17,8 @@ Set myInput = Sheets(ActiveSheet.Name)
 Set myOutput = Sheets(ActiveSheet.Name)
 
 For Each row In myInput.Rows
-       'edited by Mike, 20180831
-       myOutput.Range("G" & RowCount) = myInput.Range("F" & RowCount).Value / 1.12 * 0.9 * 0.99 'Round(..., 2)
+	   'edited by Mike, 20180831
+       myOutput.Range("H" & RowCount) = myInput.Range("G" & RowCount).Value / 1.12 * 0.9 * 0.99 'Round(..., 2)
                            
        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
             Exit For
@@ -27,10 +27,10 @@ For Each row In myInput.Rows
        End If
 Next row
 
-myOutput.Range("G" & 1, "G" & RowCount).Font.Size = 11
-myOutput.Range("G" & 1, "G" & RowCount).Font.Name = "Calibri"
-myOutput.Range("G" & 1, "G" & RowCount).NumberFormat = "0.00"
+myOutput.Range("H" & 1, "H" & RowCount).Font.Size = 11
+myOutput.Range("H" & 1, "H" & RowCount).Font.Name = "Calibri"
+myOutput.Range("H" & 1, "H" & RowCount).NumberFormat = "0.00"
 
-myOutput.Range("G" & RowCount).Value = ""
+myOutput.Range("H" & RowCount).Value = ""
 
 End Sub

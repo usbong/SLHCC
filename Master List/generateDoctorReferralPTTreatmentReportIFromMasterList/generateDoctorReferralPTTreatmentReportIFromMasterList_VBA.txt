@@ -1,0 +1,47 @@
+Sub generateDoctorReferralPTTreatmentReportIFromMasterList()
+' Given:
+' 1) Encoding for the Month Input Worksheet
+' --> Copy-paste all the patient data for the entire month.
+' Output:
+' 1) Encoding for the Month Output Worksheet
+' --> This will be where the VBA script will output and generate the report.
+
+
+Dim myInput As Worksheet
+Dim myOutput As Worksheet
+Dim row As Range
+Dim RowCount As Integer
+Dim RowCountOutput As Integer
+
+RowCount = 1
+RowCountOutput = 2
+
+Set myInput = Sheets("Encoding_for_the_Month_Input")
+Set myOutput = Sheets("Encoding_for_the_Month_Output")
+
+'clear/delete the contents, background color, and border of all used cells first
+myOutput.UsedRange.ClearContents
+myOutput.UsedRange.Interior.ColorIndex = 0
+myOutput.UsedRange.Borders.LineStyle = xlNone
+
+' add the headers of the table
+myOutput.Range("A" & 1) = "DATE:"
+' skip column B
+myOutput.Range("C" & 1) = "REFERRING DOCTOR:"
+myOutput.Range("D" & 1) = "COUNT:"
+myOutput.Range("E" & 1) = "TOTAL NET" & vbCrLf & "TREATMENT FEE:"
+myOutput.Range("F" & 1) = "PAID NET" & vbCrLf & "TREATMENT FEE:"
+myOutput.Range("G" & 1) = "UNPAID NET" & vbCrLf & "TREATMENT FEE:"
+myOutput.Range("H" & 1) = "5% OF PAID NET" & vbCrLf & "TREATMENT FEE:"
+
+myOutput.Range("A" & 1, "H" & 1).Font.Size = 14
+myOutput.Range("A" & 1, "H" & 1).Interior.Color = vbGreen
+myOutput.Range("A" & 1, "H" & 1).VerticalAlignment = xlCenter
+myOutput.Range("A" & 1, "H" & 1).HorizontalAlignment = xlCenter
+
+
+myOutput.Columns("A:H").AutoFit
+'TODO: -add: border to all used cells; the instruction below adds borders even to column I, which is the column to the right of the right-most column, i.e. "PF:" column, which may likely be due to column I's left border also being used
+'myOutput.UsedRange.Borders.LineStyle = 1
+
+End Sub

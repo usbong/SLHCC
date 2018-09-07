@@ -12,8 +12,10 @@ Dim myOutput As Worksheet
 Dim row As Range
 Dim RowCount As Integer
 Dim RowCountOutput As Integer
+Dim worksheetDateValue As Date
+Dim numberOfDoctors As Integer
 
-RowCount = 1
+RowCount = 2
 RowCountOutput = 2
 
 Set myInput = Sheets("Encoding_for_the_Month_Input")
@@ -26,22 +28,60 @@ myOutput.UsedRange.Borders.LineStyle = xlNone
 
 ' add the headers of the table
 myOutput.Range("A" & 1) = "DATE:"
-' skip column B
-myOutput.Range("C" & 1) = "REFERRING DOCTOR:"
-myOutput.Range("D" & 1) = "COUNT:"
-myOutput.Range("E" & 1) = "TOTAL NET" & vbCrLf & "TREATMENT FEE:"
-myOutput.Range("F" & 1) = "PAID NET" & vbCrLf & "TREATMENT FEE:"
-myOutput.Range("G" & 1) = "UNPAID NET" & vbCrLf & "TREATMENT FEE:"
-myOutput.Range("H" & 1) = "5% OF PAID NET" & vbCrLf & "TREATMENT FEE:"
+myOutput.Range("B" & 1) = "REFERRING DOCTOR:"
+myOutput.Range("C" & 1) = "COUNT:"
+myOutput.Range("D" & 1) = "TOTAL NET TREATMENT FEE:" '"TOTAL NET" & vbCrLf & "TREATMENT FEE:"
+myOutput.Range("E" & 1) = "PAID NET TREATMENT FEE:" '"PAID NET" & vbCrLf & "TREATMENT FEE:"
+myOutput.Range("F" & 1) = "UNPAID NET TREATMENT FEE:" '"UNPAID NET" & vbCrLf & "TREATMENT FEE:"
+myOutput.Range("G" & 1) = "5% OF PAID NET TREATMENT FEE:" '"5% OF PAID NET" & vbCrLf & "TREATMENT FEE:"
 
-myOutput.Range("A" & 1, "H" & 1).Font.Size = 14
-myOutput.Range("A" & 1, "H" & 1).Interior.Color = vbGreen
-myOutput.Range("A" & 1, "H" & 1).VerticalAlignment = xlCenter
-myOutput.Range("A" & 1, "H" & 1).HorizontalAlignment = xlCenter
+myOutput.Range("A" & 1, "G" & 1).Font.Size = 14
+myOutput.Range("A" & 1, "G" & 1).Interior.Color = vbGreen
+myOutput.Range("A" & 1, "G" & 1).VerticalAlignment = xlCenter
+myOutput.Range("A" & 1, "G" & 1).HorizontalAlignment = xlCenter
+
+'DATE value based on the worksheet's month and year
+worksheetDateValue = myInput.Range("B" & 2).Value
+
+'HMO PT Treatment transactions first
+For Each row In myInput.Rows
+       'SLR stands for "Sta. Lucia Reality", which is a corporate client of the Sta. Lucia Health Care Center, Inc. (SLHCC).
+       'SLR's payment procedure to the Marikina Orthopedic Specialty Clinic (MOSC)'s Rehab/Clinic is similar to a Health Maintenance Organization (HMO)'s as well as PhilHealth's.
+       If InStr(myInput.Range("H" & RowCount).Value, "HMO") = 0 And myInput.Range("H" & RowCount).Value <> "SLR" Then
+            
+            'DATE:
+            myOutput.Range("A" & RowCountOutput) = worksheetDateValue
+            
+            'Transaction Row #
+            'myOutput.Range("B" & RowCountOutput) = RowCountOutput - 1
+                        
+           'REFERRING DOCTOR:
+            'myInput.Range("P" & RowCount).Columns.Copy
+            'myOutput.Select
+            'myOutput.Range("B" & RowCountOutput).PasteSpecial
+            
+                        
+            If RowCountOutput Mod 2 = 0 Then 'even number
+             myOutput.Range("A" & RowCountOutput, "G" & RowCountOutput).Interior.Color = vbYellow
+            Else
+             myOutput.Range("A" & RowCountOutput, "G" & RowCountOutput).Interior.Color = vbGreen
+            End If
+            
+            RowCountOutput = RowCountOutput + 1
+       End If
+       
+       If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+            Exit For
+       Else
+            RowCount = RowCount + 1
+       End If
+Next row
 
 
-myOutput.Columns("A:H").AutoFit
+myOutput.Columns("A:G").AutoFit
 'TODO: -add: border to all used cells; the instruction below adds borders even to column I, which is the column to the right of the right-most column, i.e. "PF:" column, which may likely be due to column I's left border also being used
 'myOutput.UsedRange.Borders.LineStyle = 1
+
+myOutput.Range("A" & 1, "A" & RowCount).NumberFormat = "MMM yyyy"
 
 End Sub

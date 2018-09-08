@@ -44,7 +44,15 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 		Scanner sc = new Scanner(new FileInputStream(f));				
 
 		String s;
-
+		
+		//init table header names
+		writer.print("DATE:\t"); //"DATE:" column
+		writer.print("REFERRING DOCTOR:\t"); //"REFERRING DOCTOR:" column
+		writer.print("COUNT:\t"); //"COUNT:" column
+		writer.print("TOTAL NET TREATMENT FEE:\t"); //"TOTAL NET TREATMENT FEE:" column
+		writer.print("PAID NET TREATMENT FEE:\t"); //"PAID NET TREATMENT FEE:" column
+		writer.println("UNPAID NET TREATMENT FEE:"); //"UNPAID NET TREATMENT FEE:" column
+		
 		while (sc.hasNextLine()) {
 
 			s=sc.nextLine();

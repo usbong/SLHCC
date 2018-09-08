@@ -34,7 +34,14 @@ import java.util.regex.Matcher;
 public class generateDoctorReferralPTTreatmentReportFromMasterList {	
 	private static boolean inDebugMode = false;
 	private static String inputFilename = "input201808"; //without extension
-
+	
+	private static Vector<String> referringDoctorContainer;
+	private static double columnValuesArray[];
+	private static final int TOTAL_COLUMNS = 5; //the actual first column in the output file, i.e. the date, is not included here
+	
+	private static final int INPUT_REFERRING_DOCTOR_COLUMN = 15;
+	private static final int INPUT_DATE_COLUMN = 1;
+	
 	public static void main ( String[] args ) throws Exception
 	{
 		PrintWriter writer = new PrintWriter(inputFilename+"Output.txt", "UTF-8");
@@ -43,7 +50,8 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 
 		Scanner sc = new Scanner(new FileInputStream(f));				
 
-		String s;
+		referringDoctorContainer = new Vector<String>();
+		columnValuesArray = new double[TOTAL_COLUMNS];		
 		
 		//init table header names
 		writer.print("DATE:\t"); //"DATE:" column
@@ -52,15 +60,28 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 		writer.print("TOTAL NET TREATMENT FEE:\t"); //"TOTAL NET TREATMENT FEE:" column
 		writer.print("PAID NET TREATMENT FEE:\t"); //"PAID NET TREATMENT FEE:" column
 		writer.println("UNPAID NET TREATMENT FEE:"); //"UNPAID NET TREATMENT FEE:" column
-		
-		while (sc.hasNextLine()) {
+	
+		String s;		
+		s=sc.nextLine(); //skip the first row, which is the input file's table headers
 
+		//count/compute the values for number-based columns 
+		while (sc.hasNextLine()) {
 			s=sc.nextLine();
 			
 			String[] columns = s.split("\t");
-
+			
+			if (!referringDoctorContainer.contains(columns[INPUT_REFERRING_DOCTOR_COLUMN])) {
+				//referringDoctorContainer.add(columns[INPUT_DATE_COLUMN]);
+				
+				referringDoctorContainer.add(columns[INPUT_REFERRING_DOCTOR_COLUMN]);
+				
+//				writer.print(columns[INPUT_REFERRING_DOCTOR_COLUMN]+"\n"); //referring Medical Doctor name
+			}
+			
+/*
 			writer.print(columns[2]+"\t"); //transaction number
 			writer.println(columns[3]); //patient name
+*/			
 		}			
 		
 		sc.close();

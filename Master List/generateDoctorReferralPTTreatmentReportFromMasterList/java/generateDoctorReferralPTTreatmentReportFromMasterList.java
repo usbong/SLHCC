@@ -80,11 +80,14 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 					columnValuesArray[OUTPUT_COUNT_COLUMN] = 1;
 					referringDoctorContainer.put(columns[INPUT_REFERRING_DOCTOR_COLUMN], columnValuesArray);
 			}
+			else {
+				referringDoctorContainer.get(columns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_COUNT_COLUMN]++;
+			}
 		}			
 
 		for (String key  : referringDoctorContainer.keySet()) {
 //			writer.println(key);
-			writer.println(referringDoctorContainer.get(key)[OUTPUT_COUNT_COLUMN]); 
+			writer.println(key + "\t" + referringDoctorContainer.get(key)[OUTPUT_COUNT_COLUMN]); 
 		}
 		
 		sc.close();

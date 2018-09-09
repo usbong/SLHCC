@@ -18,6 +18,7 @@ import java.io.FileInputStream;
 import java.io.PrintWriter;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
+import java.text.NumberFormat;
 
 /*
 
@@ -38,23 +39,15 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 	private static final int INPUT_REFERRING_DOCTOR_COLUMN = 15;
 	private static final int INPUT_DATE_COLUMN = 1;
 	private static final int INPUT_CLASS_COLUMN = 8; //HMO and NON-HMO
+	private static final int INPUT_NET_PF_COLUMN = 10;
 
 	private static HashMap<String, double[]> referringDoctorContainer;	
 	private static double[] columnValuesArray;
-//	private static final int OUTPUT_TOTAL_COLUMNS = 4; //the date and the referring doctor are not yet included here
 	
 	//the date and the referring doctor are not yet included here
 	//this is for both HMO and NON-HMO transactions
 	private static final int OUTPUT_TOTAL_COLUMNS = 8; 
 	
-//	private static final int OUTPUT_REFERRING_DOCTOR_COLUMN = 0;
-/*
-	private static final int OUTPUT_COUNT_COLUMN = 0; //transaction count
-	private static final int OUTPUT_TOTAL_NET_TREATMENT_FEE_COLUMN = 1;
-	private static final int OUTPUT_PAID_NET_TREATMENT_FEE_COLUMN = 2;
-	private static final int OUTPUT_UNPAID_NET_TREATMENT_FEE_COLUMN = 3;
-*/
-
 	private static final int OUTPUT_HMO_COUNT_COLUMN = 0; //transaction count
 	private static final int OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN = 1;
 	private static final int OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN = 2;
@@ -64,7 +57,7 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 	private static final int OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN = 5;
 	private static final int OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN = 6;
 	private static final int OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN = 7;
-	
+		
 	public static void main ( String[] args ) throws Exception
 	{
 		PrintWriter writer = new PrintWriter(inputFilename+"Output.txt", "UTF-8");
@@ -86,37 +79,45 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 		String s;		
 		s=sc.nextLine(); //skip the first row, which is the input file's table headers
 
-		//count/compute the values for number-based columns 
+		//count/compute the values for number-based inputColumns 
 		while (sc.hasNextLine()) {
 			s=sc.nextLine();
 			
-			String[] columns = s.split("\t");
+			String[] inputColumns = s.split("\t");
 
-			if (!referringDoctorContainer.containsKey(columns[INPUT_REFERRING_DOCTOR_COLUMN])) {
+			if (!referringDoctorContainer.containsKey(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])) {
 				columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];		
 				
-				if (columns[INPUT_CLASS_COLUMN].contains("HMO")) {
+				if (inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) {
 					columnValuesArray[OUTPUT_HMO_COUNT_COLUMN] = 1;
+					columnValuesArray[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 				}
 				else {
 					columnValuesArray[OUTPUT_NON_HMO_COUNT_COLUMN] = 1;
+					columnValuesArray[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 				}
 				
-				referringDoctorContainer.put(columns[INPUT_REFERRING_DOCTOR_COLUMN], columnValuesArray);
+				referringDoctorContainer.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN], columnValuesArray);
 			}
 			else {
-				if (columns[INPUT_CLASS_COLUMN].contains("HMO")) {
-					referringDoctorContainer.get(columns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_COUNT_COLUMN]++;
+				if (inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) {
+					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_COUNT_COLUMN]++;					
+					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
+						+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 				}
 				else {
-					referringDoctorContainer.get(columns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_COUNT_COLUMN]++;
+					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_COUNT_COLUMN]++;					
+					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
+						+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 				}
 			}
 		}			
 
 		for (String key  : referringDoctorContainer.keySet()) {
 //			writer.println(key);
-			writer.println(key + "\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN]); 
+//			writer.println(key + "\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN]); 
+			writer.println(key + "\t" + (int) referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] 
+							   + "\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]); 									   
 		}
 		
 		sc.close();

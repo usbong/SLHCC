@@ -35,13 +35,19 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 	private static boolean inDebugMode = false;
 	private static String inputFilename = "input201808"; //without extension
 	
-	private static Vector<String> referringDoctorContainer;
-	private static double columnValuesArray[];
-	private static final int TOTAL_COLUMNS = 5; //the actual first column in the output file, i.e. the date, is not included here
-	
 	private static final int INPUT_REFERRING_DOCTOR_COLUMN = 15;
 	private static final int INPUT_DATE_COLUMN = 1;
-	
+
+	private static HashMap<String, double[]> referringDoctorContainer;	
+	private static double[] columnValuesArray;
+	private static final int OUTPUT_TOTAL_COLUMNS = 4; //the date and the referring doctor are not yet included here
+
+//	private static final int OUTPUT_REFERRING_DOCTOR_COLUMN = 0;
+	private static final int OUTPUT_COUNT_COLUMN = 0; //transaction count
+	private static final int OUTPUT_TOTAL_NET_TREATMENT_FEE_COLUMN = 1;
+	private static final int OUTPUT_PAID_NET_TREATMENT_FEE_COLUMN = 2;
+	private static final int OUTPUT_UNPAID_NET_TREATMENT_FEE_COLUMN = 3;
+		
 	public static void main ( String[] args ) throws Exception
 	{
 		PrintWriter writer = new PrintWriter(inputFilename+"Output.txt", "UTF-8");
@@ -50,8 +56,7 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 
 		Scanner sc = new Scanner(new FileInputStream(f));				
 
-		referringDoctorContainer = new Vector<String>();
-		columnValuesArray = new double[TOTAL_COLUMNS];		
+		referringDoctorContainer = new HashMap<String, double[]>();
 		
 		//init table header names
 		writer.print("DATE:\t"); //"DATE:" column
@@ -69,20 +74,18 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 			s=sc.nextLine();
 			
 			String[] columns = s.split("\t");
-			
-			if (!referringDoctorContainer.contains(columns[INPUT_REFERRING_DOCTOR_COLUMN])) {
-				//referringDoctorContainer.add(columns[INPUT_DATE_COLUMN]);
-				
-				referringDoctorContainer.add(columns[INPUT_REFERRING_DOCTOR_COLUMN]);
-				
-//				writer.print(columns[INPUT_REFERRING_DOCTOR_COLUMN]+"\n"); //referring Medical Doctor name
+
+			if (!referringDoctorContainer.containsKey(columns[INPUT_REFERRING_DOCTOR_COLUMN])) {
+					columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];		
+					columnValuesArray[OUTPUT_COUNT_COLUMN] = 1;
+					referringDoctorContainer.put(columns[INPUT_REFERRING_DOCTOR_COLUMN], columnValuesArray);
 			}
-			
-/*
-			writer.print(columns[2]+"\t"); //transaction number
-			writer.println(columns[3]); //patient name
-*/			
 		}			
+
+		for (String key  : referringDoctorContainer.keySet()) {
+//			writer.println(key);
+			writer.println(referringDoctorContainer.get(key)[OUTPUT_COUNT_COLUMN]); 
+		}
 		
 		sc.close();
 		writer.close();

@@ -36,7 +36,8 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 	private static boolean inDebugMode = false;
 	private static String inputFilename = "input201808"; //without extension
 	
-	private static String[] inputColumns;
+//	private static String[] inputColumns;
+	private static String date = null;
 	
 	private static final int INPUT_REFERRING_DOCTOR_COLUMN = 15;
 	private static final int INPUT_NOTES_COLUMN = 0;
@@ -70,14 +71,6 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 		Scanner sc = new Scanner(new FileInputStream(f));				
 
 		referringDoctorContainer = new HashMap<String, double[]>();
-		
-		//init table header names
-		writer.print("DATE:\t"); //"DATE:" column
-		writer.print("REFERRING DOCTOR:\t"); //"REFERRING DOCTOR:" column
-		writer.print("COUNT:\t"); //"COUNT:" column
-		writer.print("TOTAL NET TREATMENT FEE:\t"); //"TOTAL NET TREATMENT FEE:" column
-		writer.print("PAID NET TREATMENT FEE:\t"); //"PAID NET TREATMENT FEE:" column
-		writer.println("UNPAID NET TREATMENT FEE:"); //"UNPAID NET TREATMENT FEE:" column
 	
 		String s;		
 		s=sc.nextLine(); //skip the first row, which is the input file's table headers
@@ -86,7 +79,11 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 		while (sc.hasNextLine()) {
 			s=sc.nextLine();
 			
-			inputColumns = s.split("\t");
+			String[] inputColumns = s.split("\t");
+			
+			if (date==null) {
+				date = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);
+			}
 
 			if (!referringDoctorContainer.containsKey(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])) {
 				columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
@@ -143,14 +140,50 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 				}
 			}
 		}			
-
+		
+		/*
+		 * --------------------------------------------------------------------
+		 * OUTPUT
+		 * --------------------------------------------------------------------
+		*/
+		writer.print("HMO Report\n");
+		
+		//init table header names
+		writer.print("DATE:\t"); //"DATE:" column
+		writer.print("REFERRING DOCTOR:\t"); //"REFERRING DOCTOR:" column
+		writer.print("COUNT:\t"); //"COUNT:" column
+		writer.print("TOTAL NET TREATMENT FEE:\t"); //"TOTAL NET TREATMENT FEE:" column
+		writer.print("PAID NET TREATMENT FEE:\t"); //"PAID NET TREATMENT FEE:" column
+		writer.println("UNPAID NET TREATMENT FEE:"); //"UNPAID NET TREATMENT FEE:" column		
+		
 		for (String key  : referringDoctorContainer.keySet()) {
-			writer.println( getMonthYear(inputColumns[INPUT_DATE_COLUMN]) + 
+			writer.println( date + 
 							"\t" + key +
 							"\t" + (int) referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] +
 							"\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] +
 							"\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] +
 							"\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]
+							); 				   							
+		}
+		
+		writer.print("\nNON-HMO Report\n");
+
+		
+		//init table header names
+		writer.print("DATE:\t"); //"DATE:" column
+		writer.print("REFERRING DOCTOR:\t"); //"REFERRING DOCTOR:" column
+		writer.print("COUNT:\t"); //"COUNT:" column
+		writer.print("TOTAL NET TREATMENT FEE:\t"); //"TOTAL NET TREATMENT FEE:" column
+		writer.print("PAID NET TREATMENT FEE:\t"); //"PAID NET TREATMENT FEE:" column
+		writer.println("UNPAID NET TREATMENT FEE:"); //"UNPAID NET TREATMENT FEE:" column
+
+		for (String key  : referringDoctorContainer.keySet()) {
+			writer.println( date + 
+							"\t" + key +
+							"\t" + (int) referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN] +
+							"\t" + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] +
+							"\t" + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] +
+							"\t" + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]
 							); 				   							
 		}
 		

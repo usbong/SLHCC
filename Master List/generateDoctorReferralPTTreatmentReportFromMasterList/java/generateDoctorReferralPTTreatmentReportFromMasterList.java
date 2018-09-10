@@ -36,6 +36,8 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 	private static boolean inDebugMode = false;
 	private static String inputFilename = "input201808"; //without extension
 	
+	private static String[] inputColumns;
+	
 	private static final int INPUT_REFERRING_DOCTOR_COLUMN = 15;
 	private static final int INPUT_DATE_COLUMN = 1;
 	private static final int INPUT_CLASS_COLUMN = 8; //HMO and NON-HMO
@@ -83,7 +85,7 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 		while (sc.hasNextLine()) {
 			s=sc.nextLine();
 			
-			String[] inputColumns = s.split("\t");
+			inputColumns = s.split("\t");
 
 			if (!referringDoctorContainer.containsKey(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])) {
 				columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];		
@@ -96,7 +98,7 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 					columnValuesArray[OUTPUT_NON_HMO_COUNT_COLUMN] = 1;
 					columnValuesArray[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 				}
-				
+
 				referringDoctorContainer.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN], columnValuesArray);
 			}
 			else {
@@ -114,13 +116,18 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 		}			
 
 		for (String key  : referringDoctorContainer.keySet()) {
-//			writer.println(key);
-//			writer.println(key + "\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN]); 
-			writer.println(key + "\t" + (int) referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] 
-							   + "\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]); 									   
+			writer.println( getMonthYear(inputColumns[INPUT_DATE_COLUMN]) + 
+							"\t" + key +
+							"\t" + (int) referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] +
+							"\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]); 									   
 		}
 		
 		sc.close();
 		writer.close();
+	}
+	
+	private static String getMonthYear(String date) {
+		StringBuffer sb = new StringBuffer(date);				
+		return sb.substring(0,3).concat("-").concat(sb.substring(sb.length()-2,sb.length()));
 	}
 }

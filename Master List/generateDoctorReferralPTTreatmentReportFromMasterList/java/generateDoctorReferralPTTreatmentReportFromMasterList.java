@@ -98,6 +98,9 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 					if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
 						columnValuesArray[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 					}
+					else {
+						columnValuesArray[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+					}
 				}
 				else {
 					columnValuesArray[OUTPUT_NON_HMO_COUNT_COLUMN] = 1;
@@ -105,6 +108,9 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 
 					if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
 						columnValuesArray[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+					}
+					else {
+						columnValuesArray[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 					}
 				}
 
@@ -117,7 +123,10 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 						+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 						
 					if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
-						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+					}
+					else {
+						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 					}
 				}
 				else {
@@ -126,7 +135,10 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 						+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 						
 					if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
-						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+					}
+					else {
+						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 					}
 				}
 			}
@@ -137,7 +149,9 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 							"\t" + key +
 							"\t" + (int) referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] +
 							"\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] +
-							"\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN]); 				   							
+							"\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] +
+							"\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]
+							); 				   							
 		}
 		
 		sc.close();

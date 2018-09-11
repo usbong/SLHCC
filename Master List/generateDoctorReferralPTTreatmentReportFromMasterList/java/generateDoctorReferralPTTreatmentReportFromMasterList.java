@@ -36,7 +36,6 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 	private static boolean inDebugMode = false;
 	private static String inputFilename = "input201808"; //without extension
 	
-//	private static String[] inputColumns;
 	private static String date = null;
 	
 	private static final int INPUT_REFERRING_DOCTOR_COLUMN = 15;
@@ -75,7 +74,7 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 		String s;		
 		s=sc.nextLine(); //skip the first row, which is the input file's table headers
 
-		//count/compute the values for number-based inputColumns 
+		//count/compute the number-based values of inputColumns 
 		while (sc.hasNextLine()) {
 			s=sc.nextLine();
 			
@@ -160,8 +159,10 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 		writer.print("TOTAL NET TREATMENT FEE:\t"); //"TOTAL NET TREATMENT FEE:" column
 		writer.print("PAID NET TREATMENT FEE:\t"); //"PAID NET TREATMENT FEE:" column
 		writer.println("UNPAID NET TREATMENT FEE:"); //"UNPAID NET TREATMENT FEE:" column		
+
+		SortedSet<String> sortedKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
 		
-		for (String key  : referringDoctorContainer.keySet()) {
+		for (String key : sortedKeyset) {
 			writer.println( date + 
 							"\t" + key +
 							"\t" + (int) referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] +
@@ -172,7 +173,6 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 		}
 		
 		writer.print("\nNON-HMO Report\n");
-
 		
 		//init table header names
 		writer.print("DATE:\t"); //"DATE:" column
@@ -181,8 +181,8 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 		writer.print("TOTAL NET TREATMENT FEE:\t"); //"TOTAL NET TREATMENT FEE:" column
 		writer.print("PAID NET TREATMENT FEE:\t"); //"PAID NET TREATMENT FEE:" column
 		writer.println("UNPAID NET TREATMENT FEE:"); //"UNPAID NET TREATMENT FEE:" column
-
-		for (String key  : referringDoctorContainer.keySet()) {
+				
+		for (String key : sortedKeyset) {
 			writer.println( date + 
 							"\t" + key +
 							"\t" + (int) referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN] +

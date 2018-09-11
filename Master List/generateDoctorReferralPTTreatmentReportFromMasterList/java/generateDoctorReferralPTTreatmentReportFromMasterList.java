@@ -79,7 +79,12 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 		while (sc.hasNextLine()) {
 			s=sc.nextLine();
 			
-			String[] inputColumns = s.split("\t");
+			//if the row is blank
+			if (s.trim().equals("")) {
+				continue;
+			}
+			
+			String[] inputColumns = s.split("\t");					
 			
 			if (date==null) {
 				date = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);

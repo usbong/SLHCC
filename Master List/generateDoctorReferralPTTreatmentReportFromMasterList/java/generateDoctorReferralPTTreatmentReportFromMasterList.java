@@ -61,6 +61,7 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 	private static final int OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN = 6;
 	private static final int OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN = 7;
 		
+		
 	public static void main ( String[] args ) throws Exception
 	{
 		PrintWriter writer = new PrintWriter(inputFilename+"Output.txt", "UTF-8");
@@ -158,7 +159,8 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 		writer.print("COUNT:\t"); //"COUNT:" column
 		writer.print("TOTAL NET TREATMENT FEE:\t"); //"TOTAL NET TREATMENT FEE:" column
 		writer.print("PAID NET TREATMENT FEE:\t"); //"PAID NET TREATMENT FEE:" column
-		writer.println("UNPAID NET TREATMENT FEE:"); //"UNPAID NET TREATMENT FEE:" column		
+		writer.print("UNPAID NET TREATMENT FEE:\t"); //"UNPAID NET TREATMENT FEE:" column		
+		writer.println("5% SHARE OF NET PAID:"); //"5% SHARE OF NET PAID:" column		
 
 		SortedSet<String> sortedKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
 		
@@ -168,7 +170,8 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 							"\t" + (int) referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] +
 							"\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] +
 							"\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] +
-							"\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]
+							"\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] +
+							"\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN]*0.05
 							); 				   							
 		}
 		
@@ -180,7 +183,8 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 		writer.print("COUNT:\t"); //"COUNT:" column
 		writer.print("TOTAL NET TREATMENT FEE:\t"); //"TOTAL NET TREATMENT FEE:" column
 		writer.print("PAID NET TREATMENT FEE:\t"); //"PAID NET TREATMENT FEE:" column
-		writer.println("UNPAID NET TREATMENT FEE:"); //"UNPAID NET TREATMENT FEE:" column
+		writer.print("UNPAID NET TREATMENT FEE:\t"); //"UNPAID NET TREATMENT FEE:" column
+		writer.println("5% SHARE OF NET PAID:"); //"5% SHARE OF NET PAID:" column		
 				
 		for (String key : sortedKeyset) {
 			writer.println( date + 
@@ -188,7 +192,8 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 							"\t" + (int) referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN] +
 							"\t" + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] +
 							"\t" + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] +
-							"\t" + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]
+							"\t" + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] +
+							"\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN]*0.05
 							); 				   							
 		}
 		

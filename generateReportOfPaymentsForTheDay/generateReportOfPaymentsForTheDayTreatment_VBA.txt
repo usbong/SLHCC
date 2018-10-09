@@ -19,9 +19,11 @@ RowCountOutput = 2
 Set myInput = Sheets("Report_Today_Input")
 Set myOutput = Sheets("Report_Today_Output")
 
-'added by Mike, 20181008
+'edited by Mike, 20181009
 'set back the selected cell in the input worksheet to the top-left cell, i.e. A1, as default
 'This is to make sure that when the next input the following day is pasted, the default selected cell in the input worksheet is the first row and column.
+'Otherwise, it is possible that the human encoder may inadvertently paste the input for the day in the wrong row and column.
+'This is a case that my team and I have experienced.
 myInput.Range("A1").Select
 
 'added by Mike, 20180703
@@ -42,6 +44,7 @@ myOutput.Range("H" & 1) = "PF:"
 
 myOutput.Range("A" & 1, "H" & 1).Font.Size = 16
 myOutput.Range("A" & 1, "H" & 1).Interior.Color = vbGreen
+
 
 For Each row In myInput.Rows
        'SLR stands for "Sta. Lucia Reality", which is a corporate client of the Sta. Lucia Health Care Center, Inc. (SLHCC).

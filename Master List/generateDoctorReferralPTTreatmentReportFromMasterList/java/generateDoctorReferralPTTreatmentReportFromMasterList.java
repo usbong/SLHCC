@@ -19,6 +19,7 @@ import java.io.PrintWriter;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.text.NumberFormat;
+import java.text.DecimalFormat;
 
 /*
 ' Given:
@@ -71,9 +72,12 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 	private static final int OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN = 5;
 	private static final int OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN = 6;
 	private static final int OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN = 7;
+	
+	private static DecimalFormat df = new DecimalFormat("0.00"); //added by Mike, 20181105
+	private static int rowCount; //added by Mike, 20181105
 				
 	public static void main ( String[] args ) throws Exception
-	{
+	{		
 		//edited by Mike, 20181030
 		for (int i=0; i<args.length; i++) {
 			//added by Mike, 20181030
@@ -89,6 +93,10 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 		
 			String s;		
 			s=sc.nextLine(); //skip the first row, which is the input file's table headers
+	
+			if (inDebugMode) {
+				rowCount=0;
+			}
 			
 			//count/compute the number-based values of inputColumns 
 			while (sc.hasNextLine()) {
@@ -103,6 +111,11 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 
 				if (date==null) {
 					date = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);
+				}
+
+				if (inDebugMode) {
+					rowCount++;
+					System.out.println("rowCount: "+rowCount);
 				}
 
 				if (!referringDoctorContainer.containsKey(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])) {
@@ -183,10 +196,10 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 				writer.println( date + 
 								"\t" + key +
 								"\t" + (int) referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] +
-								"\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] +
-								"\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] +
-								"\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] +
-								"\t" + referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN]*0.05
+								"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]) +
+								"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN]) +
+								"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]) +
+								"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN]*0.05)
 								); 				   							
 			}
 			
@@ -205,10 +218,10 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 				writer.println( date + 
 								"\t" + key +
 								"\t" + (int) referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN] +
-								"\t" + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] +
-								"\t" + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] +
-								"\t" + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] +
-								"\t" + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN]*0.05
+								"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]) +
+								"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN]) +
+								"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]) +
+								"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN]*0.05)
 								); 				   							
 			}
 			

@@ -12,11 +12,11 @@ Sub autoComputeNetPFFromHMOConsultationMasterList()
 '
 ' Given:
 ' 1) Class, i.e. HMO... (Column J)
-' 2) AMT.PAID (Column K)
 '
 'Output:
 ' 1) Correct FEE (Column I) based on HMO (Column J)
-' 2) Auto-computed Net PF for HMO payments (Column L)
+' 2) AMT.PAID (Column K) which is equivalent to 1) Correct FEE
+' 3) Auto-computed Net PF for HMO payments (Column L)
 ' --> This is based on the correct FEE (Column I).
 '
 ' Note: in the Master/verified Excel Logbook, I inserted a new column at column A for my notes
@@ -80,6 +80,13 @@ For Each row In myInput.Rows
             myOutput.Range("I" & RowCount) = 300
        End If
        
+       'added by Mike, 20181106
+       'write the value of the AMT. PAID (Column K), which is equivalent to the Correct FEE (Column I)
+       'This will also overwrite any mistyped value for the AMT. PAID (Column K).
+       If (InStr(myInput.Range("J" & RowCount).Value, "HMO")) Then
+            myOutput.Range("K" & RowCount) = myOutput.Range("I" & RowCount)
+       End If
+       
        'The computation of the Net PF takes in as input the correct FEE (Column I), which is based on the HMO (Column J).
        If (InStr(myInput.Range("J" & RowCount).Value, "HMO")) Then
             'I've removed the Round(..., 2) function, because as it turned out,
@@ -97,9 +104,8 @@ For Each row In myInput.Rows
        End If
 Next row
 
-myOutput.Range("L" & 1, "L" & RowCount).Font.Size = 11
-myOutput.Range("L" & 1, "L" & RowCount).Font.Name = "Calibri"
-myOutput.Range("L" & 1, "L" & RowCount).NumberFormat = "0.00"
+myOutput.Range("K" & 1, "L" & RowCount).Font.Size = 11
+myOutput.Range("K" & 1, "L" & RowCount).Font.Name = "Calibri"
+myOutput.Range("K" & 1, "L" & RowCount).NumberFormat = "0.00"
 
 End Sub
-

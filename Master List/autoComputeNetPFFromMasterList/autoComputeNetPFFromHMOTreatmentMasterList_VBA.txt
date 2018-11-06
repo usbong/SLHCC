@@ -13,10 +13,10 @@ Sub autoComputeNetPFFromHMOTreatmentMasterList()
 '
 ' Given:
 ' 1) Class, i.e. HMO... (Column I)
-' 2) AMT.PAID (Column J)
 '
 'Output:
 ' 1) Auto-computed Net PF for HMO payments (Column K)
+' 2) AMT.PAID (Column J)
 '
 'Notes:
 ' 1) The Master List is the consolidated Excel logbook based on:
@@ -27,7 +27,9 @@ Sub autoComputeNetPFFromHMOTreatmentMasterList()
 ' 2) In the Master List/verified Excel Logbook, I inserted a new column at column A for my notes
 '
 ' 3) This auto-computation applies to all the months of 2018, except March.
-' --> In March, 0.9 was updated to 0.92 due to a change in the EWT (Expanded Withholding Tax)
+' --> In March 2018, 0.9 was updated to 0.92 due to a change in the EWT (Expanded Withholding Tax)
+' --> However, this update was not applied in actuality.
+' --> This may be likely due to while the transaction was in March 2018, the payment from the HMO was not actually given in March 2018.
 
 Dim myInput As Worksheet
 Dim myOutput As Worksheet 'the same as myInput
@@ -42,9 +44,15 @@ Set myOutput = Sheets(ActiveSheet.Name)
 For Each row In myInput.Rows
        'The computation of the Net PF is the same for all HMO payments
        If (InStr(myInput.Range("I" & RowCount).Value, "HMO")) Then
-            myOutput.Range("K" & RowCount) = Round((myInput.Range("H" & RowCount).Value - myInput.Range("H" & RowCount).Value * 0.02) / 1.12 * 0.7 * 0.9, 2)
+'            myOutput.Range("K" & RowCount) = (myInput.Range("H" & RowCount).Value - myInput.Range("H" & RowCount).Value * 0.02) / 1.12 * 0.7 * 0.92
+             myOutput.Range("K" & RowCount) = (myInput.Range("H" & RowCount).Value - myInput.Range("H" & RowCount).Value * 0.02) / 1.12 * 0.7 * 0.9
+       
+            'added by Mike, 20181106
+            'write the value of the AMT. PAID (Column J), which is equivalent to the Correct FEE (Column H)
+            'This will also overwrite any mistyped value for the AMT. PAID (Column J).
+            myOutput.Range("J" & RowCount) = myOutput.Range("H" & RowCount)
        End If
-           
+                  
        If IsEmpty(myInput.Range("D" & RowCount).Value) Then
             Exit For
        Else
@@ -52,9 +60,8 @@ For Each row In myInput.Rows
        End If
 Next row
 
-myOutput.Range("K" & 1, "K" & RowCount).Font.Size = 11
-myOutput.Range("K" & 1, "K" & RowCount).Font.Name = "Calibri"
-myOutput.Range("K" & 1, "K" & RowCount).NumberFormat = "0.00"
+myOutput.Range("J" & 1, "K" & RowCount).Font.Size = 11
+myOutput.Range("J" & 1, "K" & RowCount).Font.Name = "Calibri"
+myOutput.Range("J" & 1, "K" & RowCount).NumberFormat = "0.00"
 
 End Sub
-

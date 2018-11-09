@@ -1,9 +1,14 @@
 # MOSC (Marikina Orthopedic Specialty Clinic)
 <b>Author:</b> Michael B. Syson<br>
 <b>Date Created:</b> 20171121<br>
-<b>Date Updated:</b> 20180627<br>
+<b>Date Updated:</b> 20181109<br>
 <b>Description:</b><br>
-This is a set of Visual Basic Application (VBA) scripts/instructions/Macros to automate computing tasks pertaining to MOSC's Excel logbooks.
+This is a set of add-on software to automate computing tasks of Microsoft Excel logbooks.<br>
+
+# Add-on Software
+We've written the add-on software using among others:<br>
+a) Visual Basic Application (VBA) that we execute as instructions/Macros on Microsoft Excel<br>
+b) Java programming language
 
 # Open Source Software License
 Copyright 2017-2018 Usbong Social Systems, Inc.

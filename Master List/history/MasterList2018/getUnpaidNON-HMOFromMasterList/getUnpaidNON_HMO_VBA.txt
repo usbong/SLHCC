@@ -1,0 +1,185 @@
+Sub getUnpaidNON_HMO()
+' Input:
+' 1) Monthly Report Worksheet ("input")
+' --> Copy-paste all the patient data for the month.
+' Output:
+' 1) Unpaid NON-HMO Monthly Report Worksheet ("output")
+' --> This will be automatically created, and will be where the VBA script will output and generate the report.
+'
+' Notes:
+' 1) I added an additional column, i.e. column A, for comments in the Rehab/Clinic Report (Workbook, not Worksheet)
+' 2) The Sta Lucia computations here are for March 2018 onwards.
+
+
+Dim myInput As Worksheet
+Dim myOutput As Worksheet
+Dim row As Range
+Dim RowCount As Integer
+Dim RowCountOutput As Integer
+
+
+RowCount = 1
+RowCountOutput = 2
+
+Set myInput = Sheets(ActiveSheet.Name)
+
+'Create a new Worksheet called "Output" if it does not yet exist
+If sheetExists("Output") Then
+    Set myOutput = Sheets("Output")
+Else
+    Set myOutput = Sheets.Add(After:=Sheets(Sheets.Count))
+    ActiveSheet.Name = "Output"
+End If
+
+'Clean the Worksheet
+'remove all borders
+myOutput.Columns("A:I").Borders.LineStyle = xlNone
+'remove all colors
+myOutput.Columns("A:I").Interior.ColorIndex = 0
+'remove all cell values
+myOutput.Columns("A:I").Value = ""
+
+
+myOutput.Range("A" & 1) = "TREATMENT"
+myOutput.Range("A" & 1).Font.Size = 16
+myOutput.Range("A" & 1).HorizontalAlignment = xlLeft
+
+'STA LUCIA PRICE: Header of Column
+myInput.Range("K" & RowCount).Columns.Copy
+myOutput.Select
+myOutput.Range("G" & RowCountOutput).PasteSpecial
+
+'DATE: Header of Column
+myInput.Range("B" & RowCount).Columns.Copy
+myOutput.Select
+myOutput.Range("A" & RowCountOutput).PasteSpecial
+
+For Each row In myInput.Rows
+        
+       'Select only NON-HMO patients, e.g. WI, PWD, SC, SLC
+       If InStr(myInput.Range("I" & RowCount).Value, "HMO") = 0 Then
+            'Copy and paste only pertinent columns
+       
+            'DATE: Column
+'            myInput.Range("B" & RowCount).Columns.Copy
+'            myOutput.Select
+'            myOutput.Range("A" & RowCountOutput).PasteSpecial
+                        
+            CurrentDate = myInput.Range("B" & RowCount).Value
+                        
+            If CurrentDate <> "" Then
+                TempCurrentDate = CurrentDate
+            End If
+            
+            myOutput.Select
+            myOutput.Range("A" & RowCountOutput).Value = TempCurrentDate
+                        
+            'NAME: Column
+            myInput.Range("D" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("B" & RowCountOutput).PasteSpecial
+            
+            'CLASS: Column
+            myInput.Range("I" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("C" & RowCountOutput).PasteSpecial
+            
+            'OR#: Column
+            myInput.Range("O" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("D" & RowCountOutput).PasteSpecial
+            
+            'SR#: Column
+            myInput.Range("N" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("E" & RowCountOutput).PasteSpecial
+            
+            'AMT. PAID Column
+            myInput.Range("J" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("F" & RowCountOutput).PasteSpecial
+            
+            'STA LUCIA PRICE Column
+'            myInput.Range("K" & RowCount).Columns.Copy
+'            myOutput.Select
+'            myOutput.Range("G" & RowCountOutput).PasteSpecial
+            
+            If myInput.Range("I" & RowCount).Value = "WI" Then
+                myOutput.Select
+                myOutput.Range("G" & RowCountOutput).Value = myInput.Range("J" & RowCount).Value / 1.12 * 0.7 * 0.92
+            ElseIf myInput.Range("I" & RowCount).Value = "SC" Then
+                myOutput.Select
+                myOutput.Range("G" & RowCountOutput).Value = myInput.Range("J" & RowCount).Value * 0.7 * 0.92
+            ElseIf myInput.Range("I" & RowCount).Value = "PWD" Then
+                myOutput.Select
+                myOutput.Range("G" & RowCountOutput).Value = myInput.Range("J" & RowCount).Value * 0.7 * 0.92
+            ElseIf myInput.Range("I" & RowCount).Value = "SLC" Then
+                myOutput.Select
+                myOutput.Range("G" & RowCountOutput).Value = myInput.Range("J" & RowCount).Value / 1.12 * 0.7 * 0.92
+            End If
+            
+            myOutput.Range("G" & RowCountOutput).NumberFormat = "0.00"
+            
+            
+            'DOCTOR Column
+            myInput.Range("P" & RowCount).Columns.Copy
+            myOutput.Select
+            myOutput.Range("H" & RowCountOutput).PasteSpecial
+            
+            myOutput.Range("A" & RowCountOutput, "I" & RowCountOutput).Font.Size = 11
+            myOutput.Range("A" & RowCountOutput, "I" & RowCountOutput).Font.Name = "Calibri"
+                       
+            RowCountOutput = RowCountOutput + 1
+       End If
+       
+       If IsEmpty(myInput.Range("D" & RowCount).Value) Then
+            Exit For
+       Else
+            RowCount = RowCount + 1
+       End If
+Next row
+
+myOutput.Columns("A:I").AutoFit
+myOutput.Range("A" & 3, "H" & RowCountOutput).Interior.ColorIndex = 0
+
+
+RowCountOutput = RowCountOutput - 1
+myOutput.Range("A" & RowCountOutput) = "" 'remove the date in the last row
+
+myOutput.Range("E" & RowCountOutput) = "TOTAL:"
+
+
+'get total of AMT. PAID
+RowCountOutputSum = RowCountOutput - 1
+myOutput.Range("F" & RowCountOutput).Formula = "=Sum(F2:F" & RowCountOutputSum & ")"
+
+'get total of STA LUCIA PRICE
+myOutput.Range("G" & RowCountOutput).Formula = "=Sum(G2:G" & RowCountOutputSum & ")"
+
+
+RowCountOutput = RowCountOutput + 1
+myOutput.Range("E" & RowCountOutput) = "COUNT:"
+'get total COUNT
+RowCountOutputCount = RowCountOutput - 2
+myOutput.Range("F" & RowCountOutput).Formula = "=Count(F2:F" & RowCountOutputCount & ")"
+
+
+'consistently put borders in the table
+myOutput.Range("A" & 2, "H" & RowCountOutput).Borders.LineStyle = 1 'xlNone
+
+End Sub
+
+Function sheetExists(sheetToFind As String) As Boolean
+' Reference: https://stackoverflow.com/questions/6040164/excel-vba-if-worksheetwsname-exists;
+' last accessed: 20180303
+' answer by: Dante is not a Geek
+' edited by: Tomas Zubiri
+    
+    sheetExists = False
+    For Each Sheet In Worksheets
+        If sheetToFind = Sheet.Name Then
+            sheetExists = True
+            Exit Function
+        End If
+    Next Sheet
+End Function

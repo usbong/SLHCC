@@ -20,9 +20,9 @@ To encrypt our Summary Reports in PDF (Portable Document Format), we have to do 
 2) In Microsoft Word, we click "File" -> "Save As".</br>
 3) In the "Save As" Window, we select for the "Save as type:" dropdown menu, "PDF (\*.pdf)".</br>
 4) Before clicking the "Save" button, we click on its left, "Tools" -> "General Options..."</br>
-5) In the General Options Window, we enter for both the "Password to open:" and the "Password to modify:" fields their respective passwords or verification codes.</br>
-6) In the General Options Window, we also put a check on the "read-only Recommended" checkbox.</br>
-7) In the General Options Window, we click "OK".</br>
+5) In the "General Options" Window, we enter for both the "Password to open:" and the "Password to modify:" fields their respective passwords or verification codes.</br>
+6) In the "General Options" Window, we also put a check on the "read-only Recommended" checkbox.</br>
+7) In the "General Options" Window, we click "OK".</br>
 8) In the "Save As" Window, we click "Save".</br>
 
 Done!

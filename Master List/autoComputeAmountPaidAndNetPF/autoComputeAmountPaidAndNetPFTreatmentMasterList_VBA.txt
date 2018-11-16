@@ -1,0 +1,82 @@
+Sub autoComputeAmountPaidAndNetPFTreatmentMasterList()
+' Copyright 2018 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20180412
+' @date updated: 20181116
+'
+' Master List: Treatment 2018
+' Given:
+' 1) Standard Fee (Column H)
+' 2) Class, i.e. PWD, SC, WI, SLC, SLR (Column I)
+'
+'Output:
+' 1) Auto-computed Amount Paid based on Class and PF distribution (Column I)
+' 2) Auto-computed Net PF (Professional Fee) based on Amount Paid, Class, and PF distribution (Column K)
+
+'Notes:
+' 1) The Master List is the consolidated Excel logbook based on:
+' a) printed payslips from Sta. Lucia
+' b) Excel payslip reports from Sta. Lucia
+' c) Rehab/Clinic logbook (pen and paper)
+' d) Rehab/Clinic Excel logbook
+'
+' 2) This auto-computation applies to all the months of 2018, except March.
+' --> In March, 0.9 was updated to 0.92 due to a change in the EWT (Expanded Withholding Tax)
+
+
+Dim myInput As Worksheet
+Dim myOutput As Worksheet 'the same as myInput
+Dim row As Range
+Dim RowCount As Integer
+
+RowCount = 1
+
+Set myInput = Sheets(ActiveSheet.Name)
+Set myOutput = Sheets(ActiveSheet.Name)
+
+For Each row In myInput.Rows
+       'In the event that the EWT (Expanded Withholding Tax) needs to be changed, e.g. 10% to 8%, simply update 0.9 to 0.92
+       'Example:
+       ' myOutput.Range("J" & RowCount) = myInput.Range("I" & RowCount).Value * 0.7 * 0.9
+       ' myOutput.Range("J" & RowCount) = myInput.Range("I" & RowCount).Value * 0.7 * 0.92
+
+       'auto-compute the Amount Paid based on Class and PF distribution
+       If myInput.Range("I" & RowCount).Value = "SC" Or myInput.Range("I" & RowCount).Value = "PWD" Then
+            myOutput.Range("J" & RowCount) = myInput.Range("H" & RowCount).Value * 0.714289
+       ElseIf myInput.Range("I" & RowCount).Value = "WI" Then
+            myOutput.Range("J" & RowCount) = myInput.Range("H" & RowCount).Value
+       ElseIf myInput.Range("I" & RowCount).Value = "SLC" Then
+            myOutput.Range("J" & RowCount) = myInput.Range("H" & RowCount).Value * 0.9
+       End If
+
+       'auto-compute the Net PF (Professional Fee) based on Class and PF distribution
+       If myInput.Range("I" & RowCount).Value = "SC" Or myInput.Range("I" & RowCount).Value = "PWD" Then
+            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7 * 0.9
+       ElseIf myInput.Range("I" & RowCount).Value = "WI" Then
+            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value / 1.12 * 0.7 * 0.9
+       ElseIf myInput.Range("I" & RowCount).Value = "SLC" Then
+            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value / 1.12 * 0.7 * 0.9
+       '+added: computation for SLR (Sta. Lucia Reality) patients
+       ElseIf myInput.Range("I" & RowCount).Value = "SLR" Then
+            myOutput.Range("K" & RowCount) = myInput.Range("H" & RowCount).Value / 1.12 * 0.7 * 0.9
+       End If
+       
+       If IsEmpty(myInput.Range("D" & RowCount).Value) Then
+            Exit For
+       Else
+            RowCount = RowCount + 1
+       End If
+Next row
+
+myOutput.Range("K" & 1, "K" & RowCount).Font.Size = 11
+myOutput.Range("K" & 1, "K" & RowCount).Font.Name = "Calibri"
+myOutput.Range("K" & 1, "K" & RowCount).NumberFormat = "0.00"
+
+End Sub

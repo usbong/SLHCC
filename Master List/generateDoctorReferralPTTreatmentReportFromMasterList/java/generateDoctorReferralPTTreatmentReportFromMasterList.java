@@ -45,7 +45,7 @@ import java.text.DecimalFormat;
 */ 
 
 public class generateDoctorReferralPTTreatmentReportFromMasterList {	
-	private static boolean inDebugMode = false;
+	private static boolean inDebugMode = true;
 	private static String inputFilename = "input201801"; //without extension; default input file
 	
 	private static String date = null;
@@ -91,13 +91,16 @@ public class generateDoctorReferralPTTreatmentReportFromMasterList {
 
 			referringDoctorContainer = new HashMap<String, double[]>();
 		
+			//added by Mike, 20181116
+			date = null; //properly set the month and year in the output file of each input file
+
 			String s;		
 			s=sc.nextLine(); //skip the first row, which is the input file's table headers
 	
 			if (inDebugMode) {
 				rowCount=0;
 			}
-			
+						
 			//count/compute the number-based values of inputColumns 
 			while (sc.hasNextLine()) {
 				s=sc.nextLine();

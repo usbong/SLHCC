@@ -30,16 +30,16 @@ import java.text.DecimalFormat;
 ' Output:
 ' 1) Auto-generated Medical Doctor Referral PT Treatment Report
 ' --> "Tab delimited" .txt file 
-' --> If the name of the input file is "input201808.txt", the output file will be "input201808Output.txt".
+' --> Regardless of the name of the input file or input files, the output file will be "SummaryReportOutput.txt".
 '
 ' Notes:
 ' 1) To execute the add-on software/application simply use the following command:
-'   java generateDoctorReferralPTTreatmentReportFromMasterList input201801.txt
+'   java generateDoctorReferralPTTreatmentSummaryReportOfAllInputFilesFromMasterList input201801.txt
 ' 
 ' where: "input201801.txt" is the name of the file.
 ' 
 ' 2) To execute a set of input files, e.g. input201801.txt, input201802.txt, you can use the following command: 
-'  java generateDoctorReferralPTTreatmentReportFromMasterList input*
+'  java generateDoctorReferralPTTreatmentSummaryReportOfAllInputFilesFromMasterList.java input*
 '
 ' where: "input*" means any file in the directory that starts with "input".
 */ 
@@ -77,8 +77,7 @@ public class generateDoctorReferralPTTreatmentSummaryReportOfAllInputFilesFromMa
 	private static int rowCount; //added by Mike, 20181105
 				
 	public static void main ( String[] args ) throws Exception
-	{		
-	
+	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
 		PrintWriter writer = new PrintWriter("output/SummaryReportOutput.txt", "UTF-8");			
 
@@ -230,57 +229,6 @@ public class generateDoctorReferralPTTreatmentSummaryReportOfAllInputFilesFromMa
 			}
 			
 			sc.close();
-		}
-		
-		/*
-		 * --------------------------------------------------------------------
-		 * OUTPUT
-		 * --------------------------------------------------------------------
-		*/
-		writer.print("HMO Report\n");
-		 
-		//init table header names
-		writer.print("DATE:\t"); //"DATE:" column
-		writer.print("REFERRING DOCTOR:\t"); //"REFERRING DOCTOR:" column
-		writer.print("COUNT:\t"); //"COUNT:" column
-		writer.print("TOTAL NET TREATMENT FEE:\t"); //"TOTAL NET TREATMENT FEE:" column
-		writer.print("PAID NET TREATMENT FEE:\t"); //"PAID NET TREATMENT FEE:" column
-		writer.print("UNPAID NET TREATMENT FEE:\t"); //"UNPAID NET TREATMENT FEE:" column		
-		writer.println("5% SHARE OF NET PAID:"); //"5% SHARE OF NET PAID:" column		
-
-		SortedSet<String> sortedKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
-		
-		for (String key : sortedKeyset) {
-			writer.println( date + 
-							"\t" + key +
-							"\t" + (int) referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] +
-							"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]) +
-							"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN]) +
-							"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]) +
-							"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN]*0.05)
-							); 				   							
-		}
-		
-		writer.print("\nNON-HMO Report\n");
-		
-		//init table header names
-		writer.print("DATE:\t"); //"DATE:" column
-		writer.print("REFERRING DOCTOR:\t"); //"REFERRING DOCTOR:" column
-		writer.print("COUNT:\t"); //"COUNT:" column
-		writer.print("TOTAL NET TREATMENT FEE:\t"); //"TOTAL NET TREATMENT FEE:" column
-		writer.print("PAID NET TREATMENT FEE:\t"); //"PAID NET TREATMENT FEE:" column
-		writer.print("UNPAID NET TREATMENT FEE:\t"); //"UNPAID NET TREATMENT FEE:" column
-		writer.println("5% SHARE OF NET PAID:"); //"5% SHARE OF NET PAID:" column		
-				
-		for (String key : sortedKeyset) {
-			writer.println( date + 
-							"\t" + key +
-							"\t" + (int) referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN] +
-							"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]) +
-							"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN]) +
-							"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]) +
-							"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN]*0.05)
-							); 				   							
 		}
 		
 		writer.close();

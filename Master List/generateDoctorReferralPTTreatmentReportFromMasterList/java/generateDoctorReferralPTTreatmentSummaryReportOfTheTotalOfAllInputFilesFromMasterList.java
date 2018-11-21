@@ -112,11 +112,15 @@ public class generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputF
 				
 				String[] inputColumns = s.split("\t");					
 
+				//edited by Mike, 20181121
 				if (startDate==null) {
 					startDate = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);
+					endDate = startDate;
 				}
 				else {
-					if (i==args.length-1) { //add this condition in case the input file does not have a date for each transaction; however, ideally, for input files 2018 onwards, each transaction should have a date
+					//edited by Mike, 20181121
+					//add this condition in case the input file does not have a date for each transaction; however, ideally, for input files 2018 onwards, each transaction should have a date
+					if (!inputColumns[INPUT_DATE_COLUMN].trim().equals("")) {
 						endDate = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);
 					}
 				}
@@ -124,6 +128,13 @@ public class generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputF
 				if (inDebugMode) {
 					rowCount++;
 					System.out.println("rowCount: "+rowCount);
+				}
+				
+				//added by Mike, 20181121
+				//skip transactions that have "RehabSupplies" as its "CLASS" value
+				//In Excel logbook/workbook 2018 onwards, such transactions are not included in the Consultation and PT Treatment Excel logbooks/workbooks.
+				if (inputColumns[INPUT_CLASS_COLUMN].contains("RehabSupplies")) {
+					continue;
 				}
 
 				if (!referringDoctorContainer.containsKey(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])) {

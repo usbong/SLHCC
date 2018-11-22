@@ -1,0 +1,59 @@
+Sub autoFormatReferralSummaryReportTotal()
+' Copyright 2018 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20180412
+' @date updated: 20181116
+'
+' Master List: Referral System Report
+' Given:
+' 1) Summary Report Total Worksheet
+'
+'Output:
+' 1) Auto-formatted Summary Total Worksheet
+
+Dim myInput As Worksheet
+Dim myOutput As Worksheet 'the same as myInput
+Dim row As Range
+Dim RowCount As Integer
+Dim BlankRowCount As Integer
+Dim dateValue As String
+
+RowCount = 1
+BlankRowCount = 0
+
+Set myInput = Sheets(ActiveSheet.Name)
+Set myOutput = Sheets(ActiveSheet.Name)
+
+dateValue = myInput.Range("A3").Value
+
+For Each row In myInput.Rows
+       myOutput.Range("A" & RowCount, "G" & RowCount).Value = myInput.Range("A" & RowCount, "G" & RowCount).Value
+       
+       'auto-format the FEE columns and the "5% SHARE OF NET PAID" column to use 2 decimals places for all values
+       If myInput.Range("A" & RowCount).Value = dateValue Then
+            myOutput.Range("D" & RowCount, "G" & RowCount).NumberFormat = "0.00"
+       End If
+       
+       If IsEmpty(myInput.Range("A" & RowCount).Value) Then
+            BlankRowCount = BlankRowCount + 1
+            RowCount = RowCount + 1
+            
+            If (BlankRowCount > 2) Then
+                Exit For
+            End If
+       Else
+            RowCount = RowCount + 1
+       End If
+Next row
+
+'myOutput.Range("A" & RowCount, "G" & RowCount).Font.Size = 11
+'myOutput.Range("K" & 1, "K" & RowCount).Font.Name = "Calibri"
+'myOutput.Range("K" & 1, "K" & RowCount).NumberFormat = "0.00"
+End Sub

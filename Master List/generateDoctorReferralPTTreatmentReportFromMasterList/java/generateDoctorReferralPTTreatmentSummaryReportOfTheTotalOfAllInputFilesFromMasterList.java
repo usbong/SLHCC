@@ -77,6 +77,12 @@ public class generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputF
 	private static DecimalFormat df = new DecimalFormat("0.00"); //added by Mike, 20181105
 	private static int rowCount; //added by Mike, 20181105
 				
+	private static int totalCountForAllReferringDoctors;
+	private static double totalNetTreatmentFeeForAllReferringDoctors;
+	private static double totalPaidNetTreatmentFeeForAllReferringDoctors;
+	private static double totalUnpaidNetTreatmentFeeForAllReferringDoctors;
+	private static double totalFivePercentShareOfNetPaidForAllReferringDoctors;
+				
 	public static void main ( String[] args ) throws Exception
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
@@ -220,6 +226,13 @@ public class generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputF
 			double totalUnpaidNetTreatmentFee = referringDoctorContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] +referringDoctorContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN];
 			double totalFivePercentShareOfNetPaid = referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN]*0.05 + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN]*0.05;
 
+			//added by Mike, 20181123
+			totalCountForAllReferringDoctors += totalCount;
+			totalNetTreatmentFeeForAllReferringDoctors += totalNetTreatmentFee;
+			totalPaidNetTreatmentFeeForAllReferringDoctors += totalPaidNetTreatmentFee;
+			totalUnpaidNetTreatmentFeeForAllReferringDoctors += totalUnpaidNetTreatmentFee;
+			totalFivePercentShareOfNetPaidForAllReferringDoctors += totalFivePercentShareOfNetPaid;
+			
 			writer.println( startDate + " to " + endDate +
 							"\t" + key +
 							"\t" + totalCount +
@@ -229,10 +242,17 @@ public class generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputF
 							"\t" + df.format(totalFivePercentShareOfNetPaid)
 							); 				   							
 		}
-		
-		//----------------------------------------------------------------------------------------------------------------------------
 
+		writer.println( startDate + " to " + endDate +
+						"\t" + "All Referring Doctors" +
+						"\t" + totalCountForAllReferringDoctors +
+						"\t" + df.format(totalNetTreatmentFeeForAllReferringDoctors) +
+						"\t" + df.format(totalPaidNetTreatmentFeeForAllReferringDoctors) +
+						"\t" + df.format(totalUnpaidNetTreatmentFeeForAllReferringDoctors) +
+						"\t" + df.format(totalFivePercentShareOfNetPaidForAllReferringDoctors)
+						); 				   							
 		
+		//----------------------------------------------------------------------------------------------------------------------------		
 		writer.print("\nHMO Report\n");
 		 
 		//init table header names
@@ -246,7 +266,21 @@ public class generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputF
 
 //		SortedSet<String> sortedKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
 		
-		for (String key : sortedKeyset) {
+		//added by Mike, 20181123
+		totalCountForAllReferringDoctors = 0;
+		totalNetTreatmentFeeForAllReferringDoctors = 0;
+		totalPaidNetTreatmentFeeForAllReferringDoctors = 0;
+		totalUnpaidNetTreatmentFeeForAllReferringDoctors = 0;
+		totalFivePercentShareOfNetPaidForAllReferringDoctors = 0;
+		
+		for (String key : sortedKeyset) {			
+			//added by Mike, 20181123
+			totalCountForAllReferringDoctors += (int) referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
+			totalNetTreatmentFeeForAllReferringDoctors += referringDoctorContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN];
+			totalPaidNetTreatmentFeeForAllReferringDoctors += referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN];
+			totalUnpaidNetTreatmentFeeForAllReferringDoctors += referringDoctorContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN];
+			totalFivePercentShareOfNetPaidForAllReferringDoctors += referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN];
+			
 			writer.println( startDate + " to " + endDate +
 							"\t" + key +
 							"\t" + (int) referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] +
@@ -257,6 +291,17 @@ public class generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputF
 							); 				   							
 		}
 		
+		writer.println( startDate + " to " + endDate +
+				"\t" + "All Referring Doctors" +
+				"\t" + totalCountForAllReferringDoctors +
+				"\t" + df.format(totalNetTreatmentFeeForAllReferringDoctors) +
+				"\t" + df.format(totalPaidNetTreatmentFeeForAllReferringDoctors) +
+				"\t" + df.format(totalUnpaidNetTreatmentFeeForAllReferringDoctors) +
+				"\t" + df.format(totalFivePercentShareOfNetPaidForAllReferringDoctors)
+				); 				   							
+
+		
+		//----------------------------------------------------------------------------------------------------------------------------
 		writer.print("\nNON-HMO Report\n");
 		
 		//init table header names
@@ -267,8 +312,22 @@ public class generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputF
 		writer.print("PAID NET TREATMENT FEE:\t"); //"PAID NET TREATMENT FEE:" column
 		writer.print("UNPAID NET TREATMENT FEE:\t"); //"UNPAID NET TREATMENT FEE:" column
 		writer.println("5% SHARE OF NET PAID:"); //"5% SHARE OF NET PAID:" column		
-				
+								
+		//added by Mike, 20181123
+		totalCountForAllReferringDoctors = 0;
+		totalNetTreatmentFeeForAllReferringDoctors = 0;
+		totalPaidNetTreatmentFeeForAllReferringDoctors = 0;
+		totalUnpaidNetTreatmentFeeForAllReferringDoctors = 0;
+		totalFivePercentShareOfNetPaidForAllReferringDoctors = 0;
+
 		for (String key : sortedKeyset) {
+			//added by Mike, 20181123
+			totalCountForAllReferringDoctors += (int) referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
+			totalNetTreatmentFeeForAllReferringDoctors += referringDoctorContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN];
+			totalPaidNetTreatmentFeeForAllReferringDoctors += referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN];
+			totalUnpaidNetTreatmentFeeForAllReferringDoctors += referringDoctorContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN];
+			totalFivePercentShareOfNetPaidForAllReferringDoctors += referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN];
+
 			writer.println( startDate + " to " + endDate +
 							"\t" + key +
 							"\t" + (int) referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN] +
@@ -279,6 +338,16 @@ public class generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputF
 							); 				   							
 		}
 		
+		writer.println( startDate + " to " + endDate +
+		"\t" + "All Referring Doctors" +
+		"\t" + totalCountForAllReferringDoctors +
+		"\t" + df.format(totalNetTreatmentFeeForAllReferringDoctors) +
+		"\t" + df.format(totalPaidNetTreatmentFeeForAllReferringDoctors) +
+		"\t" + df.format(totalUnpaidNetTreatmentFeeForAllReferringDoctors) +
+		"\t" + df.format(totalFivePercentShareOfNetPaidForAllReferringDoctors)
+		); 				   							
+
+		//----------------------------------------------------------------------------------------------------------------------------
 		writer.close();
 	}
 	

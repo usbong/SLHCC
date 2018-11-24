@@ -8,8 +8,8 @@ Sub autoFormatReferralSummaryReportTotal()
 ' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
 '
 ' @author: Michael Syson
-' @date created: 20180412
-' @date updated: 20181116
+' @date created: 20181122
+' @date updated: 20181124
 '
 ' Master List: Referral System Report
 ' Given:
@@ -35,6 +35,12 @@ dateValue = myInput.Range("A3").Value
 
 For Each row In myInput.Rows
        myOutput.Range("A" & RowCount, "G" & RowCount).Value = myInput.Range("A" & RowCount, "G" & RowCount).Value
+       
+       'added by Mike, 20181124
+       'auto-format the column header text to be in bold letters
+        If myInput.Range("A" & RowCount).Value = "DATE:" Then
+            myOutput.Range("A" & RowCount, "G" & RowCount).Font.Bold = True
+       End If
        
        'auto-format the FEE columns and the "5% SHARE OF NET PAID" column to use 2 decimals places for all values
        If myInput.Range("A" & RowCount).Value = dateValue Then

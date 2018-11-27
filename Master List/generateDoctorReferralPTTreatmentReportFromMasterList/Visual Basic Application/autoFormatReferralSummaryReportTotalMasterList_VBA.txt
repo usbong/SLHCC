@@ -9,7 +9,7 @@ Sub autoFormatReferralSummaryReportTotal()
 '
 ' @author: Michael Syson
 ' @date created: 20181122
-' @date updated: 20181124
+' @date updated: 20181127
 '
 ' Master List: Referral System Report
 ' Given:
@@ -27,24 +27,43 @@ Dim dateValue As String
 
 RowCount = 1
 BlankRowCount = 0
+ColorRowCount = 0
 
 Set myInput = Sheets(ActiveSheet.Name)
 Set myOutput = Sheets(ActiveSheet.Name)
 
 dateValue = myInput.Range("A3").Value
 
+'added by Mike, 20181127
+'clear/delete the contents, background color, and border of all used cells first
+'myOutput.UsedRange.ClearContents
+myOutput.UsedRange.Interior.ColorIndex = 0
+myOutput.UsedRange.Borders.LineStyle = xlNone
+
 For Each row In myInput.Rows
        myOutput.Range("A" & RowCount, "G" & RowCount).Value = myInput.Range("A" & RowCount, "G" & RowCount).Value
        
        'added by Mike, 20181124
        'auto-format the column header text to be in bold letters
-        If myInput.Range("A" & RowCount).Value = "DATE:" Then
+       If myInput.Range("A" & RowCount).Value = "DATE:" Then
             myOutput.Range("A" & RowCount, "G" & RowCount).Font.Bold = True
+            
+            'added by Mike, 20181127
+            myOutput.Range("A" & RowCount, "G" & RowCount).Interior.ColorIndex = 15 'gray
+            ColorRowCount = 0
        End If
        
        'auto-format the FEE columns and the "5% SHARE OF NET PAID" column to use 2 decimals places for all values
        If myInput.Range("A" & RowCount).Value = dateValue Then
             myOutput.Range("D" & RowCount, "G" & RowCount).NumberFormat = "0.00"
+            
+            If ColorRowCount Mod 2 = 0 Then 'even number
+              'do nothing
+            Else
+              myOutput.Range("A" & RowCount, "G" & RowCount).Interior.ColorIndex = 15 'gray
+            End If
+            
+            ColorRowCount = ColorRowCount + 1
        End If
        
        If IsEmpty(myInput.Range("A" & RowCount).Value) Then
@@ -63,3 +82,4 @@ Next row
 'myOutput.Range("K" & 1, "K" & RowCount).Font.Name = "Calibri"
 'myOutput.Range("K" & 1, "K" & RowCount).NumberFormat = "0.00"
 End Sub
+

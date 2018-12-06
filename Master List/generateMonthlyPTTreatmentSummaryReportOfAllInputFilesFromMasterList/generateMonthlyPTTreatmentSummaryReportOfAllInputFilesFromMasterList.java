@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
+//import java.lang.Integer;
 
 /*
 ' Given:
@@ -66,10 +67,11 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 
 /*	private static HashMap<String, double[]> referringDoctorContainer;	
 */
-	private static HashMap<String, double[]> dateContainer;	//added by Mike, 201801205
+	private static HashMap<Integer, double[]> dateContainer;	//added by Mike, 201801205
 
 	private static double[] columnValuesArray;
 	private static String[] dateValuesArray; //added by Mike, 20180412
+	private static int[] dateValuesArrayInt; //added by Mike, 20181206
 		
 	//the date and the referring doctor are not yet included here
 	//this is for both HMO and NON-HMO transactions
@@ -103,11 +105,12 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		/*referringDoctorContainer = new HashMap<String, double[]>();
 		*/
 		
-		dateContainer = new HashMap<String, double[]>();
+		dateContainer = new HashMap<Integer, double[]>();
 		
 		//added by Mike, 20181116
 		startDate = null; //properly set the month and year in the output file of each input file
 		dateValuesArray = new String[args.length]; //added by Mike, 20180412
+		dateValuesArrayInt = new int[args.length]; //added by Mike, 20180412
 		
 		//edited by Mike, 20181030
 		for (int i=0; i<args.length; i++) {						
@@ -142,6 +145,12 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 					dateValuesArray[i] = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);
 				}
 
+				//added by Mike, 20181206
+				if (dateValuesArrayInt[i]==0) {
+					dateValuesArrayInt[i] = Integer.parseInt(args[i].substring(args[i].indexOf("_")+1,args[i].indexOf(".txt")));
+				}
+				
+				
 				//edited by Mike, 20181121
 				if (startDate==null) {
 					startDate = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);
@@ -168,10 +177,13 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				}
 
 //				if (!referringDoctorContainer.containsKey(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])) {
-				if (!dateContainer.containsKey(dateValuesArray[i])) {
+				if (!dateContainer.containsKey(dateValuesArrayInt[i])) {
 					columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
 					
-					if (inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) {
+					//edited by Mike, 20181206
+					if ((inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) ||
+						(inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
+
 						columnValuesArray[OUTPUT_HMO_COUNT_COLUMN] = 1;
 						columnValuesArray[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 
@@ -195,29 +207,31 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 					}
 
 //					referringDoctorContainer.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN], columnValuesArray);
-					dateContainer.put(dateValuesArray[i], columnValuesArray);
+					dateContainer.put(dateValuesArrayInt[i], columnValuesArray);
 				}
 				else {
-					if (inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) {
-/*
+					//edited by Mike, 20181206
+					if ((inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) ||
+						(inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
+/*							
 						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_COUNT_COLUMN]++;					
 						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
 							+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 */
-						dateContainer.get(dateValuesArray[i])[OUTPUT_HMO_COUNT_COLUMN]++;					
-						dateContainer.get(dateValuesArray[i])[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
+						dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN]++;					
+						dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
 							+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 							
 						if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
 /*							referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 */
-							dateContainer.get(dateValuesArray[i])[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 						}
 						else {
 /*							
 							referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 */
-							dateContainer.get(dateValuesArray[i])[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 							
 						}
 					}
@@ -227,20 +241,20 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
 							+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 */
-						dateContainer.get(dateValuesArray[i])[OUTPUT_NON_HMO_COUNT_COLUMN]++;					
-						dateContainer.get(dateValuesArray[i])[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
+						dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN]++;					
+						dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
 							+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 							
 						if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
 /*							referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 */
-							dateContainer.get(dateValuesArray[i])[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 						}
 						else {
 /*							
 							referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 */
-							dateContainer.get(dateValuesArray[i])[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);							
+							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);							
 						}
 					}
 				}					
@@ -261,21 +275,20 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		//init table header names
 		writer.print("PT TREATMENT:\t"); //"PT TREATMENT:" column
 
-		for(int i=0; i<dateValuesArray.length; i++) {
-			writer.print(dateValuesArray[i]+"\t"); //"PT TREATMENT:" column
+		for(int i=0; i<dateValuesArrayInt.length; i++) {
+			writer.print(dateValuesArrayInt[i]+"\t"); //"PT TREATMENT:" column
 		}
 		
 		//--------------------------------------------------------------------
 		writer.print("\nNON-HMO (net)"); 		
-
+/*
        for (Map.Entry<String, double[]> entry : dateContainer.entrySet())
        {
+*/		
 		
-/*		
-		SortedSet<String> sortedKeyset = new TreeSet<String>(dateContainer.keySet());
+		SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(dateContainer.keySet());
 
-		for (String key : sortedKeyset) {	
-*/
+		for (Integer key : sortedKeyset) {	
 /*		for(int k=0; k<dateContainer.length; k++) {
 */	
 /*
@@ -293,7 +306,8 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 			totalFivePercentShareOfNetPaidForAllReferringDoctors += totalFivePercentShareOfNetPaid;
 */			
 			writer.print( 
-							"\t" + entry.getValue()[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]
+//							"\t" + entry.getValue()[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]
+							"\t" + dateContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]
 /*							"\n" + key			
 
 							"\t" + totalCount +

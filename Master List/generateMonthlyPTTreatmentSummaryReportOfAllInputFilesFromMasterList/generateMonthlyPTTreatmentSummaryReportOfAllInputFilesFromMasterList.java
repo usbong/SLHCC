@@ -319,7 +319,13 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 							); 				   							
 		}
 		
+		writer.print("\nHMO (net)"); 		
 		
+		for (Integer key : sortedKeyset) {	
+			writer.print( 
+							"\t" + dateContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]
+							); 				   							
+		}
 		
 /*		
 		writer.print("REFERRING DOCTOR:\t"); //"REFERRING DOCTOR:" column

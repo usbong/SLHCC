@@ -270,7 +270,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		 * --------------------------------------------------------------------
 		*/
 		//added by Mike, 20181118
-		writer.print("HMO and NON-HMO TOTAL PT Treatment Monthly Summary Report\n");
+		writer.print("HMO and NON-HMO/Cash PT Treatment Monthly Summary Report\n");
 
 		//init table header names
 		writer.print("PT TREATMENT:\t"); //"PT TREATMENT:" column
@@ -280,7 +280,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		}
 		
 		//--------------------------------------------------------------------
-		writer.print("\nNON-HMO (net)"); 		
+		writer.print("\nNON-HMO/Cash (net) : TOTAL"); 		
 /*
        for (Map.Entry<String, double[]> entry : dateContainer.entrySet())
        {
@@ -319,11 +319,27 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 							); 				   							
 		}
 		
-		writer.print("\nHMO (net)"); 		
+		writer.print("\nHMO (net) : TOTAL"); 		
 		
 		for (Integer key : sortedKeyset) {	
 			writer.print( 
 							"\t" + dateContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]
+							); 				   							
+		}
+
+		writer.print("\nHMO (net) : PAID"); 		
+		
+		for (Integer key : sortedKeyset) {	
+			writer.print( 
+							"\t" + dateContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN]
+							); 				   							
+		}
+
+		writer.print("\nHMO (net) : UNPAID"); 		
+		
+		for (Integer key : sortedKeyset) {	
+			writer.print( 
+							"\t" + dateContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]
 							); 				   							
 		}
 		

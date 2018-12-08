@@ -273,7 +273,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		writer.print("HMO and NON-HMO/Cash PT Treatment Monthly Summary Report\n");
 
 		//init table header names
-		writer.print("PT TREATMENT:\t"); //"PT TREATMENT:" column
+		writer.print("DATE:\t"); //"PT TREATMENT:" column
 
 		for(int i=0; i<dateValuesArrayInt.length; i++) {
 			writer.print(dateValuesArrayInt[i]+"\t"); //"PT TREATMENT:" column
@@ -319,6 +319,15 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 							); 				   							
 		}
 		
+		writer.print("\nNON-HMO/Cash (net) : TRANSACTION COUNT"); 		
+		
+		for (Integer key : sortedKeyset) {	
+			writer.print( 
+							"\t" + dateContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN]
+							); 				   							
+		}
+
+		writer.print("\n"); //blank row 				
 		writer.print("\nHMO (net) : TOTAL"); 		
 		
 		for (Integer key : sortedKeyset) {	
@@ -342,6 +351,26 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 							"\t" + dateContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]
 							); 				   							
 		}
+		
+		writer.print("\nHMO (net) : TRANSACTION COUNT"); 		
+		
+		for (Integer key : sortedKeyset) {	
+			writer.print( 
+							"\t" + dateContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN]
+							); 				   							
+		}
+
+		writer.print("\n"); //blank row
+		writer.print("\nHMO and NON-HMO/Cash (net) : TRANSACTION COUNT"); 		
+
+		for (Integer key : sortedKeyset) {	
+			double count = dateContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
+		
+			writer.print( 
+							"\t" + count
+							); 				   							
+		}
+
 		
 /*		
 		writer.print("REFERRING DOCTOR:\t"); //"REFERRING DOCTOR:" column

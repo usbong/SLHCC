@@ -377,6 +377,36 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		}
 
 		writer.print("\n"); //blank row
+		writer.print("\nHMO and NON-HMO/Cash (net) : TOTAL"); 		
+
+		for (Integer key : sortedKeyset) {	
+			double count = dateContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN];
+		
+			writer.print( 
+							"\t" + count
+							); 				   							
+		}
+
+		writer.print("\nHMO and NON-HMO/Cash (net) : PAID"); 		
+
+		for (Integer key : sortedKeyset) {	
+			double count = dateContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN];
+		
+			writer.print( 
+							"\t" + count
+							); 				   							
+		}
+
+		writer.print("\nHMO and NON-HMO/Cash (net) : UNPAID"); 		
+
+		for (Integer key : sortedKeyset) {	
+			double count = dateContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN];
+		
+			writer.print( 
+							"\t" + count
+							); 				   							
+		}
+
 		writer.print("\nHMO and NON-HMO/Cash (net) : TRANSACTION COUNT"); 		
 
 		for (Integer key : sortedKeyset) {	

@@ -318,6 +318,22 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 */							
 							); 				   							
 		}
+
+		writer.print("\nNON-HMO/Cash (net) : PAID"); 		
+		
+		for (Integer key : sortedKeyset) {	
+			writer.print( 
+							"\t" + dateContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN]
+							); 				   							
+		}
+
+		writer.print("\nNON-HMO/Cash (net) : UNPAID"); 		
+		
+		for (Integer key : sortedKeyset) {	
+			writer.print( 
+							"\t" + dateContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]
+							); 				   							
+		}
 		
 		writer.print("\nNON-HMO/Cash (net) : TRANSACTION COUNT"); 		
 		

@@ -267,19 +267,28 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 		
 		//--------------------------------------------------------------------
 		//init table header names
-		writer.print("DATE:\tTREATMENT COUNT:\n"); 		
+		writer.print("\tTREATMENT COUNT:\n"); 		
 
+		double totalTreatmentCount = 0;
+		
 		for(int i=0; i<dateValuesArrayInt.length; i++) {
-			writer.print(dateValuesArrayInt[i]+"\t");
+			writer.print(convertDateToMonthYearInWords(dateValuesArrayInt[i])+"\t");
 			
 			double count = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN];
-		
+
+			totalTreatmentCount += count;
+			
 			writer.print(
 							count+"\n"							
 							); 				   							
 
 		}
+		//TOTAL
+		writer.print(
+				"TOTAL:\t"+totalTreatmentCount+"\n"							
+				); 				   							
 
+		
 /*		
 		for (Integer key : sortedKeyset) {	
 			double count = dateContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
@@ -291,6 +300,41 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 		}
 */
 		writer.close();
+	}
+	
+	private static String convertDateToMonthYearInWords(int date) {
+		StringBuffer sb = new StringBuffer(""+date);	
+		String year = sb.substring(0,4); //index 4 is not included
+		int month = Integer.parseInt(sb.substring(4,6)); //index 6 is not included
+		
+		switch(month) {
+			case 1:
+				return "January" + " " + year;
+			case 2:
+				return "February" + " " + year;
+			case 3:
+				return "March" + " " + year;
+			case 4:
+				return "April" + " " + year;
+			case 5:
+				return "May" + " " + year;
+			case 6:
+				return "June" + " " + year;
+			case 7:
+				return "July" + " " + year;
+			case 8:
+				return "August" + " " + year;
+			case 9:
+				return "September" + " " + year;
+			case 10:
+				return "October" + " " + year;
+			case 11:
+				return "November" + " " + year;
+			case 12:
+				return "December" + " " + year;
+		}	
+
+		return null;//error
 	}
 	
 	private static String getMonthYear(String date) {

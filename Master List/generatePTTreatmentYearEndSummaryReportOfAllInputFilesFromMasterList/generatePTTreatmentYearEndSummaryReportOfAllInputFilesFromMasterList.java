@@ -103,6 +103,7 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 	private static final int OUTPUT_CONSULTATION_HMO_COUNT_COLUMN = 11; //transaction count
 	private static final int OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN = 12; //transaction count
 
+	private static boolean isConsultation;
 	
 	private static DecimalFormat df = new DecimalFormat("0.00"); //added by Mike, 20181105
 	private static int rowCount; //added by Mike, 20181105
@@ -137,6 +138,13 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 			File f = new File(inputFilename+".txt");
 
 			System.out.println("inputFilename: " + inputFilename);
+			
+			if (inputFilename.toLowerCase().contains("consultation")) {
+				isConsultation=true;
+			}
+			else {
+				isConsultation=false;
+			}
 			
 			Scanner sc = new Scanner(new FileInputStream(f));				
 		
@@ -196,8 +204,8 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 				
 				//added by Mike, 20181216
 //				processMonthlyCount(dateContainer, inputColumns, i, false);
-				processMonthlyCount(dateContainer, inputColumns, i, false); //isConsultation = false
-
+				processMonthlyCount(dateContainer, inputColumns, i, isConsultation); //isConsultation = false
+/*
 				//added by Mike, 20181217
 				processHMOCount(hmoContainer, inputColumns);
 				
@@ -206,6 +214,7 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 				
 				//added by Mike, 20181218
 				processReferringDoctorTransactionCount(referringDoctorContainer, inputColumns);
+*/				
 			}
 			//added by Mike, 20181205
 			columnValuesArray[OUTPUT_DATE_ID_COLUMN] = i; 			
@@ -221,25 +230,31 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 		
 		//--------------------------------------------------------------------
 		//init table header names
-		writer.print("\tTREATMENT COUNT:\n"); 		
+		writer.print("\tTREATMENT COUNT:\tCONSULTATION COUNT:\n"); 		
 
 		double totalTreatmentCount = 0;
+		double totalConsultationCount = 0; //added by Mike, 20181218
 		
 		for(int i=0; i<dateValuesArrayInt.length; i++) {
 			writer.print(convertDateToMonthYearInWords(dateValuesArrayInt[i])+"\t");
 			
-			double count = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN];
+			double treatmentCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN];
 
-			totalTreatmentCount += count;
+			//added by Mike, 20181218
+			double consultationCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+
+			
+			totalTreatmentCount += treatmentCount;
+			totalConsultationCount += consultationCount;
 			
 			writer.print(
-							count+"\n"							
-							); 				   							
-
+							treatmentCount+"\t"+						
+							consultationCount+"\n"							
+						); 				   							
 		}
 		//TOTAL
 		writer.print(
-				"TOTAL:\t"+totalTreatmentCount+"\n"							
+				"TOTAL:\t"+totalTreatmentCount+"\t"+totalConsultationCount+"\n"							
 				); 				   							
 
 

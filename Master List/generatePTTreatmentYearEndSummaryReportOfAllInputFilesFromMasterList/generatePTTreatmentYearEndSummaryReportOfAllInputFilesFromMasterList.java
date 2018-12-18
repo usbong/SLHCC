@@ -57,6 +57,7 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 	private static final int INPUT_DATE_COLUMN = 1;
 	private static final int INPUT_CLASS_COLUMN = 8; //HMO and NON-HMO
 	private static final int INPUT_NET_PF_COLUMN = 10;
+	private static final int INPUT_NEW_OLD_COLUMN = 16;
 
 /*	private static HashMap<String, double[]> referringDoctorContainer;	
 */
@@ -71,19 +72,21 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 		
 	//the date and the referring doctor are not yet included here
 	//this is for both HMO and NON-HMO transactions
-	private static final int OUTPUT_TOTAL_COLUMNS = 9; 
+	private static final int OUTPUT_TOTAL_COLUMNS = 11; 
 	
 	private static final int OUTPUT_HMO_COUNT_COLUMN = 0; //transaction count
 	private static final int OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN = 1;
 	private static final int OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN = 2;
 	private static final int OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN = 3;
+	private static final int OUTPUT_HMO_NEW_OLD_COUNT_COLUMN = 4;
 
-	private static final int OUTPUT_NON_HMO_COUNT_COLUMN = 4; //transaction count
-	private static final int OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN = 5;
-	private static final int OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN = 6;
-	private static final int OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN = 7;
+	private static final int OUTPUT_NON_HMO_COUNT_COLUMN = 5; //transaction count
+	private static final int OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN = 6;
+	private static final int OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN = 7;
+	private static final int OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN = 8;
+	private static final int OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN = 9;
 
-	private static final int OUTPUT_DATE_ID_COLUMN = 8; //added by Mike, 20181205
+	private static final int OUTPUT_DATE_ID_COLUMN = 10; //added by Mike, 20181205
 	
 	private static DecimalFormat df = new DecimalFormat("0.00"); //added by Mike, 20181105
 	private static int rowCount; //added by Mike, 20181105
@@ -274,28 +277,31 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 
 		//--------------------------------------------------------------------
 		//init table header names
-		writer.print("\n\tTREATMENT COUNT:\n"); 		
+		writer.print("\n\tTREATMENT COUNT:\tNET PATIENT REFERRAL COUNT:\n"); 		
 
 		double totalReferringMedicalDoctorTransactionCount = 0;
+		double totalNewPatientReferralTransactionCount = 0;
 		
 		SortedSet<String> sortedReferringMedicalDoctorTransactionCountKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
 
 		for (String key : sortedReferringMedicalDoctorTransactionCountKeyset) {	
 			double count = referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
+			double newPatientReferralTransactionCount = referringDoctorContainer.get(key)[OUTPUT_HMO_NEW_OLD_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN];
 
 			totalReferringMedicalDoctorTransactionCount += count;
+			totalNewPatientReferralTransactionCount += newPatientReferralTransactionCount;
 			
 			writer.print(
 							key + "\t" + 
-							count+"\n"							
+							count+"\t" +
+							newPatientReferralTransactionCount+"\n"							
 							); 				   							
 		}
 
 		//TOTAL
 		writer.print(
-				"TOTAL:\t"+totalReferringMedicalDoctorTransactionCount+"\n"							
+				"TOTAL:\t"+totalReferringMedicalDoctorTransactionCount+"\t"+totalNewPatientReferralTransactionCount+"\n"							
 				); 				   							
-
 				
 		writer.close();
 	}
@@ -526,6 +532,11 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 				else {
 					columnValuesArray[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 				}
+
+				if (inputColumns[INPUT_NEW_OLD_COLUMN].toLowerCase().contains("new")) {
+					//added by Mike, 20181218
+					columnValuesArray[OUTPUT_HMO_NEW_OLD_COUNT_COLUMN] = 1;
+				}							
 			}
 			else {
 				columnValuesArray[OUTPUT_NON_HMO_COUNT_COLUMN] = 1;
@@ -537,8 +548,13 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 				else {
 					columnValuesArray[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 				}
+				
+				if (inputColumns[INPUT_NEW_OLD_COLUMN].toLowerCase().contains("new")) {
+					//added by Mike, 20181218
+					columnValuesArray[OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN] = 1;
+				}			
 			}
-
+			
 			referringDoctorContainer.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN], columnValuesArray);
 		}
 		else {
@@ -553,6 +569,11 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 				else {
 					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 				}
+				
+				if (inputColumns[INPUT_NEW_OLD_COLUMN].toLowerCase().contains("new")) {
+					//added by Mike, 20181218
+					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_NEW_OLD_COUNT_COLUMN]++;					
+				}							
 			}
 			else {
 				referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_COUNT_COLUMN]++;					
@@ -564,6 +585,11 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 				}
 				else {
 					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+				}
+				
+				if (inputColumns[INPUT_NEW_OLD_COLUMN].toLowerCase().contains("new")) {
+					//added by Mike, 20181218
+					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN]++;					
 				}
 			}
 		}

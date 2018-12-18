@@ -205,10 +205,10 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 				//added by Mike, 20181216
 //				processMonthlyCount(dateContainer, inputColumns, i, false);
 				processMonthlyCount(dateContainer, inputColumns, i, isConsultation); //isConsultation = false
-/*
+
 				//added by Mike, 20181217
-				processHMOCount(hmoContainer, inputColumns);
-				
+				processHMOCount(hmoContainer, inputColumns, isConsultation); //edited by Mike, 20181219
+/*				
 				//added by Mike, 20181217
 				processNONHMOCount(nonHmoContainer, inputColumns);
 				
@@ -260,26 +260,30 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 
 		//--------------------------------------------------------------------
 		//init table header names
-		writer.print("\n\tTREATMENT COUNT:\n"); 		
+		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\n"); 		
 
-		double totalHMOCount = 0;
+		double totalTreatmentHMOCount = 0;
+		double totalConsultationHMOCount = 0; //added by Mike, 20181219
 		
 		SortedSet<String> sortedKeyset = new TreeSet<String>(hmoContainer.keySet());
 
 		for (String key : sortedKeyset) {	
-			double count = hmoContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
+			double treatmentCount = hmoContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
+			double consultationCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
 
-			totalHMOCount += count;
+			totalTreatmentHMOCount += treatmentCount;
+			totalConsultationHMOCount += consultationCount;
 			
 			writer.print(
 							key + "\t" + 
-							count+"\n"							
-							); 				   							
+							treatmentCount+"\t"+							
+							consultationCount+"\n"							
+						); 				   							
 		}
 
 		//TOTAL
 		writer.print(
-				"TOTAL:\t"+totalHMOCount+"\n"							
+				"TOTAL:\t"+totalTreatmentHMOCount+"\t"+totalConsultationHMOCount+"\n"							
 				); 				   							
 
 
@@ -518,41 +522,60 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 	}
 
 	//added by Mike, 20181217
-	private static void processHMOCount(HashMap<String, double[]> hmoContainer, String[] inputColumns) {//int i) {
-			//edited by Mike, 20181206
-			if ((inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) ||
-				(inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
+	private static void processHMOCount(HashMap<String, double[]> hmoContainer, String[] inputColumns, boolean isConsultation) {
+			//edited by Mike, 20181219
+			if (!isConsultation) {											
+				//edited by Mike, 20181206
+				if ((inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) ||
+					(inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
 
-				String hmoName = inputColumns[INPUT_CLASS_COLUMN];
-				
-				if (!hmoContainer.containsKey(hmoName)) {
-					columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
-				
-					columnValuesArray[OUTPUT_HMO_COUNT_COLUMN] = 1;
-					columnValuesArray[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-
-					if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
-						columnValuesArray[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-					}
-					else {
-						columnValuesArray[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-					}
+					String hmoName = inputColumns[INPUT_CLASS_COLUMN];
 					
-					hmoContainer.put(hmoName, columnValuesArray);
-				}
-				else {
-					hmoContainer.get(hmoName)[OUTPUT_HMO_COUNT_COLUMN]++;					
-					hmoContainer.get(hmoName)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
-						+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+					if (!hmoContainer.containsKey(hmoName)) {
+						columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
+					
+						columnValuesArray[OUTPUT_HMO_COUNT_COLUMN] = 1;
+						columnValuesArray[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+
+						if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+							columnValuesArray[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+						}
+						else {
+							columnValuesArray[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+						}
 						
-					if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
-						hmoContainer.get(hmoName)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+						hmoContainer.put(hmoName, columnValuesArray);
 					}
 					else {
-						hmoContainer.get(hmoName)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);							
-					}		
-				}
-			}				
+						hmoContainer.get(hmoName)[OUTPUT_HMO_COUNT_COLUMN]++;					
+						hmoContainer.get(hmoName)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
+							+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+							
+						if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+							hmoContainer.get(hmoName)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+						}
+						else {
+							hmoContainer.get(hmoName)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);							
+						}		
+					}
+				}				
+			}
+			else {																	
+				if ((inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) ||
+					(inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
+
+					String hmoName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET];
+					
+					if (!hmoContainer.containsKey(hmoName)) {
+						columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];					
+						columnValuesArray[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] = 1;						
+						hmoContainer.put(hmoName, columnValuesArray);
+					}
+					else {
+						hmoContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;					
+					}
+				}				
+			}
 	}	
 	
 		//added by Mike, 20181217

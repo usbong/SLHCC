@@ -59,6 +59,16 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 	private static final int INPUT_NET_PF_COLUMN = 10;
 	private static final int INPUT_NEW_OLD_COLUMN = 16;
 
+	//added by Mike, 20181218
+	//CONSULTATION
+/*	
+	private static final int INPUT_CONSULTATION_CLASS_COLUMN = 9;
+	private static final int INPUT_CONSULTATION_NET_PF_COLUMN = 11;
+	private static final int INPUT_CONSULTATION_NEW_OLD_COLUMN = 17;
+*/	
+	private static final int INPUT_CONSULTATION_OFFSET = 1;
+		
+		
 /*	private static HashMap<String, double[]> referringDoctorContainer;	
 */
 	private static HashMap<Integer, double[]> dateContainer;	//added by Mike, 201801205
@@ -72,8 +82,9 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 		
 	//the date and the referring doctor are not yet included here
 	//this is for both HMO and NON-HMO transactions
-	private static final int OUTPUT_TOTAL_COLUMNS = 11; 
-	
+	private static final int OUTPUT_TOTAL_COLUMNS = 13; 
+
+	//PT TREATMENT
 	private static final int OUTPUT_HMO_COUNT_COLUMN = 0; //transaction count
 	private static final int OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN = 1;
 	private static final int OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN = 2;
@@ -87,6 +98,11 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 	private static final int OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN = 9;
 
 	private static final int OUTPUT_DATE_ID_COLUMN = 10; //added by Mike, 20181205
+	
+	//CONSULTATION
+	private static final int OUTPUT_CONSULTATION_HMO_COUNT_COLUMN = 11; //transaction count
+	private static final int OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN = 12; //transaction count
+
 	
 	private static DecimalFormat df = new DecimalFormat("0.00"); //added by Mike, 20181105
 	private static int rowCount; //added by Mike, 20181105
@@ -179,7 +195,8 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 				}
 				
 				//added by Mike, 20181216
-				processMonthlyCount(dateContainer, inputColumns, i);
+//				processMonthlyCount(dateContainer, inputColumns, i, false);
+				processMonthlyCount(dateContainer, inputColumns, i, false); //isConsultation = false
 
 				//added by Mike, 20181217
 				processHMOCount(hmoContainer, inputColumns);
@@ -356,86 +373,130 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 	}
 	
 	//added by Mike, 20181216
-	private static void processMonthlyCount(HashMap<Integer, double[]> dateContainer, String[] inputColumns, int i) {
+	private static void processMonthlyCount(HashMap<Integer, double[]> dateContainer, String[] inputColumns, int i, boolean isConsultation) {
 		//				if (!referringDoctorContainer.containsKey(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])) {
 				if (!dateContainer.containsKey(dateValuesArrayInt[i])) {
 					columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
+
+					//edited by Mike, 20181218
+					if (!isConsultation) {											
+						//edited by Mike, 20181206
+						if ((inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) ||
+							(inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
+
+							columnValuesArray[OUTPUT_HMO_COUNT_COLUMN] = 1;
+							columnValuesArray[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+
+							if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+								columnValuesArray[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+							}
+							else {
+								columnValuesArray[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+							}
+						}
+						else {
+							columnValuesArray[OUTPUT_NON_HMO_COUNT_COLUMN] = 1;
+							columnValuesArray[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+
+							if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+								columnValuesArray[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+							}
+							else {
+								columnValuesArray[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+							}
+						}
+					}
+					else {												
+						if ((inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) ||
+							(inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
+
+							columnValuesArray[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] = 1;
+/*							columnValuesArray[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+
+							if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+								columnValuesArray[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+							}
+							else {
+								columnValuesArray[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+							}
+*/							
+						}
+						else {
+							columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN] = 1;
+/*							columnValuesArray[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+
+							if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+								columnValuesArray[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+							}
+							else {
+								columnValuesArray[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+							}
+*/							
+						}						
+					}
 					
-					//edited by Mike, 20181206
-					if ((inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) ||
-						(inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
-
-						columnValuesArray[OUTPUT_HMO_COUNT_COLUMN] = 1;
-						columnValuesArray[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-
-						if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
-							columnValuesArray[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-						}
-						else {
-							columnValuesArray[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-						}
-					}
-					else {
-						columnValuesArray[OUTPUT_NON_HMO_COUNT_COLUMN] = 1;
-						columnValuesArray[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-
-						if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
-							columnValuesArray[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-						}
-						else {
-							columnValuesArray[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-						}
-					}
-
 //					referringDoctorContainer.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN], columnValuesArray);
 					dateContainer.put(dateValuesArrayInt[i], columnValuesArray);
 				}
 				else {
-					//edited by Mike, 20181206
-					if ((inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) ||
-						(inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
-/*							
-						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_COUNT_COLUMN]++;					
-						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
-							+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-*/
-						dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN]++;					
-						dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
-							+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-							
-						if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
-/*							referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-*/
-							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+					//edited by Mike, 20181218
+					if (!isConsultation) {											
+						//edited by Mike, 20181206
+						if ((inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) ||
+							(inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
+							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN]++;					
+/*							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
+								+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+								
+							if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+								dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+							}
+							else {
+								dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);							
+							}
+*/							
 						}
 						else {
-/*							
-							referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-*/
-							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-							
+							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN]++;					
+/*							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
+								+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+								
+							if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+								dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+							}
+							else {
+								dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);							
+							}
+*/							
 						}
 					}
 					else {
-/*						
-						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_COUNT_COLUMN]++;					
-						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
-							+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-*/
-						dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN]++;					
-						dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
-							+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-							
-						if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
-/*							referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-*/
-							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+						if ((inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) ||
+							(inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
+							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;					
+/*							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
+								+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+								
+							if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+								dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+							}
+							else {
+								dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);							
+							}
+*/							
 						}
 						else {
-/*							
-							referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-*/
-							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);							
+							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;					
+/*							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
+								+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+								
+							if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+								dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+							}
+							else {
+								dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);							
+							}
+*/							
 						}
 					}
 				}					

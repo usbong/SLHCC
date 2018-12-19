@@ -58,6 +58,7 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 	private static final int INPUT_CLASS_COLUMN = 8; //HMO and NON-HMO
 	private static final int INPUT_NET_PF_COLUMN = 10;
 	private static final int INPUT_NEW_OLD_COLUMN = 16;
+	private static final int INPUT_CONSULTATION_PROCEDURE_COLUMN = 3;
 
 	//added by Mike, 20181218
 	//CONSULTATION
@@ -82,7 +83,7 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 		
 	//the date and the referring doctor are not yet included here
 	//this is for both HMO and NON-HMO transactions
-	private static final int OUTPUT_TOTAL_COLUMNS = 13; 
+	private static final int OUTPUT_TOTAL_COLUMNS = 15; 
 
 	//PT TREATMENT
 	private static final int OUTPUT_HMO_COUNT_COLUMN = 0; //transaction count
@@ -102,6 +103,8 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 	//CONSULTATION
 	private static final int OUTPUT_CONSULTATION_HMO_COUNT_COLUMN = 11; //transaction count
 	private static final int OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN = 12; //transaction count
+	private static final int OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN = 13; //transaction count
+	private static final int OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN = 14; //transaction count
 
 	private static boolean isConsultation;
 	
@@ -317,11 +320,12 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 
 		//--------------------------------------------------------------------
 		//init table header names
-		writer.print("\n\tTREATMENT COUNT:\tNET PATIENT REFERRAL COUNT:\tCONSULTATION COUNT:\n"); 
+		writer.print("\n\tTREATMENT COUNT:\tNET PATIENT REFERRAL COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\n"); 
 
 		double totalReferringMedicalDoctorTransactionCount = 0;
 		double totalNewPatientReferralTransactionCount = 0;
 		double totalConsultationPerDoctorCount = 0;
+		double totalProcedurePerDoctorCount = 0;
 		
 		SortedSet<String> sortedReferringMedicalDoctorTransactionCountKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
 
@@ -333,21 +337,27 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 			//added by Mike, 20181219
 			double consultationCount = referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 
+			//added by Mike, 20181219
+			double procedureCount = referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN];
+
 			totalReferringMedicalDoctorTransactionCount += count;
 			totalNewPatientReferralTransactionCount += newPatientReferralTransactionCount;
 			totalConsultationPerDoctorCount += consultationCount;
+			totalProcedurePerDoctorCount += procedureCount;
 			
 			writer.print(
 							key + "\t" + 
 							count+"\t" +
 							newPatientReferralTransactionCount+"\t"+							
-							consultationCount+"\n"		
+							consultationCount+"\t"+
+							procedureCount+"\n"		
 							); 				   							
 		}
 
 		//TOTAL
 		writer.print(
-				"TOTAL:\t"+totalReferringMedicalDoctorTransactionCount+"\t"+totalNewPatientReferralTransactionCount+"\t"+totalConsultationPerDoctorCount+"\n"							
+				"TOTAL:\t"+totalReferringMedicalDoctorTransactionCount+"\t"+totalNewPatientReferralTransactionCount+"\t"+
+				totalConsultationPerDoctorCount+"\t"+totalProcedurePerDoctorCount+"\n"							
 				); 				   							
 				
 		writer.close();
@@ -736,9 +746,17 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 					columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN] = 1;
 				}
 				
+				//added by Mike, 20181219
+				if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().contains("p")) {
+					columnValuesArray[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] = 1;
+				}
+				else {
+					columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN] = 1;
+				}
+				
 				referringDoctorContainer.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET], columnValuesArray);
 			}
-			else {										
+			else {													
 				if (inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) {
 					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;				
 /*
@@ -747,6 +765,10 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_HMO_NEW_OLD_COUNT_COLUMN]++;					
 					}												
 */					
+					//added by Mike, 20181219
+					if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().contains("p")) {
+						columnValuesArray[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;
+					}
 				}
 				else {
 					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;					
@@ -756,6 +778,10 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_NON_HMO_NEW_OLD_COUNT_COLUMN]++;					
 					}
 */					
+					//added by Mike, 20181219
+					if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().contains("p")) {
+						columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]++;
+					}
 				}
 			}
 		}

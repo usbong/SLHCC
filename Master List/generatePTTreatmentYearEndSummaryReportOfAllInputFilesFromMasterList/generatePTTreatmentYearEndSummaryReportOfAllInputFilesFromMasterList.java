@@ -211,10 +211,10 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 				
 				//added by Mike, 20181217
 				processNONHMOCount(nonHmoContainer, inputColumns, isConsultation); //edited by Mike, 20181219
-/*				
+				
 				//added by Mike, 20181218
-				processReferringDoctorTransactionCount(referringDoctorContainer, inputColumns);
-*/				
+				processReferringDoctorTransactionCount(referringDoctorContainer, inputColumns, isConsultation); //edited by Mike, 20181219
+				
 			}
 			//added by Mike, 20181205
 			columnValuesArray[OUTPUT_DATE_ID_COLUMN] = i; 			
@@ -317,30 +317,37 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 
 		//--------------------------------------------------------------------
 		//init table header names
-		writer.print("\n\tTREATMENT COUNT:\tNET PATIENT REFERRAL COUNT:\n"); 		
+		writer.print("\n\tTREATMENT COUNT:\tNET PATIENT REFERRAL COUNT:\tCONSULTATION COUNT:\n"); 
 
 		double totalReferringMedicalDoctorTransactionCount = 0;
 		double totalNewPatientReferralTransactionCount = 0;
+		double totalConsultationPerDoctorCount = 0;
 		
 		SortedSet<String> sortedReferringMedicalDoctorTransactionCountKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
 
 		for (String key : sortedReferringMedicalDoctorTransactionCountKeyset) {	
 			double count = referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
+
 			double newPatientReferralTransactionCount = referringDoctorContainer.get(key)[OUTPUT_HMO_NEW_OLD_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN];
+
+			//added by Mike, 20181219
+			double consultationCount = referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 
 			totalReferringMedicalDoctorTransactionCount += count;
 			totalNewPatientReferralTransactionCount += newPatientReferralTransactionCount;
+			totalConsultationPerDoctorCount += consultationCount;
 			
 			writer.print(
 							key + "\t" + 
 							count+"\t" +
-							newPatientReferralTransactionCount+"\n"							
+							newPatientReferralTransactionCount+"\t"+							
+							consultationCount+"\n"		
 							); 				   							
 		}
 
 		//TOTAL
 		writer.print(
-				"TOTAL:\t"+totalReferringMedicalDoctorTransactionCount+"\t"+totalNewPatientReferralTransactionCount+"\n"							
+				"TOTAL:\t"+totalReferringMedicalDoctorTransactionCount+"\t"+totalNewPatientReferralTransactionCount+"\t"+totalConsultationPerDoctorCount+"\n"							
 				); 				   							
 				
 		writer.close();
@@ -582,7 +589,7 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 			}
 	}	
 	
-		//added by Mike, 20181217
+	//added by Mike, 20181217
 	private static void processNONHMOCount(HashMap<String, double[]> nonHmoContainer, String[] inputColumns, boolean isConsultation) {
 		//edited by Mike, 20181219
 		if (!isConsultation) {											
@@ -640,78 +647,115 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 	}	
 	
 	//added by Mike, 20181218
-	private static void processReferringDoctorTransactionCount(HashMap<String, double[]> referringDoctorContainer, String[] inputColumns) {
-		if (!referringDoctorContainer.containsKey(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])) {
-			columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
-			
-			if (inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) {
-				columnValuesArray[OUTPUT_HMO_COUNT_COLUMN] = 1;
-				columnValuesArray[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+	private static void processReferringDoctorTransactionCount(HashMap<String, double[]> referringDoctorContainer, String[] inputColumns, Boolean isConsultation) {
+		//edited by Mike, 20181219
+		if (!isConsultation) {											
+			if (!referringDoctorContainer.containsKey(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])) {
+				columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
+				
+				if (inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) {
+					columnValuesArray[OUTPUT_HMO_COUNT_COLUMN] = 1;
+					columnValuesArray[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 
-				if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
-					columnValuesArray[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+					if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+						columnValuesArray[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+					}
+					else {
+						columnValuesArray[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+					}
+
+					if (inputColumns[INPUT_NEW_OLD_COLUMN].toLowerCase().contains("new")) {
+						//added by Mike, 20181218
+						columnValuesArray[OUTPUT_HMO_NEW_OLD_COUNT_COLUMN] = 1;
+					}							
 				}
 				else {
-					columnValuesArray[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-				}
+					columnValuesArray[OUTPUT_NON_HMO_COUNT_COLUMN] = 1;
+					columnValuesArray[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 
-				if (inputColumns[INPUT_NEW_OLD_COLUMN].toLowerCase().contains("new")) {
-					//added by Mike, 20181218
-					columnValuesArray[OUTPUT_HMO_NEW_OLD_COUNT_COLUMN] = 1;
-				}							
-			}
-			else {
-				columnValuesArray[OUTPUT_NON_HMO_COUNT_COLUMN] = 1;
-				columnValuesArray[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-
-				if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
-					columnValuesArray[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-				}
-				else {
-					columnValuesArray[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+					if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+						columnValuesArray[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+					}
+					else {
+						columnValuesArray[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+					}
+					
+					if (inputColumns[INPUT_NEW_OLD_COLUMN].toLowerCase().contains("new")) {
+						//added by Mike, 20181218
+						columnValuesArray[OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN] = 1;
+					}			
 				}
 				
-				if (inputColumns[INPUT_NEW_OLD_COLUMN].toLowerCase().contains("new")) {
-					//added by Mike, 20181218
-					columnValuesArray[OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN] = 1;
-				}			
+				referringDoctorContainer.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN], columnValuesArray);
 			}
-			
-			referringDoctorContainer.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN], columnValuesArray);
+			else {
+				if (inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) {
+					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_COUNT_COLUMN]++;					
+					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
+						+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+						
+					if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+					}
+					else {
+						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+					}
+					
+					if (inputColumns[INPUT_NEW_OLD_COLUMN].toLowerCase().contains("new")) {
+						//added by Mike, 20181218
+						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_NEW_OLD_COUNT_COLUMN]++;					
+					}							
+				}
+				else {
+					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_COUNT_COLUMN]++;					
+					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
+						+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+						
+					if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+					}
+					else {
+						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+					}
+					
+					if (inputColumns[INPUT_NEW_OLD_COLUMN].toLowerCase().contains("new")) {
+						//added by Mike, 20181218
+						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN]++;					
+					}
+				}
+			}
 		}
 		else {
-			if (inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) {
-				referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_COUNT_COLUMN]++;					
-				referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
-					+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-					
-				if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
-					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+			if (!referringDoctorContainer.containsKey(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])) {
+				columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
+				
+				if (inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) {
+					columnValuesArray[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] = 1;
 				}
 				else {
-					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+					columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN] = 1;
 				}
 				
-				if (inputColumns[INPUT_NEW_OLD_COLUMN].toLowerCase().contains("new")) {
-					//added by Mike, 20181218
-					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_NEW_OLD_COUNT_COLUMN]++;					
-				}							
+				referringDoctorContainer.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET], columnValuesArray);
 			}
-			else {
-				referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_COUNT_COLUMN]++;					
-				referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
-					+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-					
-				if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
-					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+			else {										
+				if (inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) {
+					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;				
+/*
+					if (inputColumns[INPUT_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("new")) {
+						//added by Mike, 20181218
+						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_HMO_NEW_OLD_COUNT_COLUMN]++;					
+					}												
+*/					
 				}
 				else {
-					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-				}
-				
-				if (inputColumns[INPUT_NEW_OLD_COLUMN].toLowerCase().contains("new")) {
-					//added by Mike, 20181218
-					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN]++;					
+					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;					
+/*					
+					if (inputColumns[INPUT_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("new")) {
+						//added by Mike, 20181218
+						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_NON_HMO_NEW_OLD_COUNT_COLUMN]++;					
+					}
+*/					
 				}
 			}
 		}

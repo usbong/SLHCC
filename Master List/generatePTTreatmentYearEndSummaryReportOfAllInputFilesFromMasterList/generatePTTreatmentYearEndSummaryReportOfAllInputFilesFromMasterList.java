@@ -208,10 +208,10 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 
 				//added by Mike, 20181217
 				processHMOCount(hmoContainer, inputColumns, isConsultation); //edited by Mike, 20181219
-/*				
-				//added by Mike, 20181217
-				processNONHMOCount(nonHmoContainer, inputColumns);
 				
+				//added by Mike, 20181217
+				processNONHMOCount(nonHmoContainer, inputColumns, isConsultation); //edited by Mike, 20181219
+/*				
 				//added by Mike, 20181218
 				processReferringDoctorTransactionCount(referringDoctorContainer, inputColumns);
 */				
@@ -289,26 +289,30 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 
 		//--------------------------------------------------------------------
 		//init table header names
-		writer.print("\n\tTREATMENT COUNT:\n"); 		
+		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\n"); 		
 
-		double totalNONHMOCount = 0;
+		double totalTreatmentNONHMOCount = 0;
+		double totalConsultationNONHMOCount = 0; //added by Mike, 20181219
 		
 		SortedSet<String> sortedNONHMOKeyset = new TreeSet<String>(nonHmoContainer.keySet());
 
 		for (String key : sortedNONHMOKeyset) {	
-			double count = nonHmoContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
+			double treatmentCount = nonHmoContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
+			double consultationCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 
-			totalNONHMOCount += count;
+			totalTreatmentNONHMOCount += treatmentCount;
+			totalConsultationNONHMOCount += consultationCount;
 			
 			writer.print(
 							key + "\t" + 
-							count+"\n"							
-							); 				   							
+							treatmentCount+"\t"+							
+							consultationCount+"\n"							
+						); 				   							
 		}
 
 		//TOTAL
 		writer.print(
-				"TOTAL:\t"+totalNONHMOCount+"\n"							
+				"TOTAL:\t"+totalTreatmentNONHMOCount+"\t"+totalConsultationHMOCount+"\n"							
 				); 				   							
 
 		//--------------------------------------------------------------------
@@ -579,7 +583,9 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 	}	
 	
 		//added by Mike, 20181217
-	private static void processNONHMOCount(HashMap<String, double[]> nonHmoContainer, String[] inputColumns) {//int i) {
+	private static void processNONHMOCount(HashMap<String, double[]> nonHmoContainer, String[] inputColumns, boolean isConsultation) {
+		//edited by Mike, 20181219
+		if (!isConsultation) {											
 			//edited by Mike, 20181206
 			if ((!inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) &&
 				(!inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
@@ -613,7 +619,24 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 						nonHmoContainer.get(nonHmoName)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);							
 					}		
 				}
-			}				
+			}			
+		}
+		else {			
+			if ((!inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) &&
+				(!inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
+
+				String nonHmoName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET];
+				
+				if (!nonHmoContainer.containsKey(nonHmoName)) {
+					columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];				
+					columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN] = 1;					
+					nonHmoContainer.put(nonHmoName, columnValuesArray);
+				}
+				else {
+					nonHmoContainer.get(nonHmoName)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;
+				}
+			}
+		}
 	}	
 	
 	//added by Mike, 20181218

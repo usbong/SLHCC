@@ -117,6 +117,11 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 	private static double totalUnpaidNetTreatmentFeeForAllReferringDoctors;
 	private static double totalFivePercentShareOfNetPaidForAllReferringDoctors;
 				
+	//added by Mike, 20181220
+	private static HashMap<String, HashMap<String, double[]>> nonHmoContainerPerMedicalDoctor = new HashMap<String, HashMap<String, double[]>>();
+	private static HashMap<String, double[]> nonHmoContainerHashmap = new HashMap<String, double[]>();
+	private static double[] nonHmoContainerColumnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
+
 	public static void main ( String[] args ) throws Exception
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
@@ -128,6 +133,8 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 		hmoContainer = new HashMap<String, double[]>();
 		nonHmoContainer = new HashMap<String, double[]>();
 		referringDoctorContainer = new HashMap<String, double[]>();
+//		medicalDoctorContainer = new HashMap<String, double[]>();
+		nonHmoContainerPerMedicalDoctor = new HashMap<String, HashMap<String, double[]>>();		
 		
 		//added by Mike, 20181116
 		startDate = null; //properly set the month and year in the output file of each input file
@@ -218,6 +225,8 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 				//added by Mike, 20181218
 				processReferringDoctorTransactionCount(referringDoctorContainer, inputColumns, isConsultation); //edited by Mike, 20181219
 				
+				//added by Mike, 20181220
+				processMedicalDoctorTransactionPerClassificationCount(nonHmoContainerPerMedicalDoctor, inputColumns, isConsultation);				
 			}
 			//added by Mike, 20181205
 			columnValuesArray[OUTPUT_DATE_ID_COLUMN] = i; 			
@@ -359,6 +368,54 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 				"TOTAL:\t"+totalReferringMedicalDoctorTransactionCount+"\t"+totalNewPatientReferralTransactionCount+"\t"+
 				totalConsultationPerDoctorCount+"\t"+totalProcedurePerDoctorCount+"\n"							
 				); 				   							
+
+		//--------------------------------------------------------------------
+		//init table header names
+/*		SortedSet<String> sortedReferringMedicalDoctorTransactionCountKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
+*/
+		SortedSet<String> sortedNonHmoContainerPerMedicalDoctorTransactionCountKeyset = new TreeSet<String>(nonHmoContainerPerMedicalDoctor.keySet());
+//		String defaultKey=null;
+		
+		writer.print("\n");
+		for (String key : sortedNONHMOKeyset) {	
+			writer.print(key+"\t"); 		
+		}		
+		writer.print("\n");
+				
+//		SortedSet<String> sortedNonHmoContainerTableHeaderKeyset = new TreeSet<String>(nonHmoContainerPerMedicalDoctor.get(defaultKey).keySet());
+
+/*
+		double totalNonHmoCount = 0;
+*/
+
+		for (String key : sortedNonHmoContainerPerMedicalDoctorTransactionCountKeyset) {				
+//				System.out.println(">>>"+key);
+			writer.print(key+"\t");
+
+			for (String nonHmoKey : sortedNONHMOKeyset) {	
+//				System.out.println(">>>"+nonHmoKey);
+				//added by Mike, 20181219
+				double nonHmoCount = 0;
+				if (nonHmoContainerPerMedicalDoctor.get(key).get(nonHmoKey)!=null) {
+					double[] value = nonHmoContainerPerMedicalDoctor.get(key).get(nonHmoKey);
+					nonHmoCount = value[OUTPUT_NON_HMO_COUNT_COLUMN] + value[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+				}
+				//double nonHmoCount = nonHmoContainerPerMedicalDoctor.get(key).get(nonHmoKey)[OUTPUT_NON_HMO_COUNT_COLUMN] + nonHmoContainerPerMedicalDoctor.get(key).get(nonHmoKey)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+				
+/*
+				totalNonHmoCount+=nonHmoCount;
+*/				
+				writer.print(nonHmoCount+"\t");
+			}
+			writer.print("\n");
+		}
+		
+		//TOTAL
+/*		writer.print(
+				"TOTAL:\t"+totalReferringMedicalDoctorTransactionCount+"\t"+totalNewPatientReferralTransactionCount+"\t"+
+				totalConsultationPerDoctorCount+"\t"+totalProcedurePerDoctorCount+"\n"							
+				); 				   							
+*/
 				
 		writer.close();
 	}
@@ -657,9 +714,9 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 	}	
 	
 	//added by Mike, 20181218
-	private static void processReferringDoctorTransactionCount(HashMap<String, double[]> referringDoctorContainer, String[] inputColumns, Boolean isConsultation) {
+	private static void processReferringDoctorTransactionCount(HashMap<String, double[]> referringDoctorContainer, String[] inputColumns, Boolean isConsultation) {		
 		//edited by Mike, 20181219
-		if (!isConsultation) {											
+		if (!isConsultation) {	
 			if (!referringDoctorContainer.containsKey(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])) {
 				columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
 				
@@ -787,4 +844,90 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 		}
 	}
 
+	//added by Mike, 20181220
+	private static void processMedicalDoctorTransactionPerClassificationCount(HashMap<String, HashMap<String, double[]>> nonHmoContainerPerMedicalDoctor, String[] inputColumns, Boolean isConsultation) {
+		String nonHmoName = inputColumns[INPUT_CLASS_COLUMN]; //added by Mike, 20181220
+		
+		//edited by Mike, 20181219
+		if (!isConsultation) {	
+			//added by Mike, 20181220
+			if (!nonHmoName.contains("HMO")) {		
+				if (!nonHmoContainerPerMedicalDoctor.containsKey(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])) {
+					/*if (!nonHmoContainerHashmap.containsKey(nonHmoName)) {
+					*/	
+						nonHmoContainerColumnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];				
+						nonHmoContainerColumnValuesArray[OUTPUT_NON_HMO_COUNT_COLUMN] = 1;
+					/*}				
+					else {
+						//added by Mike, 20181218
+						nonHmoContainerHashmap.get(nonHmoName)[OUTPUT_NON_HMO_COUNT_COLUMN]++;										
+					}*/
+					nonHmoContainerHashmap = new HashMap<String, double[]>();
+					nonHmoContainerHashmap.put(nonHmoName, nonHmoContainerColumnValuesArray);
+					nonHmoContainerPerMedicalDoctor.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN], nonHmoContainerHashmap);
+				}
+				else {
+					if (!nonHmoContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN]).containsKey(nonHmoName)) {
+						nonHmoContainerColumnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];				
+						nonHmoContainerColumnValuesArray[OUTPUT_NON_HMO_COUNT_COLUMN] = 1;
+/*						
+						nonHmoContainerPerMedicalDoctor.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN], columnValuesArray);
+*/						
+						nonHmoContainerHashmap.put(nonHmoName, nonHmoContainerColumnValuesArray);
+						nonHmoContainerPerMedicalDoctor.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN], nonHmoContainerHashmap);
+					}			
+					else {
+						nonHmoContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN]).get(nonHmoName)[OUTPUT_NON_HMO_COUNT_COLUMN]++;					
+					}
+				}
+			}
+		}
+		else {
+			//added by Mike, 20181220
+			if (!nonHmoName.contains("HMO")) {					
+				if (!nonHmoContainerPerMedicalDoctor.containsKey(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])) {
+					/*if (!nonHmoContainerHashmap.containsKey(nonHmoName)) {
+					*/	
+						nonHmoContainerColumnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];				
+						nonHmoContainerColumnValuesArray[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN] = 1;
+					/*}				
+					else {
+						//added by Mike, 20181218
+						nonHmoContainerHashmap.get(nonHmoName)[OUTPUT_NON_HMO_COUNT_COLUMN]++;										
+					}*/
+	/*				nonHmoContainerPerMedicalDoctor.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN], columnValuesArray);
+*/	
+					nonHmoContainerHashmap = new HashMap<String, double[]>();
+					nonHmoContainerHashmap.put(nonHmoName, nonHmoContainerColumnValuesArray);
+					nonHmoContainerPerMedicalDoctor.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET], nonHmoContainerHashmap);
+
+				}
+				else {
+					if (!nonHmoContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).containsKey(nonHmoName)) {
+						nonHmoContainerColumnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];				
+						nonHmoContainerColumnValuesArray[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN] = 1;
+						
+/*						nonHmoContainerPerMedicalDoctor.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN], columnValuesArray);
+*/
+						nonHmoContainerHashmap.put(nonHmoName, nonHmoContainerColumnValuesArray);
+						nonHmoContainerPerMedicalDoctor.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET], nonHmoContainerHashmap);
+					}			
+					else {
+						/*nonHmoContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;*/	nonHmoContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(nonHmoName)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;					
+					}
+				}
+			}
+		}			
+	}
+
+	
+	private static void resetNonHMOContainerCount() {
+		//added by Mike, 20181220
+		SortedSet<String> sortedNONHMOKeyset = new TreeSet<String>(nonHmoContainer.keySet());
+
+		for (String key : sortedNONHMOKeyset) {	
+			nonHmoContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN] = 0;
+			nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN] = 0;
+		}
+	}
 }

@@ -824,7 +824,9 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 */					
 					//added by Mike, 20181219
 					if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().contains("p")) {
-						columnValuesArray[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;
+						//edited by Mike, 20181221
+						//columnValuesArray[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;
+						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;				
 					}
 				}
 				else {
@@ -837,7 +839,9 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 */					
 					//added by Mike, 20181219
 					if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().contains("p")) {
-						columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]++;
+						//edited by Mike, 20181221
+						//columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]++;						
+						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;				
 					}
 				}
 			}
@@ -850,18 +854,14 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 		
 		//edited by Mike, 20181219
 		if (!isConsultation) {	
+			return; //do not include PT Treatment
+/*			
 			//added by Mike, 20181220
 			if (!nonHmoName.contains("HMO")) {		
 				if (!nonHmoContainerPerMedicalDoctor.containsKey(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])) {
-					/*if (!nonHmoContainerHashmap.containsKey(nonHmoName)) {
-					*/	
-						nonHmoContainerColumnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];				
-						nonHmoContainerColumnValuesArray[OUTPUT_NON_HMO_COUNT_COLUMN] = 1;
-					/*}				
-					else {
-						//added by Mike, 20181218
-						nonHmoContainerHashmap.get(nonHmoName)[OUTPUT_NON_HMO_COUNT_COLUMN]++;										
-					}*/
+					nonHmoContainerColumnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];				
+					nonHmoContainerColumnValuesArray[OUTPUT_NON_HMO_COUNT_COLUMN] = 1;
+					
 					nonHmoContainerHashmap = new HashMap<String, double[]>();
 					nonHmoContainerHashmap.put(nonHmoName, nonHmoContainerColumnValuesArray);
 					nonHmoContainerPerMedicalDoctor.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN], nonHmoContainerHashmap);
@@ -870,9 +870,7 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 					if (!nonHmoContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN]).containsKey(nonHmoName)) {
 						nonHmoContainerColumnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];				
 						nonHmoContainerColumnValuesArray[OUTPUT_NON_HMO_COUNT_COLUMN] = 1;
-/*						
-						nonHmoContainerPerMedicalDoctor.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN], columnValuesArray);
-*/						
+						
 						nonHmoContainerHashmap.put(nonHmoName, nonHmoContainerColumnValuesArray);
 						nonHmoContainerPerMedicalDoctor.put(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN], nonHmoContainerHashmap);
 					}			
@@ -881,6 +879,7 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 					}
 				}
 			}
+*/			
 		}
 		else {
 			//added by Mike, 20181220

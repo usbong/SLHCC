@@ -80,6 +80,7 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 	private static double[] columnValuesArray;
 	private static String[] dateValuesArray; //added by Mike, 20180412
 	private static int[] dateValuesArrayInt; //added by Mike, 20181206
+	//private static ArrayList<int> dateValuesArrayInt; //edited by Mike, 20181221
 		
 	//the date and the referring doctor are not yet included here
 	//this is for both HMO and NON-HMO transactions
@@ -141,7 +142,8 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 		startDate = null; //properly set the month and year in the output file of each input file
 		dateValuesArray = new String[args.length]; //added by Mike, 20180412
 		dateValuesArrayInt = new int[args.length]; //added by Mike, 20180412
-		
+		//dateValuesArrayInt = new ArrayList<int>(); //edited by Mike, 20181221
+
 		//edited by Mike, 20181030
 		for (int i=0; i<args.length; i++) {						
 			//added by Mike, 20181030
@@ -182,12 +184,15 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 					dateValuesArray[i] = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);
 				}
 
-				//added by Mike, 20181206
 				if (dateValuesArrayInt[i]==0) {
 					dateValuesArrayInt[i] = Integer.parseInt(args[i].substring(args[i].indexOf("_")+1,args[i].indexOf(".txt")));
 				}
-				
-				
+/*
+				int dateValueInt = Integer.parseInt(args[i].substring(args[i].indexOf("_")+1,args[i].indexOf(".txt")));
+				if (!dateValuesArrayInt.contains(dateValueInt)){
+					dateValuesArrayInt.add(dateValueInt);
+				}				
+*/				
 				//edited by Mike, 20181121
 				if (startDate==null) {
 					startDate = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);
@@ -330,7 +335,7 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 
 		//--------------------------------------------------------------------
 		//init table header names
-		writer.print("\n\tTREATMENT COUNT:\tNET PATIENT REFERRAL COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\n"); 
+		writer.print("\n\tTREATMENT COUNT:\tNEW PATIENT REFERRAL COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\n"); 
 
 		double totalReferringMedicalDoctorTransactionCount = 0;
 		double totalNewPatientReferralTransactionCount = 0;

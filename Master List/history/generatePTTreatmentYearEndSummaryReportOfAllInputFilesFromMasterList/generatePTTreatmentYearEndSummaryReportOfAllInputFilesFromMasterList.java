@@ -639,8 +639,7 @@ public class generatePTTreatmentYearEndSummaryReportOfAllInputFilesFromMasterLis
 					}
 					else {
 						hmoContainer.get(hmoName)[OUTPUT_HMO_COUNT_COLUMN]++;					
-						hmoContainer.get(hmoName)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
-							+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+						hmoContainer.get(hmoName)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 							
 						if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
 							hmoContainer.get(hmoName)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);

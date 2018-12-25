@@ -1,0 +1,61 @@
+Sub autoHighlightPaidTransactionsMasterList()
+' Copyright 2018 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20181225
+' @date updated: 20181225
+'
+' Master List: Consultation and Treatment Workbooks (2018)
+' Given:
+' 1) NOTES: (Column A)
+'
+'Output:
+' 1) Auto-highlight paid transactions in the NOTES column (Column A)
+' --> paid NON-HMO/Cash transactions are auto-highlighted with light blue
+' --> paid HMO transactions are auto-highlighted with light green
+'
+'Notes:
+' 1) The Master List is the consolidated Excel logbook based on:
+' a) printed payslips from Sta. Lucia Health Care Centre (SLHCC)
+' b) Excel payslip reports from SLHCC
+' c) paid HMO reports from SLHCC
+' d) Rehab/Clinic logbook (pen and paper)
+' e) Rehab/Clinic Excel logbook
+
+
+Dim myInput As Worksheet
+Dim myOutput As Worksheet 'the same as myInput
+Dim row As Range
+Dim RowCount As Integer
+
+RowCount = 1
+
+Set myInput = Sheets(ActiveSheet.Name)
+Set myOutput = Sheets(ActiveSheet.Name)
+
+For Each row In myInput.Rows
+
+       If (InStr(myInput.Range("A" & RowCount).Value, ".xls")) Then
+            myOutput.Range("A" & RowCount, "S" & RowCount).Interior.Color = rgbPaleGreen
+       ElseIf (InStr(myInput.Range("A" & RowCount).Value, "paid")) Then
+            myOutput.Range("A" & RowCount, "S" & RowCount).Interior.Color = rgbSkyBlue
+       End If
+       
+       If IsEmpty(myInput.Range("D" & RowCount).Value) Then
+            Exit For
+       Else
+            RowCount = RowCount + 1
+       End If
+Next row
+
+'myOutput.Range("K" & 1, "K" & RowCount).Font.Size = 11
+'myOutput.Range("K" & 1, "K" & RowCount).Font.Name = "Calibri"
+'myOutput.Range("K" & 1, "K" & RowCount).NumberFormat = "0.00"
+
+End Sub

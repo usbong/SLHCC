@@ -64,6 +64,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	private static final int INPUT_REFERRING_DOCTOR_COLUMN = 15;
 	private static final int INPUT_NOTES_COLUMN = 0;
 	private static final int INPUT_DATE_COLUMN = 1;
+	private static final int INPUT_NAME_COLUMN = 3;
 	private static final int INPUT_CLASS_COLUMN = 8; //HMO and NON-HMO
 	private static final int INPUT_NET_PF_COLUMN = 10;
 	private static final int INPUT_NEW_OLD_COLUMN = 16;
@@ -637,7 +638,14 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				(!inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
 
 				String classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET];
+				System.out.println("classificationName: "+classificationName); 
 				
+				if (inDebugMode) {
+					if (classificationName.trim().equals("")) {
+						System.out.println(">>> "+inputColumns[INPUT_DATE_COLUMN]+"; Name: "+inputColumns[INPUT_NAME_COLUMN]);
+					}
+				}
+								
 				if (!nonHmoContainer.containsKey(classificationName)) {
 					columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];				
 					columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN] = 1;					
@@ -790,7 +798,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 
 		if (isConsultation) {			
 			String classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET]; //added by Mike, 20181220
-			System.out.println(">"+" "+classificationName);
+//			System.out.println(">"+" "+classificationName);
 
 /*			if (isConsultation) {	
 				classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET]; //added by Mike, 20181220
@@ -805,17 +813,17 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 //			System.out.println(">>> "+inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]);
 
 				if (!classificationName.contains("HMO")) {					
-			System.out.println(">>>"+inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]+" "+classificationName);
+//			System.out.println(">>>"+inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]+" "+classificationName);
 					classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;
 
-					System.out.println(">>> NON-HMO count: "+classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);
+//					System.out.println(">>> NON-HMO count: "+classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);
 				}
 				else {
-				System.out.println(">>>>>"+inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]+" "+classificationName);
+//				System.out.println(">>>>>"+inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]+" "+classificationName);
 
 					classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;					
 
-					System.out.println(">>>>> HMO count: "+classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]);
+//					System.out.println(">>>>> HMO count: "+classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]);
 
 				}
 			/*}
@@ -840,15 +848,15 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 			classificationContainerHashmap = new HashMap<String, double[]>();
 
 			for (String key : sortedHmoContainerKeyset) {						
-	System.out.println("hmoKey: "+key);		
-	System.out.println("classificationContainerColumnValuesArray: "+classificationContainerColumnValuesArray[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]);		
+//	System.out.println("hmoKey: "+key);		
+//	System.out.println("classificationContainerColumnValuesArray: "+classificationContainerColumnValuesArray[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]);		
 				classificationContainerColumnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];				
 				classificationContainerHashmap.put(key, classificationContainerColumnValuesArray);			
 			}
 
 			for (String key : sortedNonHmoContainerKeyset) {				
-	System.out.println("nonHmoKey: "+key);		
-	System.out.println("classificationContainerColumnValuesArray: "+classificationContainerColumnValuesArray[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);		
+//	System.out.println("nonHmoKey: "+key);		
+//	System.out.println("classificationContainerColumnValuesArray: "+classificationContainerColumnValuesArray[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);		
 				classificationContainerColumnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];				
 				classificationContainerHashmap.put(key, classificationContainerColumnValuesArray);
 			}

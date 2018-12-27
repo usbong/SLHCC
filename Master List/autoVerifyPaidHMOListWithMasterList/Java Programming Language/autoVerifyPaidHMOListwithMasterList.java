@@ -50,7 +50,7 @@ import java.text.DecimalFormat;
 */ 
 
 public class autoVerifyPaidHMOListwithMasterList {	
-	private static boolean inDebugMode = true;
+	private static boolean inDebugMode = false;
 	private static String inputFilename = "input201801"; //without extension; default input file
 	private static String inputHmoListFilename = "paidHmoList201811"; //without extension; default input file
 	
@@ -145,6 +145,18 @@ public class autoVerifyPaidHMOListwithMasterList {
 		StringBuffer sb = new StringBuffer(date);				
 		return sb.substring(0,3).concat("-").concat(sb.substring(sb.length()-2,sb.length()));
 	}
+
+	//added by Mike, 20181227
+	private static String formatDateToMatchWithHmoListDateFormat(String date) {
+		StringBuffer sb = new StringBuffer(date);				
+		return getDay(date).replace("-","").concat("-").concat(sb.substring(0,3)).concat("-").concat(sb.substring(sb.length()-2,sb.length()));
+	}
+
+	//added by Mike, 20181227
+	private static String getDay(String date) {
+		StringBuffer sb = new StringBuffer(date);				
+		return sb.substring(sb.indexOf("-")+1).substring(0, sb.indexOf("-")-1); //do a +1 and -1, because we are not including here the dash/hyphen, i.e. "-"
+	}
 	
 	//added by Mike, 20181030
 	private static void makeFilePath(String filePath) {
@@ -206,6 +218,8 @@ public class autoVerifyPaidHMOListwithMasterList {
 			//count/compute the number-based values of inputColumns 
 			while (hmoListScanner.hasNextLine()) {
 				hmoListString=hmoListScanner.nextLine();
+
+//				System.out.println("hmoListString: "+hmoListString);
 				
 				//if the row is blank
 				if (hmoListString.trim().equals("")) {
@@ -213,7 +227,14 @@ public class autoVerifyPaidHMOListwithMasterList {
 				}
 				
 				String[] inputHmoListColumns = hmoListString.split("\t");					
-			
+
+//				System.out.println("inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]: "+inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]);
+				
+				//if the value for the date column is blank
+				if (inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN].equals("")) {
+					continue;
+				}
+				
 				while (sc.hasNextLine()) {
 					s=sc.nextLine();
 				
@@ -234,6 +255,10 @@ public class autoVerifyPaidHMOListwithMasterList {
 					//In Excel logbook/workbook 2018 onwards, such transactions are not included in the Consultation and PT Treatment Excel logbooks/workbooks.
 					if (inputColumns[INPUT_CLASS_COLUMN].contains("RehabSupplies")) {
 						continue;
+					}
+					
+					if (inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN].equals(formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]))) {
+						System.out.println(">>"+formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]));
 					}
 					
 					writer.println(s);					

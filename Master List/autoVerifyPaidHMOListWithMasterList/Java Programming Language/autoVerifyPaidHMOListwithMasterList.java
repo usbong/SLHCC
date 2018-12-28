@@ -149,13 +149,15 @@ public class autoVerifyPaidHMOListwithMasterList {
 	//added by Mike, 20181227
 	private static String formatDateToMatchWithHmoListDateFormat(String date) {
 		StringBuffer sb = new StringBuffer(date);				
-		return getDay(date).replace("-","").concat("-").concat(sb.substring(0,3)).concat("-").concat(sb.substring(sb.length()-2,sb.length()));
+		return getDay(date).concat("-").concat(sb.substring(0,3)).concat("-").concat(sb.substring(sb.length()-2,sb.length()));
 	}
 
 	//added by Mike, 20181227
 	private static String getDay(String date) {
 		StringBuffer sb = new StringBuffer(date);				
-		return sb.substring(sb.indexOf("-")+1).substring(0, sb.indexOf("-")-1); //do a +1 and -1, because we are not including here the dash/hyphen, i.e. "-"
+		//We do a +1 and -1, because we are not including here the dash/hyphen, i.e. "-".
+		//We still need to replace any "-" that is left since the day value in both the Master List worksheet and paid HMO list can either have 1 or 2 digits.
+		return sb.substring(sb.indexOf("-")+1).substring(0, sb.indexOf("-")-1).replace("-",""); 
 	}
 	
 	//added by Mike, 20181030
@@ -229,7 +231,7 @@ public class autoVerifyPaidHMOListwithMasterList {
 				String[] inputHmoListColumns = hmoListString.split("\t");					
 
 //				System.out.println("inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]: "+inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]);
-				
+								
 				//if the value for the date column is blank
 				if (inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN].equals("")) {
 					continue;
@@ -256,6 +258,9 @@ public class autoVerifyPaidHMOListwithMasterList {
 					if (inputColumns[INPUT_CLASS_COLUMN].contains("RehabSupplies")) {
 						continue;
 					}
+					
+					System.out.println("inputColumns[INPUT_DATE_COLUMN]: "+formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]));
+
 					
 					if (inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN].equals(formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]))) {
 						System.out.println(">>"+formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]));

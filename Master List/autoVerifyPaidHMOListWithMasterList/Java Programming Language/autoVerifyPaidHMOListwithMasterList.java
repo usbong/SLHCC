@@ -156,7 +156,7 @@ public class autoVerifyPaidHMOListwithMasterList {
 	private static String getDay(String date) {
 		StringBuffer sb = new StringBuffer(date);				
 		//We do a +1 and -1, because we are not including here the dash/hyphen, i.e. "-".
-		//We still need to replace any "-" that is left since the day value in both the Master List worksheet and paid HMO list can either have 1 or 2 digits.
+		//We still need to replace any "-" that is left since the day value in both the Master List worksheet and the paid HMO list can either have 1 or 2 digits.
 		return sb.substring(sb.indexOf("-")+1).substring(0, sb.indexOf("-")-1).replace("-",""); 
 	}
 	
@@ -203,12 +203,13 @@ public class autoVerifyPaidHMOListwithMasterList {
 				isConsultation=false;
 			}
 			
-			Scanner sc = new Scanner(new FileInputStream(f));				
+/*			Scanner sc = new Scanner(new FileInputStream(f));				
+*/
 			Scanner hmoListScanner = new Scanner(new FileInputStream(hmoListFile));				
-		
+/*		
 			String s;		
 			s=sc.nextLine(); //skip the first row, which is the input file's table headers
-
+*/
 			String hmoListString;		
 			hmoListString=hmoListScanner.nextLine(); //skip the first row, which is the input file's table headers
 
@@ -236,10 +237,16 @@ public class autoVerifyPaidHMOListwithMasterList {
 				if (inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN].equals("")) {
 					continue;
 				}
-				
+	
+				Scanner sc = new Scanner(new FileInputStream(f));				
+			
+				String s;		
+				s=sc.nextLine(); //skip the first row, which is the input file's table headers
+	
 				while (sc.hasNextLine()) {
 					s=sc.nextLine();
-				
+//					System.out.println("hmoListString: "+hmoListString);
+			
 					//if the row is blank
 					if (s.trim().equals("")) {
 						continue;
@@ -259,7 +266,8 @@ public class autoVerifyPaidHMOListwithMasterList {
 						continue;
 					}
 					
-					System.out.println("inputColumns[INPUT_DATE_COLUMN]: "+formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]));
+//					System.out.println("inputColumns[INPUT_DATE_COLUMN]: "+formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]));
+//					System.out.println("inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]: "+inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]);
 
 					
 					if (inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN].equals(formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]))) {

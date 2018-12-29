@@ -290,17 +290,22 @@ public class autoVerifyPaidHMOListwithMasterList {
 								if (isInDebugMode) {
 									System.out.println(">>>>>>>> IS NUMERIC");
 								}
-							}
+							}													
 
 							System.out.println("inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase());						
 
 							System.out.println("inputColumns[INPUT_FEE_COLUMN]: "+inputColumns[INPUT_FEE_COLUMN]);						
 
-							if ((int)Double.parseDouble(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]) == Integer.parseInt(inputColumns[INPUT_FEE_COLUMN])) {
+							if (Double.parseDouble(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]) == Double.parseDouble(inputColumns[INPUT_FEE_COLUMN])) {
+/*								
 								System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase());						
+*/
+								if (Double.parseDouble(inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN]) == Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN])) {								
+									System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN].toLowerCase());																
+								}
 							}
 						}
-//						Patient Name, Fee, Net PF
+//						Patient Name, Fee, Net PF, HMO
 						
 						System.out.println(">>"+formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]));
 					}

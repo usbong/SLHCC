@@ -20,6 +20,8 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
+import java.text.ParsePosition;
+
 //import java.lang.Integer;
 
 /*
@@ -50,7 +52,7 @@ import java.text.DecimalFormat;
 */ 
 
 public class autoVerifyPaidHMOListwithMasterList {	
-	private static boolean inDebugMode = false;
+	private static boolean isInDebugMode = false;
 	private static String inputFilename = "input201801"; //without extension; default input file
 	private static String inputHmoListFilename = "paidHmoList201811"; //without extension; default input file
 	
@@ -70,8 +72,8 @@ public class autoVerifyPaidHMOListwithMasterList {
 	private static final int INPUT_HMO_LIST_DATE_COLUMN = 1;
 	private static final int INPUT_HMO_LIST_HMO_COLUMN = 2;
 	private static final int INPUT_HMO_LIST_NAME_COLUMN = 3;
-	private static final int INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN = 5;
-	private static final int INPUT_HMO_LIST_NET_PF_COLUMN = 15;
+	private static final int INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN = 7;
+	private static final int INPUT_HMO_LIST_NET_PF_COLUMN = 20;
 
 	private static final int INPUT_CONSULTATION_OFFSET = 1;
 		
@@ -215,7 +217,7 @@ public class autoVerifyPaidHMOListwithMasterList {
 			hmoListString=hmoListScanner.nextLine(); //skip the first row, which is the input file's table headers
 
 			
-			if (inDebugMode) {
+			if (isInDebugMode) {
 				rowCount=0;
 			}
 						
@@ -255,7 +257,7 @@ public class autoVerifyPaidHMOListwithMasterList {
 
 					String[] inputColumns = s.split("\t");					
 
-					if (inDebugMode) {
+					if (isInDebugMode) {
 						rowCount++;
 						System.out.println("rowCount: "+rowCount);
 					}
@@ -276,11 +278,27 @@ public class autoVerifyPaidHMOListwithMasterList {
 						"inputColumns[INPUT_NAME_COLUMN].toLowerCase(): "+inputColumns[INPUT_NAME_COLUMN].toLowerCase()+"\t"+
 						"inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase());
 */					
-						if ((inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase().equals(inputColumns[INPUT_NAME_COLUMN].toLowerCase())))/* &&
-							((inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].equals(inputColumns[INPUT_FEE_COLUMN])))*/						
+						if (inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase().equals(inputColumns[INPUT_NAME_COLUMN].toLowerCase()))
 						{
-							System.out.println("inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase());
-							
+							if (!isNumeric(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN])) {
+								if (isInDebugMode) {
+									System.out.println("NOT NUMERIC");
+								}
+								continue;
+							}
+							else {
+								if (isInDebugMode) {
+									System.out.println(">>>>>>>> IS NUMERIC");
+								}
+							}
+
+							System.out.println("inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase());						
+
+							System.out.println("inputColumns[INPUT_FEE_COLUMN]: "+inputColumns[INPUT_FEE_COLUMN]);						
+
+							if ((int)Double.parseDouble(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]) == Integer.parseInt(inputColumns[INPUT_FEE_COLUMN])) {
+								System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase());						
+							}
 						}
 //						Patient Name, Fee, Net PF
 						
@@ -294,4 +312,12 @@ public class autoVerifyPaidHMOListwithMasterList {
 			}			
 		}
 	}	
+	
+	public static boolean isNumeric(String str)
+	{
+	  NumberFormat formatter = NumberFormat.getInstance();
+	  ParsePosition pos = new ParsePosition(0);
+	  formatter.parse(str, pos);
+	  return str.length() == pos.getIndex();
+	}
 }

@@ -70,7 +70,7 @@ public class autoVerifyPaidHMOListwithMasterList {
 	
 	private static final int INPUT_HMO_LIST_NOTES_COLUMN = 0;
 	private static final int INPUT_HMO_LIST_DATE_COLUMN = 1;
-	private static final int INPUT_HMO_LIST_HMO_COLUMN = 2;
+	private static final int INPUT_HMO_LIST_CLASS_COLUMN = 2;
 	private static final int INPUT_HMO_LIST_NAME_COLUMN = 3;
 	private static final int INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN = 7;
 	private static final int INPUT_HMO_LIST_NET_PF_COLUMN = 20;
@@ -301,7 +301,17 @@ public class autoVerifyPaidHMOListwithMasterList {
 								System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase());						
 */
 								if (Double.parseDouble(inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN]) == Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN])) {								
-									System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN].toLowerCase());																
+/*								
+									System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN].toLowerCase());		
+*/									
+
+/*
+									System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase());						
+									System.out.println(">> inputColumns[INPUT_CLASS_COLUMN].toLowerCase(): "+inputColumns[INPUT_CLASS_COLUMN].toLowerCase());						
+*/
+									if (inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase().trim().equals(inputColumns[INPUT_CLASS_COLUMN].toLowerCase().replace("hmo/","").trim())) {								
+										System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase());											
+									}
 								}
 							}
 						}

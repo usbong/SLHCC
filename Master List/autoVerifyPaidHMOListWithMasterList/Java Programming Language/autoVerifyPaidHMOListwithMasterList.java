@@ -62,6 +62,7 @@ public class autoVerifyPaidHMOListwithMasterList {
 	private static final int INPUT_NOTES_COLUMN = 0;
 	private static final int INPUT_DATE_COLUMN = 1;
 	private static final int INPUT_NAME_COLUMN = 3;
+	private static final int INPUT_FEE_COLUMN = 7;
 	private static final int INPUT_CLASS_COLUMN = 8; //HMO and NON-HMO
 	private static final int INPUT_NET_PF_COLUMN = 10;
 	
@@ -268,9 +269,21 @@ public class autoVerifyPaidHMOListwithMasterList {
 					
 //					System.out.println("inputColumns[INPUT_DATE_COLUMN]: "+formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]));
 //					System.out.println("inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]: "+inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]);
-
 					
 					if (inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN].equals(formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]))) {
+/*
+						System.out.println(
+						"inputColumns[INPUT_NAME_COLUMN].toLowerCase(): "+inputColumns[INPUT_NAME_COLUMN].toLowerCase()+"\t"+
+						"inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase());
+*/					
+						if ((inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase().equals(inputColumns[INPUT_NAME_COLUMN].toLowerCase())))/* &&
+							((inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].equals(inputColumns[INPUT_FEE_COLUMN])))*/						
+						{
+							System.out.println("inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase());
+							
+						}
+//						Patient Name, Fee, Net PF
+						
 						System.out.println(">>"+formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]));
 					}
 					

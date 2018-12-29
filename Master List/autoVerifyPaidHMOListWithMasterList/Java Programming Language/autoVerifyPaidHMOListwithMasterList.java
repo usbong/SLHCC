@@ -313,6 +313,9 @@ public class autoVerifyPaidHMOListwithMasterList {
 		}
 	}	
 	
+	//Reference: https://stackoverflow.com/questions/1102891/how-to-check-if-a-string-is-numeric-in-java;
+	//last accessed: 20181229
+	//answer by: CraigTP; edited by: MHosafy
 	public static boolean isNumeric(String str)
 	{
 	  NumberFormat formatter = NumberFormat.getInstance();

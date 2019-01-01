@@ -86,7 +86,8 @@ public class autoVerifyPaidHMOListwithMasterList {
 	
 	private static DecimalFormat df = new DecimalFormat("0.00"); //added by Mike, 20181105
 	private static int rowCount; //added by Mike, 20181105
-					
+	private static int hmoRowCount; //added by Mike, 20181230
+						
 	public static void main ( String[] args ) throws Exception
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
@@ -186,6 +187,9 @@ public class autoVerifyPaidHMOListwithMasterList {
 			return;
 		}
 		
+		PrintWriter writer = null;			
+		PrintWriter hmoListWriter = null;
+
 		for (int i=0; i<args.length; i++) {						
 			if (args[i].toLowerCase().contains("hmo")) {
 				continue;
@@ -194,8 +198,9 @@ public class autoVerifyPaidHMOListwithMasterList {
 			inputFilename = args[i].replaceAll(".txt","");			
 			File f = new File(inputFilename+".txt");
 						
-			PrintWriter writer = new PrintWriter("output/"+inputFilename+".txt", "UTF-8");			
-			PrintWriter hmoListWriter = new PrintWriter("output/"+inputHmoListFilename+".txt", "UTF-8");
+/*			writer = new PrintWriter("output/"+inputFilename+".txt", "UTF-8");			
+*/
+			hmoListWriter = new PrintWriter("output/"+inputHmoListFilename+".txt", "UTF-8");
 						
 			System.out.println("inputFilename: " + inputFilename);
 			
@@ -216,11 +221,9 @@ public class autoVerifyPaidHMOListwithMasterList {
 			String hmoListString;		
 			hmoListString=hmoListScanner.nextLine(); //skip the first row, which is the input file's table headers
 
+			rowCount=0;
+			hmoRowCount=0;
 			
-			if (isInDebugMode) {
-				rowCount=0;
-			}
-						
 			//count/compute the number-based values of inputColumns 
 			while (hmoListScanner.hasNextLine()) {
 				hmoListString=hmoListScanner.nextLine();
@@ -240,7 +243,11 @@ public class autoVerifyPaidHMOListwithMasterList {
 				if (inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN].equals("")) {
 					continue;
 				}
-	
+
+				//added by Mike, 20181230
+				writer = new PrintWriter("output/"+inputFilename+".txt", "UTF-8");			
+				hmoRowCount++;
+
 				Scanner sc = new Scanner(new FileInputStream(f));				
 			
 				String s;		
@@ -254,11 +261,12 @@ public class autoVerifyPaidHMOListwithMasterList {
 					if (s.trim().equals("")) {
 						continue;
 					}
-
+					
 					String[] inputColumns = s.split("\t");					
 
+					rowCount++;
+					
 					if (isInDebugMode) {
-						rowCount++;
 						System.out.println("rowCount: "+rowCount);
 					}
 					
@@ -310,7 +318,17 @@ public class autoVerifyPaidHMOListwithMasterList {
 									System.out.println(">> inputColumns[INPUT_CLASS_COLUMN].toLowerCase(): "+inputColumns[INPUT_CLASS_COLUMN].toLowerCase());						
 */
 									if (inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase().trim().equals(inputColumns[INPUT_CLASS_COLUMN].toLowerCase().replace("hmo/","").trim())) {								
-										System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase());											
+										System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase());			
+
+										//System.out.println(""+inputHmoListFilename);
+										//StringBuffer hmoListStringBuffer = new StringBuffer(hmoListString);
+										s = inputHmoListFilename + "\t" + s;
+										
+										System.out.println(">>>>> s: "+s);			
+
+										//hmoListWriter = new PrintWriter("output/"+inputHmoListFilename
+										writer.println(s);					
+										break;
 									}
 								}
 							}
@@ -321,11 +339,14 @@ public class autoVerifyPaidHMOListwithMasterList {
 					}
 					
 					writer.println(s);					
-				}
+				}				
+				writer.close();									
 				
 				hmoListWriter.println(hmoListString);					
 			}			
 		}
+		
+		hmoListWriter.close();					
 	}	
 	
 	//Reference: https://stackoverflow.com/questions/1102891/how-to-check-if-a-string-is-numeric-in-java;

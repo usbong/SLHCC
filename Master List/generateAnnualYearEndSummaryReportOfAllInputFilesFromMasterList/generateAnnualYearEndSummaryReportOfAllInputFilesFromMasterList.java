@@ -319,15 +319,20 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 /*
 		double totalNonHmoCount = 0;
 */
-		boolean hasInitTableHeader=false;
-
+		HashMap<String, Integer> totalCountForEachClassification = new HashMap<String, Integer>(); //added by Mike, 20190102
+		boolean hasInitTableHeader=false;		
+		SortedSet<String> sortedclassificationKeyset = null;
+		
 		for (String key : sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset) {				
-			SortedSet<String> sortedclassificationKeyset = new TreeSet<String>(classificationContainerPerMedicalDoctor.get(key).keySet());
+			sortedclassificationKeyset = new TreeSet<String>(classificationContainerPerMedicalDoctor.get(key).keySet());
 
 			if (!hasInitTableHeader) {
 				writer.print("\t");
 				for (String classificationKey : sortedclassificationKeyset) {	
 					writer.print(classificationKey+"\t");
+					
+					//added by Mike, 20190102
+					totalCountForEachClassification.put(classificationKey, 0);
 				}				
 				writer.print("\n");
 				hasInitTableHeader=true;
@@ -336,12 +341,13 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 			writer.print(key+"\t");
 
 			for (String classificationKey : sortedclassificationKeyset) {
-//				double classificationCount = 0;
-//				if (classificationContainerPerMedicalDoctor.get(key).get(classificationKey)!=null) {
-					double[] value = classificationContainerPerMedicalDoctor.get(key).get(classificationKey);
-					double classificationCount = value[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + value[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
-//				}
-//				System.out.println(">>" +key+" "+classificationKey+" "+classificationCount);
+				double[] value = classificationContainerPerMedicalDoctor.get(key).get(classificationKey);
+				double classificationCount = value[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + value[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+				
+				//added by Mike, 20190102
+				totalCountForEachClassification.put(classificationKey, totalCountForEachClassification.get(classificationKey)+(int)classificationCount);
+//				System.out.println(">>" +" "+classificationKey+" "+totalCountForEachClassification.get(classificationKey));
+
 				writer.print(classificationCount+"\t");
 			}			
 			
@@ -349,12 +355,13 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		}
 		
 		//TOTAL
-/*		writer.print(
-				"TOTAL:\t"+totalReferringMedicalDoctorTransactionCount+"\t"+totalNewPatientReferralTransactionCount+"\t"+
-				totalConsultationPerDoctorCount+"\t"+totalProcedurePerDoctorCount+"\n"							
-				); 				   							
-*/
+		writer.print("TOTAL:\t");
 				
+		//added by Mike, 20190102				
+		for (String classificationKey : sortedclassificationKeyset) {
+			writer.print(totalCountForEachClassification.get(classificationKey)+"\t");
+		}			
+		writer.print("\n");		
 		writer.close();
 	}
 	

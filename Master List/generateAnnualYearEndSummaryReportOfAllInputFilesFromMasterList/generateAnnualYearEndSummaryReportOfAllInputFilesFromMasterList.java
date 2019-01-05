@@ -172,10 +172,11 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		
 		//--------------------------------------------------------------------
 		//init table header names
-		writer.print("\tTREATMENT COUNT:\tCONSULTATION COUNT:\n"); 		
+		writer.print("\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\n"); 		
 
 		double totalTreatmentCount = 0;
 		double totalConsultationCount = 0; //added by Mike, 20181218
+		double totalProcedureCount = 0; //added by Mike, 20190105		
 		
 		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //divide by 2 because we have the same month-year for both TREATMENT and CONSULTATION
 			writer.print(convertDateToMonthYearInWords(dateValuesArrayInt[i])+"\t");
@@ -185,18 +186,22 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 			//added by Mike, 20181218
 			double consultationCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 
+			//added by Mike, 20190105
+			double procedureCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN];
 			
 			totalTreatmentCount += treatmentCount;
 			totalConsultationCount += consultationCount;
+			totalProcedureCount += procedureCount;
 			
 			writer.print(
 							treatmentCount+"\t"+						
-							consultationCount+"\n"							
+							consultationCount+"\t"+							
+							procedureCount+"\n"
 						); 				   							
 		}
 		//TOTAL
 		writer.print(
-				"TOTAL:\t"+totalTreatmentCount+"\t"+totalConsultationCount+"\n"							
+				"TOTAL:\t"+totalTreatmentCount+"\t"+totalConsultationCount+"\t"+totalProcedureCount+"\n"							
 				); 				   							
 
 
@@ -462,6 +467,11 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 								columnValuesArray[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 							}
 */							
+
+							//added by Mike, 20190105
+							if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().contains("p")) {
+								columnValuesArray[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] = 1;
+							}
 						}
 						else {
 							columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN] = 1;
@@ -474,6 +484,10 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 								columnValuesArray[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 							}
 */							
+							//added by Mike, 20190105
+							if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().contains("p")) {
+								columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN] = 1;
+							}
 						}						
 					}
 					
@@ -526,6 +540,10 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 								dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);							
 							}
 */							
+							//added by Mike, 20190105
+							if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().contains("p")) {
+								dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;
+							}
 						}
 						else {
 							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;					
@@ -539,6 +557,10 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 								dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);							
 							}
 */							
+							//added by Mike, 20190105
+							if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().contains("p")) {
+								dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]++;
+							}
 						}
 					}
 				}					

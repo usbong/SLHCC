@@ -89,6 +89,8 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 
 	private static final int OUTPUT_DATE_ID_COLUMN = 8; //added by Mike, 20181205
 	
+	private static boolean isConsultation; //added by Mike, 20190106
+
 	private static DecimalFormat df = new DecimalFormat("0.00"); //added by Mike, 20181105
 	private static int rowCount; //added by Mike, 20181105
 				
@@ -120,6 +122,21 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 
 			System.out.println("inputFilename: " + inputFilename);
 			
+			//added by Mike, 20181206
+			//edited by Mike, 20190106
+			if (dateValuesArrayInt[i]==0) {
+				dateValuesArrayInt[i] = Integer.parseInt(args[i].substring(args[i].indexOf("_")+1,args[i].indexOf(".txt")));
+			}
+			
+			if (inputFilename.toLowerCase().contains("consultation")) {
+				isConsultation=true;
+				continue;
+			}
+			else {
+				isConsultation=false;
+			}
+
+			
 			Scanner sc = new Scanner(new FileInputStream(f));				
 		
 			String s;		
@@ -143,13 +160,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				//added by Mike, 20180412
 				if (dateValuesArray[i]==null) {
 					dateValuesArray[i] = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);
-				}
-
-				//added by Mike, 20181206
-				if (dateValuesArrayInt[i]==0) {
-					dateValuesArrayInt[i] = Integer.parseInt(args[i].substring(args[i].indexOf("_")+1,args[i].indexOf(".txt")));
-				}
-				
+				}				
 				
 				//edited by Mike, 20181121
 				if (startDate==null) {
@@ -275,7 +286,8 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		//init table header names
 		writer.print("DATE:\t"); //"PT TREATMENT:" column
 
-		for(int i=0; i<dateValuesArrayInt.length; i++) {
+		//do not include input files that are Consultation transactions 
+		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //edited by Mike, 20190106
 			writer.print(dateValuesArrayInt[i]+"\t"); //"PT TREATMENT:" column
 		}
 		

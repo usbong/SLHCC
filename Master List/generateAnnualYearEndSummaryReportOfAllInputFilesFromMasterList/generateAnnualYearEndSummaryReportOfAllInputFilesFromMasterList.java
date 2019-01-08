@@ -216,6 +216,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 
 		//--------------------------------------------------------------------
 		//init table header names
+/*		
 		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\n"); 		
 
 		double totalTreatmentHMOCount = 0;
@@ -241,7 +242,41 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		writer.print(
 				"TOTAL:\t"+totalTreatmentHMOCount+"\t"+totalConsultationHMOCount+"\n"							
 				); 				   							
+*/
 
+		writer.print("\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\tMEDICAL CERTIFICATE COUNT:\n"); 		
+
+		double totalTreatmentHMOCount = 0;
+		double totalConsultationHMOCount = 0; //added by Mike, 20181219		
+		double totalProcedureHMOCount = 0; //added by Mike, 20190105		
+		double totalMedicalCertificateHMOCount = 0; //added by Mike, 20190107
+		
+		SortedSet<String> sortedKeyset = new TreeSet<String>(hmoContainer.keySet());
+
+		for (String key : sortedKeyset) {	
+			double treatmentCount = hmoContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
+			double consultationCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
+			double procedureCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]; //added by Mike, 20190105		
+			double medicalCertificateCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; //added by Mike, 20190107
+
+			totalTreatmentHMOCount += treatmentCount;
+			totalConsultationHMOCount += consultationCount;
+			totalProcedureHMOCount += procedureCount;
+			totalMedicalCertificateHMOCount += medicalCertificateCount;
+			
+			writer.print(
+							key + "\t" + 
+							treatmentCount+"\t"+							
+							consultationCount+"\t"+							
+							procedureCount+"\t"+							
+							medicalCertificateCount+"\n"							
+						); 				   							
+		}
+
+		//TOTAL
+		writer.print(
+				"TOTAL:\t"+totalTreatmentHMOCount+"\t"+totalConsultationHMOCount+"\t"+totalProcedureHMOCount+"\t"+totalMedicalCertificateHMOCount+"\n"
+				);					
 
 		//--------------------------------------------------------------------
 		//init table header names
@@ -662,11 +697,54 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 					
 					if (!hmoContainer.containsKey(hmoName)) {
 						columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];					
-						columnValuesArray[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] = 1;						
+						
+						//edited by Mike, 20190109
+						if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN].toLowerCase().trim().contains("mc")) {
+							columnValuesArray[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] = 1;						
+						}
+						else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().trim().contains("p")) {
+							//edited by Mike, 20190108
+							if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().trim().contains("/")) {
+								//do not include in count; only for NON-HMO/Cash payments
+/*								columnValuesArray[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] = 1;						
+								columnValuesArray[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] = 1;						
+*/								
+							}
+							else {
+								columnValuesArray[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] = 1;						
+							}
+						}	
+						else {
+							columnValuesArray[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] = 1;						
+						}
+						
+/*						columnValuesArray[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] = 1;						
+*/
 						hmoContainer.put(hmoName, columnValuesArray);
 					}
 					else {
-						hmoContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;					
+						//edited by Mike, 20190109
+						if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN].toLowerCase().trim().contains("mc")) {
+							hmoContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]++;						
+						}
+						else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().trim().contains("p")) {
+							//edited by Mike, 20190108
+							if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().trim().contains("/")) {
+								//do not include in count; only for NON-HMO/Cash payments
+/*								columnValuesArray[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;						
+								columnValuesArray[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;						
+*/								
+							}
+							else {
+								hmoContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;						
+							}
+						}	
+						else {
+							hmoContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;						
+						}
+					
+/*						hmoContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;					
+*/
 					}
 				}				
 			}

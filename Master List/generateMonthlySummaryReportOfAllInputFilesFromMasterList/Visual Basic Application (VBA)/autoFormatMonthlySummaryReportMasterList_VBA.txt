@@ -1,0 +1,88 @@
+Sub autoFormatMonthlySummaryReport()
+' Copyright 2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190114
+' @date updated: 20190114
+'
+' Master List
+' Given:
+' 1) Consultation Monthly Summary Report Worksheet and/or PT Treatment Monthly Summary Report Worksheet
+'
+' Output:
+' 1) Auto-formatted Monthly Summary Report Worksheet
+
+Dim myInput As Worksheet
+Dim myOutput As Worksheet 'the same as myInput
+Dim row As Range
+Dim RowCount As Integer
+Dim BlankRowCount As Integer
+Dim dateValue As String
+
+RowCount = 1
+BlankRowCount = 0
+ColorRowCount = 0
+
+Set myInput = Sheets(ActiveSheet.Name)
+Set myOutput = Sheets(ActiveSheet.Name)
+
+dateValue = myInput.Range("A3").Value
+
+'added by Mike, 20181127
+'clear/delete the contents, background color, and border of all used cells first
+'myOutput.UsedRange.ClearContents
+myOutput.UsedRange.Interior.ColorIndex = 0
+myOutput.UsedRange.Borders.LineStyle = xlNone
+
+myOutput.Range("A" & 1).Font.Bold = True
+
+For Each row In myInput.Rows
+       myOutput.Range("A" & RowCount, "M" & RowCount).Value = myInput.Range("A" & RowCount, "M" & RowCount).Value
+       
+       'auto-format the column header text to be in bold letters
+       If myInput.Range("A" & RowCount).Value = "DATE:" Then
+            myOutput.Range("A" & RowCount, "M" & RowCount).Font.Bold = True
+            
+            'added by Mike, 20181127
+            myOutput.Range("A" & RowCount, "M" & RowCount).Interior.ColorIndex = 15 'gray
+            ColorRowCount = 1
+       End If
+       
+       'auto-format the TOTAL, PAID, and UNPAID cells to use 2 decimals places for all values
+       'do not include the TRANSACTION COUNT row
+       If (InStr(myInput.Range("A" & RowCount).Value, "HMO") And InStr(myInput.Range("A" & RowCount).Value, "COUNT") = 0) Then
+            myOutput.Range("B" & RowCount, "M" & RowCount).NumberFormat = "0.00"
+       Else
+            myOutput.Range("B" & RowCount, "M" & RowCount).NumberFormat = "0"
+       End If
+       
+       If ColorRowCount Mod 2 = 0 Then 'even number
+          'do nothing
+       Else
+          myOutput.Range("A" & RowCount, "M" & RowCount).Interior.ColorIndex = 15 'gray
+       End If
+        
+       ColorRowCount = ColorRowCount + 1
+       
+       If IsEmpty(myInput.Range("A" & RowCount).Value) Then
+            BlankRowCount = BlankRowCount + 1
+            RowCount = RowCount + 1
+            
+            If (BlankRowCount > 2) Then
+                Exit For
+            End If
+       Else
+            RowCount = RowCount + 1
+       End If
+Next row
+
+'myOutput.Range("A" & RowCount, "G" & RowCount).Font.Size = 11
+'myOutput.Range("K" & 1, "K" & RowCount).Font.Name = "Calibri"
+'myOutput.Range("K" & 1, "K" & RowCount).NumberFormat = "0.00"
+End Sub

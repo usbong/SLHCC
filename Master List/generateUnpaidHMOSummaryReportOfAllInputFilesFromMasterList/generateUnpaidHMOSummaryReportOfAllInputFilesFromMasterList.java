@@ -158,7 +158,9 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 	public static void main ( String[] args ) throws Exception
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
-		PrintWriter writer = new PrintWriter("output/UnpaidHMOSummaryReportOutput.txt", "UTF-8");			
+		PrintWriter consultationWriter = new PrintWriter("output/UnpaidHMOSummaryReportOutputConsultation.txt", "UTF-8");			
+		PrintWriter treatmentWriter = new PrintWriter("output/UnpaidHMOSummaryReportOutputTreatment.txt", "UTF-8");			
+
 		/*referringDoctorContainer = new HashMap<String, double[]>();
 		*/
 		
@@ -191,15 +193,15 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 		 * --------------------------------------------------------------------
 		*/
 		//added by Mike, 20181118
-		writer.print("Unpaid HMO Summary Report\n");
+		consultationWriter.print("Unpaid HMO Summary Report (CONSULTATION)\n");
 		
 		//--------------------------------------------------------------------
 		//init table header names
-		writer.print("CONSULTATION\n");
-		writer.print("DATE:\tPATIENT NAME:\tFEE:\tCLASSIFICATION:\tAPPROVAL CODE:\n"); 		
+//		writer.print("CONSULTATION\n");
+		consultationWriter.print("DATE:\tPATIENT NAME:\tFEE:\tCLASSIFICATION:\tAPPROVAL CODE:\n"); 		
 		for(int i=0; i<transactionDateContainer.size(); i++) {
 			if (transactionDateContainer.get(i)[OUTPUT_HMO_FILE_TYPE_COLUMN].toLowerCase().trim().equals("consultation")){
-				writer.print(
+				consultationWriter.print(
 								transactionDateContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+"\t"+
 								transactionDateContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]+"\t"+
 								transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN]+"\t"+
@@ -210,11 +212,13 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 			}
 		}
 
-		writer.print("\nPT TREATMENT\n");
-		writer.print("DATE:\tPATIENT NAME:\tFEE:\tCLASSIFICATION:\tAPPROVAL CODE:\n"); 		
+		treatmentWriter.print("Unpaid HMO Summary Report (PT TREATMENT)\n");
+
+//		treatmentWriter.print("\nPT TREATMENT\n");
+		treatmentWriter.print("DATE:\tPATIENT NAME:\tFEE:\tCLASSIFICATION:\tAPPROVAL CODE:\n"); 		
 		for(int i=0; i<transactionDateContainer.size(); i++) {
 			if (transactionDateContainer.get(i)[OUTPUT_HMO_FILE_TYPE_COLUMN].toLowerCase().trim().equals("treatment")){
-				writer.print(
+				treatmentWriter.print(
 								transactionDateContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+"\t"+
 								transactionDateContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]+"\t"+
 								transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN]+"\t"+
@@ -223,7 +227,9 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 							); 				   											
 			}
 		}
-		writer.close();
+		
+		consultationWriter.close();		
+		treatmentWriter.close();
 	}
 	
 	private static String convertDateToMonthYearInWords(int date) {

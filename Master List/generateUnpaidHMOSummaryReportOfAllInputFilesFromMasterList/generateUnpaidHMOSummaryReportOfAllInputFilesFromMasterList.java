@@ -197,6 +197,10 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 		consultationWriter.print("Unpaid HMO Summary Report (CONSULTATION)\n");
 		
 		//--------------------------------------------------------------------
+		//added by Mike, 20190122
+		double totalUnpaidHMOFeeConsultation = 0;
+		double totalUnpaidHMOFeeTreatment = 0;
+		
 		//init table header names
 //		writer.print("CONSULTATION\n");
 		consultationWriter.print("DATE:\tPATIENT NAME:\tFEE:\tCLASSIFICATION:\tAPPROVAL CODE:\n"); 		
@@ -210,8 +214,12 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 //								transactionDateContainer.get(i)[OUTPUT_HMO_APPROVAL_CODE_COLUMN]+"\n"
 								"\t\n"
 							); 				   											
+							
+				//added by Mike, 20190122
+				totalUnpaidHMOFeeConsultation += Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN].replace("\"","").replace(",",""));
 			}
 		}
+		consultationWriter.print("TOTAL:\t\t"+totalUnpaidHMOFeeConsultation+"\n"); 		
 
 		treatmentWriter.print("Unpaid HMO Summary Report (PT TREATMENT)\n");
 
@@ -226,8 +234,12 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 								transactionDateContainer.get(i)[OUTPUT_HMO_CLASS_COLUMN]+"\t"+
 								transactionDateContainer.get(i)[OUTPUT_HMO_APPROVAL_CODE_COLUMN]+"\n"
 							); 				   											
+							
+				//added by Mike, 20190122
+				totalUnpaidHMOFeeTreatment += Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN].replace("\"","").replace(",",""));
 			}
 		}
+		treatmentWriter.print("TOTAL:\t\t"+totalUnpaidHMOFeeTreatment+"\n"); 		
 		
 		consultationWriter.close();		
 		treatmentWriter.close();

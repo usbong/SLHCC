@@ -75,6 +75,7 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 	private static final int INPUT_CONSULTATION_PROCEDURE_COLUMN = 2;
 	//added by Mike, 20190107
 	private static final int INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN = 2; //The int value is the same as "INPUT_CONSULTATION_PROCEDURE_COLUMN".
+	private static final int INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN = 16; //added by Mike, 20190122
 
 	//added by Mike, 20181218
 	//CONSULTATION
@@ -304,16 +305,21 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 			}
 		}
 		else {												
-			columnValuesStringArray[OUTPUT_HMO_FILE_TYPE_COLUMN] = "CONSULTATION";
-			columnValuesStringArray[OUTPUT_HMO_FEE_COLUMN] = inputColumns[INPUT_CONSULTATION_FEE_COLUMN];
-			columnValuesStringArray[OUTPUT_HMO_CLASS_COLUMN] = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET];
+			//added by Mike, 20190122
+			//do the set of instructions if the MEDICAL DOCTOR has the keywords "syson" and "pedro"
+			if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toLowerCase().trim().contains("syson")) &&
+						(inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toLowerCase().trim().contains("pedro"))) {
+				columnValuesStringArray[OUTPUT_HMO_FILE_TYPE_COLUMN] = "CONSULTATION";
+				columnValuesStringArray[OUTPUT_HMO_FEE_COLUMN] = inputColumns[INPUT_CONSULTATION_FEE_COLUMN];
+				columnValuesStringArray[OUTPUT_HMO_CLASS_COLUMN] = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET];
 
-			if ((inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) ||
-				(inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
-				if (!inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
-					transactionDateContainer.add(columnValuesStringArray);
-				}
-			}
+				if ((inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) ||
+					(inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
+					if (!inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+						transactionDateContainer.add(columnValuesStringArray);
+					}
+				}							
+			}					
 		}
 	}
 

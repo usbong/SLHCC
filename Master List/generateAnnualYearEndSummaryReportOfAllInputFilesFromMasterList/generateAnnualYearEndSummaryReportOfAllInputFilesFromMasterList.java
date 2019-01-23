@@ -21,6 +21,9 @@ import java.util.regex.Matcher;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 //import java.lang.Integer;
+//import commons-lang3-3.8.1;
+//import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 
 /*
 ' Given:
@@ -52,6 +55,18 @@ import java.text.DecimalFormat;
 '   java generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList *"2018"*.txt
 '
 ' where: * means any set of characters
+'
+' 5) To compile on Windows' Command Prompt the add-on software with the Apache Commons Text .jar file, i.e. org.apache.commons.text, use the following command:
+'   javac -cp .;org.apache.commons.text.jar generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList.java
+'
+' 6) To execute on Windows' Command Prompt the add-on software with the Apache Commons Text .jar file, i.e. org.apache.commons.text, use the following command:
+'   java -cp .;org.apache.commons.text.jar generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList
+'
+' 7) The Apache Commons Text binaries with the .jar file can be downloaded here:
+'   http://commons.apache.org/proper/commons-text/download_text.cgi; last accessed: 20190123
+'
+' 8) The documentation for the LevenshteinDistance can be viewed here:
+'   https://commons.apache.org/proper/commons-text/javadocs/api-release/org/apache/commons/text/similarity/LevenshteinDistance.html; last accessed: 20190123
 */ 
 
 public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {	
@@ -165,6 +180,14 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		setClassificationContainerPerMedicalDoctor(classificationContainerPerMedicalDoctor);
 		processInputFiles(args, false);
 				
+		//TODO: -apply: this properly in the add-on software to consolidate similar Strings, e.g. Medical Doctor, whose difference may only be an excess space between characters, etc
+		//added by Mike, 20190123
+		LevenshteinDistance myLevenshteinDistance = new LevenshteinDistance();
+		System.out.println(">>> Compare the Difference between Strings!");		
+		System.out.println(myLevenshteinDistance.apply("1234567890", "1")); //answer: 9
+		System.out.println(myLevenshteinDistance.apply("123", "123")); //answer: 0
+		System.out.println(myLevenshteinDistance.apply("123", "132")); //answer: 2
+		System.out.println(myLevenshteinDistance.apply("132", "1 32")); //answer: 1
 		
 		/*
 		 * --------------------------------------------------------------------

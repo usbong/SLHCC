@@ -750,7 +750,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				if ((inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) ||
 					(inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
 
-					String hmoName = inputColumns[INPUT_CLASS_COLUMN].toUpperCase();
+					String hmoName = inputColumns[INPUT_CLASS_COLUMN].trim().toUpperCase();
 					
 					if (!hmoContainer.containsKey(hmoName)) {
 						columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
@@ -785,7 +785,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				if ((inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) ||
 					(inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
 
-					String hmoName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].toUpperCase();
+					String hmoName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
 					
 					if (!hmoContainer.containsKey(hmoName)) {
 						columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];					
@@ -850,7 +850,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 			if ((!inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) &&
 				(!inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
 
-				String classificationName = inputColumns[INPUT_CLASS_COLUMN];
+				String classificationName = inputColumns[INPUT_CLASS_COLUMN].trim().toUpperCase();
 				
 				if (!nonHmoContainer.containsKey(classificationName)) {
 					columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
@@ -885,7 +885,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 			if ((!inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) &&
 				(!inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
 
-				String classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET];
+				String classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
 				System.out.println("classificationName: "+classificationName); 
 				
 				if (inDebugMode) {
@@ -1193,10 +1193,10 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	//added by Mike, 20181220
 	private static void processMedicalDoctorTransactionPerClassificationCount(HashMap<String, HashMap<String, double[]>> classificationContainerPerMedicalDoctor, String[] inputColumns, Boolean isConsultation) {				
 
-		String medicalDoctorKey = inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET].toUpperCase();
+		String medicalDoctorKey = inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
 	
 		if (isConsultation) {			
-			String classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].toUpperCase(); //added by Mike, 20181220
+			String classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase(); //added by Mike, 20181220
 //			System.out.println(">"+" "+classificationName);
 //			System.out.println(">>> "+inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]);
 
@@ -1257,7 +1257,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		}		
 	}
 
-	//TODO: remove key.toUpperCase() due to it not being necessary when the contents in the container are already capitalized
+	//TODO: remove key.trim().toUpperCase() due to it not being necessary when the contents in the container are already capitalized
 	private static void setClassificationContainerPerMedicalDoctor(HashMap<String, HashMap<String, double[]>> classificationContainerPerMedicalDoctor) {
 		SortedSet<String> sortedHmoContainerKeyset = new TreeSet<String>(hmoContainer.keySet());
 		SortedSet<String> sortedNonHmoContainerKeyset = new TreeSet<String>(nonHmoContainer.keySet());
@@ -1271,17 +1271,17 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 //	System.out.println("hmoKey: "+key);		
 //	System.out.println("classificationContainerColumnValuesArray: "+classificationContainerColumnValuesArray[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]);		
 				classificationContainerColumnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];				
-				classificationContainerHashmap.put(key.toUpperCase(), classificationContainerColumnValuesArray);			
+				classificationContainerHashmap.put(key.trim().toUpperCase(), classificationContainerColumnValuesArray);			
 			}
 
 			for (String key : sortedNonHmoContainerKeyset) {								
 //	System.out.println("nonHmoKey: "+key);		
 //	System.out.println("classificationContainerColumnValuesArray: "+classificationContainerColumnValuesArray[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);		
 				classificationContainerColumnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];				
-				classificationContainerHashmap.put(key.toUpperCase(), classificationContainerColumnValuesArray);
+				classificationContainerHashmap.put(key.trim().toUpperCase(), classificationContainerColumnValuesArray);
 			}
 
-			classificationContainerPerMedicalDoctor.put(medicalDoctorKey.toUpperCase(), classificationContainerHashmap);
+			classificationContainerPerMedicalDoctor.put(medicalDoctorKey.trim().toUpperCase(), classificationContainerHashmap);
 		}					
 /*		
 		for (String key : sortedMedicalDoctorKeyset) {						

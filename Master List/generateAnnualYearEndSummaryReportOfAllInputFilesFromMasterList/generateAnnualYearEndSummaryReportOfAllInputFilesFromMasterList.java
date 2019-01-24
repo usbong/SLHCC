@@ -23,8 +23,8 @@ import java.text.DecimalFormat;
 //import java.lang.Integer;
 //import commons-lang3-3.8.1;
 //import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.similarity.LevenshteinDistance;
-
+/*import org.apache.commons.text.similarity.LevenshteinDistance;
+*/
 /*
 ' Given:
 ' 1) Encoding for the Month Input Worksheet
@@ -179,7 +179,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		//PART/COMPONENT/MODULE/PHASE 2		
 		setClassificationContainerPerMedicalDoctor(classificationContainerPerMedicalDoctor);
 		processInputFiles(args, false);
-				
+/*				
 		//TODO: -apply: this properly in the add-on software to consolidate similar Strings, e.g. Medical Doctor, whose difference may only be an excess space between characters, etc
 		//added by Mike, 20190123
 		LevenshteinDistance myLevenshteinDistance = new LevenshteinDistance();
@@ -188,7 +188,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		System.out.println(myLevenshteinDistance.apply("123", "123")); //answer: 0
 		System.out.println(myLevenshteinDistance.apply("123", "132")); //answer: 2
 		System.out.println(myLevenshteinDistance.apply("132", "1 32")); //answer: 1
-		
+*/		
 		/*
 		 * --------------------------------------------------------------------
 		 * OUTPUT
@@ -241,16 +241,13 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		//init table header names
 /*		
 		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\n"); 		
-
 		double totalTreatmentHMOCount = 0;
 		double totalConsultationHMOCount = 0; //added by Mike, 20181219
 		
 		SortedSet<String> sortedKeyset = new TreeSet<String>(hmoContainer.keySet());
-
 		for (String key : sortedKeyset) {	
 			double treatmentCount = hmoContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
 			double consultationCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
-
 			totalTreatmentHMOCount += treatmentCount;
 			totalConsultationHMOCount += consultationCount;
 			
@@ -260,7 +257,6 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 							consultationCount+"\n"							
 						); 				   							
 		}
-
 		//TOTAL
 		writer.print(
 				"TOTAL:\t"+totalTreatmentHMOCount+"\t"+totalConsultationHMOCount+"\n"							
@@ -305,16 +301,13 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		//init table header names
 /*		
 		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\n"); 		
-
 		double totalTreatmentNONHMOCount = 0;
 		double totalConsultationNONHMOCount = 0; //added by Mike, 20181219
 		
 		SortedSet<String> sortedNONHMOKeyset = new TreeSet<String>(nonHmoContainer.keySet());
-
 		for (String key : sortedNONHMOKeyset) {	
 			double treatmentCount = nonHmoContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
 			double consultationCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
-
 			totalTreatmentNONHMOCount += treatmentCount;
 			totalConsultationNONHMOCount += consultationCount;
 			
@@ -324,7 +317,6 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 							consultationCount+"\n"							
 						); 				   							
 		}
-
 		//TOTAL
 		writer.print(
 				"TOTAL:\t"+totalTreatmentNONHMOCount+"\t"+totalConsultationHMOCount+"\n"							
@@ -416,25 +408,19 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 
 /*		
 		writer.print("\n\tTREATMENT COUNT:\tNEW PATIENT REFERRAL COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\n"); 
-
 		double totalReferringMedicalDoctorTransactionCount = 0;
 		double totalNewPatientReferralTransactionCount = 0;
 		double totalConsultationPerDoctorCount = 0;
 		double totalProcedurePerDoctorCount = 0;
 		
 		SortedSet<String> sortedReferringMedicalDoctorTransactionCountKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
-
 		for (String key : sortedReferringMedicalDoctorTransactionCountKeyset) {	
 			double count = referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
-
 			double newPatientReferralTransactionCount = referringDoctorContainer.get(key)[OUTPUT_HMO_NEW_OLD_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN];
-
 			//added by Mike, 20181219
 			double consultationCount = referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
-
 			//added by Mike, 20181219
 			double procedureCount = referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN];
-
 			totalReferringMedicalDoctorTransactionCount += count;
 			totalNewPatientReferralTransactionCount += newPatientReferralTransactionCount;
 			totalConsultationPerDoctorCount += consultationCount;
@@ -448,7 +434,6 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 							procedureCount+"\n"		
 							); 				   							
 		}
-
 		//TOTAL
 		writer.print(
 				"TOTAL:\t"+totalReferringMedicalDoctorTransactionCount+"\t"+totalNewPatientReferralTransactionCount+"\t"+
@@ -765,7 +750,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				if ((inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) ||
 					(inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
 
-					String hmoName = inputColumns[INPUT_CLASS_COLUMN];
+					String hmoName = inputColumns[INPUT_CLASS_COLUMN].toUpperCase();
 					
 					if (!hmoContainer.containsKey(hmoName)) {
 						columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
@@ -800,7 +785,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				if ((inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) ||
 					(inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
 
-					String hmoName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET];
+					String hmoName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].toUpperCase();
 					
 					if (!hmoContainer.containsKey(hmoName)) {
 						columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];					
@@ -1151,7 +1136,6 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 					}
 
 /*												`		referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;				
-
 					//added by Mike, 20181219
 					if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().contains("p")) {
 						//edited by Mike, 20181221
@@ -1194,7 +1178,6 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 					
 /*					
 					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;					
-
 					//added by Mike, 20181219
 					if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().contains("p")) {
 						//edited by Mike, 20181221
@@ -1210,8 +1193,10 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	//added by Mike, 20181220
 	private static void processMedicalDoctorTransactionPerClassificationCount(HashMap<String, HashMap<String, double[]>> classificationContainerPerMedicalDoctor, String[] inputColumns, Boolean isConsultation) {				
 
+		String medicalDoctorKey = inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET].toUpperCase();
+	
 		if (isConsultation) {			
-			String classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET]; //added by Mike, 20181220
+			String classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].toUpperCase(); //added by Mike, 20181220
 //			System.out.println(">"+" "+classificationName);
 //			System.out.println(">>> "+inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]);
 
@@ -1222,20 +1207,20 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 */					
 					//edited by Mike, 20190107
 					if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN].toLowerCase().trim().contains("mc")) {
-						classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]++;
+						classificationContainerPerMedicalDoctor.get(medicalDoctorKey).get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]++;
 					}
 					else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().trim().contains("p")) {
 						//edited by Mike, 20190108
 						if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().trim().contains("/")) {
-							classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]++;
-							classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;
+							classificationContainerPerMedicalDoctor.get(medicalDoctorKey).get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]++;
+							classificationContainerPerMedicalDoctor.get(medicalDoctorKey).get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;
 						}
 						else {
-							classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]++;
+							classificationContainerPerMedicalDoctor.get(medicalDoctorKey).get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]++;
 						}
 					}	
 					else {
-						classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;
+						classificationContainerPerMedicalDoctor.get(medicalDoctorKey).get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;
 					}
 
 					
@@ -1250,20 +1235,20 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 
 					//edited by Mike, 20190107
 					if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN].toLowerCase().trim().contains("mc")) {
-						classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]++;
+						classificationContainerPerMedicalDoctor.get(medicalDoctorKey).get(classificationName)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]++;
 					}
 					else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().trim().contains("p")) {
 						//edited by Mike, 20190108
 						if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().trim().contains("/")) {
-							classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;
-							classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;
+							classificationContainerPerMedicalDoctor.get(medicalDoctorKey).get(classificationName)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;
+							classificationContainerPerMedicalDoctor.get(medicalDoctorKey).get(classificationName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;
 						}
 						else {
-							classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;
+							classificationContainerPerMedicalDoctor.get(medicalDoctorKey).get(classificationName)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;
 						}
 					}	
 					else {
-						classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;
+						classificationContainerPerMedicalDoctor.get(medicalDoctorKey).get(classificationName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;
 					}
 
 //					System.out.println(">>>>> HMO count: "+classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]);
@@ -1272,6 +1257,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		}		
 	}
 
+	//TODO: remove key.toUpperCase() due to it not being necessary when the contents in the container are already capitalized
 	private static void setClassificationContainerPerMedicalDoctor(HashMap<String, HashMap<String, double[]>> classificationContainerPerMedicalDoctor) {
 		SortedSet<String> sortedHmoContainerKeyset = new TreeSet<String>(hmoContainer.keySet());
 		SortedSet<String> sortedNonHmoContainerKeyset = new TreeSet<String>(nonHmoContainer.keySet());
@@ -1285,17 +1271,17 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 //	System.out.println("hmoKey: "+key);		
 //	System.out.println("classificationContainerColumnValuesArray: "+classificationContainerColumnValuesArray[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]);		
 				classificationContainerColumnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];				
-				classificationContainerHashmap.put(key, classificationContainerColumnValuesArray);			
+				classificationContainerHashmap.put(key.toUpperCase(), classificationContainerColumnValuesArray);			
 			}
 
-			for (String key : sortedNonHmoContainerKeyset) {				
+			for (String key : sortedNonHmoContainerKeyset) {								
 //	System.out.println("nonHmoKey: "+key);		
 //	System.out.println("classificationContainerColumnValuesArray: "+classificationContainerColumnValuesArray[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);		
 				classificationContainerColumnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];				
-				classificationContainerHashmap.put(key, classificationContainerColumnValuesArray);
+				classificationContainerHashmap.put(key.toUpperCase(), classificationContainerColumnValuesArray);
 			}
 
-			classificationContainerPerMedicalDoctor.put(medicalDoctorKey, classificationContainerHashmap);
+			classificationContainerPerMedicalDoctor.put(medicalDoctorKey.toUpperCase(), classificationContainerHashmap);
 		}					
 /*		
 		for (String key : sortedMedicalDoctorKeyset) {						
@@ -1413,7 +1399,6 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	private static void resetNonHMOContainerCount() {
 		//added by Mike, 20181220
 		SortedSet<String> sortedNONHMOKeyset = new TreeSet<String>(nonHmoContainer.keySet());
-
 		for (String key : sortedNONHMOKeyset) {	
 			nonHmoContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN] = 0;
 			nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN] = 0;

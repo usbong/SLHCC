@@ -1263,7 +1263,6 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		}		
 	}
 
-	//TODO: remove key due to it not being necessary when the contents in the container are already capitalized
 	private static void setClassificationContainerPerMedicalDoctor(HashMap<String, HashMap<String, double[]>> classificationContainerPerMedicalDoctor) {
 		SortedSet<String> sortedHmoContainerKeyset = new TreeSet<String>(hmoContainer.keySet());
 		SortedSet<String> sortedNonHmoContainerKeyset = new TreeSet<String>(nonHmoContainer.keySet());

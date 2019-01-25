@@ -23,8 +23,8 @@ import java.text.DecimalFormat;
 //import java.lang.Integer;
 //import commons-lang3-3.8.1;
 //import org.apache.commons.lang3.StringUtils;
-/*import org.apache.commons.text.similarity.LevenshteinDistance;
-*/
+import org.apache.commons.text.similarity.LevenshteinDistance;
+
 /*
 ' Given:
 ' 1) Encoding for the Month Input Worksheet
@@ -60,7 +60,7 @@ import java.text.DecimalFormat;
 '   javac -cp .;org.apache.commons.text.jar generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList.java
 '
 ' 6) To execute on Windows' Command Prompt the add-on software with the Apache Commons Text .jar file, i.e. org.apache.commons.text, use the following command:
-'   java -cp .;org.apache.commons.text.jar generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList
+'   java -cp .;org.apache.commons.text.jar generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList *.txt
 '
 ' 7) The Apache Commons Text binaries with the .jar file can be downloaded here:
 '   http://commons.apache.org/proper/commons-text/download_text.cgi; last accessed: 20190123
@@ -179,10 +179,15 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		//PART/COMPONENT/MODULE/PHASE 2		
 		setClassificationContainerPerMedicalDoctor(classificationContainerPerMedicalDoctor);
 		processInputFiles(args, false);
-/*				
+				
+				
+		//added by Mike, 20190125
+		processContainers();
+/*		
 		//TODO: -apply: this properly in the add-on software to consolidate similar Strings, e.g. Medical Doctor, whose difference may only be an excess space between characters, etc
 		//added by Mike, 20190123
 		LevenshteinDistance myLevenshteinDistance = new LevenshteinDistance();
+		
 		System.out.println(">>> Compare the Difference between Strings!");		
 		System.out.println(myLevenshteinDistance.apply("1234567890", "1")); //answer: 9
 		System.out.println(myLevenshteinDistance.apply("123", "123")); //answer: 0
@@ -271,7 +276,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		double totalMedicalCertificateHMOCount = 0; //added by Mike, 20190107
 		
 		SortedSet<String> sortedKeyset = new TreeSet<String>(hmoContainer.keySet());
-
+		
 		for (String key : sortedKeyset) {	
 			double treatmentCount = hmoContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
 			double consultationCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
@@ -1410,4 +1415,58 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		}
 	}
 */	
+	private static void processContainers() {
+		LevenshteinDistance myLevenshteinDistance = new LevenshteinDistance();
+		
+		SortedSet<String> sortedHMOKeyset = new TreeSet<String>(hmoContainer.keySet());
+		for (String key : sortedHMOKeyset) {	
+			for (String keyTwo : sortedHMOKeyset) {
+/*				
+				int lengthOfLongestKey = key.length();
+				
+				if (key.equals(keyTwo)) {
+					continue;
+				}
+				
+				if (key.length() < keyTwo.length()) {
+					lengthOfLongestKey = keyTwo.length();
+				}
+*/				
+				System.out.println(">>> Compare the Difference between Strings!");		
+/*				System.out.println(myLevenshteinDistance.apply(key, keyTwo));
+				System.out.println("key: "+key+" : keyTwo: "+keyTwo);
+*/
+				//compare the two key strings; if the result is a numerical value that is less than 3, combine the two 
+				if (myLevenshteinDistance.apply(key, keyTwo)<3) {
+					System.out.println(myLevenshteinDistance.apply(key, keyTwo));
+					System.out.println("key: "+key+" : keyTwo: "+keyTwo);
+
+					//treatmentCount 
+					hmoContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] += hmoContainer.get(keyTwo)[OUTPUT_HMO_COUNT_COLUMN];
+
+					//consultationCount
+					hmoContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] += hmoContainer.get(keyTwo)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
+
+					//procedureCount
+					hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] += hmoContainer.get(keyTwo)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]; 		
+
+					//medicalCertificateCount
+					hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] += hmoContainer.get(keyTwo)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; 	
+
+					hmoContainer.remove(keyTwo);
+				}
+			}
+		}
+/*		
+		System.out.println(">>> Compare the Difference between Strings!");		
+		System.out.println(myLevenshteinDistance.apply("1234567890", "1")); //answer: 9
+	
+		hmoContainer = new HashMap<String, double[]>();
+		nonHmoContainer = new HashMap<String, double[]>();
+		referringDoctorContainer = new HashMap<String, double[]>();
+//		medicalDoctorContainer = new HashMap<String, double[]>();
+		classificationContainerPerMedicalDoctor = new HashMap<String, HashMap<String, double[]>>();				
+*/				
+
+	}
 }

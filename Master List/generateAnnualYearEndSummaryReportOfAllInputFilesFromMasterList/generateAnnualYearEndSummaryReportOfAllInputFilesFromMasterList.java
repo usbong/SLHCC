@@ -153,6 +153,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	private static double[] classificationContainerColumnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
 	private static boolean hasSetClassificationContainerPerMedicalDoctor=false;
 	
+	//added by Mike, 20190126
+	private static LevenshteinDistance myLevenshteinDistance;
+	
 	public static void main ( String[] args ) throws Exception
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
@@ -1415,27 +1418,63 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		}
 	}
 */	
-	private static void processContainers() {
-		LevenshteinDistance myLevenshteinDistance = new LevenshteinDistance();
+	//added by Mike, 20190126
+	private static void consolidateKeysAndTheirValuesInContainer(HashMap<String, double[]> container) {
+		SortedSet<String> sortedKeyset = new TreeSet<String>(container.keySet());
+		SortedSet<String> sortedKeysetTwo = new TreeSet<String>(container.keySet());
 		
-		SortedSet<String> sortedHMOKeyset = new TreeSet<String>(hmoContainer.keySet());
-		for (String key : sortedHMOKeyset) {	
-			for (String keyTwo : sortedHMOKeyset) {
-/*				
-				int lengthOfLongestKey = key.length();
-				
-				if (key.equals(keyTwo)) {
-					continue;
-				}
-				
-				if (key.length() < keyTwo.length()) {
-					lengthOfLongestKey = keyTwo.length();
-				}
-*/				
+		for (String key : sortedKeyset) {	
+			for (String keyTwo : sortedKeysetTwo) {				
 				System.out.println(">>> Compare the Difference between Strings!");		
 /*				System.out.println(myLevenshteinDistance.apply(key, keyTwo));
 				System.out.println("key: "+key+" : keyTwo: "+keyTwo);
 */
+				if (key.equals(keyTwo)) {
+					continue;
+				}
+
+				//compare the two key strings; if the result is a numerical value that is less than 3, combine the two 
+				if (myLevenshteinDistance.apply(key, keyTwo)<3) {
+/*					
+					System.out.println(myLevenshteinDistance.apply(key, keyTwo));
+					System.out.println("key: "+key+" : keyTwo: "+keyTwo);
+					System.out.println("container.get(key)[OUTPUT_HMO_COUNT_COLUMN]: "+container.get(key)[OUTPUT_HMO_COUNT_COLUMN]);
+					System.out.println("container.get(keyTwo)[OUTPUT_HMO_COUNT_COLUMN]: "+container.get(keyTwo)[OUTPUT_HMO_COUNT_COLUMN]);
+*/					
+					//treatmentCount 
+					container.get(key)[OUTPUT_HMO_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_HMO_COUNT_COLUMN];
+/*
+					System.out.println("container.get(key)[OUTPUT_HMO_COUNT_COLUMN]: "+container.get(key)[OUTPUT_HMO_COUNT_COLUMN]);
+*/					
+					//consultationCount
+					container.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
+
+					//procedureCount
+					container.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]; 		
+
+					//medicalCertificateCount
+					container.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; 	
+
+					container.remove(keyTwo);
+					consolidateKeysAndTheirValuesInContainer(container);
+					return;
+				}
+			}
+		}			
+//		return container;
+	}
+
+	private static void processContainers() {
+		myLevenshteinDistance = new LevenshteinDistance();
+		consolidateKeysAndTheirValuesInContainer(hmoContainer);
+/*		
+		SortedSet<String> sortedHMOKeyset = new TreeSet<String>(hmoContainer.keySet());
+		for (String key : sortedHMOKeyset) {	
+			for (String keyTwo : sortedHMOKeyset) {
+				System.out.println(">>> Compare the Difference between Strings!");		
+//				System.out.println(myLevenshteinDistance.apply(key, keyTwo));
+//				System.out.println("key: "+key+" : keyTwo: "+keyTwo);
+
 				//compare the two key strings; if the result is a numerical value that is less than 3, combine the two 
 				if (myLevenshteinDistance.apply(key, keyTwo)<3) {
 					System.out.println(myLevenshteinDistance.apply(key, keyTwo));
@@ -1457,16 +1496,15 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				}
 			}
 		}
-/*		
-		System.out.println(">>> Compare the Difference between Strings!");		
-		System.out.println(myLevenshteinDistance.apply("1234567890", "1")); //answer: 9
+*/		
+		
+//		System.out.println(">>> Compare the Difference between Strings!");		
+//		System.out.println(myLevenshteinDistance.apply("1234567890", "1")); //answer: 9
 	
-		hmoContainer = new HashMap<String, double[]>();
-		nonHmoContainer = new HashMap<String, double[]>();
-		referringDoctorContainer = new HashMap<String, double[]>();
-//		medicalDoctorContainer = new HashMap<String, double[]>();
-		classificationContainerPerMedicalDoctor = new HashMap<String, HashMap<String, double[]>>();				
-*/				
-
+//		hmoContainer = new HashMap<String, double[]>();
+//		nonHmoContainer = new HashMap<String, double[]>();
+//		referringDoctorContainer = new HashMap<String, double[]>();
+////		medicalDoctorContainer = new HashMap<String, double[]>();
+//		classificationContainerPerMedicalDoctor = new HashMap<String, HashMap<String, double[]>>();								
 	}
 }

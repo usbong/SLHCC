@@ -1425,7 +1425,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		
 		for (String key : sortedKeyset) {	
 			for (String keyTwo : sortedKeysetTwo) {				
-				System.out.println(">>> Compare the Difference between Strings!");		
+//				System.out.println(">>> Compare the Difference between Strings!");		
 /*				System.out.println(myLevenshteinDistance.apply(key, keyTwo));
 				System.out.println("key: "+key+" : keyTwo: "+keyTwo);
 */
@@ -1433,19 +1433,19 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 					continue;
 				}
 
-				//compare the two key strings; if the result is a numerical value that is less than 3, combine the two 
-				if (myLevenshteinDistance.apply(key, keyTwo)<3) {
-/*					
+				//compare the two key strings; if the result is a numerical value that is less than 2, combine the two 
+				if (myLevenshteinDistance.apply(key, keyTwo)<2) {
+					
 					System.out.println(myLevenshteinDistance.apply(key, keyTwo));
 					System.out.println("key: "+key+" : keyTwo: "+keyTwo);
 					System.out.println("container.get(key)[OUTPUT_HMO_COUNT_COLUMN]: "+container.get(key)[OUTPUT_HMO_COUNT_COLUMN]);
 					System.out.println("container.get(keyTwo)[OUTPUT_HMO_COUNT_COLUMN]: "+container.get(keyTwo)[OUTPUT_HMO_COUNT_COLUMN]);
-*/					
+					
 					//treatmentCount 
 					container.get(key)[OUTPUT_HMO_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_HMO_COUNT_COLUMN];
-/*
+
 					System.out.println("container.get(key)[OUTPUT_HMO_COUNT_COLUMN]: "+container.get(key)[OUTPUT_HMO_COUNT_COLUMN]);
-*/					
+					
 					//consultationCount
 					container.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
 

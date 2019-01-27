@@ -76,6 +76,10 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	private static String startDate = null;
 	private static String endDate = null;
 	
+	//added by Mike, 20190127
+	private static final int HMO_CONTAINER_TYPE = 0;
+	private static final int NON_HMO_CONTAINER_TYPE = 1;	
+	
 	private static final int INPUT_REFERRING_DOCTOR_COLUMN = 15;
 	private static final int INPUT_NOTES_COLUMN = 0;
 	private static final int INPUT_DATE_COLUMN = 1;
@@ -1419,7 +1423,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	}
 */	
 	//added by Mike, 20190126
-	private static void consolidateKeysAndTheirValuesInContainer(HashMap<String, double[]> container) {
+	private static void consolidateKeysAndTheirValuesInContainer(HashMap<String, double[]> container, int containerType) {
 		SortedSet<String> sortedKeyset = new TreeSet<String>(container.keySet());
 		SortedSet<String> sortedKeysetTwo = new TreeSet<String>(container.keySet());
 		
@@ -1435,29 +1439,56 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 
 				//compare the two key strings; if the result is a numerical value that is less than 2, combine the two 
 				if (myLevenshteinDistance.apply(key, keyTwo)<2) {
-					
-					System.out.println(myLevenshteinDistance.apply(key, keyTwo));
-					System.out.println("key: "+key+" : keyTwo: "+keyTwo);
-					System.out.println("container.get(key)[OUTPUT_HMO_COUNT_COLUMN]: "+container.get(key)[OUTPUT_HMO_COUNT_COLUMN]);
-					System.out.println("container.get(keyTwo)[OUTPUT_HMO_COUNT_COLUMN]: "+container.get(keyTwo)[OUTPUT_HMO_COUNT_COLUMN]);
-					
-					//treatmentCount 
-					container.get(key)[OUTPUT_HMO_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_HMO_COUNT_COLUMN];
+					switch (containerType) {
+						case HMO_CONTAINER_TYPE:
+		/*					
+							System.out.println(myLevenshteinDistance.apply(key, keyTwo));
+							System.out.println("key: "+key+" : keyTwo: "+keyTwo);
+							System.out.println("container.get(key)[OUTPUT_HMO_COUNT_COLUMN]: "+container.get(key)[OUTPUT_HMO_COUNT_COLUMN]);
+							System.out.println("container.get(keyTwo)[OUTPUT_HMO_COUNT_COLUMN]: "+container.get(keyTwo)[OUTPUT_HMO_COUNT_COLUMN]);
+		*/					
+							//treatmentCount 
+							container.get(key)[OUTPUT_HMO_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_HMO_COUNT_COLUMN];
+		/*
+							System.out.println("container.get(key)[OUTPUT_HMO_COUNT_COLUMN]: "+container.get(key)[OUTPUT_HMO_COUNT_COLUMN]);
+		*/					
+							//consultationCount
+							container.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
 
-					System.out.println("container.get(key)[OUTPUT_HMO_COUNT_COLUMN]: "+container.get(key)[OUTPUT_HMO_COUNT_COLUMN]);
-					
-					//consultationCount
-					container.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
+							//procedureCount
+							container.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]; 		
 
-					//procedureCount
-					container.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]; 		
+							//medicalCertificateCount
+							container.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; 	
 
-					//medicalCertificateCount
-					container.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; 	
+							container.remove(keyTwo);
+							consolidateKeysAndTheirValuesInContainer(container, HMO_CONTAINER_TYPE);
+							return;
+						case NON_HMO_CONTAINER_TYPE:
+		/*					
+							System.out.println(myLevenshteinDistance.apply(key, keyTwo));
+							System.out.println("key: "+key+" : keyTwo: "+keyTwo);
+							System.out.println("container.get(key)[OUTPUT_HMO_COUNT_COLUMN]: "+container.get(key)[OUTPUT_HMO_COUNT_COLUMN]);
+							System.out.println("container.get(keyTwo)[OUTPUT_HMO_COUNT_COLUMN]: "+container.get(keyTwo)[OUTPUT_HMO_COUNT_COLUMN]);
+		*/					
+							//treatmentCount 
+							container.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_NON_HMO_COUNT_COLUMN];
+		/*
+							System.out.println("container.get(key)[OUTPUT_HMO_COUNT_COLUMN]: "+container.get(key)[OUTPUT_HMO_COUNT_COLUMN]);
+		*/					
+							//consultationCount
+							container.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 
-					container.remove(keyTwo);
-					consolidateKeysAndTheirValuesInContainer(container);
-					return;
+							//procedureCount
+							container.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]; 		
+
+							//medicalCertificateCount
+							container.get(key)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; 	
+
+							container.remove(keyTwo);
+							consolidateKeysAndTheirValuesInContainer(container, NON_HMO_CONTAINER_TYPE);
+							return;
+					}
 				}
 			}
 		}			
@@ -1466,37 +1497,13 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 
 	private static void processContainers() {
 		myLevenshteinDistance = new LevenshteinDistance();
-		consolidateKeysAndTheirValuesInContainer(hmoContainer);
-/*		
-		SortedSet<String> sortedHMOKeyset = new TreeSet<String>(hmoContainer.keySet());
-		for (String key : sortedHMOKeyset) {	
-			for (String keyTwo : sortedHMOKeyset) {
-				System.out.println(">>> Compare the Difference between Strings!");		
-//				System.out.println(myLevenshteinDistance.apply(key, keyTwo));
-//				System.out.println("key: "+key+" : keyTwo: "+keyTwo);
+		consolidateKeysAndTheirValuesInContainer(hmoContainer, HMO_CONTAINER_TYPE);
+		//This method below is at present not useful given that there are NON-HMO names whose length is only 2 characters
+		//Thus, NON-HMO's that shouldn't be combined, e.g. SC and NC (No Charge), are combined
+		//As a workaround, we can, however, use NON-HMO names whose length is longer than 2 characters
+/*		consolidateKeysAndTheirValuesInContainer(nonHmoContainer, NON_HMO_CONTAINER_TYPE);
+*/
 
-				//compare the two key strings; if the result is a numerical value that is less than 3, combine the two 
-				if (myLevenshteinDistance.apply(key, keyTwo)<3) {
-					System.out.println(myLevenshteinDistance.apply(key, keyTwo));
-					System.out.println("key: "+key+" : keyTwo: "+keyTwo);
-
-					//treatmentCount 
-					hmoContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] += hmoContainer.get(keyTwo)[OUTPUT_HMO_COUNT_COLUMN];
-
-					//consultationCount
-					hmoContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] += hmoContainer.get(keyTwo)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
-
-					//procedureCount
-					hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] += hmoContainer.get(keyTwo)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]; 		
-
-					//medicalCertificateCount
-					hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] += hmoContainer.get(keyTwo)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; 	
-
-					hmoContainer.remove(keyTwo);
-				}
-			}
-		}
-*/		
 		
 //		System.out.println(">>> Compare the Difference between Strings!");		
 //		System.out.println(myLevenshteinDistance.apply("1234567890", "1")); //answer: 9

@@ -80,7 +80,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	private static final int HMO_CONTAINER_TYPE = 0;
 	private static final int NON_HMO_CONTAINER_TYPE = 1;	
 	private static final int REFERRING_DOCTOR_CONTAINER_TYPE = 2;	
-	
+	private static final int HMO_CLASSIFICATION_CONTAINER_PER_MEDICAL_DOCTOR_CONTAINER_TYPE = 3;	
+	private static final int NON_HMO_CLASSIFICATION_CONTAINER_PER_MEDICAL_DOCTOR_CONTAINER_TYPE = 4;	
+		
 	private static final int INPUT_REFERRING_DOCTOR_COLUMN = 15;
 	private static final int INPUT_NOTES_COLUMN = 0;
 	private static final int INPUT_DATE_COLUMN = 1;
@@ -1423,6 +1425,11 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		}
 	}
 */	
+/*
+	//added by Mike, 20190127
+	private static void consolidateKeysAndTheirValuesInContainer
+	<String, HashMap<String, double[]>>
+*/
 	//added by Mike, 20190126
 	private static void consolidateKeysAndTheirValuesInContainer(HashMap<String, double[]> container, int containerType) {
 		SortedSet<String> sortedKeyset = new TreeSet<String>(container.keySet());
@@ -1431,6 +1438,16 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		int threshold; //added by Mike, 20190127
 		
 		for (String key : sortedKeyset) {	
+			//added by Mike, 20190127
+			if (containerType==HMO_CLASSIFICATION_CONTAINER_PER_MEDICAL_DOCTOR_CONTAINER_TYPE) {				
+				if (!key.contains("HMO")) {
+/*					System.out.println("Not HMO");
+					System.out.println("key: "+key);
+*/					
+					continue;
+				}
+			}
+
 			for (String keyTwo : sortedKeysetTwo) {				
 //				System.out.println(">>> Compare the Difference between Strings!");		
 /*				System.out.println(myLevenshteinDistance.apply(key, keyTwo));
@@ -1450,6 +1467,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				if (myLevenshteinDistance.apply(key, keyTwo)<threshold) {
 					switch (containerType) {
 						case HMO_CONTAINER_TYPE:
+						case HMO_CLASSIFICATION_CONTAINER_PER_MEDICAL_DOCTOR_CONTAINER_TYPE:
 		/*					
 							System.out.println(myLevenshteinDistance.apply(key, keyTwo));
 							System.out.println("key: "+key+" : keyTwo: "+keyTwo);
@@ -1471,9 +1489,10 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 							container.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; 	
 
 							container.remove(keyTwo);
-							consolidateKeysAndTheirValuesInContainer(container, HMO_CONTAINER_TYPE);
+							consolidateKeysAndTheirValuesInContainer(container, containerType);
 							return;
 						case NON_HMO_CONTAINER_TYPE:
+						case NON_HMO_CLASSIFICATION_CONTAINER_PER_MEDICAL_DOCTOR_CONTAINER_TYPE:
 		/*					
 							System.out.println(myLevenshteinDistance.apply(key, keyTwo));
 							System.out.println("key: "+key+" : keyTwo: "+keyTwo);
@@ -1495,7 +1514,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 							container.get(key)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; 	
 
 							container.remove(keyTwo);
-							consolidateKeysAndTheirValuesInContainer(container, NON_HMO_CONTAINER_TYPE);
+							consolidateKeysAndTheirValuesInContainer(container, containerType);
 							return;
 						case REFERRING_DOCTOR_CONTAINER_TYPE:
 							//treatmentCount 
@@ -1524,7 +1543,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 							container.get(key)[OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN]; 	
 							
 							container.remove(keyTwo);
-							consolidateKeysAndTheirValuesInContainer(container, REFERRING_DOCTOR_CONTAINER_TYPE);
+							consolidateKeysAndTheirValuesInContainer(container, containerType);
 							return;
 					}
 				}
@@ -1545,6 +1564,15 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		//added by Mike, 20190127
 		consolidateKeysAndTheirValuesInContainer(referringDoctorContainer, REFERRING_DOCTOR_CONTAINER_TYPE);
 
+		//added by Mike, 20190127
+		SortedSet<String> sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset = new TreeSet<String>(classificationContainerPerMedicalDoctor.keySet());
+		
+		for (String key : sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset) {	
+			System.out.println(">>>> key: "+key);
+			consolidateKeysAndTheirValuesInContainer(classificationContainerPerMedicalDoctor.get(key), HMO_CLASSIFICATION_CONTAINER_PER_MEDICAL_DOCTOR_CONTAINER_TYPE);
+/*			consolidateKeysAndTheirValuesInContainer(classificationContainerPerMedicalDoctor.get(key), NON_HMO_CLASSIFICATION_CONTAINER_PER_MEDICAL_DOCTOR_CONTAINER_TYPE);
+*/
+		}
 
 		
 //		System.out.println(">>> Compare the Difference between Strings!");		

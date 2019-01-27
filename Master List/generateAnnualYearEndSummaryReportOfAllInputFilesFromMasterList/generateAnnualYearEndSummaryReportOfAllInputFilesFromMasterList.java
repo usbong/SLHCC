@@ -79,6 +79,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	//added by Mike, 20190127
 	private static final int HMO_CONTAINER_TYPE = 0;
 	private static final int NON_HMO_CONTAINER_TYPE = 1;	
+	private static final int REFERRING_DOCTOR_CONTAINER_TYPE = 2;	
 	
 	private static final int INPUT_REFERRING_DOCTOR_COLUMN = 15;
 	private static final int INPUT_NOTES_COLUMN = 0;
@@ -1426,6 +1427,8 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	private static void consolidateKeysAndTheirValuesInContainer(HashMap<String, double[]> container, int containerType) {
 		SortedSet<String> sortedKeyset = new TreeSet<String>(container.keySet());
 		SortedSet<String> sortedKeysetTwo = new TreeSet<String>(container.keySet());
+
+		int threshold; //added by Mike, 20190127
 		
 		for (String key : sortedKeyset) {	
 			for (String keyTwo : sortedKeysetTwo) {				
@@ -1438,7 +1441,13 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				}
 
 				//compare the two key strings; if the result is a numerical value that is less than 2, combine the two 
-				if (myLevenshteinDistance.apply(key, keyTwo)<2) {
+				//Note: We use less than 2, so that "MEDOCARE", with the "MEDO", and MEDICARE, with the "MEDI", are recognized by the add-on software as distinct.
+				threshold = 2; //default value
+				if (containerType==REFERRING_DOCTOR_CONTAINER_TYPE) { //In this case, the numerical value should be less than 3.
+					threshold = 3;
+				}
+								
+				if (myLevenshteinDistance.apply(key, keyTwo)<threshold) {
 					switch (containerType) {
 						case HMO_CONTAINER_TYPE:
 		/*					
@@ -1488,6 +1497,35 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 							container.remove(keyTwo);
 							consolidateKeysAndTheirValuesInContainer(container, NON_HMO_CONTAINER_TYPE);
 							return;
+						case REFERRING_DOCTOR_CONTAINER_TYPE:
+							//treatmentCount 
+							container.get(key)[OUTPUT_HMO_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_HMO_COUNT_COLUMN];
+
+							container.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_NON_HMO_COUNT_COLUMN];
+							
+							//consultationCount
+							container.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
+
+							container.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+
+							//procedureCount
+							container.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]; 		
+
+							container.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]; 		
+
+							//medicalCertificateCount
+							container.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; 	
+
+							container.get(key)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; 	
+
+							//newPatientReferralTransactionCount
+							container.get(key)[OUTPUT_HMO_NEW_OLD_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_HMO_NEW_OLD_COUNT_COLUMN]; 	
+
+							container.get(key)[OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN] += container.get(keyTwo)[OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN]; 	
+							
+							container.remove(keyTwo);
+							consolidateKeysAndTheirValuesInContainer(container, REFERRING_DOCTOR_CONTAINER_TYPE);
+							return;
 					}
 				}
 			}
@@ -1498,11 +1536,15 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	private static void processContainers() {
 		myLevenshteinDistance = new LevenshteinDistance();
 		consolidateKeysAndTheirValuesInContainer(hmoContainer, HMO_CONTAINER_TYPE);
-		//This method below is at present not useful given that there are NON-HMO names whose length is only 2 characters
-		//Thus, NON-HMO's that shouldn't be combined, e.g. SC and NC (No Charge), are combined
+		
+		//This method below is at present not useful given that there are NON-HMO names whose length is only 2 characters.
+		//Thus, NON-HMO's that shouldn't be combined, e.g. "SC" and "NC" (No Charge), are combined.
 		//As a workaround, we can, however, use NON-HMO names whose length is longer than 2 characters
 /*		consolidateKeysAndTheirValuesInContainer(nonHmoContainer, NON_HMO_CONTAINER_TYPE);
 */
+		//added by Mike, 20190127
+		consolidateKeysAndTheirValuesInContainer(referringDoctorContainer, REFERRING_DOCTOR_CONTAINER_TYPE);
+
 
 		
 //		System.out.println(">>> Compare the Difference between Strings!");		

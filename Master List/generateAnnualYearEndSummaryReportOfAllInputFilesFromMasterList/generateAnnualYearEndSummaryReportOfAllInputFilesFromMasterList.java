@@ -1425,11 +1425,65 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		}
 	}
 */	
-/*
-	//added by Mike, 20190127
-	private static void consolidateKeysAndTheirValuesInContainer
-	<String, HashMap<String, double[]>>
+
+	//added by Mike, 20190128
+	private static void consolidateKeysAndTheirHashMapValuesInContainer(HashMap<String, HashMap<String, double[]>> container) {
+		SortedSet<String> sortedKeyset = new TreeSet<String>(container.keySet());
+		SortedSet<String> sortedKeysetTwo = new TreeSet<String>(container.keySet());
+						
+		int threshold; //added by Mike, 20190127
+	
+		//At present, the key is the name of the Medical Doctor
+		for (String key : sortedKeyset) {	
+			for (String keyTwo : sortedKeysetTwo) {				
+//				System.out.println(">>> Compare the Difference between Strings!");		
+/*				System.out.println(myLevenshteinDistance.apply(key, keyTwo));
+				System.out.println("key: "+key+" : keyTwo: "+keyTwo);
 */
+				if (key.equals(keyTwo)) {
+					continue;
+				}
+
+				threshold = 3; //Similar with the for Referring Medical Doctors, the numerical value should be less than 3.
+								
+				if (myLevenshteinDistance.apply(key, keyTwo)<threshold) {					
+					SortedSet<String> sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset = new TreeSet<String>(container.get(key).keySet());
+		
+					for (String classificationKey : sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset) {
+						//treatmentCount 
+						container.get(key).get(classificationKey)[OUTPUT_HMO_COUNT_COLUMN] += container.get(keyTwo).get(classificationKey)[OUTPUT_HMO_COUNT_COLUMN];
+
+						container.get(key).get(classificationKey)[OUTPUT_NON_HMO_COUNT_COLUMN] += container.get(keyTwo).get(classificationKey)[OUTPUT_NON_HMO_COUNT_COLUMN];
+						
+						//consultationCount
+						container.get(key).get(classificationKey)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] += container.get(keyTwo).get(classificationKey)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
+
+						container.get(key).get(classificationKey)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN] += container.get(keyTwo).get(classificationKey)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+
+						//procedureCount
+						container.get(key).get(classificationKey)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] += container.get(keyTwo).get(classificationKey)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]; 		
+
+						container.get(key).get(classificationKey)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN] += container.get(keyTwo).get(classificationKey)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]; 		
+
+						//medicalCertificateCount
+						container.get(key).get(classificationKey)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] += container.get(keyTwo).get(classificationKey)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; 	
+
+						container.get(key).get(classificationKey)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] += container.get(keyTwo).get(classificationKey)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; 	
+
+						//newPatientReferralTransactionCount
+						container.get(key).get(classificationKey)[OUTPUT_HMO_NEW_OLD_COUNT_COLUMN] += container.get(keyTwo).get(classificationKey)[OUTPUT_HMO_NEW_OLD_COUNT_COLUMN]; 	
+
+						container.get(key).get(classificationKey)[OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN] += container.get(keyTwo).get(classificationKey)[OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN]; 	
+					}
+					
+					container.remove(keyTwo);
+					consolidateKeysAndTheirHashMapValuesInContainer(container);
+					return;
+				}
+			}
+		}
+	}
+
 	//added by Mike, 20190126
 	private static void consolidateKeysAndTheirValuesInContainer(HashMap<String, double[]> container, int containerType) {
 		SortedSet<String> sortedKeyset = new TreeSet<String>(container.keySet());
@@ -1574,6 +1628,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 */
 		}
 
+		consolidateKeysAndTheirHashMapValuesInContainer(classificationContainerPerMedicalDoctor);
 		
 //		System.out.println(">>> Compare the Difference between Strings!");		
 //		System.out.println(myLevenshteinDistance.apply("1234567890", "1")); //answer: 9

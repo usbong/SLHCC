@@ -19,7 +19,7 @@ Set myOutput = Sheets(ActiveSheet.Name)
 
 For Each row In myInput.Rows
        'The Net PF computation appears to be the same for Senior Citizen, People With Disabilities, Walk-In, and Sta. Lucia patient.
-       'I have written the code in this manner similar to the VBA instructions for Treatment's to make it easier to modify if necessary.
+       'I have written the code in this manner similar to the VBA instructions for PT Treatment's to make it easier to modify if necessary.
        
        'I've removed the Round(..., 2) function, because as it turned out,
        'doing ...NumberFormat = "0.00" on the cell would automatically round
@@ -35,14 +35,29 @@ For Each row In myInput.Rows
        '     myOutput.Range("K" & RowCount) = Round(myInput.Range("J" & RowCount).Value * 0.7, 2)
        'End If
        
+       'edited by Mike, 20190129
+       'These computations are used if the Medical Doctor has his/her own Official Receipt (OR).
+       'If myInput.Range("I" & RowCount).Value = "SC" Or myInput.Range("I" & RowCount).Value = "PWD" Then
+       '     myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7
+       'ElseIf myInput.Range("I" & RowCount).Value = "WI" Then
+       '     myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7
+       'ElseIf myInput.Range("I" & RowCount).Value = "SLC" Then
+       '     myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7
+       'ElseIf myInput.Range("I" & RowCount).Value = "Medical Certificate" Then
+       '     myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7
+       'End If
+
+       'added by Mike, 20190129
+       'These computations are used if the Medical Doctor uses the Official Receipt (OR) from Sta. Lucia Health Care Centre.
+       'These include the VAT - OT payment, etc.
        If myInput.Range("I" & RowCount).Value = "SC" Or myInput.Range("I" & RowCount).Value = "PWD" Then
-            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7
+            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7 * 0.9
        ElseIf myInput.Range("I" & RowCount).Value = "WI" Then
-            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7
+            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value / 1.12 * 0.7 * 0.9
        ElseIf myInput.Range("I" & RowCount).Value = "SLC" Then
-            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7
+            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value / 1.12 * 0.7 * 0.9
        ElseIf myInput.Range("I" & RowCount).Value = "Medical Certificate" Then
-            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7
+            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value / 1.12 * 0.7 * 0.9
        End If
 
        If IsEmpty(myInput.Range("C" & RowCount).Value) Then

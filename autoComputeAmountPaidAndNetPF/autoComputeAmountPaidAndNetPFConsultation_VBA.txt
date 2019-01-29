@@ -1,0 +1,85 @@
+Sub autoComputeAmountPaidAndNetPFConsultation()
+' Given:
+' 1) Standard Fee (Column H)
+' 2) CLASS/Classification, i.e. SC, WI, SLC, PWD (Column I)
+
+'Output:
+' 1) Auto-computed Amount Paid based on CLASS/Classification and PF (Professional Fee) distribution (Column J)
+' 2) Auto-computed Net PF based on Class/Classification and PF distribution (Column K)
+
+
+Dim myInput As Worksheet
+Dim myOutput As Worksheet 'the same as myInput
+Dim row As Range
+Dim RowCount As Integer
+
+RowCount = 1
+
+Set myInput = Sheets(ActiveSheet.Name)
+Set myOutput = Sheets(ActiveSheet.Name)
+
+For Each row In myInput.Rows
+       'auto-compute the Amount Paid based on Class and PF distribution
+       If myInput.Range("I" & RowCount).Value = "SC" Or myInput.Range("I" & RowCount).Value = "PWD" Then
+            myOutput.Range("J" & RowCount) = myInput.Range("H" & RowCount).Value * 0.714289
+       ElseIf myInput.Range("I" & RowCount).Value = "WI" Then
+            myOutput.Range("J" & RowCount) = myInput.Range("H" & RowCount).Value
+       ElseIf myInput.Range("I" & RowCount).Value = "SLC" Then
+            myOutput.Range("J" & RowCount) = myInput.Range("H" & RowCount).Value * 0.9
+       ElseIf myInput.Range("I" & RowCount).Value = "Medical Certificate" Then
+            myOutput.Range("J" & RowCount) = myInput.Range("H" & RowCount).Value
+       End If
+
+       'The Net PF computation appears to be the same for Senior Citizen, People With Disabilities, Walk-In, and Sta. Lucia patient.
+       'I have written the code in this manner similar to the VBA instructions for PT Treatment's to make it easier to modify if necessary.
+       
+       'I've removed the Round(..., 2) function, because as it turned out,
+       'doing ...NumberFormat = "0.00" on the cell would automatically round
+       'the value to the hundredths.
+       
+       'If myInput.Range("I" & RowCount).Value = "SC" Or myInput.Range("I" & RowCount).Value = "PWD" Then
+       '     myOutput.Range("K" & RowCount) = Round(myInput.Range("J" & RowCount).Value * 0.7, 2)
+       'ElseIf myInput.Range("I" & RowCount).Value = "WI" Then
+       '     myOutput.Range("K" & RowCount) = Round(myInput.Range("J" & RowCount).Value * 0.7, 2)
+       'ElseIf myInput.Range("I" & RowCount).Value = "SLC" Then
+       '     myOutput.Range("K" & RowCount) = Round(myInput.Range("J" & RowCount).Value * 0.7, 2)
+       'ElseIf myInput.Range("I" & RowCount).Value = "Medical Certificate" Then
+       '     myOutput.Range("K" & RowCount) = Round(myInput.Range("J" & RowCount).Value * 0.7, 2)
+       'End If
+       
+       'edited by Mike, 20190129
+       'These computations are used if the Medical Doctor has his/her own Official Receipt (OR).
+       'If myInput.Range("I" & RowCount).Value = "SC" Or myInput.Range("I" & RowCount).Value = "PWD" Then
+       '     myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7
+       'ElseIf myInput.Range("I" & RowCount).Value = "WI" Then
+       '     myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7
+       'ElseIf myInput.Range("I" & RowCount).Value = "SLC" Then
+       '     myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7
+       'ElseIf myInput.Range("I" & RowCount).Value = "Medical Certificate" Then
+       '     myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7
+       'End If
+
+       'added by Mike, 20190129
+       'These computations are used if the Medical Doctor uses the Official Receipt (OR) from Sta. Lucia.
+       'These include the VAT - OT payment, etc.
+       If myInput.Range("I" & RowCount).Value = "SC" Or myInput.Range("I" & RowCount).Value = "PWD" Then
+            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7 * 0.9
+       ElseIf myInput.Range("I" & RowCount).Value = "WI" Then
+            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value / 1.12 * 0.7 * 0.9
+       ElseIf myInput.Range("I" & RowCount).Value = "SLC" Then
+            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value / 1.12 * 0.7 * 0.9
+       ElseIf myInput.Range("I" & RowCount).Value = "Medical Certificate" Then
+            myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value / 1.12 * 0.7 * 0.9
+       End If
+
+       If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+            Exit For
+       Else
+            RowCount = RowCount + 1
+       End If
+Next row
+
+myOutput.Range("J" & 1, "K" & RowCount).Font.Size = 11
+myOutput.Range("J" & 1, "K" & RowCount).Font.Name = "Calibri"
+myOutput.Range("J" & 1, "K" & RowCount).NumberFormat = "0.00"
+End Sub

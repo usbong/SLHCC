@@ -29,7 +29,7 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 ' Given:
 ' 1) Encoding for the Month Input Worksheet
 ' --> Saved/Exported as "Tab delimited" .txt file from Excel
-' --> Example: input201808.txt (where the date format is YYYYMM; based on ISO 8601)
+' --> Example: input_201808.txt (where the date format is YYYYMM; based on ISO 8601)
 '
 ' Output:
 ' 1) Auto-generated Annual Year End Summary Report
@@ -38,9 +38,9 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 '
 ' Notes:
 ' 1) To execute the add-on software/application simply use the following command:
-'   java generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList input201801.txt
+'   java generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList input_201801.txt
 ' 
-' where: "input201801.txt" is the name of the file.
+' where: "input_201801.txt" is the name of the file.
 ' 
 ' 2) To execute a set of input files, e.g. input201801.txt, input201802.txt, you can use the following command: 
 '   java generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList input*
@@ -221,7 +221,8 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		double totalProcedureCount = 0; //added by Mike, 20190105		
 		double totalMedicalCertificateCount = 0; //added by Mike, 20190107
 		
-		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //divide by 2 because we have the same month-year for both TREATMENT and CONSULTATION
+		//Note that there should be an even number of input files and at least two (2) input files, one for PT Treatment and another for Consultation
+		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION
 			writer.print(convertDateToMonthYearInWords(dateValuesArrayInt[i])+"\t");
 			
 			double treatmentCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN];

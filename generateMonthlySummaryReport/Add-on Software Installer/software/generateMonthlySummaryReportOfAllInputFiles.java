@@ -96,6 +96,8 @@ public class generateMonthlySummaryReportOfAllInputFiles {
 	private static final int INPUT_NET_PF_COLUMN = 10-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_NEW_OLD_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_CONSULTATION_PROCEDURE_COLUMN = 2-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_NEW_OLD_PATIENT_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190102
+	
 	//added by Mike, 20190107
 	private static final int INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN = 2-INPUT_NON_MASTER_LIST_OFFSET; //The int value is the same as "INPUT_CONSULTATION_PROCEDURE_COLUMN".
 
@@ -122,7 +124,7 @@ public class generateMonthlySummaryReportOfAllInputFiles {
 		
 	//the date and the referring doctor are not yet included here
 	//this is for both HMO and NON-HMO transactions
-	private static final int OUTPUT_TOTAL_COLUMNS = 17; //edited by Mike, 20190107
+	private static final int OUTPUT_TOTAL_COLUMNS = 21; //edited by Mike, 20190107
 
 	//PT TREATMENT
 	private static final int OUTPUT_HMO_COUNT_COLUMN = 0; //transaction count
@@ -130,22 +132,26 @@ public class generateMonthlySummaryReportOfAllInputFiles {
 	private static final int OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN = 2;
 	private static final int OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN = 3;
 	private static final int OUTPUT_HMO_NEW_OLD_COUNT_COLUMN = 4;
+	private static final int OUTPUT_HMO_NEW_OLD_PATIENT_COUNT_COLUMN = 5; //added by Mike, 20190102
 
-	private static final int OUTPUT_NON_HMO_COUNT_COLUMN = 5; //transaction count
-	private static final int OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN = 6;
-	private static final int OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN = 7;
-	private static final int OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN = 8;
-	private static final int OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN = 9;
+	private static final int OUTPUT_NON_HMO_COUNT_COLUMN = 6; //transaction count
+	private static final int OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN = 7;
+	private static final int OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN = 8;
+	private static final int OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN = 9;
+	private static final int OUTPUT_NON_HMO_NEW_OLD_COUNT_COLUMN = 10;	
+	private static final int OUTPUT_NON_HMO_NEW_OLD_PATIENT_COUNT_COLUMN = 11; //added by Mike, 20190102
 
-	private static final int OUTPUT_DATE_ID_COLUMN = 10; //added by Mike, 20181205
+	private static final int OUTPUT_DATE_ID_COLUMN = 12; //added by Mike, 20181205
 	
 	//CONSULTATION
-	private static final int OUTPUT_CONSULTATION_HMO_COUNT_COLUMN = 11; //transaction count
-	private static final int OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN = 12; //transaction count
-	private static final int OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN = 13; //transaction count
-	private static final int OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN = 14; //transaction count
-	private static final int OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN = 15; //transaction count; added by Mike, 20190107
-	private static final int OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN = 16; //transaction count; added by Mike, 20190107
+	private static final int OUTPUT_CONSULTATION_HMO_COUNT_COLUMN = 13; //transaction count
+	private static final int OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN = 14; //transaction count
+	private static final int OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN = 15; //transaction count
+	private static final int OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN = 16; //transaction count
+	private static final int OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN = 17; //transaction count; added by Mike, 20190107
+	private static final int OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN = 18; //transaction count; added by Mike, 20190107
+	private static final int OUTPUT_CONSULTATION_HMO_NEW_OLD_PATIENT_COUNT_COLUMN = 19; //transaction count; added by Mike, 20190107
+	private static final int OUTPUT_CONSULTATION_NON_HMO_NEW_OLD_PATIENT_COUNT_COLUMN = 20; //transaction count; added by Mike, 20190107
 
 	private static boolean isConsultation;
 	
@@ -283,12 +289,14 @@ public class generateMonthlySummaryReportOfAllInputFiles {
 				); 				   							
 */
 
-		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\tMEDICAL CERTIFICATE COUNT:\n"); 		
+		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\tMEDICAL CERTIFICATE COUNT:\tTREATMENT NEW PATIENT COUNT:\tCONSULTATION NEW PATIENT COUNT:\n"); 		
 
 		double totalTreatmentHMOCount = 0;
 		double totalConsultationHMOCount = 0; //added by Mike, 20181219		
 		double totalProcedureHMOCount = 0; //added by Mike, 20190105		
 		double totalMedicalCertificateHMOCount = 0; //added by Mike, 20190107
+		double totalNewPatientTreatmentHMOCount = 0; //added by Mike, 20190102
+		double totalNewPatientConsultationHMOCount = 0; //added by Mike, 20190102
 		
 		SortedSet<String> sortedKeyset = new TreeSet<String>(hmoContainer.keySet());
 		
@@ -297,24 +305,30 @@ public class generateMonthlySummaryReportOfAllInputFiles {
 			double consultationCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
 			double procedureCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]; //added by Mike, 20190105		
 			double medicalCertificateCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; //added by Mike, 20190107
+			double newPatientTreatmentCount = hmoContainer.get(key)[OUTPUT_HMO_NEW_OLD_PATIENT_COUNT_COLUMN]; //added by Mike, 20190102
+			double newPatientConsultationCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_NEW_OLD_PATIENT_COUNT_COLUMN]; //added by Mike, 20190102
 
 			totalTreatmentHMOCount += treatmentCount;
 			totalConsultationHMOCount += consultationCount;
 			totalProcedureHMOCount += procedureCount;
 			totalMedicalCertificateHMOCount += medicalCertificateCount;
+			totalNewPatientTreatmentHMOCount += newPatientTreatmentCount;
+			totalNewPatientConsultationHMOCount += newPatientConsultationCount;
 			
 			writer.print(
 							key + "\t" + 
 							treatmentCount+"\t"+							
 							consultationCount+"\t"+							
 							procedureCount+"\t"+							
-							medicalCertificateCount+"\n"							
+							medicalCertificateCount+"\t"+							
+							newPatientTreatmentCount+"\t"+							
+							newPatientConsultationCount+"\n"							
 						); 				   							
 		}
 
 		//TOTAL
 		writer.print(
-				"TOTAL:\t"+totalTreatmentHMOCount+"\t"+totalConsultationHMOCount+"\t"+totalProcedureHMOCount+"\t"+totalMedicalCertificateHMOCount+"\n"
+				"TOTAL:\t"+totalTreatmentHMOCount+"\t"+totalConsultationHMOCount+"\t"+totalProcedureHMOCount+"\t"+totalMedicalCertificateHMOCount+"\t"+totalNewPatientTreatmentHMOCount+"\t"+totalNewPatientConsultationHMOCount+"\n"
 				);					
 
 		//--------------------------------------------------------------------
@@ -778,6 +792,11 @@ public class generateMonthlySummaryReportOfAllInputFiles {
 					
 						columnValuesArray[OUTPUT_HMO_COUNT_COLUMN] = 1;
 						
+						//added by Mike, 20190102						
+						if (inputColumns[INPUT_NEW_OLD_PATIENT_COLUMN].trim().toLowerCase().contains("new")) {
+							columnValuesArray[OUTPUT_HMO_NEW_OLD_PATIENT_COUNT_COLUMN] = 1;
+						}
+						
 						if (isNetPFComputed) {							
 							columnValuesArray[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 
@@ -792,6 +811,11 @@ public class generateMonthlySummaryReportOfAllInputFiles {
 					}
 					else {
 						hmoContainer.get(hmoName)[OUTPUT_HMO_COUNT_COLUMN]++;	
+
+						//added by Mike, 20190102
+						if (inputColumns[INPUT_NEW_OLD_PATIENT_COLUMN].trim().toLowerCase().contains("new")) {
+							hmoContainer.get(hmoName)[OUTPUT_HMO_NEW_OLD_PATIENT_COUNT_COLUMN]++;
+						}
 
 						if (isNetPFComputed) {							
 							hmoContainer.get(hmoName)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
@@ -814,7 +838,12 @@ public class generateMonthlySummaryReportOfAllInputFiles {
 					String hmoName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
 					
 					if (!hmoContainer.containsKey(hmoName)) {
-						columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];					
+						columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];		
+
+						//added by Mike, 20190102
+						if (inputColumns[INPUT_NEW_OLD_PATIENT_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toLowerCase().contains("new")) {
+							columnValuesArray[OUTPUT_CONSULTATION_HMO_NEW_OLD_PATIENT_COUNT_COLUMN] = 1;
+						}						
 						
 						//edited by Mike, 20190109
 						if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN].toLowerCase().trim().contains("mc")) {
@@ -841,6 +870,11 @@ public class generateMonthlySummaryReportOfAllInputFiles {
 						hmoContainer.put(hmoName, columnValuesArray);
 					}
 					else {
+						//added by Mike, 20190102
+						if (inputColumns[INPUT_NEW_OLD_PATIENT_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toLowerCase().contains("new")) {
+							hmoContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_NEW_OLD_PATIENT_COUNT_COLUMN]++;
+						}						
+						
 						//edited by Mike, 20190109
 						if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN].toLowerCase().trim().contains("mc")) {
 							hmoContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]++;						

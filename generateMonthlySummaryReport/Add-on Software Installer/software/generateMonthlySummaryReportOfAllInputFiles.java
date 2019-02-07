@@ -244,7 +244,13 @@ public class generateMonthlySummaryReportOfAllInputFiles {
 */		
 		//Note that there should be an even number of input files and at least two (2) input files, one for PT Treatment and another for Consultation
 		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION
-		System.out.println("dateValuesArrayInt[i]: "+dateValuesArrayInt[i]);
+/*		System.out.println("dateValuesArrayInt[i]: "+dateValuesArrayInt[i]);
+*/		
+			//added by Mike, 20190207
+			if (dateValuesArrayInt[i]==0) { //if there is no .txt input file
+				System.out.println("\nThere is no Tab-delimited .txt input file in either the \"consultation\" folder or the \"treatment\" folder.");
+				return;
+			}
 		
 			writer.print(convertDateToMonthYearInWords(dateValuesArrayInt[i])+"\t");
 			
@@ -612,6 +618,59 @@ public class generateMonthlySummaryReportOfAllInputFiles {
 	private static String getMonthYear(String date) {
 		StringBuffer sb = new StringBuffer(date);				
 		return sb.substring(0,3).concat("-").concat(sb.substring(sb.length()-2,sb.length()));
+	}
+
+	//input: Jan
+	//output: 1
+	private static String convertMonthToNumber(String month) {
+		switch(month) {
+			case "jan":
+				return "01";
+			case "feb":
+				return "02"; 
+			case "mar":
+				return "03";
+			case "apr":
+				return "04";
+			case "may":
+				return "05";
+			case "jun":
+				return "06";
+			case "jul":
+				return "07";
+			case "aug":
+				return "08";
+			case "sep":
+				return "09";
+			case "oct":
+				return "10";
+			case "nov":
+				return "11";
+			case "dec":
+				return "12";
+		}	
+		return null;
+	}
+	
+	//input: Jan-19
+	//output: 201901
+	private static int getYearMonthAsInt(String date) {
+		StringBuffer sb = new StringBuffer(""+date);	
+		String month = sb.substring(0,sb.indexOf("-")).toLowerCase(); //index "-" is not included
+		month = ""+convertMonthToNumber(month);
+
+		String year = sb.substring(sb.indexOf("-")).substring(sb.indexOf("-")+1);
+
+		System.out.println("year: "+year);
+
+		//if the year is only 2 digits, e.g. "19", instead of of "2019"
+		if (year.length() < 4) {
+			year = "20" + year;
+		}
+		
+
+		System.out.println("Integer.parseInt(year.concat(month)): "+Integer.parseInt(year.concat(month)));
+		return Integer.parseInt(year.concat(month));
 	}
 	
 	//added by Mike, 20181030
@@ -1741,16 +1800,22 @@ public class generateMonthlySummaryReportOfAllInputFiles {
 					dateValuesArray[i] = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);
 				}
 
+				//edited by Mike, 20190207
 				if (dateValuesArrayInt[i]==0) {
+					dateValuesArrayInt[i] = getYearMonthAsInt(inputColumns[INPUT_DATE_COLUMN]);					
+/*					
 					dateValuesArrayInt[i] = Integer.parseInt(args[i].substring(args[i].indexOf("_")+1,args[i].indexOf(".txt")));
+*/					
 				}
+
+				
 /*
 				int dateValueInt = Integer.parseInt(args[i].substring(args[i].indexOf("_")+1,args[i].indexOf(".txt")));
 				if (!dateValuesArrayInt.contains(dateValueInt)){
 					dateValuesArrayInt.add(dateValueInt);
 				}				
 */				
-				//edited by Mike, 20181121
+/*				//edited by Mike, 20181121
 				if (startDate==null) {
 					startDate = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);
 					endDate = startDate;
@@ -1762,19 +1827,19 @@ public class generateMonthlySummaryReportOfAllInputFiles {
 						endDate = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);
 					}
 				}
-
+*/
 				if (isInDebugMode) {
 					rowCount++;
 					System.out.println("rowCount: "+rowCount);
 				}
-				
+/*				
 				//added by Mike, 20181121
 				//skip transactions that have "RehabSupplies" as its "CLASS" value
 				//In Excel logbook/workbook 2018 onwards, such transactions are not included in the Consultation and PT Treatment Excel logbooks/workbooks.
 				if (inputColumns[INPUT_CLASS_COLUMN].contains("RehabSupplies")) {
 					continue;
 				}
-
+*/
 				if (isPhaseOne) {
 					//added by Mike, 20181216
 	//				processMonthlyCount(dateContainer, inputColumns, i, false);

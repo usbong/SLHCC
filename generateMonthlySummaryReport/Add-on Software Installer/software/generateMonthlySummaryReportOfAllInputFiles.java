@@ -238,9 +238,14 @@ public class generateMonthlySummaryReportOfAllInputFiles {
 		double totalConsultationCount = 0; //added by Mike, 20181218
 		double totalProcedureCount = 0; //added by Mike, 20190105		
 		double totalMedicalCertificateCount = 0; //added by Mike, 20190107
-		
+/*
+		System.out.println("dateValuesArrayInt.length: "+dateValuesArrayInt.length);		
+		System.out.println("dateValuesArrayInt.length/2: "+dateValuesArrayInt.length/2);
+*/		
 		//Note that there should be an even number of input files and at least two (2) input files, one for PT Treatment and another for Consultation
 		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION
+		System.out.println("dateValuesArrayInt[i]: "+dateValuesArrayInt[i]);
+		
 			writer.print(convertDateToMonthYearInWords(dateValuesArrayInt[i])+"\t");
 			
 			double treatmentCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN];
@@ -1699,13 +1704,18 @@ public class generateMonthlySummaryReportOfAllInputFiles {
 
 			System.out.println("inputFilename: " + inputFilename);
 			
+			//added by Mike, 20190207
+			if (inputFilename.contains("*")) {
+				continue;
+			}
+			
 			if (inputFilename.toLowerCase().contains("consultation")) {
 				isConsultation=true;
 			}
 			else {
 				isConsultation=false;
 			}
-			
+						
 			Scanner sc = new Scanner(new FileInputStream(f));				
 		
 			String s;		

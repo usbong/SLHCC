@@ -1,0 +1,76 @@
+Sub autoComputeAmountPaidAndNetPFConsultationMasterListMedicalDoctorOfficialReceipt()
+' Copyright 2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190208
+' @date updated: 20190208
+'
+' Consultation Master List (Medical Doctor Official Receipt (OR))
+' Given:
+' 1) Class (Classification), i.e. SC, WI, SLC, PWD, SLR (Column J)
+' 2) Fee (Column I)
+'
+'Output:
+' 1) Auto-computed AMT.PAID (Column K)
+' 2) Auto-computed Net PF based on Sta. Lucia's PF distribution (Column L)
+'
+'Notes:
+' 1) This set of instructions is for Consultation transactions that use the Official Receipt (OR) from the Medical Doctor who is not required by the TRAIN Act of the BIR (Bureau of Internal Revenue) to pay VAT (Value-Added Tax).
+' 2) There is another set of instructions and computation for Consultation transactions that use the Official Receipt (OR) from the Sta. Lucia Health Care Centre (SLHCC).
+
+Dim myInput As Worksheet
+Dim myOutput As Worksheet 'the same as myInput
+Dim row As Range
+Dim RowCount As Integer
+
+RowCount = 1
+
+Set myInput = Sheets(ActiveSheet.Name)
+Set myOutput = Sheets(ActiveSheet.Name)
+
+For Each row In myInput.Rows
+       'auto-compute the Amount Paid based on Class and PF distribution
+       If myInput.Range("J" & RowCount).Value = "SC" Or myInput.Range("J" & RowCount).Value = "PWD" Then
+            myOutput.Range("K" & RowCount) = myInput.Range("I" & RowCount).Value * 0.714289
+       ElseIf myInput.Range("J" & RowCount).Value = "WI" Then
+            myOutput.Range("K" & RowCount) = myInput.Range("I" & RowCount).Value
+       '+added: computation for SLR (Sta. Lucia Reality) patients
+       ElseIf myInput.Range("J" & RowCount).Value = "SLR" Then
+            myOutput.Range("K" & RowCount) = myInput.Range("I" & RowCount).Value
+       ElseIf myInput.Range("J" & RowCount).Value = "SLC" Then
+            myOutput.Range("K" & RowCount) = myInput.Range("I" & RowCount).Value * 0.9
+       End If
+       
+       'These computations are used if the Medical Doctor uses his/her own Official Receipt (OR)'
+	   'In addition, the Medical Doctor is not required by the TRAIN Act of the BIR (Bureau of Internal Revenue) to pay VAT (Value-Added Tax).
+       If myInput.Range("J" & RowCount).Value = "SC" Or myInput.Range("J" & RowCount).Value = "PWD" Then
+            myOutput.Range("L" & RowCount) = myInput.Range("K" & RowCount).Value * 0.7
+       ElseIf myInput.Range("J" & RowCount).Value = "WI" Then
+            myOutput.Range("L" & RowCount) = myInput.Range("K" & RowCount).Value * 0.7
+       '+added: computation for SLR (Sta. Lucia Reality) patients
+       ElseIf myInput.Range("J" & RowCount).Value = "SLR" Then
+            myOutput.Range("L" & RowCount) = myInput.Range("K" & RowCount).Value * 0.7
+       ElseIf myInput.Range("J" & RowCount).Value = "SLC" Then
+            myOutput.Range("L" & RowCount) = myInput.Range("K" & RowCount).Value * 0.7
+       ElseIf myInput.Range("J" & RowCount).Value = "Medical Certificate" Then
+            myOutput.Range("L" & RowCount) = myInput.Range("K" & RowCount).Value * 0.7
+       End If
+       
+       If IsEmpty(myInput.Range("D" & RowCount).Value) Then
+            Exit For
+       Else
+            RowCount = RowCount + 1
+       End If
+Next row
+
+myOutput.Range("K" & 1, "L" & RowCount).Font.Size = 11
+myOutput.Range("K" & 1, "L" & RowCount).Font.Name = "Calibri"
+myOutput.Range("K" & 1, "L" & RowCount).NumberFormat = "0.00"
+
+End Sub

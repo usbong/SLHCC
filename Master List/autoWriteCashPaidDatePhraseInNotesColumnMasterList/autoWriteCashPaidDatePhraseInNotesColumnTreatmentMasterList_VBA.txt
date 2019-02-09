@@ -35,13 +35,14 @@ Dim myOutput As Worksheet 'the same as myInput
 Dim row As Range
 Dim RowCount As Integer
 
-RowCount = 1
+RowCount = 2 'do not include the table header
 
 Set myInput = Sheets(ActiveSheet.Name)
 Set myOutput = Sheets(ActiveSheet.Name)
 
 For Each row In myInput.Rows
-       If (InStr(myInput.Range("I" & RowCount).Value, "HMO") = 0) Then 'if not an HMO transaction
+       'if not an empty and not an HMO transaction
+       If (IsEmpty(myInput.Range("I" & RowCount).Value) = 0) And (InStr(myInput.Range("I" & RowCount).Value, "HMO") = 0) Then
             myOutput.Range("A" & RowCount) = "paid: " & Format(myInput.Range("B" & RowCount).Value, "mmm-dd-yy") & "; " & myInput.Range("A" & RowCount).Value
        End If
        

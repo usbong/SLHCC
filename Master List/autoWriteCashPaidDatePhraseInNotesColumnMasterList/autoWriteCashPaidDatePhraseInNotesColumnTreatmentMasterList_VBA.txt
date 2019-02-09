@@ -1,0 +1,60 @@
+Sub autoWriteCashPaidDatePhraseInNotesColumnTreatmentMasterList()
+' Copyright 2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190209
+' @date updated: 20190209
+'
+' Master List: Treatment 2018
+' Given:
+' 1) Transaction Date (Column B)
+' 2) Class/Classification, i.e. PWD, SC, WI, SLC, SLR (Column I)
+' 3) All non-hmo/cash transactions are paid on the Transaction Date
+'
+'Output:
+' 1) Auto-written Cash Paid Date Phrase in Notes Column (Column A), e.g. "paid: Nov-05-18; ", with space after ";".
+
+'Notes:
+' 1) The Master List is the consolidated Excel logbook based on:
+' a) printed payslips from Sta. Lucia
+' b) Excel payslip reports from Sta. Lucia
+' c) Rehab/Clinic logbook (pen and paper)
+' d) Rehab/Clinic Excel logbook
+'
+' 2) The date phrase uses the same format, i.e. "mmm-dd-yy", as the transaction date in the worksheet/workbook
+'
+
+Dim myInput As Worksheet
+Dim myOutput As Worksheet 'the same as myInput
+Dim row As Range
+Dim RowCount As Integer
+
+RowCount = 1
+
+Set myInput = Sheets(ActiveSheet.Name)
+Set myOutput = Sheets(ActiveSheet.Name)
+
+For Each row In myInput.Rows
+       If (InStr(myInput.Range("I" & RowCount).Value, "HMO") = 0) Then 'if not an HMO transaction
+            myOutput.Range("A" & RowCount) = "paid: " & Format(myInput.Range("B" & RowCount).Value, "mmm-dd-yy") & "; " & myInput.Range("A" & RowCount).Value
+       End If
+       
+       If IsEmpty(myInput.Range("D" & RowCount).Value) Then
+            Exit For
+       Else
+            RowCount = RowCount + 1
+       End If
+Next row
+
+myOutput.Range("A" & 1, "A" & RowCount).Font.Size = 11
+myOutput.Range("A" & 1, "A" & RowCount).Font.Name = "Calibri"
+'myOutput.Range("A" & 1, "A" & RowCount).NumberFormat = "mmm-dd-yy"
+'myOutput.Range("A" & 1, "A" & RowCount).NumberFormat = "0.00"
+
+End Sub

@@ -1,4 +1,4 @@
-Sub autoFormatMonthlySummaryReport()
+Sub autoFormatMonthlySummaryReportMasterList()
 ' Copyright 2019 Usbong Social Systems, Inc.
 '
 ' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
@@ -9,7 +9,7 @@ Sub autoFormatMonthlySummaryReport()
 '
 ' @author: Michael Syson
 ' @date created: 20190114
-' @date updated: 20190114
+' @date updated: 20190211
 '
 ' Master List
 ' Given:
@@ -17,6 +17,10 @@ Sub autoFormatMonthlySummaryReport()
 '
 ' Output:
 ' 1) Auto-formatted Monthly Summary Report Worksheet
+'
+' Notes:
+' 1) From the table header row, the add-on software automatically makes each alternating row gray.
+' 2) The font style for the name/title row and the date transaction row is bold.
 
 Dim myInput As Worksheet
 Dim myOutput As Worksheet 'the same as myInput
@@ -24,10 +28,17 @@ Dim row As Range
 Dim RowCount As Integer
 Dim BlankRowCount As Integer
 Dim dateValue As String
+Dim column As Range 'added by Mike, 20190211
+Dim transactionDateRow As Integer 'added by Mike, 20190211
 
 RowCount = 1
 BlankRowCount = 0
 ColorRowCount = 0
+
+'added by Mike, 20190211
+columnCount = 1
+columnLetter = "A"
+transactionDateRow = 2 '2 is the date row
 
 Set myInput = Sheets(ActiveSheet.Name)
 Set myOutput = Sheets(ActiveSheet.Name)
@@ -42,30 +53,46 @@ myOutput.UsedRange.Borders.LineStyle = xlNone
 
 myOutput.Range("A" & 1).Font.Bold = True
 
+For Each column In myInput.Columns
+    columnLetter = Split((Columns(columnCount).Address(, 0)), ":")(0)
+
+    'Reference: https://stackoverflow.com/questions/12796973/function-to-convert-column-number-to-letter; last accessed: 20180211
+    'answered and edited by: ashleedawg
+    'answer edited on: 20180330
+    'MsgBox Split((Columns(columnCount).Address(, 0)), ":")(0)
+    If IsEmpty(myInput.Range(columnLetter & transactionDateRow).Value) Then
+            Exit For
+    Else
+            columnCount = columnCount + 1
+    End If
+Next column
+
+columnLetter = Split((Columns(columnCount - 1).Address(, 0)), ":")(0)
+
 For Each row In myInput.Rows
-       myOutput.Range("A" & RowCount, "M" & RowCount).Value = myInput.Range("A" & RowCount, "M" & RowCount).Value
+       myOutput.Range("A" & RowCount, columnLetter & RowCount).Value = myInput.Range("A" & RowCount, columnLetter & RowCount).Value
        
        'auto-format the column header text to be in bold letters
        If myInput.Range("A" & RowCount).Value = "DATE:" Then
-            myOutput.Range("A" & RowCount, "M" & RowCount).Font.Bold = True
+            myOutput.Range("A" & RowCount, columnLetter & RowCount).Font.Bold = True
             
             'added by Mike, 20181127
-            myOutput.Range("A" & RowCount, "M" & RowCount).Interior.ColorIndex = 15 'gray
+            myOutput.Range("A" & RowCount, columnLetter & RowCount).Interior.ColorIndex = 15 'gray
             ColorRowCount = 1
        End If
        
        'auto-format the TOTAL, PAID, and UNPAID cells to use 2 decimals places for all values
        'do not include the TRANSACTION COUNT row
        If (InStr(myInput.Range("A" & RowCount).Value, "HMO") And InStr(myInput.Range("A" & RowCount).Value, "COUNT") = 0) Then
-            myOutput.Range("B" & RowCount, "M" & RowCount).NumberFormat = "0.00"
+            myOutput.Range("B" & RowCount, columnLetter & RowCount).NumberFormat = "0.00"
        Else
-            myOutput.Range("B" & RowCount, "M" & RowCount).NumberFormat = "0"
+            myOutput.Range("B" & RowCount, columnLetter & RowCount).NumberFormat = "0"
        End If
        
        If ColorRowCount Mod 2 = 0 Then 'even number
           'do nothing
        Else
-          myOutput.Range("A" & RowCount, "M" & RowCount).Interior.ColorIndex = 15 'gray
+          myOutput.Range("A" & RowCount, columnLetter & RowCount).Interior.ColorIndex = 15 'gray
        End If
         
        ColorRowCount = ColorRowCount + 1

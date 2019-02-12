@@ -1,0 +1,50 @@
+Sub exportCurrentWorksheetToTabDelimitedTxtFile()
+' Copyright 2018~2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20181105
+' @date updated: 20190212
+'
+' Input Worksheet of the Observation Report for the Day
+' Given:
+' 1) Worksheet, e.g. 201801, 201802
+' --> "201801" means "January 2018"; "201802" means "February 2018".
+' --> Using numbers for the month and year makes it easier for us to properly sort the files from January to December of a given year.
+' --> This is besides the fact that we are adhering to ISO 8601.
+'
+' Output:
+' 1) Tab delimited .txt files of the current Worksheet in the Excel Workbook
+' --> If the Workbook's filename is "PTTreatmentMasterList.xlsm", and the Worksheet name is "201801", the output Tab delimited filename would be "PTTreatmentMasterList_201801.txt".
+'
+' Notes:
+' 1) The PT Treatment Master List is the consolidated Excel logbook based on:
+' a) printed payslips from Sta. Lucia Health Care Centre
+' b) Excel payslip reports from Sta. Lucia Health Care Centre
+' c) ORTHO AND PT DEPT/Rehab/Clinic logbook (pen and paper)
+' d) ORTHO AND PT DEPT/Rehab/Clinic Excel logbook
+'
+' Reference:
+' 1) https://superuser.com/questions/841398/how-to-convert-excel-file-with-multiple-sheets-to-a-set-of-csv-files;
+' last accessed: 20181105
+' answer by: gtwebb on 20141118
+' edited by: phuclv on 20161120
+
+Dim ws As Worksheet
+Dim path As String
+
+Set myInput = Sheets(ActiveSheet.Name)
+
+path = ActiveWorkbook.path & "\" & Left(ActiveWorkbook.Name, InStr(ActiveWorkbook.Name, ".") - 1)
+'Save the workbook first before exporting the worksheet
+ActiveWorkbook.SaveAs Filename:=path
+'Export the current/present active worksheet
+ActiveWorkbook.SaveAs Filename:=path & "_" & myInput.Name & ".txt", FileFormat:=xlText, CreateBackup:=False
+'Close the workbook
+ActiveWorkbook.Close
+End Sub

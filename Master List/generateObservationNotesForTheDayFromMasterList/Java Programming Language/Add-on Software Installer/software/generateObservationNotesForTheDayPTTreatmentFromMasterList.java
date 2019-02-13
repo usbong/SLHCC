@@ -49,7 +49,7 @@ import java.text.DecimalFormat;
 */ 
 
 public class generateObservationNotesForTheDayPTTreatmentFromMasterList {	
-	private static boolean inDebugMode = true;
+	private static boolean isInDebugMode = true;
 	private static String inputFilename = "input201801"; //without extension; default input file
 	
 	private static String startDate = null;
@@ -132,13 +132,13 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 			File f = new File(inputFilename+".txt");
 
 			System.out.println("inputFilename: " + inputFilename);
-			
+/*			
 			//added by Mike, 20181206
 			//edited by Mike, 20190106
 			if (dateValuesArrayInt[i]==0) {
 				dateValuesArrayInt[i] = Integer.parseInt(args[i].substring(args[i].indexOf("_")+1,args[i].indexOf(".txt")));
 			}
-			
+*/			
 			if (inputFilename.toLowerCase().contains("consultation")) {
 				isConsultation=true;
 				continue;
@@ -152,7 +152,7 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 			String s;		
 			s=sc.nextLine(); //skip the first row, which is the input file's table headers
 	
-			if (inDebugMode) {
+			if (isInDebugMode) {
 				rowCount=0;
 			}
 						
@@ -185,7 +185,7 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 					}
 				}
 
-				if (inDebugMode) {
+				if (isInDebugMode) {
 					rowCount++;
 					System.out.println("rowCount: "+rowCount);
 				}
@@ -216,12 +216,14 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 				}				
 				
 				//phase/part/component 2
-				String[] notesInputColumns = s.split(";");					
+				String[] notesInputColumns = inputColumns[INPUT_NOTES_COLUMN].split(";");					
 				for (int k=0; k<notesInputColumns.length; k++) {
 					if (!notesContainer.containsKey(notesInputColumns[k])) {
-						notesContainer.put(notesInputColumns[k], transactionORNumber);
-						
+						notesContainer.put(notesInputColumns[k], transactionORNumber);						
 					}	
+					else {
+						notesContainer.put(notesInputColumns[k], transactionORNumber); //add the transaction OR number in the list with the same notes
+					}
 				}
 		
 			}			
@@ -233,9 +235,67 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 		 * OUTPUT
 		 * --------------------------------------------------------------------
 		*/
-		//added by Mike, 20181118
-		writer.print("HMO and NON-HMO/Cash PT Treatment Monthly Summary Report\n");
+		if (isInDebugMode) {
+			System.out.println("//--------------------------");			
+			System.out.println("  Transactions List:");			
+			System.out.println("//--------------------------");			
 
+			SortedSet<Integer> sortedTransactionsKeyset = new TreeSet<Integer>(transactionsContainer.keySet());
+
+			for (Integer key : sortedTransactionsKeyset) {	
+				System.out.println(key+"\n"+
+								   transactionsContainer.get(key)[OUTPUT_DATE_COLUMN]+"\n"+
+								   transactionsContainer.get(key)[OUTPUT_PATIENT_NAME_COLUMN]+"\n"+
+								   transactionsContainer.get(key)[OUTPUT_PAYMENT_CLASSIFICATION_COLUMN]+"\n--");
+			}
+
+			System.out.println("//--------------------------");			
+			System.out.println("  Notes List:");			
+			System.out.println("//--------------------------");			
+			SortedSet<String> sortedNotesKeyset = new TreeSet<String>(notesContainer.keySet());
+
+			for (String key : sortedNotesKeyset) {	
+				System.out.println(key+"\n"+
+								   notesContainer.get(key)+"\n--");
+			}
+
+		}
+		
+/*		
+		SortedSet<String> sortedNotesKeyset = new TreeSet<String>(notesContainer.keySet());
+
+		for (String key : sortedNotesKeyset) {	
+			System.out.println(""+dateContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]);
+		}
+*/		
+/*		
+		writer.print("Notes:\n");
+		writer.print("1) These are for the following transactions.\n\n");
+
+		SortedSet<String> sortedNotesKeyset = new TreeSet<String>(notesContainer.keySet());
+
+		for (String key : sortedNotesKeyset) {	
+			writer.print( 
+//							"\t" + entry.getValue()[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]
+							"\t" + dateContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]
+							); 				   							
+		}
+*/
+		
+/*		
+		SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(dateContainer.keySet());
+
+		for (Integer key : sortedKeyset) {	
+			writer.print( 
+//							"\t" + entry.getValue()[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]
+							"\t" + dateContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]
+							); 				   							
+		}
+*/		
+		
+		
+		
+		
 		//init table header names
 		writer.print("DATE:\t"); //"PT TREATMENT:" column
 

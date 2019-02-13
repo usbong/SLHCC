@@ -66,7 +66,7 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 /*	private static HashMap<String, double[]> referringDoctorContainer;	
 */
 	private static HashMap<Integer, double[]> dateContainer;	//added by Mike, 20181205
-	private static HashMap<String, Integer> notesContainer;	//added by Mike, 20190213
+	private static HashMap<String, ArrayList<Integer>> notesContainer;	//added by Mike, 20190213
 	private static HashMap<Integer, String[]> transactionsContainer; //added by Mike, 20190213; the int key is the OR number
 
 	private static String[] notesValuesArray; //added by Mike, 20190213
@@ -117,7 +117,7 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 		*/
 		
 		dateContainer = new HashMap<Integer, double[]>();
-		notesContainer = new HashMap<String, Integer>();
+		notesContainer = new HashMap<String, ArrayList<Integer>>();
 		transactionsContainer = new HashMap<Integer, String[]>();
 		
 		//added by Mike, 20181116
@@ -216,13 +216,14 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 				}				
 				
 				//phase/part/component 2
-				String[] notesInputColumns = inputColumns[INPUT_NOTES_COLUMN].split(";");					
+				//TO-DO: -update: to include quotation mark, i.e. ", as delimeter for those that are the end part of my notes for that transaction
+				String[] notesInputColumns = inputColumns[INPUT_NOTES_COLUMN].split(";");	
 				for (int k=0; k<notesInputColumns.length; k++) {
 					if (!notesContainer.containsKey(notesInputColumns[k])) {
-						notesContainer.put(notesInputColumns[k], transactionORNumber);						
+						notesContainer.put(notesInputColumns[k], new ArrayList<Integer>(transactionORNumber));
 					}	
 					else {
-						notesContainer.put(notesInputColumns[k], transactionORNumber); //add the transaction OR number in the list with the same notes
+						notesContainer.get(notesInputColumns[k]).add(transactionORNumber); //add the transaction OR number in the list with the same notes
 					}
 				}
 		
@@ -235,12 +236,13 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 		 * OUTPUT
 		 * --------------------------------------------------------------------
 		*/
+		SortedSet<Integer> sortedTransactionsKeyset = new TreeSet<Integer>(transactionsContainer.keySet());
+		SortedSet<String> sortedNotesKeyset = new TreeSet<String>(notesContainer.keySet());
+
 		if (isInDebugMode) {
 			System.out.println("//--------------------------");			
 			System.out.println("  Transactions List:");			
 			System.out.println("//--------------------------");			
-
-			SortedSet<Integer> sortedTransactionsKeyset = new TreeSet<Integer>(transactionsContainer.keySet());
 
 			for (Integer key : sortedTransactionsKeyset) {	
 				System.out.println(key+"\n"+
@@ -252,11 +254,12 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 			System.out.println("//--------------------------");			
 			System.out.println("  Notes List:");			
 			System.out.println("//--------------------------");			
-			SortedSet<String> sortedNotesKeyset = new TreeSet<String>(notesContainer.keySet());
 
 			for (String key : sortedNotesKeyset) {	
-				System.out.println(key+"\n"+
-								   notesContainer.get(key)+"\n--");
+				for (Integer officialReceiptNumberValue : notesContainer.get(key)) {
+					System.out.println(key+"\n"+
+								       officialReceiptNumberValue+"\n--");
+				}
 			}
 
 		}
@@ -268,374 +271,37 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 			System.out.println(""+dateContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]);
 		}
 */		
-/*		
+	
 		writer.print("Notes:\n");
-		writer.print("1) These are for the following transactions.\n\n");
-
-		SortedSet<String> sortedNotesKeyset = new TreeSet<String>(notesContainer.keySet());
-
-		for (String key : sortedNotesKeyset) {	
-			writer.print( 
-//							"\t" + entry.getValue()[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]
-							"\t" + dateContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]
-							); 				   							
-		}
+		int notesCount=1;
+		
+		for (String notesKey : sortedNotesKeyset) {	
+			writer.print(notesCount+") These are for the following transactions.\n\n");
+			notesCount++;
+			
+//			for (Integer transactionsKey : sortedTransactionsKeyset) {	
+/*			System.out.println("transactionsKey: "+transactionsKey+"; "+"notesContainer.get(notesKey): "+notesContainer.get(notesKey));
 */
-		
-/*		
-		SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(dateContainer.keySet());
 
-		for (Integer key : sortedKeyset) {	
-			writer.print( 
-//							"\t" + entry.getValue()[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]
-							"\t" + dateContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]
-							); 				   							
-		}
-*/		
-		
-		
-		
-		
-		//init table header names
-		writer.print("DATE:\t"); //"PT TREATMENT:" column
+				for (Integer officialReceiptNumberValue : notesContainer.get(notesKey)) {
+/*					System.out.println(key+"\n"+
+								       officialReceiptNumberValue+"\n--");
+*/									   
+//					if (transactionsKey.intValue()==officialReceiptNumberValue.intValue()) { //OR NUMBER
+/*					System.out.println("here");
+*/				
+					writer.println(transactionsContainer.get(officialReceiptNumberValue)[OUTPUT_DATE_COLUMN]+"\t"+
+								   officialReceiptNumberValue+"\t"+
+								   transactionsContainer.get(officialReceiptNumberValue)[OUTPUT_PATIENT_NAME_COLUMN]+"\t"+
+								   transactionsContainer.get(officialReceiptNumberValue)[OUTPUT_PAYMENT_CLASSIFICATION_COLUMN]);		
+//					}
 
-		//do not include input files that are Consultation transactions 
-		for(int i=0; i<dateValuesArrayInt.length; i++) { //edited by Mike, 20190106
-			writer.print(dateValuesArrayInt[i]+"\t"); //"PT TREATMENT:" column
+				}
+//			}
+								   
+			writer.println("\n--> "+notesKey+"\n");							   
 		}
 		
-		//--------------------------------------------------------------------
-		writer.print("\nNON-HMO/Cash (net) : TOTAL"); 		
-/*
-       for (Map.Entry<String, double[]> entry : dateContainer.entrySet())
-       {
-*/		
-		
-		SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(dateContainer.keySet());
-
-		for (Integer key : sortedKeyset) {	
-/*		for(int k=0; k<dateContainer.length; k++) {
-*/	
-/*
-			int totalCount = (int) dateContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + (int) dateContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
-			double totalNetTreatmentFee = dateContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN];
-			double totalPaidNetTreatmentFee = dateContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN];
-			double totalUnpaidNetTreatmentFee = dateContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN];
-			double totalFivePercentShareOfNetPaid = dateContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN]*0.05 + dateContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN]*0.05;
-
-			//added by Mike, 20181123
-			totalCountForAllReferringDoctors += totalCount;
-			totalNetTreatmentFeeForAllReferringDoctors += totalNetTreatmentFee;
-			totalPaidNetTreatmentFeeForAllReferringDoctors += totalPaidNetTreatmentFee;
-			totalUnpaidNetTreatmentFeeForAllReferringDoctors += totalUnpaidNetTreatmentFee;
-			totalFivePercentShareOfNetPaidForAllReferringDoctors += totalFivePercentShareOfNetPaid;
-*/			
-			writer.print( 
-//							"\t" + entry.getValue()[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]
-							"\t" + dateContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]
-/*							"\n" + key			
-
-							"\t" + totalCount +
-							"\t" + df.format(totalNetTreatmentFee) +
-							"\t" + df.format(totalPaidNetTreatmentFee) +
-							"\t" + df.format(totalUnpaidNetTreatmentFee) +
-							"\t" + df.format(totalFivePercentShareOfNetPaid)
-*/							
-							); 				   							
-		}
-
-		writer.print("\nNON-HMO/Cash (net) : PAID"); 		
-		
-		for (Integer key : sortedKeyset) {	
-			writer.print( 
-							"\t" + dateContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN]
-							); 				   							
-		}
-
-		writer.print("\nNON-HMO/Cash (net) : UNPAID"); 		
-		
-		for (Integer key : sortedKeyset) {	
-			writer.print( 
-							"\t" + dateContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]
-							); 				   							
-		}
-		
-		writer.print("\nNON-HMO/Cash (net) : TRANSACTION COUNT"); 		
-		
-		for (Integer key : sortedKeyset) {	
-			writer.print( 
-							"\t" + dateContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN]
-							); 				   							
-		}
-
-		writer.print("\n"); //blank row 				
-		writer.print("\nHMO (net) : TOTAL"); 		
-		
-		for (Integer key : sortedKeyset) {	
-			writer.print( 
-							"\t" + dateContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]
-							); 				   							
-		}
-
-		writer.print("\nHMO (net) : PAID"); 		
-		
-		for (Integer key : sortedKeyset) {	
-			writer.print( 
-							"\t" + dateContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN]
-							); 				   							
-		}
-
-		writer.print("\nHMO (net) : UNPAID"); 		
-		
-		for (Integer key : sortedKeyset) {	
-			writer.print( 
-							"\t" + dateContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]
-							); 				   							
-		}
-		
-		writer.print("\nHMO (net) : TRANSACTION COUNT"); 		
-		
-		for (Integer key : sortedKeyset) {	
-			writer.print( 
-							"\t" + dateContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN]
-							); 				   							
-		}
-
-		writer.print("\n"); //blank row
-		writer.print("\nHMO and NON-HMO/Cash (net) : TOTAL"); 		
-
-		for (Integer key : sortedKeyset) {	
-			double count = dateContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN];
-		
-			writer.print( 
-							"\t" + count
-							); 				   							
-		}
-
-		writer.print("\nHMO and NON-HMO/Cash (net) : PAID"); 		
-
-		for (Integer key : sortedKeyset) {	
-			double count = dateContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN];
-		
-			writer.print( 
-							"\t" + count
-							); 				   							
-		}
-
-		writer.print("\nHMO and NON-HMO/Cash (net) : UNPAID"); 		
-
-		for (Integer key : sortedKeyset) {	
-			double count = dateContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN];
-		
-			writer.print( 
-							"\t" + count
-							); 				   							
-		}
-
-		writer.print("\nHMO and NON-HMO/Cash (net) : TRANSACTION COUNT"); 		
-
-		for (Integer key : sortedKeyset) {	
-			double count = dateContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
-		
-			writer.print( 
-							"\t" + count
-							); 				   							
-		}
-
-		
-/*		
-		writer.print("REFERRING DOCTOR:\t"); //"REFERRING DOCTOR:" column
-		writer.print("COUNT:\t"); //"COUNT:" column
-		writer.print("TOTAL NET TREATMENT FEE:\t"); //"TOTAL NET TREATMENT FEE:" column
-		writer.print("PAID NET TREATMENT FEE:\t"); //"PAID NET TREATMENT FEE:" column
-		writer.print("UNPAID NET TREATMENT FEE:\t"); //"UNPAID NET TREATMENT FEE:" column		
-		writer.println("5% SHARE OF NET PAID:"); //"5% SHARE OF NET PAID:" column		
-
-		SortedSet<String> sortedKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
-
-
-		for (String key : sortedKeyset) {
-			int totalCount = (int) referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + (int) referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
-			double totalNetTreatmentFee = referringDoctorContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN];
-			double totalPaidNetTreatmentFee = referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN];
-			double totalUnpaidNetTreatmentFee = referringDoctorContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] +referringDoctorContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN];
-			double totalFivePercentShareOfNetPaid = referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN]*0.05 + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN]*0.05;
-
-			//added by Mike, 20181123
-			totalCountForAllReferringDoctors += totalCount;
-			totalNetTreatmentFeeForAllReferringDoctors += totalNetTreatmentFee;
-			totalPaidNetTreatmentFeeForAllReferringDoctors += totalPaidNetTreatmentFee;
-			totalUnpaidNetTreatmentFeeForAllReferringDoctors += totalUnpaidNetTreatmentFee;
-			totalFivePercentShareOfNetPaidForAllReferringDoctors += totalFivePercentShareOfNetPaid;
-			
-			writer.println( 
-							startDate + " to " + endDate +
-							"\t" + key +
-							"\t" + totalCount +
-							"\t" + df.format(totalNetTreatmentFee) +
-							"\t" + df.format(totalPaidNetTreatmentFee) +
-							"\t" + df.format(totalUnpaidNetTreatmentFee) +
-							"\t" + df.format(totalFivePercentShareOfNetPaid)
-							); 				   							
-							
-		}
-
-		writer.println( startDate + " to " + endDate +
-						"\t" + "All Referring Doctors" +
-						"\t" + totalCountForAllReferringDoctors +
-						"\t" + df.format(totalNetTreatmentFeeForAllReferringDoctors) +
-						"\t" + df.format(totalPaidNetTreatmentFeeForAllReferringDoctors) +
-						"\t" + df.format(totalUnpaidNetTreatmentFeeForAllReferringDoctors) +
-						"\t" + df.format(totalFivePercentShareOfNetPaidForAllReferringDoctors)
-						); 				   							
-*/		
-
-/*		
-		//init table header names
-		writer.print("DATE:\t"); //"DATE:" column
-		writer.print("REFERRING DOCTOR:\t"); //"REFERRING DOCTOR:" column
-		writer.print("COUNT:\t"); //"COUNT:" column
-		writer.print("TOTAL NET TREATMENT FEE:\t"); //"TOTAL NET TREATMENT FEE:" column
-		writer.print("PAID NET TREATMENT FEE:\t"); //"PAID NET TREATMENT FEE:" column
-		writer.print("UNPAID NET TREATMENT FEE:\t"); //"UNPAID NET TREATMENT FEE:" column		
-		writer.println("5% SHARE OF NET PAID:"); //"5% SHARE OF NET PAID:" column		
-
-		SortedSet<String> sortedKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
-
-//		int dateCount=0; //added by Mike, 20180412
-//		dateValuesArray[dateCount];
-
-		for (String key : sortedKeyset) {
-			int totalCount = (int) referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + (int) referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
-			double totalNetTreatmentFee = referringDoctorContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN];
-			double totalPaidNetTreatmentFee = referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN];
-			double totalUnpaidNetTreatmentFee = referringDoctorContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] +referringDoctorContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN];
-			double totalFivePercentShareOfNetPaid = referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN]*0.05 + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN]*0.05;
-
-			//added by Mike, 20181123
-			totalCountForAllReferringDoctors += totalCount;
-			totalNetTreatmentFeeForAllReferringDoctors += totalNetTreatmentFee;
-			totalPaidNetTreatmentFeeForAllReferringDoctors += totalPaidNetTreatmentFee;
-			totalUnpaidNetTreatmentFeeForAllReferringDoctors += totalUnpaidNetTreatmentFee;
-			totalFivePercentShareOfNetPaidForAllReferringDoctors += totalFivePercentShareOfNetPaid;
-			
-			writer.println( 
-							startDate + " to " + endDate +
-							"\t" + key +
-							"\t" + totalCount +
-							"\t" + df.format(totalNetTreatmentFee) +
-							"\t" + df.format(totalPaidNetTreatmentFee) +
-							"\t" + df.format(totalUnpaidNetTreatmentFee) +
-							"\t" + df.format(totalFivePercentShareOfNetPaid)
-							); 				   							
-							
-		}
-
-		writer.println( startDate + " to " + endDate +
-						"\t" + "All Referring Doctors" +
-						"\t" + totalCountForAllReferringDoctors +
-						"\t" + df.format(totalNetTreatmentFeeForAllReferringDoctors) +
-						"\t" + df.format(totalPaidNetTreatmentFeeForAllReferringDoctors) +
-						"\t" + df.format(totalUnpaidNetTreatmentFeeForAllReferringDoctors) +
-						"\t" + df.format(totalFivePercentShareOfNetPaidForAllReferringDoctors)
-						); 				   							
-		
-		//----------------------------------------------------------------------------------------------------------------------------		
-		writer.print("\nHMO Report\n");
-		 
-		//init table header names
-		writer.print("DATE:\t"); //"DATE:" column
-		writer.print("REFERRING DOCTOR:\t"); //"REFERRING DOCTOR:" column
-		writer.print("COUNT:\t"); //"COUNT:" column
-		writer.print("TOTAL NET TREATMENT FEE:\t"); //"TOTAL NET TREATMENT FEE:" column
-		writer.print("PAID NET TREATMENT FEE:\t"); //"PAID NET TREATMENT FEE:" column
-		writer.print("UNPAID NET TREATMENT FEE:\t"); //"UNPAID NET TREATMENT FEE:" column		
-		writer.println("5% SHARE OF NET PAID:"); //"5% SHARE OF NET PAID:" column		
-
-//		SortedSet<String> sortedKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
-		
-		//added by Mike, 20181123
-		totalCountForAllReferringDoctors = 0;
-		totalNetTreatmentFeeForAllReferringDoctors = 0;
-		totalPaidNetTreatmentFeeForAllReferringDoctors = 0;
-		totalUnpaidNetTreatmentFeeForAllReferringDoctors = 0;
-		totalFivePercentShareOfNetPaidForAllReferringDoctors = 0;
-		
-		for (String key : sortedKeyset) {			
-			//added by Mike, 20181123
-			totalCountForAllReferringDoctors += (int) referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
-			totalNetTreatmentFeeForAllReferringDoctors += referringDoctorContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN];
-			totalPaidNetTreatmentFeeForAllReferringDoctors += referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN];
-			totalUnpaidNetTreatmentFeeForAllReferringDoctors += referringDoctorContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN];
-			totalFivePercentShareOfNetPaidForAllReferringDoctors += referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN];
-			
-			writer.println( startDate + " to " + endDate +
-							"\t" + key +
-							"\t" + (int) referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] +
-							"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]) +
-							"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN]) +
-							"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]) +
-							"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN]*0.05)
-							); 				   							
-		}
-		
-		writer.println( startDate + " to " + endDate +
-				"\t" + "All Referring Doctors" +
-				"\t" + totalCountForAllReferringDoctors +
-				"\t" + df.format(totalNetTreatmentFeeForAllReferringDoctors) +
-				"\t" + df.format(totalPaidNetTreatmentFeeForAllReferringDoctors) +
-				"\t" + df.format(totalUnpaidNetTreatmentFeeForAllReferringDoctors) +
-				"\t" + df.format(totalFivePercentShareOfNetPaidForAllReferringDoctors)
-				); 				   							
-
-		
-		//----------------------------------------------------------------------------------------------------------------------------
-		writer.print("\nNON-HMO Report\n");
-		
-		//init table header names
-		writer.print("DATE:\t"); //"DATE:" column
-		writer.print("REFERRING DOCTOR:\t"); //"REFERRING DOCTOR:" column
-		writer.print("COUNT:\t"); //"COUNT:" column
-		writer.print("TOTAL NET TREATMENT FEE:\t"); //"TOTAL NET TREATMENT FEE:" column
-		writer.print("PAID NET TREATMENT FEE:\t"); //"PAID NET TREATMENT FEE:" column
-		writer.print("UNPAID NET TREATMENT FEE:\t"); //"UNPAID NET TREATMENT FEE:" column
-		writer.println("5% SHARE OF NET PAID:"); //"5% SHARE OF NET PAID:" column		
-								
-		//added by Mike, 20181123
-		totalCountForAllReferringDoctors = 0;
-		totalNetTreatmentFeeForAllReferringDoctors = 0;
-		totalPaidNetTreatmentFeeForAllReferringDoctors = 0;
-		totalUnpaidNetTreatmentFeeForAllReferringDoctors = 0;
-		totalFivePercentShareOfNetPaidForAllReferringDoctors = 0;
-
-		for (String key : sortedKeyset) {
-			//added by Mike, 20181123
-			totalCountForAllReferringDoctors += (int) referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
-			totalNetTreatmentFeeForAllReferringDoctors += referringDoctorContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN];
-			totalPaidNetTreatmentFeeForAllReferringDoctors += referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN];
-			totalUnpaidNetTreatmentFeeForAllReferringDoctors += referringDoctorContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN];
-			totalFivePercentShareOfNetPaidForAllReferringDoctors += referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN];
-
-			writer.println( startDate + " to " + endDate +
-							"\t" + key +
-							"\t" + (int) referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN] +
-							"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]) +
-							"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN]) +
-							"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]) +
-							"\t" + df.format(referringDoctorContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN]*0.05)
-							); 				   							
-		}
-		
-		writer.println( startDate + " to " + endDate +
-		"\t" + "All Referring Doctors" +
-		"\t" + totalCountForAllReferringDoctors +
-		"\t" + df.format(totalNetTreatmentFeeForAllReferringDoctors) +
-		"\t" + df.format(totalPaidNetTreatmentFeeForAllReferringDoctors) +
-		"\t" + df.format(totalUnpaidNetTreatmentFeeForAllReferringDoctors) +
-		"\t" + df.format(totalFivePercentShareOfNetPaidForAllReferringDoctors)
-		); 				   							
-*/
-		//----------------------------------------------------------------------------------------------------------------------------
 		writer.close();
 	}
 	

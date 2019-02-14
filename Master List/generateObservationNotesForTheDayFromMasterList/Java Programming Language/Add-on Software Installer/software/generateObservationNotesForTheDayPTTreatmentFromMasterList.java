@@ -296,7 +296,14 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 		int notesCount=1;
 		
 		for (String notesKey : sortedNotesKeyset) {	
-			writer.print(notesCount+") These are for the following transactions.\n\n");
+		
+			if (notesContainer.get(notesKey).size()>1) {
+				writer.print(notesCount+") These are for the following transactions.\n\n");
+			}
+			else {
+				writer.print(notesCount+") These are for the following transaction.\n\n");
+			}
+			
 			notesCount++;
 			
 //			for (Integer transactionsKey : sortedTransactionsKeyset) {	

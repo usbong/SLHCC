@@ -216,9 +216,11 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 				}				
 				
 				//phase/part/component 2
-				//TO-DO: -update: to include quotation mark, i.e. ", as delimeter for those that are the end part of my notes for that transaction
 				String[] notesInputColumns = inputColumns[INPUT_NOTES_COLUMN].split(";");	
 				for (int k=0; k<notesInputColumns.length; k++) {
+					//remove the excess quotation marks due to the input file being exported from MS Excel as Tab-delimited
+					notesInputColumns[k] = notesInputColumns[k].replace("\"\"","'").replace("\"","").replace("'","\"");
+					
 					if (!notesContainer.containsKey(notesInputColumns[k])) {
 						notesContainer.put(notesInputColumns[k], new ArrayList<Integer>(transactionORNumber));
 					}	

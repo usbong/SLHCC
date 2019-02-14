@@ -150,7 +150,8 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 			Scanner sc = new Scanner(new FileInputStream(f));				
 		
 			String s;		
-			s=sc.nextLine(); //skip the first row, which is the input file's table headers
+			//removed the instruction below given that the input file does not include the table headers
+//			s=sc.nextLine(); //skip the first row, which is the input file's table headers
 	
 			if (isInDebugMode) {
 				rowCount=0;
@@ -167,6 +168,8 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 				
 				String[] inputColumns = s.split("\t");					
 				
+//				System.out.println(">> s: "+s);
+
 				//added by Mike, 20180412
 				if (dateValuesArray[i]==null) {
 					dateValuesArray[i] = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);
@@ -217,12 +220,21 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 				
 				//phase/part/component 2
 				String[] notesInputColumns = inputColumns[INPUT_NOTES_COLUMN].split(";");	
-				for (int k=0; k<notesInputColumns.length; k++) {
+
+					
+				System.out.println(">> transactionORNumber: "+transactionORNumber);				
+				System.out.println(">> input: "+inputColumns[INPUT_NOTES_COLUMN]);
+
+				for (int k=0; k<notesInputColumns.length; k++) {					
 					//remove the excess quotation marks due to the input file being exported from MS Excel as Tab-delimited
 					notesInputColumns[k] = notesInputColumns[k].replace("\"\"","'").replace("\"","").replace("'","\"");
 					
+					System.out.println(">> "+notesInputColumns[k]);
+
 					if (!notesContainer.containsKey(notesInputColumns[k])) {
-						notesContainer.put(notesInputColumns[k], new ArrayList<Integer>(transactionORNumber));
+						System.out.println(">>>> new");
+						notesContainer.put(notesInputColumns[k], new ArrayList<Integer>());
+						notesContainer.get(notesInputColumns[k]).add(transactionORNumber); //add the transaction OR number 
 					}	
 					else {
 						notesContainer.get(notesInputColumns[k]).add(transactionORNumber); //add the transaction OR number in the list with the same notes
@@ -258,10 +270,16 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 			System.out.println("//--------------------------");			
 
 			for (String key : sortedNotesKeyset) {	
+				System.out.println(key+"\n--");
+				System.out.println("length: "+notesContainer.get(key).size()+"\n");
+
+
 				for (Integer officialReceiptNumberValue : notesContainer.get(key)) {
 					System.out.println(key+"\n"+
 								       officialReceiptNumberValue+"\n--");
 				}
+				System.out.println("-----");
+				
 			}
 
 		}

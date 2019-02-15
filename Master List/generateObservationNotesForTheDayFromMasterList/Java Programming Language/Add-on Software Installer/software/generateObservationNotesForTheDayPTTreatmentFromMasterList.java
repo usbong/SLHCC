@@ -68,7 +68,9 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 	private static HashMap<Integer, double[]> dateContainer;	//added by Mike, 20181205
 	private static HashMap<String, ArrayList<Integer>> notesContainer;	//added by Mike, 20190213
 	private static HashMap<Integer, String[]> transactionsContainer; //added by Mike, 20190213; the int key is the OR number
-
+	private static HashMap<Integer, ArrayList<String>> outputContainer; //added by Mike, 20190215; the key is a numerical value for the set of transactions
+	private static HashMap<Integer, ArrayList<Integer>> setOfTransactionsContainer; //added by Mike, 20190215
+	
 	private static String[] notesValuesArray; //added by Mike, 20190213
 	private static String[] transactionsValuesArray; //added by Mike, 20190213
 
@@ -119,7 +121,9 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 		dateContainer = new HashMap<Integer, double[]>();
 		notesContainer = new HashMap<String, ArrayList<Integer>>();
 		transactionsContainer = new HashMap<Integer, String[]>();
-		
+		outputContainer = new HashMap<Integer, ArrayList<String>>(); //added by Mike, 20190215
+		setOfTransactionsContainer = new HashMap<Integer, ArrayList<Integer>>(); //added by Mike, 20190215
+ 	
 		//added by Mike, 20181116
 		startDate = null; //properly set the month and year in the output file of each input file
 		dateValuesArray = new String[args.length]; //added by Mike, 20180412
@@ -244,7 +248,7 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 			}			
 		}
 		
-		//TO-DO: -update: instructions to auto-write output
+		
 		/*
 		 * --------------------------------------------------------------------
 		 * OUTPUT
@@ -252,7 +256,39 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 		*/
 		SortedSet<Integer> sortedTransactionsKeyset = new TreeSet<Integer>(transactionsContainer.keySet());
 		SortedSet<String> sortedNotesKeyset = new TreeSet<String>(notesContainer.keySet());
+		
+//		outputContainer = new HashMap<Integer, ArrayList<String>>(); //added by Mike, 20190215
+//		setOfTransactionsContainer = new HashMap<Integer, ArrayList<Integer>>(); //added by Mike, 20190215
 
+		//added by Mike, 20190215
+		//phase/part/component 3
+		//group together the notes with the same set of transactions	
+		int setOfTransactionsCount=0;
+		for (String notesKey : sortedNotesKeyset) {			
+				if (setOfTransactionsContainer.isEmpty()) {
+					setOfTransactionsContainer.put(setOfTransactionsCount, notesContainer.get(notesKey));
+					setOfTransactionsCount++;
+					continue;
+				}
+
+				for (int i=0; i<setOfTransactionsContainer.size(); i++) {
+					if (notesContainer.get(notesKey).equals(setOfTransactionsContainer.get(i))) {
+						System.out.println("equal: "+notesContainer.get(notesKey));
+						break;
+					}
+					
+					//if this is last entry in the container and has no existing match in the container
+					if (i==setOfTransactionsContainer.size()-1) { 
+						setOfTransactionsContainer.put(setOfTransactionsCount, notesContainer.get(notesKey));
+						setOfTransactionsCount++;					
+					}
+				}
+		}
+
+		for (int i=0; i<setOfTransactionsContainer.size(); i++) {
+			System.out.println(">>> " + setOfTransactionsContainer.get(i));
+		}
+		
 		if (isInDebugMode) {
 			System.out.println("//--------------------------");			
 			System.out.println("  Transactions List:");			

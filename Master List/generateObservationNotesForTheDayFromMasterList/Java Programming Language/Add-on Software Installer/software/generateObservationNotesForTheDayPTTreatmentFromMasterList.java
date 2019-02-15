@@ -273,22 +273,22 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 
 				for (int i=0; i<setOfTransactionsContainer.size(); i++) {
 					if (notesContainer.get(notesKey).equals(setOfTransactionsContainer.get(i))) {
-						System.out.println("equal: "+notesContainer.get(notesKey));
+//						System.out.println("equal: "+notesContainer.get(notesKey));
 						break;
 					}
 					
-					//if this is last entry in the container and has no existing match in the container
+					//if this is the last entry in the container and has no existing match in the container
 					if (i==setOfTransactionsContainer.size()-1) { 
 						setOfTransactionsContainer.put(setOfTransactionsCount, notesContainer.get(notesKey));
 						setOfTransactionsCount++;					
 					}
 				}
 		}
-
+/*
 		for (int i=0; i<setOfTransactionsContainer.size(); i++) {
 			System.out.println(">>> " + setOfTransactionsContainer.get(i));
 		}
-		
+*/		
 		if (isInDebugMode) {
 			System.out.println("//--------------------------");			
 			System.out.println("  Transactions List:");			
@@ -308,8 +308,7 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 			for (String key : sortedNotesKeyset) {	
 				System.out.println(key+"\n--");
 				System.out.println("length: "+notesContainer.get(key).size()+"\n");
-
-
+				
 				for (Integer officialReceiptNumberValue : notesContainer.get(key)) {
 					System.out.println(key+"\n"+
 								       officialReceiptNumberValue+"\n--");
@@ -330,39 +329,32 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 	
 		writer.print("Notes:\n");
 		int notesCount=1;
-		
-		for (String notesKey : sortedNotesKeyset) {	
-		
-			if (notesContainer.get(notesKey).size()>1) {
+
+		for (int i=0; i<setOfTransactionsContainer.size(); i++) {		
+			if (setOfTransactionsContainer.get(i).size()>1) {
 				writer.print(notesCount+") These are for the following transactions.\n\n");
 			}
 			else {
 				writer.print(notesCount+") These are for the following transaction.\n\n");
+			}			
+			notesCount++;
+		
+			for (Integer officialReceiptNumberValue : setOfTransactionsContainer.get(i)) {
+				writer.println(transactionsContainer.get(officialReceiptNumberValue)[OUTPUT_DATE_COLUMN]+"\t"+
+							   officialReceiptNumberValue+"\t"+
+							   transactionsContainer.get(officialReceiptNumberValue)[OUTPUT_PATIENT_NAME_COLUMN]+"\t"+
+							   transactionsContainer.get(officialReceiptNumberValue)[OUTPUT_PAYMENT_CLASSIFICATION_COLUMN]);		
+			}
+
+			writer.println(""); //new line					
+			
+			for (String key : sortedNotesKeyset) {	
+				if (setOfTransactionsContainer.get(i).equals(notesContainer.get(key))) {		
+					writer.println("--> "+key.trim());					
+				}
 			}
 			
-			notesCount++;
-			
-//			for (Integer transactionsKey : sortedTransactionsKeyset) {	
-/*			System.out.println("transactionsKey: "+transactionsKey+"; "+"notesContainer.get(notesKey): "+notesContainer.get(notesKey));
-*/
-
-				for (Integer officialReceiptNumberValue : notesContainer.get(notesKey)) {
-/*					System.out.println(key+"\n"+
-								       officialReceiptNumberValue+"\n--");
-*/									   
-//					if (transactionsKey.intValue()==officialReceiptNumberValue.intValue()) { //OR NUMBER
-/*					System.out.println("here");
-*/				
-					writer.println(transactionsContainer.get(officialReceiptNumberValue)[OUTPUT_DATE_COLUMN]+"\t"+
-								   officialReceiptNumberValue+"\t"+
-								   transactionsContainer.get(officialReceiptNumberValue)[OUTPUT_PATIENT_NAME_COLUMN]+"\t"+
-								   transactionsContainer.get(officialReceiptNumberValue)[OUTPUT_PAYMENT_CLASSIFICATION_COLUMN]);		
-//					}
-
-				}
-//			}
-								   
-			writer.println("\n--> "+notesKey+"\n");							   
+			writer.println(""); //new line					
 		}
 		
 		writer.close();

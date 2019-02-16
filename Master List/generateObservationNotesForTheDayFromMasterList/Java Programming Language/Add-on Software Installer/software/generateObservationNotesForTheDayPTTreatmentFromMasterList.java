@@ -348,9 +348,13 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 
 			writer.println(""); //new line					
 			
+			//added by Mike, 20190216
+			//Reference: https://www.cs.cmu.edu/~pattis/15-1XX/common/handouts/ascii.html; last accessed: 20190216
+			int observationCount=97; //97 is letter 'a" in ASCII
 			for (String key : sortedNotesKeyset) {	
 				if (setOfTransactionsContainer.get(i).equals(notesContainer.get(key))) {		
-					writer.println("--> "+key.trim());					
+					writer.println("--> "+(char)+observationCount+") I "+key.trim()+".");					
+					observationCount++;
 				}
 			}
 			

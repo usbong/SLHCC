@@ -340,7 +340,7 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 			notesCount++;
 		
 			for (Integer officialReceiptNumberValue : setOfTransactionsContainer.get(i)) {
-				writer.println(transactionsContainer.get(officialReceiptNumberValue)[OUTPUT_DATE_COLUMN]+"\t"+
+				writer.println(updateDateFormat(transactionsContainer.get(officialReceiptNumberValue)[OUTPUT_DATE_COLUMN])+"\t"+
 							   officialReceiptNumberValue+"\t"+
 							   transactionsContainer.get(officialReceiptNumberValue)[OUTPUT_PATIENT_NAME_COLUMN]+"\t"+
 							   transactionsContainer.get(officialReceiptNumberValue)[OUTPUT_PAYMENT_CLASSIFICATION_COLUMN]);		
@@ -353,7 +353,7 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 			int observationCount=97; //97 is letter 'a" in ASCII
 			for (String key : sortedNotesKeyset) {	
 				if (setOfTransactionsContainer.get(i).equals(notesContainer.get(key))) {		
-					writer.println("--> "+(char)+observationCount+") I "+key.trim()+".");					
+					writer.println("--> "+(char)observationCount+") I "+key.trim()+".");					
 					observationCount++;
 				}
 			}
@@ -362,6 +362,55 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 		}
 		
 		writer.close();
+	}
+	
+	//input: Feb-14-19
+	//output: 14/02/2019
+	private static String updateDateFormat(String date) { 
+		String[] inputDateParts = date.split("-");					
+		String month = "";
+		
+		switch(inputDateParts[0].toLowerCase()) { //month
+			case "jan":
+				month = "01";
+				break;
+			case "feb":
+				month = "02";
+				break;
+			case "mar":
+				month = "03";
+				break;
+			case "apr":
+				month = "04";
+				break;
+			case "may":
+				month = "05";
+				break;
+			case "jun":
+				month = "06";
+				break;
+			case "jul":
+				month = "07";
+				break;
+			case "aug":
+				month = "08";
+				break;
+			case "sep":
+				month = "09";
+				break;
+			case "oct":
+				month = "10";
+				break;
+			case "nov":
+				month = "11";
+				break;
+			case "dec":
+				month = "12";
+				break;
+		}	
+
+		//TO-DO: -update: this to not hardcode "20" for the year
+		return inputDateParts[1]+"/"+month+"/"+"20"+inputDateParts[2];
 	}
 	
 	private static String getMonthYear(String date) {

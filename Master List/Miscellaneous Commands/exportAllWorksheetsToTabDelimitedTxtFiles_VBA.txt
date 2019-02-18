@@ -1,5 +1,5 @@
 Sub exportAllWorksheetsToTabDelimitedTxtFiles()
-' Copyright 2018 Usbong Social Systems, Inc.
+' Copyright 2018~2019 Usbong Social Systems, Inc.
 '
 ' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
 '
@@ -9,9 +9,9 @@ Sub exportAllWorksheetsToTabDelimitedTxtFiles()
 '
 ' @author: Michael Syson
 ' @date created: 20181105
-' @date updated: 20181105
+' @date updated: 20190218
 '
-' PT Treatment Master List 2018
+' Input Workbook, e.g. Consultation Master List, PT Treatment Master List
 ' Given:
 ' 1) Worksheets, e.g. 201801, 201802
 ' --> "201801" means "January 2018"; "201802" means "February 2018".
@@ -23,11 +23,14 @@ Sub exportAllWorksheetsToTabDelimitedTxtFiles()
 ' --> If the Workbook's filename is "PTTreatmentMasterList.xlsm", and the Worksheet name is "201801", the output Tab delimited filename would be "PTTreatmentMasterList_201801.txt".
 '
 ' Notes:
-' 1) The PT Treatment Master List is the consolidated Excel logbook based on:
+' 1) The Master List is the consolidated Excel logbook based on:
 ' a) printed payslips from Sta. Lucia Health Care Centre
 ' b) Excel payslip reports from Sta. Lucia Health Care Centre
 ' c) Rehab/Clinic logbook (pen and paper)
 ' d) Rehab/Clinic Excel logbook
+'
+' 2) We recommend that the input workbook is saved as an Excel Macro-Enabled Workbook, i.e. .xlsm.
+' --> Otherwise, you'll need to create and put this set of VBA instructions in the workbook every time.
 '
 ' Reference:
 ' 1) https://superuser.com/questions/841398/how-to-convert-excel-file-with-multiple-sheets-to-a-set-of-csv-files;
@@ -39,8 +42,17 @@ Dim ws As Worksheet
 Dim path As String
 
 path = ActiveWorkbook.path & "\" & Left(ActiveWorkbook.Name, InStr(ActiveWorkbook.Name, ".") - 1)
+
+'Save the workbook first before exporting the worksheet
+ActiveWorkbook.SaveAs Filename:=path
+
 For Each ws In Worksheets
+    'Export the current/present active worksheet
     ws.Activate
     ActiveWorkbook.SaveAs Filename:=path & "_" & ws.Name & ".txt", FileFormat:=xlText, CreateBackup:=False
 Next
+
+'Close the workbook without the extra step of saving it again anymore
+ActiveWorkbook.Close SaveChanges:=False
+
 End Sub

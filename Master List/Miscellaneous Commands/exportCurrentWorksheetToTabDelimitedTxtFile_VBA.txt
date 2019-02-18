@@ -9,9 +9,9 @@ Sub exportCurrentWorksheetToTabDelimitedTxtFile()
 '
 ' @author: Michael Syson
 ' @date created: 20181105
-' @date updated: 20190212
+' @date updated: 20190218
 '
-' Input Worksheet of the Observation Report for the Day
+' Input Workbook with Worksheet of the Observation Report for the Day
 ' Given:
 ' 1) Worksheet, e.g. 201801, 201802
 ' --> "201801" means "January 2018"; "201802" means "February 2018".
@@ -29,6 +29,9 @@ Sub exportCurrentWorksheetToTabDelimitedTxtFile()
 ' c) ORTHO AND PT DEPT/Rehab/Clinic logbook (pen and paper)
 ' d) ORTHO AND PT DEPT/Rehab/Clinic Excel logbook
 '
+' 2) We recommend that the input workbook is saved as an Excel Macro-Enabled Workbook, i.e. .xlsm.
+' --> Otherwise, you'll need to create and put this set of VBA instructions in the workbook every time.
+'
 ' Reference:
 ' 1) https://superuser.com/questions/841398/how-to-convert-excel-file-with-multiple-sheets-to-a-set-of-csv-files;
 ' last accessed: 20181105
@@ -41,10 +44,14 @@ Dim path As String
 Set myInput = Sheets(ActiveSheet.Name)
 
 path = ActiveWorkbook.path & "\" & Left(ActiveWorkbook.Name, InStr(ActiveWorkbook.Name, ".") - 1)
+
 'Save the workbook first before exporting the worksheet
 ActiveWorkbook.SaveAs Filename:=path
+
 'Export the current/present active worksheet
 ActiveWorkbook.SaveAs Filename:=path & "_" & myInput.Name & ".txt", FileFormat:=xlText, CreateBackup:=False
-'Close the workbook
-ActiveWorkbook.Close
+
+'Close the workbook without the extra step of saving it again anymore
+ActiveWorkbook.Close SaveChanges:=False
+
 End Sub

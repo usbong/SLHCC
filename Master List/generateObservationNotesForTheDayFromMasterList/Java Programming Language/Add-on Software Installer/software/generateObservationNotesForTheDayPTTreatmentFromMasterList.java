@@ -114,7 +114,7 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 	public static void main ( String[] args ) throws Exception
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
-		PrintWriter writer = new PrintWriter("output/ObservationNotesForTheDaySummaryReportOutput.txt", "UTF-8");			
+		PrintWriter writer = new PrintWriter("output/ObservationNotesForTheDaySummaryTreatmentReportOutput.txt", "UTF-8");			
 		/*referringDoctorContainer = new HashMap<String, double[]>();
 		*/
 		

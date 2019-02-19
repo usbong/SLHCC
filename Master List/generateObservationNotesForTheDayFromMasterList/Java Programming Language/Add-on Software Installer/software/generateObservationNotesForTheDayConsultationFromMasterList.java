@@ -166,7 +166,6 @@ public class generateObservationNotesForTheDayConsultationFromMasterList {
 			if (isInDebugMode) {
 				rowCount=0;
 			}
-						
 			//count/compute the number-based values of inputColumns 
 			while (sc.hasNextLine()) {
 				s=sc.nextLine();

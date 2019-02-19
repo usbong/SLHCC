@@ -327,7 +327,7 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 		}
 */		
 	
-		writer.print("Notes:\n");
+		writer.print("Notes (PT Treatment):\n");
 		int notesCount=1;
 
 		for (int i=0; i<setOfTransactionsContainer.size(); i++) {		
@@ -335,7 +335,7 @@ public class generateObservationNotesForTheDayPTTreatmentFromMasterList {
 				writer.print(notesCount+") These are for the following transactions.\n\n");
 			}
 			else {
-				writer.print(notesCount+") These are for the following transaction.\n\n");
+				writer.print(notesCount+") This is for the following transaction.\n\n");
 			}			
 			notesCount++;
 		

@@ -341,7 +341,7 @@ public class generateObservationNotesForTheDayConsultationFromMasterList {
 				writer.print(notesCount+") These are for the following transactions.\n\n");
 			}
 			else {
-				writer.print(notesCount+") These are for the following transaction.\n\n");
+				writer.print(notesCount+") This is for the following transaction.\n\n");
 			}			
 			notesCount++;
 		

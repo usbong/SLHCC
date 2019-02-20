@@ -239,6 +239,18 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 		*/
 		//edited by Mike, 20190131
 		writer.print("Monthly Summary Report of Diagnosed Cases\n");
+		
+		SortedSet<String> sortedKeyset = new TreeSet<String>(diagnosedCasesContainer.keySet());
+		
+		for (String key : sortedKeyset) {	
+			double diagnosedCaseCount = diagnosedCasesContainer.get(key);
+			
+			writer.println(
+							key + "\t" + 
+							diagnosedCaseCount+"\n"							
+						); 				   							
+		}
+
 /*		
 		//--------------------------------------------------------------------
 		//init table header names

@@ -1732,10 +1732,9 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 
 //				System.out.println(s);
 				
-				knownDiagnosedCasesContainer.put(inputColumns[INPUT_KNOWN_DIAGNOSED_CASES_LIST_SUB_CLASSIFICATION_COLUMN],
-												 inputColumns[INPUT_KNOWN_DIAGNOSED_CASES_LIST_CLASSIFICATION_COLUMN]);
+				knownDiagnosedCasesContainer.put(inputColumns[INPUT_KNOWN_DIAGNOSED_CASES_LIST_SUB_CLASSIFICATION_COLUMN].toUpperCase(),
+												 inputColumns[INPUT_KNOWN_DIAGNOSED_CASES_LIST_CLASSIFICATION_COLUMN].toUpperCase());
 				
-
 /*				
 				SortedSet<String> sortedKnownDiagnosedCasesKeyset = new TreeSet<String>(knownDiagnosedCasesContainer.keySet());
 				for (String key : sortedKnownDiagnosedCasesKeyset) {	

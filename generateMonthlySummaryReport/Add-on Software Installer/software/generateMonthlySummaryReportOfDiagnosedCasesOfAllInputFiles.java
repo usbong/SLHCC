@@ -117,7 +117,12 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 	private static final int INPUT_CONSULTATION_NEW_OLD_COLUMN = 17;
 */	
 	private static final int INPUT_CONSULTATION_OFFSET = 1;
-						
+
+	//added by Mike, 20190222
+	private static final int INPUT_KNOWN_DIAGNOSED_CASES_LIST_CLASSIFICATION_COLUMN = 0;
+	private static final int INPUT_KNOWN_DIAGNOSED_CASES_LIST_SUB_CLASSIFICATION_COLUMN = 1;
+
+	
 /*	private static HashMap<String, double[]> referringDoctorContainer;	
 */
 	private static HashMap<Integer, double[]> dateContainer;	//added by Mike, 201801205
@@ -1724,9 +1729,19 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 				}
 				
 				String[] inputColumns = s.split("\t");					
+
+//				System.out.println(s);
 				
-				System.out.println(s);
+				knownDiagnosedCasesContainer.put(inputColumns[INPUT_KNOWN_DIAGNOSED_CASES_LIST_SUB_CLASSIFICATION_COLUMN],
+												 inputColumns[INPUT_KNOWN_DIAGNOSED_CASES_LIST_CLASSIFICATION_COLUMN]);
 				
+
+/*				
+				SortedSet<String> sortedKnownDiagnosedCasesKeyset = new TreeSet<String>(knownDiagnosedCasesContainer.keySet());
+				for (String key : sortedKnownDiagnosedCasesKeyset) {	
+					System.out.println(key + " : " + knownDiagnosedCasesContainer.get(key));
+				}
+*/
 				
 /*
 				int dateValueInt = Integer.parseInt(args[i].substring(args[i].indexOf("_")+1,args[i].indexOf(".txt")));

@@ -1,0 +1,63 @@
+Classification	Sub-classification
+STL UE	Trapezius Strain
+STL UE	Bicipital Tendinitis
+STL UE	Lateral Epicondylitis
+STL UE	Contusions
+STL UE	Bursitis
+STL UE	Muscle Sprain
+STL UE	Muscle strain shoulder
+STL UE	Muscle elbow
+STL UE	Muscle wrist
+STL UE	TFCC
+STL LE	Plantar Fascitis
+STL LE	Muscle Strain
+STL LE	Muscle Sprain Thigh
+STL LE	Muscle Leg
+STL LE	Muscle Ankle
+STL LE	ACL injury
+STL LE	PFPS
+STL LE	Achilles Tendinitis
+STL LE	Achilles Bursitis
+STL LE	Peripheral Neuropathy LE
+Cervical Disorder	Cervical Strain
+Cervical Disorder	Cervical OA
+Cervical Disorder	cervical Radiculopathy
+Cervical Disorder	Cervical spondylolysis
+Cervical Disorder	Cervical losis
+Cervical Disorder	Cervical listhesis
+Cervical Disorder	Cervical spasm
+Cervical Disorder	cervical Disc bulge
+Lumbar disorder	Lumbar strain
+Lumbar disorder	lumbar radiculopathy
+Lumbar disorder	lumbar disc bulge
+Lumbar disorder	Lumbar spondylosis
+Lumbar disorder	Lumbar lolysis
+Lumbar disorder	Lumbar listhesis
+Lumbar disorder	Chronic LBP
+Lumbar disorder	Mechanical LBP
+Lumbar disorder	Lumbar OA
+Lumbar disorder	Lumbar Stenosis
+OA/RA/Gouty arthritis	OA
+OA/RA/Gouty arthritis	RA
+OA/RA/Gouty arthritis	Gouty arthritis
+OA/RA/Gouty arthritis	hip
+OA/RA/Gouty arthritis	knee
+OA/RA/Gouty arthritis	ankle
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p ORIF
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Plating
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Screws
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Dislocation
+Fx/S/p ORIF/Plating/Screws; Dislocation	UE
+Fx/S/p ORIF/Plating/Screws; Dislocation	LE
+Scoliosis	Scoliosis
+MPS	MPS
+CTS	CTS
+DQT	DQT
+Trigger Finger/Stenosing tenosynovitis	Trigger Finger
+Trigger Finger/Stenosing tenosynovitis	Stenosing tenosynovitis
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder impingement
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder rotator cuff tendinitis
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder adhesive capsulitis
+CVA	CVA
+CP/Cerebral Palsy	CP
+CP/Cerebral Palsy	Cerebral Palsy

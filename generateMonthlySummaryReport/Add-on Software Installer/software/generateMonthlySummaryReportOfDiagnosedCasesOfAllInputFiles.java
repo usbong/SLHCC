@@ -74,6 +74,8 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 	private static boolean isNetPFComputed = false; //added by Mike, 20190131
 
 	private static String inputFilename = "input201801"; //without extension; default input file
+	//added by Mike, 20190222
+	private static String diagnosedCasesListInputFilename = "diagnosedCasesList"; //without extension; default input file 
 	
 	private static String startDate = null;
 	private static String endDate = null;
@@ -124,6 +126,7 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 	private static HashMap<String, double[]> referringDoctorContainer; //added by Mike, 20181218
 	private static HashMap<String, double[]> medicalDoctorContainer; //added by Mike, 20190202
 	private static HashMap<String, Integer> diagnosedCasesContainer; //added by Mike, 20190220
+	private static HashMap<String, String> knownDiagnosedCasesContainer; //added by Mike, 20190222
 
 	private static double[] columnValuesArray;
 	private static String[] dateValuesArray; //added by Mike, 20180412
@@ -201,6 +204,7 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 		medicalDoctorContainer = new HashMap<String, double[]>(); //added by Mike, 20190202
 				
 		diagnosedCasesContainer = new HashMap<String, Integer>(); //added by Mike, 20190220						
+		knownDiagnosedCasesContainer = new HashMap<String, String>(); //added by Mike, 20190222						
 				
 		//added by Mike, 20181116
 		startDate = null; //properly set the month and year in the output file of each input file
@@ -208,7 +212,11 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 		dateValuesArrayInt = new int[args.length]; //added by Mike, 20180412
 		//dateValuesArrayInt = new ArrayList<int>(); //edited by Mike, 20181221
 			
-		//PART/COMPONENT/MODULE/PHASE 1
+		//added by Mike, 20190222
+		//PART/COMPONENT/MODULE/PHASE 1			
+		processKnownDiagnosedCasesInputFile(args);
+		
+		//PART/COMPONENT/MODULE/PHASE 2
 		processInputFiles(args, true);
 		
 /*
@@ -1678,7 +1686,94 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 		}														
 */		
 	}
+
+	private static void processKnownDiagnosedCasesInputFile(String[] args) throws Exception {
+		//edited by Mike, 20181030
+		for (int i=0; i<args.length; i++) {						
+			//added by Mike, 20181030
+			inputFilename = args[i].replaceAll(".txt","");			
+			File f = new File(inputFilename+".txt");
+
+			System.out.println("inputFilename: " + inputFilename);
+			
+			//added by Mike, 20190207
+			if (inputFilename.contains("*")) {
+				continue;
+			}
+			
+			if (!inputFilename.toLowerCase().contains("assets")) {
+				continue;
+			}					
+									
+			Scanner sc = new Scanner(new FileInputStream(f));				
+		
+			String s;		
+//			s=sc.nextLine(); //skip the first row, which is the input file's table headers
 	
+			if (isInDebugMode) {
+				rowCount=0;
+			}
+						
+			//count/compute the number-based values of inputColumns 
+			while (sc.hasNextLine()) {
+				s=sc.nextLine();
+				
+				//if the row is blank
+				if (s.trim().equals("")) {
+					continue;
+				}
+				
+				String[] inputColumns = s.split("\t");					
+				
+				System.out.println(s);
+				
+				
+/*
+				int dateValueInt = Integer.parseInt(args[i].substring(args[i].indexOf("_")+1,args[i].indexOf(".txt")));
+				if (!dateValuesArrayInt.contains(dateValueInt)){
+					dateValuesArrayInt.add(dateValueInt);
+				}				
+*/				
+/*				//edited by Mike, 20181121
+				if (startDate==null) {
+					startDate = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);
+					endDate = startDate;
+				}
+				else {
+					//edited by Mike, 20181121
+					//add this condition in case the input file does not have a date for each transaction; however, ideally, for input files 2018 onwards, each transaction should have a date
+					if (!inputColumns[INPUT_DATE_COLUMN].trim().equals("")) {
+						endDate = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);
+					}
+				}
+*/
+				if (isInDebugMode) {
+					rowCount++;
+					System.out.println("rowCount: "+rowCount);
+				}
+/*				
+				//added by Mike, 20181121
+				//skip transactions that have "RehabSupplies" as its "CLASS" value
+				//In Excel logbook/workbook 2018 onwards, such transactions are not included in the Consultation and PT Treatment Excel logbooks/workbooks.
+				if (inputColumns[INPUT_CLASS_COLUMN].contains("RehabSupplies")) {
+					continue;
+				}
+*/
+/*
+				if (isPhaseOne) {
+					//TO-DO: -add: handle consultation transactions
+					processDiagnosedCasesCount(diagnosedCasesContainer, inputColumns, isConsultation); //edited by Mike, 20181219
+				}
+				else {
+					//added by Mike, 20181220
+					processMedicalDoctorTransactionPerClassificationCount(classificationContainerPerMedicalDoctor, inputColumns, isConsultation);
+				}
+*/				
+			}		
+		}		
+
+	}
+
 	private static void processInputFiles(String[] args, boolean isPhaseOne) throws Exception {
 		//edited by Mike, 20181030
 		for (int i=0; i<args.length; i++) {						
@@ -1692,6 +1787,11 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 			if (inputFilename.contains("*")) {
 				continue;
 			}
+			
+			//added by Mike, 20190222
+			if (inputFilename.toLowerCase().contains("assets")) {
+				continue;
+			}					
 			
 			if (inputFilename.toLowerCase().contains("consultation")) {
 				isConsultation=true;
@@ -1794,7 +1894,6 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 			columnValuesArray[OUTPUT_DATE_ID_COLUMN] = i; 		
 */			
 		}		
-
 	}
 	
 /*	

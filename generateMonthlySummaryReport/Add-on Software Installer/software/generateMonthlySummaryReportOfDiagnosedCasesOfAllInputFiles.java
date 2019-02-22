@@ -132,6 +132,7 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 	private static HashMap<String, double[]> medicalDoctorContainer; //added by Mike, 20190202
 	private static HashMap<String, Integer> diagnosedCasesContainer; //added by Mike, 20190220
 	private static HashMap<String, String> knownDiagnosedCasesContainer; //added by Mike, 20190222
+	private static HashMap<String, Integer> classifiedDiagnosedCasesContainer; //added by Mike, 20190222
 
 	private static double[] columnValuesArray;
 	private static String[] dateValuesArray; //added by Mike, 20180412
@@ -210,6 +211,7 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 				
 		diagnosedCasesContainer = new HashMap<String, Integer>(); //added by Mike, 20190220						
 		knownDiagnosedCasesContainer = new HashMap<String, String>(); //added by Mike, 20190222						
+		classifiedDiagnosedCasesContainer = new HashMap<String, Integer>(); //added by Mike, 20190222
 				
 		//added by Mike, 20181116
 		startDate = null; //properly set the month and year in the output file of each input file
@@ -223,7 +225,9 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 		
 		//PART/COMPONENT/MODULE/PHASE 2
 		processInputFiles(args, true);
-		
+
+		//PART/COMPONENT/MODULE/PHASE 3	
+		processDiagnosisClassification(); //added by Mike, 20190222
 /*
 		//PART/COMPONENT/MODULE/PHASE 2		
 		setClassificationContainerPerMedicalDoctor(classificationContainerPerMedicalDoctor);
@@ -2153,4 +2157,63 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 			else {	//TO-DO: -add: handle Consultation transactions
 			}
 	}	
+	
+	//added by Mike, 20190222
+	private static void processDiagnosisClassification() {
+		SortedSet<String> sortedKeyset = new TreeSet<String>(diagnosedCasesContainer.keySet());
+		SortedSet<String> sortedKnownDiagnosedCasesKeyset = new TreeSet<String>(knownDiagnosedCasesContainer.keySet());
+		
+		for (String inputString : sortedKeyset) {			
+			for (String knownDiagnosedCasesKey : sortedKnownDiagnosedCasesKeyset) {	 //the key is the sub-classification
+				boolean hasKnownDiagnosedCaseKeywords=false;
+				String classification = knownDiagnosedCasesContainer.get(knownDiagnosedCasesKey);
+				String[] s = classification.split(" ");
+				
+				for(int i=0; i<s.length; i++) {
+					if (!inputString.contains(s[i])) {
+						hasKnownDiagnosedCaseKeywords=false;
+						break;
+					}
+					hasKnownDiagnosedCaseKeywords=true;
+				}
+
+				String classificationKey = inputString;
+				if (hasKnownDiagnosedCaseKeywords) {
+					classificationKey = classification;
+				}
+				
+				if (!classifiedDiagnosedCasesContainer.containsKey(classificationKey)) {
+					classifiedDiagnosedCasesContainer.put(classificationKey,1);
+				}
+				else {
+					int currentCount = classifiedDiagnosedCasesContainer.get(classificationKey);
+					classifiedDiagnosedCasesContainer.put(classificationKey,currentCount+1);
+				}
+				
+//				System.out.println(knownDiagnosedCasesKey + " : " + knownDiagnosedCasesContainer.get(key));
+			}
+
+			
+/*			
+			double diagnosedCaseCount = diagnosedCasesContainer.get(key);
+			
+			writer.println(
+							key + "\t" + 
+							diagnosedCaseCount+"\n"							
+						); 				   						
+*/						
+		}
+
+		SortedSet<String> sortedClassifiedDiagnosedCasesKeyset = new TreeSet<String>(classifiedDiagnosedCasesContainer.keySet());	
+		
+		for (String key : sortedClassifiedDiagnosedCasesKeyset) {			
+			double diagnosedCaseCount = classifiedDiagnosedCasesContainer.get(key);
+			
+			System.out.println(
+							key + "\t" + 
+							diagnosedCaseCount+"\n"							
+						); 				   						
+		}
+
+	}
 }

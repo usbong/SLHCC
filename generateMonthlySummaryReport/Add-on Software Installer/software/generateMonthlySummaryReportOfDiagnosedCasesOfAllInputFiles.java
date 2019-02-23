@@ -256,27 +256,37 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 		 * OUTPUT
 		 * --------------------------------------------------------------------
 		*/
-		//edited by Mike, 20190131
-		writer.print("Monthly Summary Report of Diagnosed Cases\n");
-		
+		//edited by Mike, 20190223
 		SortedSet<String> sortedKeyset = new TreeSet<String>(diagnosedCasesContainer.keySet());
+		SortedSet<String> sortedClassifiedKeyset = new TreeSet<String>(classifiedDiagnosedCasesContainer.keySet());
+	
+		int total = 0;
 		
+		writer.print("Monthly Summary Report of Diagnosed Cases\n");
+
 		for (String key : sortedKeyset) {	
 			int diagnosedCaseCount = diagnosedCasesContainer.get(key);
+			total+=diagnosedCaseCount;
 			
 			writer.println(
 							key + "\t" + 
 							diagnosedCaseCount+"\n"							
 						); 				   							
 		}
+		
+		writer.println(
+							"TOTAL:\t" + 
+							total+"\n"							
+						); 				   							
 
 		//added by Mike, 20190223
 		classifiedWriter.print("Monthly Summary Report of Classified Diagnosed Cases\n");
-		
-		SortedSet<String> sortedClassifiedKeyset = new TreeSet<String>(classifiedDiagnosedCasesContainer.keySet());
+				
+		total = 0;
 		
 		for (String key : sortedClassifiedKeyset) {	
 			int diagnosedCaseCount = classifiedDiagnosedCasesContainer.get(key);
+			total+=diagnosedCaseCount;
 			
 			classifiedWriter.println(
 							key + "\t" + 
@@ -284,6 +294,10 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 						); 				   							
 		}
 		
+		classifiedWriter.println(
+							"TOTAL:\t" + 
+							total+"\n"							
+						); 				   							
 
 /*		
 		//--------------------------------------------------------------------

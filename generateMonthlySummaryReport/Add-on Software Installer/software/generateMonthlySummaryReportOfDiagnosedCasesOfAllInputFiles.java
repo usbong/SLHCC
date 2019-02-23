@@ -198,6 +198,8 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
 		PrintWriter writer = new PrintWriter("output/MonthlySummaryReportOfDiagnosedCasesOutput.txt", "UTF-8");			
+		PrintWriter classifiedWriter = new PrintWriter("output/MonthlySummaryReportOfDiagnosedCasesClassifiedOutput.txt", "UTF-8");			
+
 		/*referringDoctorContainer = new HashMap<String, double[]>();
 		*/
 		
@@ -260,13 +262,28 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 		SortedSet<String> sortedKeyset = new TreeSet<String>(diagnosedCasesContainer.keySet());
 		
 		for (String key : sortedKeyset) {	
-			double diagnosedCaseCount = diagnosedCasesContainer.get(key);
+			int diagnosedCaseCount = diagnosedCasesContainer.get(key);
 			
 			writer.println(
 							key + "\t" + 
 							diagnosedCaseCount+"\n"							
 						); 				   							
 		}
+
+		//added by Mike, 20190223
+		classifiedWriter.print("Monthly Summary Report of Classified Diagnosed Cases\n");
+		
+		SortedSet<String> sortedClassifiedKeyset = new TreeSet<String>(classifiedDiagnosedCasesContainer.keySet());
+		
+		for (String key : sortedClassifiedKeyset) {	
+			int diagnosedCaseCount = classifiedDiagnosedCasesContainer.get(key);
+			
+			classifiedWriter.println(
+							key + "\t" + 
+							diagnosedCaseCount+"\n"							
+						); 				   							
+		}
+		
 
 /*		
 		//--------------------------------------------------------------------
@@ -520,6 +537,7 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 */
 		
 		writer.close();
+		classifiedWriter.close();
 	}
 	
 	private static String convertDateToMonthYearInWords(int date) {
@@ -2163,11 +2181,16 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 		SortedSet<String> sortedKeyset = new TreeSet<String>(diagnosedCasesContainer.keySet());
 		SortedSet<String> sortedKnownDiagnosedCasesKeyset = new TreeSet<String>(knownDiagnosedCasesContainer.keySet());
 		
+		String classificationKey = "";
+		
 		for (String inputString : sortedKeyset) {			
 			for (String knownDiagnosedCasesKey : sortedKnownDiagnosedCasesKeyset) {	 //the key is the sub-classification
 				boolean hasKnownDiagnosedCaseKeywords=false;
+				String subClassification = knownDiagnosedCasesKey; 
 				String classification = knownDiagnosedCasesContainer.get(knownDiagnosedCasesKey);
-				String[] s = classification.split(" ");
+				String[] s = subClassification.split(" ");
+				
+//				System.out.println(">>> subClassification: "+subClassification);
 				
 				for(int i=0; i<s.length; i++) {
 					if (!inputString.contains(s[i])) {
@@ -2177,20 +2200,22 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 					hasKnownDiagnosedCaseKeywords=true;
 				}
 
-				String classificationKey = inputString;
+				classificationKey = inputString;
 				if (hasKnownDiagnosedCaseKeywords) {
 					classificationKey = classification;
-				}
-				
-				if (!classifiedDiagnosedCasesContainer.containsKey(classificationKey)) {
-					classifiedDiagnosedCasesContainer.put(classificationKey,1);
-				}
-				else {
-					int currentCount = classifiedDiagnosedCasesContainer.get(classificationKey);
-					classifiedDiagnosedCasesContainer.put(classificationKey,currentCount+1);
+					break;
 				}
 				
 //				System.out.println(knownDiagnosedCasesKey + " : " + knownDiagnosedCasesContainer.get(key));
+			}
+
+			if (!classifiedDiagnosedCasesContainer.containsKey(classificationKey)) {
+				classifiedDiagnosedCasesContainer.put(classificationKey,1);
+			}
+			else {
+				int currentCount = classifiedDiagnosedCasesContainer.get(classificationKey);
+//				System.out.println(">> classificationKey: "+classificationKey+" : "+currentCount);
+				classifiedDiagnosedCasesContainer.put(classificationKey,currentCount+1);
 			}
 
 			
@@ -2207,9 +2232,9 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 		SortedSet<String> sortedClassifiedDiagnosedCasesKeyset = new TreeSet<String>(classifiedDiagnosedCasesContainer.keySet());	
 		
 		for (String key : sortedClassifiedDiagnosedCasesKeyset) {			
-			double diagnosedCaseCount = classifiedDiagnosedCasesContainer.get(key);
+			int diagnosedCaseCount = classifiedDiagnosedCasesContainer.get(key);
 			
-			System.out.println(
+			System.out.print(
 							key + "\t" + 
 							diagnosedCaseCount+"\n"							
 						); 				   						

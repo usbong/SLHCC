@@ -27,6 +27,7 @@ Cervical Disorder	Cervical losis
 Cervical Disorder	Cervical listhesis
 Cervical Disorder	Cervical spasm
 Cervical Disorder	cervical Disc bulge
+Cervical Disorder	cervical
 Cervical Disorder	C1
 Cervical Disorder	C2
 Cervical Disorder	C3
@@ -44,6 +45,7 @@ Lumbar disorder	Chronic LBP
 Lumbar disorder	Mechanical LBP
 Lumbar disorder	Lumbar OA
 Lumbar disorder	Lumbar Stenosis
+Lumbar disorder	Lumbar
 Lumbar disorder	L1
 Lumbar disorder	L2
 Lumbar disorder	L3

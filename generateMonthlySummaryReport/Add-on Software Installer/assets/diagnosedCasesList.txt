@@ -27,6 +27,13 @@ Cervical Disorder	Cervical losis
 Cervical Disorder	Cervical listhesis
 Cervical Disorder	Cervical spasm
 Cervical Disorder	cervical Disc bulge
+Cervical Disorder	C1
+Cervical Disorder	C2
+Cervical Disorder	C3
+Cervical Disorder	C4
+Cervical Disorder	C5
+Cervical Disorder	C6
+Cervical Disorder	C7
 Lumbar disorder	Lumbar strain
 Lumbar disorder	lumbar radiculopathy
 Lumbar disorder	lumbar disc bulge
@@ -37,6 +44,15 @@ Lumbar disorder	Chronic LBP
 Lumbar disorder	Mechanical LBP
 Lumbar disorder	Lumbar OA
 Lumbar disorder	Lumbar Stenosis
+Lumbar disorder	L1
+Lumbar disorder	L2
+Lumbar disorder	L3
+Lumbar disorder	L4
+Lumbar disorder	L5
+Lumbar disorder	S1
+Lumbar disorder	S2
+Lumbar disorder	S3
+Lumbar disorder	S4
 OA/RA/Gouty arthritis	OA
 OA/RA/Gouty arthritis	RA
 OA/RA/Gouty arthritis	Gouty arthritis
@@ -58,6 +74,8 @@ Trigger Finger/Stenosing tenosynovitis	Stenosing tenosynovitis
 Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder impingement
 Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder rotator cuff tendinitis
 Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder adhesive capsulitis
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	adhesive capsulitis
 CVA	CVA
 CP/Cerebral Palsy	CP
 CP/Cerebral Palsy	Cerebral Palsy

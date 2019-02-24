@@ -2196,98 +2196,31 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 		SortedSet<String> sortedKnownDiagnosedCasesKeyset = new TreeSet<String>(knownDiagnosedCasesContainer.keySet());
 		
 		String classificationKey = "";
-		String subClassification = ""; 
-		String classification = "";
-		
-		boolean hasKnownDiagnosedCaseKeywords=false;
 		
 		for (String inputString : sortedKeyset) {			
-			//added by Mike, 20190224
-			String[] inputStringArray = inputString.replace("-"," ").split(" ");				
-			System.out.println(">>>>>>> inputString: "+inputString);
-
 			for (String knownDiagnosedCasesKey : sortedKnownDiagnosedCasesKeyset) {	 //the key is the sub-classification
-				hasKnownDiagnosedCaseKeywords=false;
-				subClassification = knownDiagnosedCasesKey; 
-				classification = knownDiagnosedCasesContainer.get(knownDiagnosedCasesKey);
-/*				
-				if (inputString.toLowerCase().contains("trigger")) {					
-					System.out.println(">>>>>>> inputString: "+inputString);
-				}
-				
-				if (subClassification.toLowerCase().contains("trigger")) {
-				System.out.println(">>> subClassification: "+subClassification);
-				System.out.println(">>> classification: "+classification);
-				}
-*/
-
+				boolean hasKnownDiagnosedCaseKeywords=false;
+				String subClassification = knownDiagnosedCasesKey; 
+				String classification = knownDiagnosedCasesContainer.get(knownDiagnosedCasesKey);
 				String[] s = subClassification.split(" ");
 				
 //				System.out.println(">>> subClassification: "+subClassification);
 				
-				for(int i=0; i<s.length; i++) {			
-					System.out.println(">>>> : "+s[i]);
-
-					int k;
-					for(k=0; k<inputStringArray.length; k++) {		
-						System.out.println(">> "+inputStringArray[k]);
-						
-						if (inputStringArray[k].trim().toUpperCase().equals(s[i].trim().toUpperCase())) {
-							hasKnownDiagnosedCaseKeywords=true;
-							break;
-						}
-						else {
-							System.out.println(">> true: "+inputString +" : "+s[i]);
-
-						}						
-					}
-
-					if (k==inputStringArray.length) {
-						hasKnownDiagnosedCaseKeywords=false;
-					}
-				}			
-				if (hasKnownDiagnosedCaseKeywords) {
-					break;
-				}
-/*				
-				for(int i=0; i<s.length; i++) {					
+				for(int i=0; i<s.length; i++) {
 					if (!inputString.contains(s[i])) {
 						hasKnownDiagnosedCaseKeywords=false;
 						break;
 					}
-					else {
-												System.out.println(">> true: "+inputString +" : "+s[i]);
-
-					}
 					hasKnownDiagnosedCaseKeywords=true;
 				}
-*/
-/*
+
 				classificationKey = inputString;
 				if (hasKnownDiagnosedCaseKeywords) {
 					classificationKey = classification;
-					
-					if (inputString.toLowerCase().contains("trigger")) {					
-						System.out.println(">>> inputString: "+inputString);
-						System.out.println(">>> classificationKey: "+classificationKey);
-					}
-
 					break;
 				}
-*/				
-//				System.out.println(knownDiagnosedCasesKey + " : " + knownDiagnosedCasesContainer.get(key));
-			}
-			
-			classificationKey = inputString;
-			if (hasKnownDiagnosedCaseKeywords) {
-				classificationKey = classification;
 				
-				if (inputString.toLowerCase().contains("trigger")) {					
-					System.out.println(">>> inputString: "+inputString);
-					System.out.println(">>> classificationKey: "+classificationKey);
-				}
-
-//				break;
+//				System.out.println(knownDiagnosedCasesKey + " : " + knownDiagnosedCasesContainer.get(key));
 			}
 
 			if (!classifiedDiagnosedCasesContainer.containsKey(classificationKey)) {

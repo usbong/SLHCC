@@ -11,34 +11,6 @@ Sub importAllTxtFilesAsWorksheetsInWorkbook()
 ' @date created: 20190225
 ' @date updated: 20190225
 '
-' Workbook with Imported Worksheets 
-' Given:
-' 1) User selected Tab-delimited .txt files, e.g. "201801.txt", "201802.txt"
-' --> "201801" means "January 2018"; "201802" means "February 2018".
-' --> Using numbers for the month and year makes it easier for us to properly sort the files from January to December of a given year.
-' --> This is besides the fact that we are adhering to ISO 8601.
-'
-' Output:
-' 1) Workbook with the automatically imported Tab delimited .txt files as worksheets
-' --> The worksheet name is equal with the name of the Tab-delimited .txt file.
-'
-' Notes:
-' 1) We recommend that the workbook is saved as an Excel Macro-Enabled Workbook, i.e. .xlsm.
-' --> Otherwise, you'll need to create and put this set of VBA instructions in the workbook every time.
-'
-Sub importAllTxtFilesAsWorksheetsInWorkbook()
-' Copyright 2019 Usbong Social Systems, Inc.
-'
-' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
-'
-' http://www.apache.org/licenses/LICENSE-2.0
-'
-' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
-'
-' @author: Michael Syson
-' @date created: 20190225
-' @date updated: 20190225
-'
 ' Workbook with Imported Worksheets
 ' Given:
 ' 1) User selected Tab-delimited .txt files, e.g. "201801.txt", "201802.txt"
@@ -77,18 +49,21 @@ Sub importAllTxtFilesAsWorksheetsInWorkbook()
         'Use the name of the file as the worksheet name
         WSNew.Name = Replace(fso.GetFileName(FileName), ".txt", "")
         
-        'TO-DO: -copy and paste: all the contents of the (Tab-delimited) .txt file into the new worksheet
-        WSNew.Activate
+        'WSNew.Activate
         
-        'Open and read the contents of the file
+        'Open, read, copy, and paste the contents of the (Tab-delimited) .txt file into the new worksheet
+        'TO-DO: -add: copy and paste the contents into each column using the Tab in the .txt file as the delimiter
         Open FileName For Input As #1
+            RowCount = 1
             Do Until EOF(1)
                 Line Input #1, textline
-                Text = Text & textline
-                MsgBox ("text: " & Text)
+                'Text = Text & textline
+                'MsgBox ("text: " & Text)
+                WSNew.Cells(RowCount, 1) = textline
+                RowCount = RowCount + 1
             Loop
         Close #1
-    
+            
     Next FileName
     Set fso = Nothing
 End Sub

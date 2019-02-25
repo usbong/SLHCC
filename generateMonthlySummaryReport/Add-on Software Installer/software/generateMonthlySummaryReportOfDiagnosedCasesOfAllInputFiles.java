@@ -2244,6 +2244,7 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 
 					if (k==inputStringArray.length) {
 						hasKnownDiagnosedCaseKeywords=false;
+						break;
 					}
 				}			
 				if (hasKnownDiagnosedCaseKeywords) {

@@ -90,15 +90,31 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 	private static final int INPUT_REFERRING_DOCTOR_COLUMN = 15-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_NOTES_COLUMN = 0; //This column is not included in the INPUT_NON_MASTER_LIST_OFFSET
 	private static final int INPUT_DATE_COLUMN = 1-INPUT_NON_MASTER_LIST_OFFSET;
-	private static final int INPUT_NAME_COLUMN = 3-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_PATIENT_NAME_COLUMN = 3-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_CLASS_COLUMN = 8-INPUT_NON_MASTER_LIST_OFFSET; //HMO and NON-HMO
 	private static final int INPUT_NET_PF_COLUMN = 10-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_NEW_OLD_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_NEW_OLD_PATIENT_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190102
+	private static final int INPUT_CHARGE_SLIP_NUMBER_COLUMN = 11-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190226
+	private static final int INPUT_APPROVAL_CODE_COLUMN = 12-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190226
+	private static final int INPUT_FEE_COLUMN = 7-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190226
+
+	//added by Mike, 20190226
+	private static final String OUTPUT_HMO_BILLING_DEPARTMENT_PT_VALUE = "PT";
+	private static final String OUTPUT_HMO_BILLING_DEPARTMENT_ORTHO_VALUE = "ORTHO";
+	private static final String OUTPUT_HMO_BILLING_DEPARTMENT_REHAB_VALUE = "REHAB";
+
+	private static final String OUTPUT_HMO_BILLING_PROCEDURE_PT_VALUE = "PT TREATMENT";
+	private static final String OUTPUT_HMO_BILLING_PROCEDURE_ORTHO_VALUE = "ORTHO CONSULT";
+	private static final String OUTPUT_HMO_BILLING_PROCEDURE_ORTHO_PROCEDURE_VALUE = "ORTHO-PROCEDURE";
+	private static final String OUTPUT_HMO_BILLING_PROCEDURE_REHAB_PROCEDURE_VALUE = "REHAB-PROCEDURE";
+
+	private static final String OUTPUT_HMO_BILLING_PAYEE_VALUE = "STA. LUCIA HEALTH CARE CENTRE, INC.";
+	
 	//edited by Mike, 20190202
 	private static final int INPUT_CONSULTATION_PROCEDURE_COLUMN = 2-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET;
-	
+
 	//added by Mike, 20190107
 	private static final int INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN = 2-INPUT_NON_MASTER_LIST_OFFSET; //The int value is the same as "INPUT_CONSULTATION_PROCEDURE_COLUMN".
 
@@ -131,8 +147,8 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 	//PT TREATMENT
 	//added by Mike, 20190226
 	private static final int OUTPUT_HMO_BILLING_DATE_COLUMN = 0;
-	private static final int OUTPUT_HMO_BILLING_NAME_COLUMN = 1;
-	private static final int OUTPUT_HMO_BILLING_CHARGE_SLIP_NO_COLUMN = 4;
+	private static final int OUTPUT_HMO_BILLING_HMO_NAME_COLUMN = 1;
+	private static final int OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN = 4;
 	private static final int OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN = 5;
 	private static final int OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN = 6; //approval code/account number
 	private static final int OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN = 7; 
@@ -1061,7 +1077,7 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 				
 				if (isInDebugMode) {
 					if (classificationName.trim().equals("")) {
-						System.out.println(">>> "+inputColumns[INPUT_DATE_COLUMN]+"; Name: "+inputColumns[INPUT_NAME_COLUMN]);
+						System.out.println(">>> "+inputColumns[INPUT_DATE_COLUMN]+"; Name: "+inputColumns[INPUT_PATIENT_NAME_COLUMN]);
 					}
 				}
 /*								

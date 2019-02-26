@@ -131,11 +131,13 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 */
 	private static HashMap<Integer, double[]> dateContainer;	//added by Mike, 201801205
 	private static HashMap<String, double[]> hmoContainer;	//added by Mike, 201801217
+	private static HashMap<Integer, String[]> hmoBillingContainer;	//added by Mike, 20190226
 	private static HashMap<String, double[]> nonHmoContainer;	//added by Mike, 201801217
 	private static HashMap<String, double[]> referringDoctorContainer; //added by Mike, 20181218
 	private static HashMap<String, double[]> medicalDoctorContainer; //added by Mike, 20190202
 
 	private static double[] columnValuesArray;
+	private static String[] hmoBillingColumnValuesArray;
 	private static String[] dateValuesArray; //added by Mike, 20180412
 	private static int[] dateValuesArrayInt; //added by Mike, 20181206
 	//private static ArrayList<int> dateValuesArrayInt; //edited by Mike, 20181221
@@ -217,6 +219,7 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 		
 		dateContainer = new HashMap<Integer, double[]>();
 		hmoContainer = new HashMap<String, double[]>();
+		hmoBillingContainer = new HashMap<Integer, String[]>(); //added by Mike, 20190226
 		nonHmoContainer = new HashMap<String, double[]>();
 		referringDoctorContainer = new HashMap<String, double[]>();
 //		medicalDoctorContainer = new HashMap<String, double[]>();
@@ -233,12 +236,14 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 		processInputFiles(args, true);
 
 		//PART/COMPONENT/MODULE/PHASE 2		
-		setClassificationContainerPerMedicalDoctor(classificationContainerPerMedicalDoctor);
+/*		setClassificationContainerPerMedicalDoctor(classificationContainerPerMedicalDoctor);
 		processInputFiles(args, false);
-				
+*/				
 				
 		//added by Mike, 20190125
-		processContainers();
+/*		processContainers();
+*/
+		
 /*		
 		//TODO: -apply: this properly in the add-on software to consolidate similar Strings, e.g. Medical Doctor, whose difference may only be an excess space between characters, etc
 		//added by Mike, 20190123
@@ -255,6 +260,7 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 		 * OUTPUT
 		 * --------------------------------------------------------------------
 		*/
+/*
 		//edited by Mike, 20190131
 		writer.print("Monthly Summary Report\n");
 		
@@ -266,14 +272,9 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 		double totalConsultationCount = 0; //added by Mike, 20181218
 		double totalProcedureCount = 0; //added by Mike, 20190105		
 		double totalMedicalCertificateCount = 0; //added by Mike, 20190107
-/*
-		System.out.println("dateValuesArrayInt.length: "+dateValuesArrayInt.length);		
-		System.out.println("dateValuesArrayInt.length/2: "+dateValuesArrayInt.length/2);
-*/		
+
 		//Note that there should be an even number of input files and at least two (2) input files, one for PT Treatment and another for Consultation
 		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION
-/*		System.out.println("dateValuesArrayInt[i]: "+dateValuesArrayInt[i]);
-*/		
 			//added by Mike, 20190207
 			if (dateValuesArrayInt[i]==0) { //if there is no .txt input file
 				System.out.println("\nThere is no Tab-delimited .txt input file in either the \"consultation\" folder or the \"treatment\" folder.");
@@ -312,30 +313,6 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 
 		//--------------------------------------------------------------------
 		//init table header names
-/*		
-		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\n"); 		
-		double totalTreatmentHMOCount = 0;
-		double totalConsultationHMOCount = 0; //added by Mike, 20181219
-		
-		SortedSet<String> sortedKeyset = new TreeSet<String>(hmoContainer.keySet());
-		for (String key : sortedKeyset) {	
-			double treatmentCount = hmoContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
-			double consultationCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
-			totalTreatmentHMOCount += treatmentCount;
-			totalConsultationHMOCount += consultationCount;
-			
-			writer.print(
-							key + "\t" + 
-							treatmentCount+"\t"+							
-							consultationCount+"\n"							
-						); 				   							
-		}
-		//TOTAL
-		writer.print(
-				"TOTAL:\t"+totalTreatmentHMOCount+"\t"+totalConsultationHMOCount+"\n"							
-				); 				   							
-*/
-
 		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\tMEDICAL CERTIFICATE COUNT:\tTREATMENT NEW PATIENT COUNT:\tCONSULTATION NEW PATIENT COUNT:\n"); 		
 
 		double totalTreatmentHMOCount = 0;
@@ -380,30 +357,6 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 
 		//--------------------------------------------------------------------
 		//init table header names
-/*		
-		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\n"); 		
-		double totalTreatmentNONHMOCount = 0;
-		double totalConsultationNONHMOCount = 0; //added by Mike, 20181219
-		
-		SortedSet<String> sortedNONHMOKeyset = new TreeSet<String>(nonHmoContainer.keySet());
-		for (String key : sortedNONHMOKeyset) {	
-			double treatmentCount = nonHmoContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
-			double consultationCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
-			totalTreatmentNONHMOCount += treatmentCount;
-			totalConsultationNONHMOCount += consultationCount;
-			
-			writer.print(
-							key + "\t" + 
-							treatmentCount+"\t"+							
-							consultationCount+"\n"							
-						); 				   							
-		}
-		//TOTAL
-		writer.print(
-				"TOTAL:\t"+totalTreatmentNONHMOCount+"\t"+totalConsultationHMOCount+"\n"							
-				); 				   							
-*/
-
 		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\tMEDICAL CERTIFICATE COUNT:\n"); 		
 
 		double totalTreatmentNONHMOCount = 0;
@@ -508,60 +461,14 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 				totalOldPatientPerDoctorCount+"\n"											
 				); 				   										
 
-/*		
-		writer.print("\n\tTREATMENT COUNT:\tNEW PATIENT REFERRAL COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\n"); 
-		double totalReferringMedicalDoctorTransactionCount = 0;
-		double totalNewPatientReferralTransactionCount = 0;
-		double totalConsultationPerDoctorCount = 0;
-		double totalProcedurePerDoctorCount = 0;
-		
-		SortedSet<String> sortedReferringMedicalDoctorTransactionCountKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
-		for (String key : sortedReferringMedicalDoctorTransactionCountKeyset) {	
-			double count = referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
-			double newPatientReferralTransactionCount = referringDoctorContainer.get(key)[OUTPUT_HMO_NEW_PATIENT_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
-			//added by Mike, 20181219
-			double consultationCount = referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
-			//added by Mike, 20181219
-			double procedureCount = referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN];
-			totalReferringMedicalDoctorTransactionCount += count;
-			totalNewPatientReferralTransactionCount += newPatientReferralTransactionCount;
-			totalConsultationPerDoctorCount += consultationCount;
-			totalProcedurePerDoctorCount += procedureCount;
-			
-			writer.print(
-							key + "\t" + 
-							count+"\t" +
-							newPatientReferralTransactionCount+"\t"+							
-							consultationCount+"\t"+
-							procedureCount+"\n"		
-							); 				   							
-		}
-		//TOTAL
-		writer.print(
-				"TOTAL:\t"+totalReferringMedicalDoctorTransactionCount+"\t"+totalNewPatientReferralTransactionCount+"\t"+
-				totalConsultationPerDoctorCount+"\t"+totalProcedurePerDoctorCount+"\n"							
-				); 				   							
-*/
 		//--------------------------------------------------------------------
 		//init table header names
 		writer.print("\nCONSULTATION COUNT under each CLASSIFICATION\n");
 
-/*		SortedSet<String> sortedReferringMedicalDoctorTransactionCountKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
-*/
 		SortedSet<String> sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset = new TreeSet<String>(classificationContainerPerMedicalDoctor.keySet());
 //		String defaultKey=null;
-/*		
-		writer.print("\n");
-		for (String key : sortedNONHMOKeyset) {	
-			writer.print(key+"\t"); 		
-		}		
-		writer.print("\n");
-*/				
 //		SortedSet<String> sortedNonHmoContainerTableHeaderKeyset = new TreeSet<String>(classificationContainerPerMedicalDoctor.get(defaultKey).keySet());
 
-/*
-		double totalNonHmoCount = 0;
-*/
 		HashMap<String, Integer> totalCountForEachClassification = new HashMap<String, Integer>(); //added by Mike, 20190102
 		boolean hasInitTableHeader=false;		
 		SortedSet<String> sortedclassificationKeyset = null;
@@ -604,6 +511,7 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 		for (String classificationKey : sortedclassificationKeyset) {
 			writer.print(totalCountForEachClassification.get(classificationKey)+"\t");
 		}			
+*/		
 		writer.print("\n");		
 		writer.close();
 	}
@@ -897,6 +805,139 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 					}
 				}					
 	}
+
+	//added by Mike, 20190226
+	private static void processHMOBilling(HashMap<Integer, String[]> hmoBillingContainer, String[] inputColumns, boolean isConsultation) {
+			if (!isConsultation) {											
+				if ((inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) ||
+					(inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
+
+					String hmoName = inputColumns[INPUT_CLASS_COLUMN].trim().toUpperCase();
+					int chargeSlipNumber = Integer.parseInt(inputColumns[INPUT_CHARGE_SLIP_NUMBER_COLUMN].trim().toUpperCase());
+					
+					if (!hmoBillingContainer.containsKey(chargeSlipNumber)) {
+						hmoBillingColumnValuesArray = new String[OUTPUT_TOTAL_COLUMNS];
+					
+//						columnValuesArray[OUTPUT_HMO_COUNT_COLUMN] = 1;
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DATE_COLUMN] 
+							= inputColumns[INPUT_DATE_COLUMN].trim().toUpperCase();
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN] 
+							= hmoName.replace("HMO/","");				
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN] 
+							= ""+chargeSlipNumber;
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN] 
+							= inputColumns[INPUT_PATIENT_NAME_COLUMN].trim().toUpperCase();
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN] 
+							= inputColumns[INPUT_APPROVAL_CODE_COLUMN].trim().toUpperCase();
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN] 
+							= inputColumns[INPUT_REFERRING_DOCTOR_COLUMN].trim().toUpperCase();
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PAYEE_COLUMN] 
+							= OUTPUT_HMO_BILLING_PAYEE_VALUE;
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN] 
+							= OUTPUT_HMO_BILLING_DEPARTMENT_PT_VALUE;
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PROCEDURE_COLUMN] 
+							= OUTPUT_HMO_BILLING_PROCEDURE_PT_VALUE;
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN] 
+							= inputColumns[INPUT_FEE_COLUMN].trim().toUpperCase();						
+						
+						hmoBillingContainer.put(chargeSlipNumber, hmoBillingColumnValuesArray);
+					}
+					else {
+						System.out.println("Error: Duplicate Charge Slip Number: "+chargeSlipNumber);
+/*						
+						hmoBillingContainer.get(hmoName)[OUTPUT_HMO_COUNT_COLUMN]++;	
+
+						//added by Mike, 20190102
+						if (inputColumns[INPUT_NEW_OLD_PATIENT_COLUMN].trim().toLowerCase().contains("new")) {
+							hmoBillingContainer.get(hmoName)[OUTPUT_HMO_NEW_PATIENT_COUNT_COLUMN]++;
+						}
+
+						if (isNetPFComputed) {							
+							hmoBillingContainer.get(hmoName)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
+								+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+								
+							if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+								hmoBillingContainer.get(hmoName)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+							}
+							else {
+								hmoBillingContainer.get(hmoName)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);							
+							}		
+						}
+*/						
+					}
+				}				
+			}
+			else {		
+				//TO-DO: -add: process HMO Consultation transactions
+/*			
+				if ((inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) ||
+					(inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
+
+					String hmoName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
+					
+					if (!hmoBillingContainer.containsKey(hmoName)) {
+						columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];		
+
+						//added by Mike, 20190102
+						if (inputColumns[INPUT_NEW_OLD_PATIENT_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toLowerCase().contains("new")) {
+							columnValuesArray[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN] = 1;
+						}						
+						
+						//edited by Mike, 20190109
+						if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN].toLowerCase().trim().contains("mc")) {
+							columnValuesArray[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] = 1;						
+						}
+						else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().trim().contains("p")) {
+							//edited by Mike, 20190108
+							if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().trim().contains("/")) {
+								//do not include in count; only for NON-HMO/Cash payments
+							}
+							else {
+								columnValuesArray[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] = 1;						
+							}
+						}	
+						else {
+							columnValuesArray[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] = 1;						
+						}
+						
+						hmoBillingContainer.put(hmoName, columnValuesArray);
+					}
+					else {
+						//added by Mike, 20190102
+						if (inputColumns[INPUT_NEW_OLD_PATIENT_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toLowerCase().contains("new")) {
+							hmoBillingContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN]++;
+						}						
+						
+						//edited by Mike, 20190109
+						if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN].toLowerCase().trim().contains("mc")) {
+							hmoBillingContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]++;						
+						}
+						else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().trim().contains("p")) {
+							//edited by Mike, 20190108
+							if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().trim().contains("/")) {
+								//do not include in count; only for NON-HMO/Cash payments
+							}
+							else {
+								hmoBillingContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;						
+							}
+						}	
+						else {
+							hmoBillingContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;						
+						}					
+					}
+				}			
+*/				
+			}
+	}	
 
 	//added by Mike, 20181217
 	private static void processHMOCount(HashMap<String, double[]> hmoContainer, String[] inputColumns, boolean isConsultation) {
@@ -1871,13 +1912,15 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 				if (isPhaseOne) {
 					//added by Mike, 20181216
 	//				processMonthlyCount(dateContainer, inputColumns, i, false);
-					processMonthlyCount(dateContainer, inputColumns, i, isConsultation); //isConsultation = false
-					
-					//added by Mike, 20181217
+/*					processMonthlyCount(dateContainer, inputColumns, i, isConsultation); //isConsultation = false
+*/					
+/*					//added by Mike, 20181217
 					processHMOCount(hmoContainer, inputColumns, isConsultation); //edited by Mike, 20181219
-					
+*/					
 					//added by Mike, 20181217
-					processNONHMOCount(nonHmoContainer, inputColumns, isConsultation); //edited by Mike, 20181219
+/*					processNONHMOCount(nonHmoContainer, inputColumns, isConsultation); //edited by Mike, 20181219
+*/
+
 /*					
 					//added by Mike, 20181218
 					processReferringDoctorTransactionCount(referringDoctorContainer, inputColumns, isConsultation); //edited by Mike, 20181219
@@ -1886,15 +1929,22 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 	//				processMedicalDoctorTransactionPerClassificationCount(classificationContainerPerMedicalDoctor, inputColumns, isConsultation);
 	
 					//added by Mike, 20190202
-					processMedicalDoctorTransactionCount(medicalDoctorContainer, inputColumns, isConsultation);
+/*					processMedicalDoctorTransactionCount(medicalDoctorContainer, inputColumns, isConsultation);
+*/
+					//added by Mike, 20190226
+					processHMOBilling(hmoBillingContainer, inputColumns, isConsultation);															
 				}
 				else {
+/*					
 					//added by Mike, 20181220
 					processMedicalDoctorTransactionPerClassificationCount(classificationContainerPerMedicalDoctor, inputColumns, isConsultation);
+*/					
 				}
 			}		
+/*			
 			//added by Mike, 20181205
 			columnValuesArray[OUTPUT_DATE_ID_COLUMN] = i; 			
+*/			
 		}		
 
 	}

@@ -52,14 +52,17 @@ Sub importAllTxtFilesAsWorksheetsInWorkbook()
         'WSNew.Activate
         
         'Open, read, copy, and paste the contents of the (Tab-delimited) .txt file into the new worksheet
-        'TO-DO: -add: copy and paste the contents into each column using the Tab in the .txt file as the delimiter
+        'Paste the contents into each column using the Tab in the .txt file as the delimiter
         Open FileName For Input As #1
             RowCount = 1
             Do Until EOF(1)
-                Line Input #1, textline
-                'Text = Text & textline
+                Line Input #1, textLine
+                'Text = Text & textLine
                 'MsgBox ("text: " & Text)
-                WSNew.Cells(RowCount, 1) = textline
+                textLineArray = Split(textLine, vbTab)
+                For ColumnCount = 1 To UBound(textLineArray)
+                    WSNew.Cells(RowCount, ColumnCount) = textLineArray(ColumnCount)
+                Next
                 RowCount = RowCount + 1
             Loop
         Close #1

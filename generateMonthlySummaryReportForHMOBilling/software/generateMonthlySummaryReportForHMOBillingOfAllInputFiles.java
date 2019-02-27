@@ -120,12 +120,17 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 
 	//added by Mike, 20181218
 	//CONSULTATION
+	private static final int INPUT_CONSULTATION_PROCEDURE_DETAILS_COLUMN = 12-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_CONSULTATION_APPROVAL_CODE_COLUMN = 15-INPUT_NON_MASTER_LIST_OFFSET;
+	
 /*	
 	private static final int INPUT_CONSULTATION_CLASS_COLUMN = 9;
 	private static final int INPUT_CONSULTATION_NET_PF_COLUMN = 11;
 	private static final int INPUT_CONSULTATION_NEW_OLD_COLUMN = 17;
 */	
 	private static final int INPUT_CONSULTATION_OFFSET = 1;
+	
+	private static int hmoBillingContainerTransactionCount = 0; //added by Mike, 20190227	
 						
 /*	private static HashMap<String, double[]> referringDoctorContainer;	
 */
@@ -866,7 +871,7 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 					String hmoName = inputColumns[INPUT_CLASS_COLUMN].trim().toUpperCase();
 					int chargeSlipNumber = Integer.parseInt(inputColumns[INPUT_CHARGE_SLIP_NUMBER_COLUMN].trim().toUpperCase());
 					
-					if (!hmoBillingContainer.containsKey(chargeSlipNumber)) {
+					if (!hmoBillingContainer.containsKey(hmoBillingContainerTransactionCount)){//chargeSlipNumber)) {
 						hmoBillingColumnValuesArray = new String[OUTPUT_TOTAL_COLUMNS];
 					
 //						columnValuesArray[OUTPUT_HMO_COUNT_COLUMN] = 1;
@@ -900,10 +905,12 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN] 
 							= inputColumns[INPUT_FEE_COLUMN].trim().toUpperCase();						
 						
-						hmoBillingContainer.put(chargeSlipNumber, hmoBillingColumnValuesArray);
+						hmoBillingContainer.put(hmoBillingContainerTransactionCount, hmoBillingColumnValuesArray);
+						hmoBillingContainerTransactionCount++;
 					}
 					else {
 						System.out.println("Error: Duplicate Charge Slip Number: "+chargeSlipNumber);
+											
 /*						
 						hmoBillingContainer.get(hmoName)[OUTPUT_HMO_COUNT_COLUMN]++;	
 
@@ -929,6 +936,49 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 			}
 			else {		
 				//TO-DO: -add: process HMO Consultation transactions
+/*				
+				String hmoName = inputColumns[IINPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
+				int chargeSlipNumber = null; //no charge slip number for HMO Consultation transactions
+				//Integer.parseInt(inputColumns[INPUT_CHARGE_SLIP_NUMBER_COLUMN].trim().toUpperCase());
+			
+				if (!hmoBillingContainer.containsKey(chargeSlipNumber)) {
+					hmoBillingColumnValuesArray = new String[OUTPUT_TOTAL_COLUMNS];
+				
+//						columnValuesArray[OUTPUT_HMO_COUNT_COLUMN] = 1;
+					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DATE_COLUMN] 
+						= inputColumns[INPUT_DATE_COLUMN].trim().toUpperCase();
+						
+					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN] 
+						= hmoName.replace("HMO/","");				
+						
+					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN] 
+						= ""+chargeSlipNumber;
+						
+					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN] 
+						= inputColumns[INPUT_PATIENT_NAME_COLUMN].trim().toUpperCase();
+						
+					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN] 
+						= inputColumns[INPUT_APPROVAL_CODE_COLUMN].trim().toUpperCase();
+						
+					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN] 
+						= inputColumns[INPUT_REFERRING_DOCTOR_COLUMN].trim().toUpperCase();
+						
+					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PAYEE_COLUMN] 
+						= OUTPUT_HMO_BILLING_PAYEE_VALUE;
+						
+					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN] 
+						= OUTPUT_HMO_BILLING_DEPARTMENT_PT_VALUE;
+						
+					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PROCEDURE_COLUMN] 
+						= OUTPUT_HMO_BILLING_PROCEDURE_PT_VALUE;
+						
+					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN] 
+						= inputColumns[INPUT_FEE_COLUMN].trim().toUpperCase();						
+					
+					hmoBillingContainer.put(chargeSlipNumber, hmoBillingColumnValuesArray);
+				}
+*/
+
 /*			
 				if ((inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) ||
 					(inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {

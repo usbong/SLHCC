@@ -146,6 +146,8 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 	//this is for both HMO and NON-HMO transactions
 	private static final int OUTPUT_TOTAL_COLUMNS = 25; //edited by Mike, 20190202
 
+	private static final int OUTPUT_HMO_BILLING_TOTAL_COLUMNS = 17; //added by Mike, 20190227
+
 	//PT TREATMENT
 	//added by Mike, 20190226
 	private static final int OUTPUT_HMO_BILLING_DATE_COLUMN = 0;
@@ -260,6 +262,29 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 		 * OUTPUT
 		 * --------------------------------------------------------------------
 		*/
+		//--------------------------------------------------------------------
+		//init table header names
+//		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\tMEDICAL CERTIFICATE COUNT:\tTREATMENT NEW PATIENT COUNT:\tCONSULTATION NEW PATIENT COUNT:\n"); 		
+		
+		//added by Mike, 20190227
+		SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(hmoBillingContainer.keySet());		
+		
+		for (Integer key : sortedKeyset) {			
+			for (int i=0; i<OUTPUT_HMO_BILLING_TOTAL_COLUMNS; i++) {
+				String outputValue = hmoBillingContainer.get(key)[i];
+
+				if (outputValue==null) {
+					outputValue="";
+				}
+
+				writer.print(
+								outputValue+"\t"
+							); 				   											
+			}
+			writer.println();
+		}
+				
+				
 /*
 		//edited by Mike, 20190131
 		writer.print("Monthly Summary Report\n");

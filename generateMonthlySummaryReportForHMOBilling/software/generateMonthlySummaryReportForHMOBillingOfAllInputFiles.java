@@ -631,7 +631,7 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 
 		String year = sb.substring(sb.indexOf("-")).substring(sb.indexOf("-")+1);
 
-		System.out.println("year: "+year);
+//		System.out.println("year: "+year);
 
 		//if the year is only 2 digits, e.g. "19", instead of of "2019"
 		if (year.length() < 4) {
@@ -654,7 +654,7 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 		String day = date.split("-")[1];
 		String year = sb.substring(sb.indexOf("-")).substring(sb.indexOf("-")+1);
 
-		System.out.println("year: "+year);
+//		System.out.println("year: "+year);
 
 		//if the year is only 2 digits, e.g. "19", instead of of "2019"
 		if (year.length() < 4) {
@@ -935,108 +935,60 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 				}				
 			}
 			else {		
-				//TO-DO: -add: process HMO Consultation transactions
-/*				
-				String hmoName = inputColumns[IINPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
-				int chargeSlipNumber = null; //no charge slip number for HMO Consultation transactions
-				//Integer.parseInt(inputColumns[INPUT_CHARGE_SLIP_NUMBER_COLUMN].trim().toUpperCase());
-			
-				if (!hmoBillingContainer.containsKey(chargeSlipNumber)) {
-					hmoBillingColumnValuesArray = new String[OUTPUT_TOTAL_COLUMNS];
-				
-//						columnValuesArray[OUTPUT_HMO_COUNT_COLUMN] = 1;
-					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DATE_COLUMN] 
-						= inputColumns[INPUT_DATE_COLUMN].trim().toUpperCase();
-						
-					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN] 
-						= hmoName.replace("HMO/","");				
-						
-					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN] 
-						= ""+chargeSlipNumber;
-						
-					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN] 
-						= inputColumns[INPUT_PATIENT_NAME_COLUMN].trim().toUpperCase();
-						
-					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN] 
-						= inputColumns[INPUT_APPROVAL_CODE_COLUMN].trim().toUpperCase();
-						
-					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN] 
-						= inputColumns[INPUT_REFERRING_DOCTOR_COLUMN].trim().toUpperCase();
-						
-					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PAYEE_COLUMN] 
-						= OUTPUT_HMO_BILLING_PAYEE_VALUE;
-						
-					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN] 
-						= OUTPUT_HMO_BILLING_DEPARTMENT_PT_VALUE;
-						
-					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PROCEDURE_COLUMN] 
-						= OUTPUT_HMO_BILLING_PROCEDURE_PT_VALUE;
-						
-					hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN] 
-						= inputColumns[INPUT_FEE_COLUMN].trim().toUpperCase();						
-					
-					hmoBillingContainer.put(chargeSlipNumber, hmoBillingColumnValuesArray);
-				}
-*/
-
-/*			
 				if ((inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) ||
 					(inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
-
+						
 					String hmoName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
-					
-					if (!hmoBillingContainer.containsKey(hmoName)) {
-						columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];		
+					//int chargeSlipNumber = ""; //no charge slip number for HMO Consultation transactions
+					//Integer.parseInt(inputColumns[INPUT_CHARGE_SLIP_NUMBER_COLUMN].trim().toUpperCase());
 
-						//added by Mike, 20190102
-						if (inputColumns[INPUT_NEW_OLD_PATIENT_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toLowerCase().contains("new")) {
-							columnValuesArray[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN] = 1;
-						}						
+					String consultationProcedureDetails = inputColumns[INPUT_CONSULTATION_PROCEDURE_DETAILS_COLUMN].trim();
+					
+					if (!hmoBillingContainer.containsKey(hmoBillingContainerTransactionCount)) {
+						hmoBillingColumnValuesArray = new String[OUTPUT_TOTAL_COLUMNS];
+					
+	//						columnValuesArray[OUTPUT_HMO_COUNT_COLUMN] = 1;
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DATE_COLUMN] 
+							= inputColumns[INPUT_DATE_COLUMN].trim().toUpperCase();
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN] 
+							= hmoName.replace("HMO/","");				
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN] 
+							= "";//+chargeSlipNumber;
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN] 
+							= inputColumns[INPUT_PATIENT_NAME_COLUMN].trim().toUpperCase();
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN] 
+							= inputColumns[INPUT_APPROVAL_CODE_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN] 
+							= inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PAYEE_COLUMN] 
+							= OUTPUT_HMO_BILLING_PAYEE_VALUE;
 						
-						//edited by Mike, 20190109
-						if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN].toLowerCase().trim().contains("mc")) {
-							columnValuesArray[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] = 1;						
+						//TO-DO: -update: instructions to include OUTPUT_HMO_BILLING_DEPARTMENT_REHAB_VALUE, i.e. "REHAB-CONSULT"
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN] 
+							= OUTPUT_HMO_BILLING_DEPARTMENT_ORTHO_VALUE;
+
+						//TO-DO: -update: instructions to include OUTPUT_HMO_BILLING_PROCEDURE_REHAB_VALUE, i.e. "REHAB-PROCEDURE"						
+						if (!consultationProcedureDetails.trim().equals("")) {
+							hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PROCEDURE_COLUMN] 
+								= OUTPUT_HMO_BILLING_PROCEDURE_ORTHO_PROCEDURE_VALUE + " ("+consultationProcedureDetails+")";
 						}
-						else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().trim().contains("p")) {
-							//edited by Mike, 20190108
-							if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().trim().contains("/")) {
-								//do not include in count; only for NON-HMO/Cash payments
-							}
-							else {
-								columnValuesArray[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] = 1;						
-							}
-						}	
 						else {
-							columnValuesArray[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] = 1;						
+							hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PROCEDURE_COLUMN] 
+								= OUTPUT_HMO_BILLING_PROCEDURE_ORTHO_VALUE;
 						}
-						
-						hmoBillingContainer.put(hmoName, columnValuesArray);
+											
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN] 
+							= inputColumns[INPUT_FEE_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();												
+						hmoBillingContainer.put(hmoBillingContainerTransactionCount, hmoBillingColumnValuesArray);
+						hmoBillingContainerTransactionCount++;
 					}
-					else {
-						//added by Mike, 20190102
-						if (inputColumns[INPUT_NEW_OLD_PATIENT_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toLowerCase().contains("new")) {
-							hmoBillingContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN]++;
-						}						
-						
-						//edited by Mike, 20190109
-						if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN].toLowerCase().trim().contains("mc")) {
-							hmoBillingContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]++;						
-						}
-						else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().trim().contains("p")) {
-							//edited by Mike, 20190108
-							if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().trim().contains("/")) {
-								//do not include in count; only for NON-HMO/Cash payments
-							}
-							else {
-								hmoBillingContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;						
-							}
-						}	
-						else {
-							hmoBillingContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;						
-						}					
-					}
-				}			
-*/				
+				}	
 			}
 	}	
 

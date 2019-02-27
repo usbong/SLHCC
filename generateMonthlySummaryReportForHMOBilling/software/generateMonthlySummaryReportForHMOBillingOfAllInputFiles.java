@@ -277,6 +277,10 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 					outputValue="";
 				}
 
+				if (i==OUTPUT_HMO_BILLING_DATE_COLUMN) {
+					outputValue = getDateAsHMOBillingFormat(outputValue);
+				}
+				
 				writer.print(
 								outputValue+"\t"
 							); 				   											
@@ -632,6 +636,28 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 
 		System.out.println("Integer.parseInt(year.concat(month)): "+Integer.parseInt(year.concat(month)));
 		return Integer.parseInt(year.concat(month));
+	}
+	
+	//added by Mike, 20190227
+	//input: JAN-05-19
+	//output: 05/01/2019
+	private static String getDateAsHMOBillingFormat(String date) {
+		StringBuffer sb = new StringBuffer(""+date);	
+		String month = sb.substring(0,sb.indexOf("-")).toLowerCase(); //index "-" is not included
+		month = ""+convertMonthToNumber(month);
+
+		String day = date.split("-")[1];
+		String year = sb.substring(sb.indexOf("-")).substring(sb.indexOf("-")+1);
+
+		System.out.println("year: "+year);
+
+		//if the year is only 2 digits, e.g. "19", instead of of "2019"
+		if (year.length() < 4) {
+			year = "20" + year;
+		}
+		
+
+		return day.concat("/").concat(month).concat("/").concat(year);
 	}
 	
 	//added by Mike, 20181030

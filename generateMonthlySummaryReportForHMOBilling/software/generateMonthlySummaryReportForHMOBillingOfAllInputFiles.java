@@ -296,6 +296,10 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 					if (i==OUTPUT_HMO_BILLING_DATE_COLUMN) {
 						outputValue = getDateAsHMOBillingFormat(outputValue);
 					}
+
+					if (i==OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN) {
+						outputValue = outputValue.replace("\"","");
+					}
 					
 					hmoPrintWriterContainer.get(hmoNameKey).print(								
 												outputValue+"\t"

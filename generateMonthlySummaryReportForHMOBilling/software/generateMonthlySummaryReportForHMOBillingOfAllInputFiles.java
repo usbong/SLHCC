@@ -106,6 +106,7 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 
 	private static final String OUTPUT_HMO_BILLING_PROCEDURE_PT_VALUE = "PT TREATMENT";
 	private static final String OUTPUT_HMO_BILLING_PROCEDURE_ORTHO_VALUE = "ORTHO CONSULT";
+	private static final String OUTPUT_HMO_BILLING_PROCEDURE_REHAB_VALUE = "REHAB CONSULT";
 	private static final String OUTPUT_HMO_BILLING_PROCEDURE_ORTHO_PROCEDURE_VALUE = "ORTHO-PROCEDURE";
 	private static final String OUTPUT_HMO_BILLING_PROCEDURE_REHAB_PROCEDURE_VALUE = "REHAB-PROCEDURE";
 
@@ -131,6 +132,9 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 	private static final int INPUT_CONSULTATION_OFFSET = 1;
 	
 	private static int hmoBillingContainerTransactionCount = 0; //added by Mike, 20190227	
+	
+	//TO-DO: -update: the keyword accordingly
+	private static final String HMO_BILLING_REHAB_CLASSIFICATION_KEYWORD_VALUE = "REYES"; //added by Mike, 20190228	
 						
 /*	private static HashMap<String, double[]> referringDoctorContainer;	
 */
@@ -969,12 +973,38 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PAYEE_COLUMN] 
 							= OUTPUT_HMO_BILLING_PAYEE_VALUE;
 						
-						//TO-DO: -update: instructions to include OUTPUT_HMO_BILLING_DEPARTMENT_REHAB_VALUE, i.e. "REHAB-CONSULT"
-						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN] 
+/*						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN] 
 							= OUTPUT_HMO_BILLING_DEPARTMENT_ORTHO_VALUE;
+*/
+						//edited by Mike, 20190228
+						if (inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase().contains(HMO_BILLING_REHAB_CLASSIFICATION_KEYWORD_VALUE)) {
+							hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN] 
+								= OUTPUT_HMO_BILLING_DEPARTMENT_REHAB_VALUE;
+																
+							if (!consultationProcedureDetails.trim().equals("")) {
+								hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PROCEDURE_COLUMN] 
+									= OUTPUT_HMO_BILLING_PROCEDURE_REHAB_PROCEDURE_VALUE + " ("+consultationProcedureDetails+")";
+							}
+							else {
+								hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PROCEDURE_COLUMN] 
+									= OUTPUT_HMO_BILLING_PROCEDURE_REHAB_VALUE;
+							}
+						}
+						else {
+							hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN] 
+								= OUTPUT_HMO_BILLING_DEPARTMENT_ORTHO_VALUE;
+								
+							if (!consultationProcedureDetails.trim().equals("")) {
+								hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PROCEDURE_COLUMN] 
+									= OUTPUT_HMO_BILLING_PROCEDURE_ORTHO_PROCEDURE_VALUE + " ("+consultationProcedureDetails+")";
+							}
+							else {
+								hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PROCEDURE_COLUMN] 
+									= OUTPUT_HMO_BILLING_PROCEDURE_ORTHO_VALUE;
+							}
+						}
 
-						//TO-DO: -update: instructions to include OUTPUT_HMO_BILLING_PROCEDURE_REHAB_VALUE, i.e. "REHAB-PROCEDURE"						
-						if (!consultationProcedureDetails.trim().equals("")) {
+/*						if (!consultationProcedureDetails.trim().equals("")) {
 							hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PROCEDURE_COLUMN] 
 								= OUTPUT_HMO_BILLING_PROCEDURE_ORTHO_PROCEDURE_VALUE + " ("+consultationProcedureDetails+")";
 						}
@@ -982,7 +1012,7 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 							hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PROCEDURE_COLUMN] 
 								= OUTPUT_HMO_BILLING_PROCEDURE_ORTHO_VALUE;
 						}
-											
+*/											
 						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN] 
 							= inputColumns[INPUT_FEE_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();												
 						hmoBillingContainer.put(hmoBillingContainerTransactionCount, hmoBillingColumnValuesArray);

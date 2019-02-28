@@ -280,51 +280,34 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 		//added by Mike, 20190227
 		SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(hmoBillingContainer.keySet());		
 		String hmoNameKey = "";
+		
 		for (Integer key : sortedKeyset) {			
-			for (int i=0; i<OUTPUT_HMO_BILLING_TOTAL_COLUMNS; i++) {
-				String outputValue = hmoBillingContainer.get(key)[i];
+			hmoNameKey = hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN];
 
-				if (outputValue==null) {
-					outputValue="";
-				}
+			//added by Mike, 20190228	
+			if (hmoPrintWriterContainer.containsKey(hmoNameKey)) {				
+				for (int i=0; i<OUTPUT_HMO_BILLING_TOTAL_COLUMNS; i++) {
+					String outputValue = hmoBillingContainer.get(key)[i];
 
-				if (i==OUTPUT_HMO_BILLING_DATE_COLUMN) {
-					outputValue = getDateAsHMOBillingFormat(outputValue);
-				}
+					if (outputValue==null) {
+						outputValue="";
+					}
 
-				if (i==OUTPUT_HMO_BILLING_HMO_NAME_COLUMN) {				
-					hmoNameKey = hmoBillingContainer.get(key)[i];
-				}
-				
-				//added by Mike, 20190228	
-				if (hmoPrintWriterContainer.containsKey(hmoNameKey)) {
+					if (i==OUTPUT_HMO_BILLING_DATE_COLUMN) {
+						outputValue = getDateAsHMOBillingFormat(outputValue);
+					}
+					
 					hmoPrintWriterContainer.get(hmoNameKey).print(								
-																	outputValue+"\t"
-															   ); 				   											
+												outputValue+"\t"
+										   ); 				   											
 				}
-				
-/*				
-				writer.print(
-								outputValue+"\t"
-							); 				   											
-*/							
+				hmoPrintWriterContainer.get(hmoNameKey).println();
 			}
-/*			
-			writer.println();
-*/
-			hmoPrintWriterContainer.get(hmoNameKey).println();
 		}
 				
 		for (Integer key : sortedKeyset) {			
-			for (int i=0; i<OUTPUT_HMO_BILLING_TOTAL_COLUMNS; i++) {
-				if (i==OUTPUT_HMO_BILLING_HMO_NAME_COLUMN) {				
-					hmoNameKey = hmoBillingContainer.get(key)[i];
-				}
-				
-				//added by Mike, 20190228				
-				hmoPrintWriterContainer.get(hmoNameKey).print("\n");
-				hmoPrintWriterContainer.get(hmoNameKey).close();
-			}
+			hmoNameKey = hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN];
+			hmoPrintWriterContainer.get(hmoNameKey).close();
 		}
 /*	
 		writer.print("\n");		

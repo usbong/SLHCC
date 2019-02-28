@@ -144,7 +144,8 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 	private static HashMap<String, double[]> nonHmoContainer;	//added by Mike, 201801217
 	private static HashMap<String, double[]> referringDoctorContainer; //added by Mike, 20181218
 	private static HashMap<String, double[]> medicalDoctorContainer; //added by Mike, 20190202
-
+	private static HashMap<String, PrintWriter> hmoPrintWriterContainer; //added by Mike, 20190228
+	
 	private static double[] columnValuesArray;
 	private static String[] hmoBillingColumnValuesArray;
 	private static String[] dateValuesArray; //added by Mike, 20180412
@@ -169,8 +170,7 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 	private static final int OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN = 10; 
 	private static final int OUTPUT_HMO_BILLING_PROCEDURE_COLUMN = 11; 
 	private static final int OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN = 16; 
-		
-	
+			
 	private static final int OUTPUT_HMO_COUNT_COLUMN = 0; //transaction count
 	private static final int OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN = 1;
 	private static final int OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN = 2;
@@ -224,7 +224,8 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 	public static void main ( String[] args ) throws Exception
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
-		PrintWriter writer = new PrintWriter("output/MonthlySummaryReportOutput.txt", "UTF-8");			
+/*		PrintWriter writer = new PrintWriter("output/MonthlySummaryReportOutput.txt", "UTF-8");			
+*/
 		/*referringDoctorContainer = new HashMap<String, double[]>();
 		*/
 		
@@ -235,8 +236,9 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 		referringDoctorContainer = new HashMap<String, double[]>();
 //		medicalDoctorContainer = new HashMap<String, double[]>();
 		classificationContainerPerMedicalDoctor = new HashMap<String, HashMap<String, double[]>>();				
-		medicalDoctorContainer = new HashMap<String, double[]>(); //added by Mike, 20190202
-				
+		medicalDoctorContainer = new HashMap<String, double[]>(); //added by Mike, 20190202				
+		hmoPrintWriterContainer = new HashMap<String, PrintWriter>(); //added by Mike, 20190228				
+		
 		//added by Mike, 20181116
 		startDate = null; //properly set the month and year in the output file of each input file
 		dateValuesArray = new String[args.length]; //added by Mike, 20180412
@@ -277,7 +279,7 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 		
 		//added by Mike, 20190227
 		SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(hmoBillingContainer.keySet());		
-		
+		String hmoNameKey = "";
 		for (Integer key : sortedKeyset) {			
 			for (int i=0; i<OUTPUT_HMO_BILLING_TOTAL_COLUMNS; i++) {
 				String outputValue = hmoBillingContainer.get(key)[i];
@@ -289,269 +291,45 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 				if (i==OUTPUT_HMO_BILLING_DATE_COLUMN) {
 					outputValue = getDateAsHMOBillingFormat(outputValue);
 				}
+
+				if (i==OUTPUT_HMO_BILLING_HMO_NAME_COLUMN) {				
+					hmoNameKey = hmoBillingContainer.get(key)[i];
+				}
 				
+				//added by Mike, 20190228	
+				if (hmoPrintWriterContainer.containsKey(hmoNameKey)) {
+					hmoPrintWriterContainer.get(hmoNameKey).print(								
+																	outputValue+"\t"
+															   ); 				   											
+				}
+				
+/*				
 				writer.print(
 								outputValue+"\t"
 							); 				   											
+*/							
 			}
+/*			
 			writer.println();
+*/
+			hmoPrintWriterContainer.get(hmoNameKey).println();
 		}
 				
+		for (Integer key : sortedKeyset) {			
+			for (int i=0; i<OUTPUT_HMO_BILLING_TOTAL_COLUMNS; i++) {
+				if (i==OUTPUT_HMO_BILLING_HMO_NAME_COLUMN) {				
+					hmoNameKey = hmoBillingContainer.get(key)[i];
+				}
 				
-/*
-		//edited by Mike, 20190131
-		writer.print("Monthly Summary Report\n");
-		
-		//--------------------------------------------------------------------
-		//init table header names
-		writer.print("\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\tMEDICAL CERTIFICATE COUNT:\n"); 		
-
-		double totalTreatmentCount = 0;
-		double totalConsultationCount = 0; //added by Mike, 20181218
-		double totalProcedureCount = 0; //added by Mike, 20190105		
-		double totalMedicalCertificateCount = 0; //added by Mike, 20190107
-
-		//Note that there should be an even number of input files and at least two (2) input files, one for PT Treatment and another for Consultation
-		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION
-			//added by Mike, 20190207
-			if (dateValuesArrayInt[i]==0) { //if there is no .txt input file
-				System.out.println("\nThere is no Tab-delimited .txt input file in either the \"consultation\" folder or the \"treatment\" folder.");
-				return;
+				//added by Mike, 20190228				
+				hmoPrintWriterContainer.get(hmoNameKey).print("\n");
+				hmoPrintWriterContainer.get(hmoNameKey).close();
 			}
-		
-			writer.print(convertDateToMonthYearInWords(dateValuesArrayInt[i])+"\t");
-			
-			double treatmentCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN];
-
-			//added by Mike, 20181218
-			double consultationCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
-
-			//added by Mike, 20190105
-			double procedureCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN];
-
-			//added by Mike, 20190105
-			double medicalCertificateCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN];
-			
-			totalTreatmentCount += treatmentCount;
-			totalConsultationCount += consultationCount;
-			totalProcedureCount += procedureCount;
-			totalMedicalCertificateCount += medicalCertificateCount;
-			
-			writer.print(
-							treatmentCount+"\t"+						
-							consultationCount+"\t"+							
-							procedureCount+"\t"+
-							medicalCertificateCount+"\n"
-						); 				   							
 		}
-		//TOTAL
-		writer.print(
-				"TOTAL:\t"+totalTreatmentCount+"\t"+totalConsultationCount+"\t"+totalProcedureCount+"\t"+totalMedicalCertificateCount+"\n"		
-				); 				   							
-
-		//--------------------------------------------------------------------
-		//init table header names
-		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\tMEDICAL CERTIFICATE COUNT:\tTREATMENT NEW PATIENT COUNT:\tCONSULTATION NEW PATIENT COUNT:\n"); 		
-
-		double totalTreatmentHMOCount = 0;
-		double totalConsultationHMOCount = 0; //added by Mike, 20181219		
-		double totalProcedureHMOCount = 0; //added by Mike, 20190105		
-		double totalMedicalCertificateHMOCount = 0; //added by Mike, 20190107
-		double totalNewPatientTreatmentHMOCount = 0; //added by Mike, 20190102
-		double totalNewPatientConsultationHMOCount = 0; //added by Mike, 20190102
-		
-		SortedSet<String> sortedKeyset = new TreeSet<String>(hmoContainer.keySet());
-		
-		for (String key : sortedKeyset) {	
-			double treatmentCount = hmoContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
-			double consultationCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
-			double procedureCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]; //added by Mike, 20190105		
-			double medicalCertificateCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; //added by Mike, 20190107
-			double newPatientTreatmentCount = hmoContainer.get(key)[OUTPUT_HMO_NEW_PATIENT_COUNT_COLUMN]; //added by Mike, 20190102
-			double newPatientConsultationCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN]; //added by Mike, 20190102
-
-			totalTreatmentHMOCount += treatmentCount;
-			totalConsultationHMOCount += consultationCount;
-			totalProcedureHMOCount += procedureCount;
-			totalMedicalCertificateHMOCount += medicalCertificateCount;
-			totalNewPatientTreatmentHMOCount += newPatientTreatmentCount;
-			totalNewPatientConsultationHMOCount += newPatientConsultationCount;
-			
-			writer.print(
-							key + "\t" + 
-							treatmentCount+"\t"+							
-							consultationCount+"\t"+							
-							procedureCount+"\t"+							
-							medicalCertificateCount+"\t"+							
-							newPatientTreatmentCount+"\t"+							
-							newPatientConsultationCount+"\n"							
-						); 				   							
-		}
-
-		//TOTAL
-		writer.print(
-				"TOTAL:\t"+totalTreatmentHMOCount+"\t"+totalConsultationHMOCount+"\t"+totalProcedureHMOCount+"\t"+totalMedicalCertificateHMOCount+"\t"+totalNewPatientTreatmentHMOCount+"\t"+totalNewPatientConsultationHMOCount+"\n"
-				);					
-
-		//--------------------------------------------------------------------
-		//init table header names
-		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\tMEDICAL CERTIFICATE COUNT:\n"); 		
-
-		double totalTreatmentNONHMOCount = 0;
-		double totalConsultationNONHMOCount = 0; //added by Mike, 20181219		
-		double totalProcedureNONHMOCount = 0; //added by Mike, 20190105		
-		double totalMedicalCertificateNONHMOCount = 0; //added by Mike, 20190107
-		
-		SortedSet<String> sortedNONHMOKeyset = new TreeSet<String>(nonHmoContainer.keySet());
-
-		for (String key : sortedNONHMOKeyset) {	
-			double treatmentNONHMOCount = nonHmoContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
-			double consultationNONHMOCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
-			double procedureNONHMOCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]; //added by Mike, 20190105		
-			double medicalCertificateNONHMOCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; //added by Mike, 20190107
-
-			totalTreatmentNONHMOCount += treatmentNONHMOCount;
-			totalConsultationNONHMOCount += consultationNONHMOCount;
-			totalProcedureNONHMOCount += procedureNONHMOCount;
-			totalMedicalCertificateNONHMOCount += medicalCertificateNONHMOCount;
-			
-			writer.print(
-							key + "\t" + 
-							treatmentNONHMOCount+"\t"+							
-							consultationNONHMOCount+"\t"+							
-							procedureNONHMOCount+"\t"+							
-							medicalCertificateNONHMOCount+"\n"							
-						); 				   							
-		}
-
-		//TOTAL
-		writer.print(
-				"TOTAL:\t"+totalTreatmentNONHMOCount+"\t"+totalConsultationNONHMOCount+"\t"+totalProcedureNONHMOCount+"\t"+totalMedicalCertificateNONHMOCount+"\n"
-				);					
-
-		//--------------------------------------------------------------------
-		//init table header names
-		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\tMEDICAL CERTIFICATE COUNT:\tNEW PATIENT REFERRAL COUNT:\tCONSULTATION NEW PATIENT COUNT:\tCONSULTATION PATIENT FOLLOW-UP COUNT:\tCONSULTATION OLD PATIENT COUNT:\n"); 		
-
-		double totalReferringMedicalDoctorTransactionCount = 0;
-		double totalNewPatientReferralTransactionCount = 0;
-		double totalConsultationPerDoctorCount = 0;
-		double totalProcedurePerDoctorCount = 0;
-		double totalMedicalCertificatePerDoctorCount = 0;
-		double totalNewPatientPerDoctorCount = 0;
-		double totalFollowUpPerDoctorCount = 0;
-		double totalOldPatientPerDoctorCount = 0;
-		
-		SortedSet<String> sortedMedicalDoctorTransactionCountKeyset = new TreeSet<String>(medicalDoctorContainer.keySet());
-
-		for (String key : sortedMedicalDoctorTransactionCountKeyset) {	
-			double count = medicalDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
-
-			double newPatientReferralTransactionCount = medicalDoctorContainer.get(key)[OUTPUT_HMO_NEW_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
-
-			//added by Mike, 20181219
-			double consultationCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
-
-			//added by Mike, 20181219
-			double procedureCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN];
-
-			//added by Mike, 20190109
-			double medicalCertificateCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN];
-
-			//added by Mike, 20190202
-			double newPatientCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
-
-			//added by Mike, 20190202
-			double followUpCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_FOLLOW_UP_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_FOLLOW_UP_COUNT_COLUMN];
-
-			//added by Mike, 20190202
-			double oldPatientCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_OLD_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_OLD_PATIENT_COUNT_COLUMN];
-			
-			totalReferringMedicalDoctorTransactionCount += count;
-			totalNewPatientReferralTransactionCount += newPatientReferralTransactionCount;
-			totalConsultationPerDoctorCount += consultationCount;
-			totalProcedurePerDoctorCount += procedureCount;
-			totalMedicalCertificatePerDoctorCount += procedureCount;
-			totalFollowUpPerDoctorCount += followUpCount;
-			totalNewPatientPerDoctorCount += newPatientCount;
-			totalOldPatientPerDoctorCount += oldPatientCount;
-			
-			writer.print(
-							key + "\t" + 
-							count+"\t" +
-							consultationCount+"\t"+
-							procedureCount+"\t"+		
-							medicalCertificateCount+"\t"+		
-							newPatientReferralTransactionCount+"\t"+						
-							newPatientCount+"\t"+						
-							followUpCount+"\t"+						
-							oldPatientCount+"\n"						
-							); 				   							
-		}
-
-		//TOTAL
-		writer.print(
-				"TOTAL:\t"+totalReferringMedicalDoctorTransactionCount+"\t"+
-				totalConsultationPerDoctorCount+"\t"+totalProcedurePerDoctorCount+"\t"+
-				totalMedicalCertificatePerDoctorCount+"\t"+totalNewPatientReferralTransactionCount+"\t"+
-				totalNewPatientPerDoctorCount+"\t"+											
-				totalFollowUpPerDoctorCount+"\t"+											
-				totalOldPatientPerDoctorCount+"\n"											
-				); 				   										
-
-		//--------------------------------------------------------------------
-		//init table header names
-		writer.print("\nCONSULTATION COUNT under each CLASSIFICATION\n");
-
-		SortedSet<String> sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset = new TreeSet<String>(classificationContainerPerMedicalDoctor.keySet());
-//		String defaultKey=null;
-//		SortedSet<String> sortedNonHmoContainerTableHeaderKeyset = new TreeSet<String>(classificationContainerPerMedicalDoctor.get(defaultKey).keySet());
-
-		HashMap<String, Integer> totalCountForEachClassification = new HashMap<String, Integer>(); //added by Mike, 20190102
-		boolean hasInitTableHeader=false;		
-		SortedSet<String> sortedclassificationKeyset = null;
-		
-		for (String key : sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset) {				
-			sortedclassificationKeyset = new TreeSet<String>(classificationContainerPerMedicalDoctor.get(key).keySet());
-
-			if (!hasInitTableHeader) {
-				writer.print("\t");
-				for (String classificationKey : sortedclassificationKeyset) {	
-					writer.print(classificationKey+"\t");
-					
-					//added by Mike, 20190102
-					totalCountForEachClassification.put(classificationKey, 0);
-				}				
-				writer.print("\n");
-				hasInitTableHeader=true;
-			}
-
-			writer.print(key+"\t");
-
-			for (String classificationKey : sortedclassificationKeyset) {
-				double[] value = classificationContainerPerMedicalDoctor.get(key).get(classificationKey);
-				double classificationCount = value[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + value[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
-				
-				//added by Mike, 20190102
-				totalCountForEachClassification.put(classificationKey, totalCountForEachClassification.get(classificationKey)+(int)classificationCount);
-//				System.out.println(">>" +" "+classificationKey+" "+totalCountForEachClassification.get(classificationKey));
-
-				writer.print(classificationCount+"\t");
-			}			
-			
-			writer.print("\n");
-		}
-		
-		//TOTAL
-		writer.print("TOTAL:\t");
-				
-		//added by Mike, 20190102				
-		for (String classificationKey : sortedclassificationKeyset) {
-			writer.print(totalCountForEachClassification.get(classificationKey)+"\t");
-		}			
-*/		
+/*	
 		writer.print("\n");		
 		writer.close();
+*/		
 	}
 	
 	private static String convertDateToMonthYearInWords(int date) {
@@ -867,13 +645,18 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 	}
 
 	//added by Mike, 20190226
-	private static void processHMOBilling(HashMap<Integer, String[]> hmoBillingContainer, String[] inputColumns, boolean isConsultation) {
+	private static void processHMOBilling(HashMap<Integer, String[]> hmoBillingContainer, String[] inputColumns, boolean isConsultation) throws Exception {
 			if (!isConsultation) {											
 				if ((inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) ||
 					(inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
 
-					String hmoName = inputColumns[INPUT_CLASS_COLUMN].trim().toUpperCase();
+					String hmoName = inputColumns[INPUT_CLASS_COLUMN].trim().toUpperCase().replace("HMO/","");
 					int chargeSlipNumber = Integer.parseInt(inputColumns[INPUT_CHARGE_SLIP_NUMBER_COLUMN].trim().toUpperCase());
+					
+					//added by Mike, 20190228
+					if (!hmoPrintWriterContainer.containsKey(hmoName)) {
+						hmoPrintWriterContainer.put(hmoName, new PrintWriter("output/"+hmoName+".txt","UTF-8"));
+					}
 					
 					if (!hmoBillingContainer.containsKey(hmoBillingContainerTransactionCount)){//chargeSlipNumber)) {
 						hmoBillingColumnValuesArray = new String[OUTPUT_TOTAL_COLUMNS];
@@ -883,7 +666,7 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 							= inputColumns[INPUT_DATE_COLUMN].trim().toUpperCase();
 							
 						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN] 
-							= hmoName.replace("HMO/","");				
+							= hmoName;//.replace("HMO/","")		
 							
 						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN] 
 							= ""+chargeSlipNumber;
@@ -942,11 +725,16 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 				if ((inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) ||
 					(inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
 						
-					String hmoName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
+					String hmoName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase().replace("HMO/","");
 					//int chargeSlipNumber = ""; //no charge slip number for HMO Consultation transactions
 					//Integer.parseInt(inputColumns[INPUT_CHARGE_SLIP_NUMBER_COLUMN].trim().toUpperCase());
 
 					String consultationProcedureDetails = inputColumns[INPUT_CONSULTATION_PROCEDURE_DETAILS_COLUMN].trim();
+					
+					//added by Mike, 20190228
+					if (!hmoPrintWriterContainer.containsKey(hmoName)) {
+						hmoPrintWriterContainer.put(hmoName, new PrintWriter("output/"+hmoName+".txt","UTF-8"));
+					}
 					
 					if (!hmoBillingContainer.containsKey(hmoBillingContainerTransactionCount)) {
 						hmoBillingColumnValuesArray = new String[OUTPUT_TOTAL_COLUMNS];
@@ -956,7 +744,7 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 							= inputColumns[INPUT_DATE_COLUMN].trim().toUpperCase();
 							
 						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN] 
-							= hmoName.replace("HMO/","");				
+							= hmoName;//.replace("HMO/","");				
 							
 						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN] 
 							= "";//+chargeSlipNumber;

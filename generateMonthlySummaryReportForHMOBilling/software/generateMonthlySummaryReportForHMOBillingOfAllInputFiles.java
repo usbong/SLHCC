@@ -145,6 +145,7 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 	private static HashMap<String, double[]> referringDoctorContainer; //added by Mike, 20181218
 	private static HashMap<String, double[]> medicalDoctorContainer; //added by Mike, 20190202
 	private static HashMap<String, PrintWriter> hmoPrintWriterContainer; //added by Mike, 20190228
+	private static ArrayList<String> hmoBillingTableHeaderArrayList; //added by Mike, 20190301
 	
 	private static double[] columnValuesArray;
 	private static String[] hmoBillingColumnValuesArray;
@@ -162,13 +163,20 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 	//added by Mike, 20190226
 	private static final int OUTPUT_HMO_BILLING_DATE_COLUMN = 0;
 	private static final int OUTPUT_HMO_BILLING_HMO_NAME_COLUMN = 1;
+	private static final int OUTPUT_HMO_BILLING_NUMBER_COLUMN = 2; //for use as table header only
+	private static final int OUTPUT_HMO_BILLING_FORM_COLUMN = 3; //for use as table header only
 	private static final int OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN = 4;
 	private static final int OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN = 5;
 	private static final int OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN = 6; //approval code/account number
 	private static final int OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN = 7; 
 	private static final int OUTPUT_HMO_BILLING_PAYEE_COLUMN = 8; 
+	private static final int OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN = 9; //for use as table header only
 	private static final int OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN = 10; 
 	private static final int OUTPUT_HMO_BILLING_PROCEDURE_COLUMN = 11; 
+	private static final int OUTPUT_HMO_BILLING_DOCTORS_COLUMN = 12; //for use as table header only
+	private static final int OUTPUT_HMO_BILLING_VAT_EXEMPT_COLUMN = 13; //for use as table header only
+	private static final int OUTPUT_HMO_BILLING_VATABLE_SALES_COLUMN = 14; //for use as table header only
+	private static final int OUTPUT_HMO_BILLING_VAT_COLUMN = 15; //for use as table header only
 	private static final int OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN = 16; 
 			
 	private static final int OUTPUT_HMO_COUNT_COLUMN = 0; //transaction count
@@ -239,6 +247,25 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 		medicalDoctorContainer = new HashMap<String, double[]>(); //added by Mike, 20190202				
 		hmoPrintWriterContainer = new HashMap<String, PrintWriter>(); //added by Mike, 20190228				
 		
+		hmoBillingTableHeaderArrayList = new ArrayList<String>();
+		hmoBillingTableHeaderArrayList.add("DATE"); //OUTPUT_HMO_BILLING_DATE_COLUMN		
+		hmoBillingTableHeaderArrayList.add("HMO NAME"); //OUTPUT_HMO_BILLING_HMO_NAME_COLUMN		
+		hmoBillingTableHeaderArrayList.add("NO."); //OUTPUT_HMO_BILLING_NUMBER_COLUMN		
+		hmoBillingTableHeaderArrayList.add("FORM"); //OUTPUT_HMO_BILLING_FORM_COLUMN		
+		hmoBillingTableHeaderArrayList.add("CHARGE SLIP NO."); //OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN		
+		hmoBillingTableHeaderArrayList.add("PATIENT'S NAME"); //OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN		
+		hmoBillingTableHeaderArrayList.add("ACCOUNT#/APPROVAL CODE"); //OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN		
+		hmoBillingTableHeaderArrayList.add("DOCTOR'S NAME"); //OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN		
+		hmoBillingTableHeaderArrayList.add("PAYEE"); //OUTPUT_HMO_BILLING_PAYEE_COLUMN
+		hmoBillingTableHeaderArrayList.add("DIAGNOSIS"); //OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN
+		hmoBillingTableHeaderArrayList.add("DEPT"); //OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN
+		hmoBillingTableHeaderArrayList.add("PROCEDURE"); //OUTPUT_HMO_BILLING_PROCEDURE_COLUMN
+		hmoBillingTableHeaderArrayList.add("DOCTORS"); //OUTPUT_HMO_BILLING_DOCTORS_COLUMN
+		hmoBillingTableHeaderArrayList.add("VAT EXEMPT"); //OUTPUT_HMO_BILLING_VAT_EXEMPT_COLUMN
+		hmoBillingTableHeaderArrayList.add("VATABLE SALES"); //OUTPUT_HMO_BILLING_VATABLE_SALES_COLUMN
+		hmoBillingTableHeaderArrayList.add("VAT"); //OUTPUT_HMO_BILLING_VAT_COLUMN
+		hmoBillingTableHeaderArrayList.add("TOTAL AMOUNT"); //OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN
+		
 		//added by Mike, 20181116
 		startDate = null; //properly set the month and year in the output file of each input file
 		dateValuesArray = new String[args.length]; //added by Mike, 20180412
@@ -279,14 +306,28 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 		
 		//added by Mike, 20190227
 		SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(hmoBillingContainer.keySet());		
+		SortedSet<String> sortedHmoPrintWriterKeyset = new TreeSet<String>(hmoPrintWriterContainer.keySet());		
+
 		String hmoNameKey = "";
 		
+		//added by Mike, 20190301
+		for (String key : sortedHmoPrintWriterKeyset) {					
+			for(int k=0; k<hmoBillingTableHeaderArrayList.size(); k++) {
+				hmoPrintWriterContainer.get(key).print(								
+											hmoBillingTableHeaderArrayList.get(k)+"\t"
+									   ); 				   											
+			}
+				
+			hmoPrintWriterContainer.get(key).println(); 				   											
+		}
+
 		for (Integer key : sortedKeyset) {			
 			hmoNameKey = hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN];
 
 			//added by Mike, 20190228	
 			if (hmoPrintWriterContainer.containsKey(hmoNameKey)) {				
 				for (int i=0; i<OUTPUT_HMO_BILLING_TOTAL_COLUMNS; i++) {
+										
 					String outputValue = hmoBillingContainer.get(key)[i];
 
 					if (outputValue==null) {

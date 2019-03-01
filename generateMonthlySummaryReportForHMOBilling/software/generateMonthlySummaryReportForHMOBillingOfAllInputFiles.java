@@ -312,6 +312,31 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 		
 		//added by Mike, 20190301
 		for (String key : sortedHmoPrintWriterKeyset) {					
+			//added by Mike, 20190301
+			//write the top portion above the table header			
+			//write an additional Tab, i.e. "\t", at the end of each row
+			//this is so that the present add-on software as MS Excel Macro can properly copy and paste all the columns with written data
+			hmoPrintWriterContainer.get(key).println(
+											addTabUntilColumn(OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN)+
+											"STA. LUCIA HEALTH CARE CENTRE"+"\t"
+									   ); 				   											
+			hmoPrintWriterContainer.get(key).println(
+											addTabUntilColumn(OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN)+
+											"SUMMARY OF BILLING TRANSACTIONS"+"\t"
+									   ); 				   											
+
+			hmoPrintWriterContainer.get(key).println(											
+											"HMO"+
+											addTabUntilColumn(OUTPUT_HMO_BILLING_VAT_EXEMPT_COLUMN)+
+											"TOTAL AMOUNT:"+"\t"
+									   ); 				   											
+
+			hmoPrintWriterContainer.get(key).println(											
+									   		"BILLING PERIOD: FOR THE MONTH OF"+
+											addTabUntilColumn(OUTPUT_HMO_BILLING_VAT_EXEMPT_COLUMN)+
+											"BILLING DATE:"+"\t"
+										); 				   											
+			
 			for(int k=0; k<hmoBillingTableHeaderArrayList.size(); k++) {
 				hmoPrintWriterContainer.get(key).print(								
 											hmoBillingTableHeaderArrayList.get(k)+"\t"
@@ -359,6 +384,16 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 		writer.print("\n");		
 		writer.close();
 */		
+	}
+	
+	private static String addTabUntilColumn(int column) {
+		StringBuffer output = new StringBuffer("");
+		
+		for (int i=0; i<column; i++) {
+			output.append("\t");
+		}
+		
+		return output.toString();
 	}
 	
 	private static String convertDateToMonthYearInWords(int date) {

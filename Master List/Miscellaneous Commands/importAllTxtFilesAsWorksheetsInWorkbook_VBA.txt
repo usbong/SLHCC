@@ -9,7 +9,7 @@ Sub importAllTxtFilesAsWorksheetsInWorkbook()
 '
 ' @author: Michael Syson
 ' @date created: 20190225
-' @date updated: 20190228
+' @date updated: 20190301
 '
 ' Workbook with Imported Worksheets
 ' Given:
@@ -40,6 +40,9 @@ Sub importAllTxtFilesAsWorksheetsInWorkbook()
     End If
 
     Set fso = CreateObject("Scripting.FileSystemObject")
+    
+    'added by Mike, 20190301
+    Application.ScreenUpdating = False
 
     'Loop over all the files selected by the user and import them as new worksheets
     For Each FileName In FileNames
@@ -69,5 +72,9 @@ Sub importAllTxtFilesAsWorksheetsInWorkbook()
         Close #1
             
     Next FileName
+    
+    'added by Mike, 20190301
+    Application.ScreenUpdating = True
+
     Set fso = Nothing
 End Sub

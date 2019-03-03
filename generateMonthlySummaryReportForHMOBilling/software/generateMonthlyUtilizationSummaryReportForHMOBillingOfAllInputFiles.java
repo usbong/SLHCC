@@ -71,6 +71,7 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles {	
 	private static boolean isInDebugMode = true; //edited by Mike, 20190131
 	private static boolean isNetPFComputed = false; //added by Mike, 20190131
+	private static boolean isOutputMultipleTxtFilesPerHMO = false; //added by Mike, 20190303
 
 	private static String inputFilename = "input201801"; //without extension; default input file
 	
@@ -245,8 +246,7 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 	public static void main ( String[] args ) throws Exception
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
-/*		PrintWriter writer = new PrintWriter("output/MonthlySummaryReportOutput.txt", "UTF-8");			
-*/
+		
 		/*referringDoctorContainer = new HashMap<String, double[]>();
 		*/
 		
@@ -258,7 +258,16 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 //		medicalDoctorContainer = new HashMap<String, double[]>();
 		classificationContainerPerMedicalDoctor = new HashMap<String, HashMap<String, double[]>>();				
 		medicalDoctorContainer = new HashMap<String, double[]>(); //added by Mike, 20190202				
-		hmoPrintWriterContainer = new HashMap<String, PrintWriter>(); //added by Mike, 20190228				
+				
+		PrintWriter writer = null;
+		if (isOutputMultipleTxtFilesPerHMO) {
+			hmoPrintWriterContainer = new HashMap<String, PrintWriter>(); //added by Mike, 20190228				
+		}
+		else {
+			writer = new PrintWriter("output/output.txt", "UTF-8");
+		}
+		
+		
 /*		
 		hmoBillingTableHeaderArrayList = new ArrayList<String>();
 		hmoBillingTableHeaderArrayList.add("DATE"); //OUTPUT_HMO_BILLING_DATE_COLUMN		
@@ -325,93 +334,171 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 		//--------------------------------------------------------------------
 		//init table header names
 //		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\tMEDICAL CERTIFICATE COUNT:\tTREATMENT NEW PATIENT COUNT:\tCONSULTATION NEW PATIENT COUNT:\n"); 		
-		
-		//added by Mike, 20190227
-		SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(hmoBillingContainer.keySet());		
-		SortedSet<String> sortedHmoPrintWriterKeyset = new TreeSet<String>(hmoPrintWriterContainer.keySet());		
 
-		String hmoNameKey = "";
-		
-		//added by Mike, 20190301
-		for (String key : sortedHmoPrintWriterKeyset) {					
-			//added by Mike, 20190301
-			//write the top portion above the table header			
-			//write an additional Tab, i.e. "\t", at the end of each row
-			//this is so that the present add-on software as MS Excel Macro can properly copy and paste all the columns with written data
-			hmoPrintWriterContainer.get(key).println(
-											addTabUntilColumn(OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN)+
-											"STA. LUCIA HEALTH CARE CENTRE, INC."+"\t"
-									   ); 				   											
-			hmoPrintWriterContainer.get(key).println(
-											addTabUntilColumn(OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN)+
-											"HMO UTILIZATION SUMMARY"+"\t"
-									   ); 				   											
+		if (isOutputMultipleTxtFilesPerHMO) {
+			//added by Mike, 20190227
+			SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(hmoBillingContainer.keySet());		
+			SortedSet<String> sortedHmoPrintWriterKeyset = new TreeSet<String>(hmoPrintWriterContainer.keySet());		
+
+			String hmoNameKey = "";
 			
-			for(int k=0; k<hmoUtilizationTableHeaderArrayList.size(); k++) {
-				hmoPrintWriterContainer.get(key).print(								
-											hmoUtilizationTableHeaderArrayList.get(k)+"\t"
-									   ); 				   											
-			}
+			//added by Mike, 20190301
+			for (String key : sortedHmoPrintWriterKeyset) {					
+				//added by Mike, 20190301
+				//write the top portion above the table header			
+				//write an additional Tab, i.e. "\t", at the end of each row
+				//this is so that the present add-on software as MS Excel Macro can properly copy and paste all the columns with written data
+				hmoPrintWriterContainer.get(key).println(
+												addTabUntilColumn(OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN)+
+												"STA. LUCIA HEALTH CARE CENTRE, INC."+"\t"
+										   ); 				   											
+				hmoPrintWriterContainer.get(key).println(
+												addTabUntilColumn(OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN)+
+												"HMO UTILIZATION SUMMARY"+"\t"
+										   ); 				   											
 				
-			hmoPrintWriterContainer.get(key).println(); 				   											
-		}
-
-		for (Integer key : sortedKeyset) {			
-			hmoNameKey = hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN];
-
-			//edited by Mike, 20190303	
-			if (hmoPrintWriterContainer.containsKey(hmoNameKey)) {				
-//				for (int i=0; i<OUTPUT_HMO_UTILIZATION_SUMMARY_TOTAL_COLUMNS; i++) {
-					hmoPrintWriterContainer.get(hmoNameKey).print(								
-													getDateAsHMOBillingFormat(
-														hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_DATE_COLUMN]
-														)+"\t"
-												); 				   											
-
-					hmoPrintWriterContainer.get(hmoNameKey).print(								
-													hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN]+"\t"
-												); 				   											
-
-					hmoPrintWriterContainer.get(hmoNameKey).print(								
-													hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN]+"\t"
-												); 				   											
-
-					hmoPrintWriterContainer.get(hmoNameKey).print(								
-													hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN]+"\t"
-												); 				   											
-
-					//MD'S SIGNATURE
-					hmoPrintWriterContainer.get(hmoNameKey).print(								
-													"\t"
-												); 				   											
-
-					//RECEIVED BY/DATE
-					hmoPrintWriterContainer.get(hmoNameKey).print(								
-													"\t"
-												); 				   											
-												
-/*
-					if (outputValue==null) {
-						outputValue="";
-					}
-*/
-
-
-/*					if (i==OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN) {
-*/	
-/*						outputValue = outputValue.replace("\"","");
-*/
-/*					}
-*/					
-//				}
-				hmoPrintWriterContainer.get(hmoNameKey).println();
+				for(int k=0; k<hmoUtilizationTableHeaderArrayList.size(); k++) {
+					hmoPrintWriterContainer.get(key).print(								
+												hmoUtilizationTableHeaderArrayList.get(k)+"\t"
+										   ); 				   											
+				}
+					
+				hmoPrintWriterContainer.get(key).println(); 				   											
 			}
+
+			for (Integer key : sortedKeyset) {			
+				hmoNameKey = hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN];
+
+				//edited by Mike, 20190303	
+				if (hmoPrintWriterContainer.containsKey(hmoNameKey)) {				
+	//				for (int i=0; i<OUTPUT_HMO_UTILIZATION_SUMMARY_TOTAL_COLUMNS; i++) {
+						hmoPrintWriterContainer.get(hmoNameKey).print(								
+														getDateAsHMOBillingFormat(
+															hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_DATE_COLUMN]
+															)+"\t"
+													); 				   											
+
+						hmoPrintWriterContainer.get(hmoNameKey).print(								
+														hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN]+"\t"
+													); 				   											
+
+						hmoPrintWriterContainer.get(hmoNameKey).print(								
+														hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN]+"\t"
+													); 				   											
+
+						hmoPrintWriterContainer.get(hmoNameKey).print(								
+														hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN]+"\t"
+													); 				   											
+
+						//MD'S SIGNATURE
+						hmoPrintWriterContainer.get(hmoNameKey).print(								
+														"\t"
+													); 				   											
+
+						//RECEIVED BY/DATE
+						hmoPrintWriterContainer.get(hmoNameKey).print(								
+														"\t"
+													); 				   											
+													
+	/*
+						if (outputValue==null) {
+							outputValue="";
+						}
+	*/
+
+
+	/*					if (i==OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN) {
+	*/	
+	/*						outputValue = outputValue.replace("\"","");
+	*/
+	/*					}
+	*/					
+	//				}
+					hmoPrintWriterContainer.get(hmoNameKey).println();
+				}
+			}
+					
+			for (Integer key : sortedKeyset) {			
+				hmoNameKey = hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN];
+				hmoPrintWriterContainer.get(hmoNameKey).close();
+			}
+		}	
+		else {
+				SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(hmoBillingContainer.keySet());		
+
+				String hmoNameKey = "";
+			
+				//added by Mike, 20190301
+				//write the top portion above the table header			
+				//write an additional Tab, i.e. "\t", at the end of each row
+				//this is so that the present add-on software as MS Excel Macro can properly copy and paste all the columns with written data
+				writer.println(
+												addTabUntilColumn(OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN)+
+												"STA. LUCIA HEALTH CARE CENTRE, INC."+"\t"
+										   ); 				   											
+				writer.println(
+												addTabUntilColumn(OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN)+
+												"HMO UTILIZATION SUMMARY"+"\t"
+										   ); 				   											
+					
+				for(int k=0; k<hmoUtilizationTableHeaderArrayList.size(); k++) {
+					writer.print(								
+												hmoUtilizationTableHeaderArrayList.get(k)+"\t"
+										   ); 				   											
+				}
+
+				writer.println(); 				   											
+
+				for (Integer key : sortedKeyset) {			
+	//				hmoNameKey = hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN];
+
+							writer.print(								
+															getDateAsHMOBillingFormat(
+																hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_DATE_COLUMN]
+																)+"\t"
+														); 				   											
+
+							writer.print(								
+															hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN]+"\t"
+														); 				   											
+
+							writer.print(								
+															hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN]+"\t"
+														); 				   											
+
+							writer.print(								
+															hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN]+"\t"
+														); 				   											
+
+							//MD'S SIGNATURE
+							writer.print(								
+															"\t"
+														); 				   											
+
+							//RECEIVED BY/DATE
+							writer.print(								
+															"\t"
+														); 				   											
+														
+		/*
+							if (outputValue==null) {
+								outputValue="";
+							}
+		*/
+
+
+		/*					if (i==OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN) {
+		*/	
+		/*						outputValue = outputValue.replace("\"","");
+		*/
+		/*					}
+		*/					
+		//				}
+						writer.println();
+				}
+				writer.close();			
 		}
-				
-		for (Integer key : sortedKeyset) {			
-			hmoNameKey = hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN];
-			hmoPrintWriterContainer.get(hmoNameKey).close();
-		}
+		
 /*	
 		writer.print("\n");		
 		writer.close();
@@ -748,10 +835,13 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 
 					String hmoName = inputColumns[INPUT_CLASS_COLUMN].trim().toUpperCase().replace("HMO/","");
 					int chargeSlipNumber = Integer.parseInt(inputColumns[INPUT_CHARGE_SLIP_NUMBER_COLUMN].trim().toUpperCase());
-					
-					//added by Mike, 20190228
-					if (!hmoPrintWriterContainer.containsKey(hmoName)) {
-						hmoPrintWriterContainer.put(hmoName, new PrintWriter("output/"+hmoName+".txt","UTF-8"));
+
+					//edited by Mike, 20190303					
+					if (isOutputMultipleTxtFilesPerHMO) {
+						//added by Mike, 20190228
+						if (!hmoPrintWriterContainer.containsKey(hmoName)) {
+							hmoPrintWriterContainer.put(hmoName, new PrintWriter("output/"+hmoName+".txt","UTF-8"));
+						}
 					}
 					
 					if (!hmoBillingContainer.containsKey(hmoBillingContainerTransactionCount)){//chargeSlipNumber)) {
@@ -838,10 +928,13 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 					//Integer.parseInt(inputColumns[INPUT_CHARGE_SLIP_NUMBER_COLUMN].trim().toUpperCase());
 
 					String consultationProcedureDetails = inputColumns[INPUT_CONSULTATION_PROCEDURE_DETAILS_COLUMN].trim();
-					
-					//added by Mike, 20190228
-					if (!hmoPrintWriterContainer.containsKey(hmoName)) {
-						hmoPrintWriterContainer.put(hmoName, new PrintWriter("output/"+hmoName+".txt","UTF-8"));
+
+					//edited by Mike, 20190303
+					if (isOutputMultipleTxtFilesPerHMO) {					
+						//added by Mike, 20190228
+						if (!hmoPrintWriterContainer.containsKey(hmoName)) {
+							hmoPrintWriterContainer.put(hmoName, new PrintWriter("output/"+hmoName+".txt","UTF-8"));
+						}
 					}
 					
 					if (!hmoBillingContainer.containsKey(hmoBillingContainerTransactionCount)) {

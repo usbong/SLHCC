@@ -72,6 +72,8 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 	private static boolean isInDebugMode = true; //edited by Mike, 20190131
 	private static boolean isNetPFComputed = false; //added by Mike, 20190131
 	private static boolean isOutputMultipleTxtFilesPerHMO = false; //added by Mike, 20190303
+	//added by Mike, 20190131; edited by Mike, 20190303
+	private static final int INPUT_NON_MASTER_LIST_OFFSET = 0;//1; 
 
 	private static String inputFilename = "input201801"; //without extension; default input file
 	
@@ -84,10 +86,7 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 	private static final int REFERRING_DOCTOR_CONTAINER_TYPE = 2;	
 	private static final int HMO_CLASSIFICATION_CONTAINER_PER_MEDICAL_DOCTOR_CONTAINER_TYPE = 3;	
 	private static final int NON_HMO_CLASSIFICATION_CONTAINER_PER_MEDICAL_DOCTOR_CONTAINER_TYPE = 4;	
-	
-	//added by Mike, 20190131
-	private static final int INPUT_NON_MASTER_LIST_OFFSET = 1; 
-	
+		
 	private static final int INPUT_REFERRING_DOCTOR_COLUMN = 15-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_NOTES_COLUMN = 0; //This column is not included in the INPUT_NON_MASTER_LIST_OFFSET
 	private static final int INPUT_DATE_COLUMN = 1-INPUT_NON_MASTER_LIST_OFFSET;

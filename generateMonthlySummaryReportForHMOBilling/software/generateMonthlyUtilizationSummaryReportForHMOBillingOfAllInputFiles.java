@@ -98,6 +98,7 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 	private static final int INPUT_CHARGE_SLIP_NUMBER_COLUMN = 11-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190226
 	private static final int INPUT_APPROVAL_CODE_COLUMN = 12-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190226
 	private static final int INPUT_FEE_COLUMN = 7-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190226
+	private static final int INPUT_DIAGNOSIS_COLUMN = 6-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190303
 
 	//added by Mike, 20190226
 	private static final String OUTPUT_HMO_BILLING_DEPARTMENT_PT_VALUE = "PT";
@@ -123,6 +124,7 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 	//CONSULTATION
 	private static final int INPUT_CONSULTATION_PROCEDURE_DETAILS_COLUMN = 12-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_CONSULTATION_APPROVAL_CODE_COLUMN = 15-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_CONSULTATION_DIAGNOSIS_COLUMN = 7-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190303
 	
 /*	
 	private static final int INPUT_CONSULTATION_CLASS_COLUMN = 9;
@@ -146,6 +148,7 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 	private static HashMap<String, double[]> medicalDoctorContainer; //added by Mike, 20190202
 	private static HashMap<String, PrintWriter> hmoPrintWriterContainer; //added by Mike, 20190228
 	private static ArrayList<String> hmoBillingTableHeaderArrayList; //added by Mike, 20190301
+	private static ArrayList<String> hmoUtilizationTableHeaderArrayList; //added by Mike, 20190303
 	
 	private static double[] columnValuesArray;
 	private static String[] hmoBillingColumnValuesArray;
@@ -165,7 +168,7 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 	private static final int OUTPUT_HMO_UTILIZATION_DATE_COLUMN = 0;
 	private static final int OUTPUT_HMO_UTILIZATION_PATIENT_NAME_COLUMN = 1;
 	private static final int OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN = 2;
-	private static final int OUTPUT_HMO_UTILIZATION_DIAGNOSIS_NAME_COLUMN = 3;
+	private static final int OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN = 3;
 	private static final int OUTPUT_HMO_UTILIZATION_MD_SIGNATURE_COLUMN = 4;
 	private static final int OUTPUT_HMO_UTILIZATION_RECEIVED_BY_DATE_COLUMN = 5;
 	
@@ -256,7 +259,7 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 		classificationContainerPerMedicalDoctor = new HashMap<String, HashMap<String, double[]>>();				
 		medicalDoctorContainer = new HashMap<String, double[]>(); //added by Mike, 20190202				
 		hmoPrintWriterContainer = new HashMap<String, PrintWriter>(); //added by Mike, 20190228				
-		
+/*		
 		hmoBillingTableHeaderArrayList = new ArrayList<String>();
 		hmoBillingTableHeaderArrayList.add("DATE"); //OUTPUT_HMO_BILLING_DATE_COLUMN		
 		hmoBillingTableHeaderArrayList.add("HMO NAME"); //OUTPUT_HMO_BILLING_HMO_NAME_COLUMN		
@@ -275,7 +278,16 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 		hmoBillingTableHeaderArrayList.add("VATABLE SALES"); //OUTPUT_HMO_BILLING_VATABLE_SALES_COLUMN
 		hmoBillingTableHeaderArrayList.add("VAT"); //OUTPUT_HMO_BILLING_VAT_COLUMN
 		hmoBillingTableHeaderArrayList.add("TOTAL AMOUNT"); //OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN
+*/
 		
+		hmoUtilizationTableHeaderArrayList = new ArrayList<String>();
+		hmoUtilizationTableHeaderArrayList.add("DATE"); 
+		hmoUtilizationTableHeaderArrayList.add("PATIENT'S NAME");
+		hmoUtilizationTableHeaderArrayList.add("HMO NAME");
+		hmoUtilizationTableHeaderArrayList.add("DIAGNOSIS");
+		hmoUtilizationTableHeaderArrayList.add("MD'S SIGNATURE");		
+		hmoUtilizationTableHeaderArrayList.add("RECEIVED BY/DATE");		
+				
 		//added by Mike, 20181116
 		startDate = null; //properly set the month and year in the output file of each input file
 		dateValuesArray = new String[args.length]; //added by Mike, 20180412
@@ -327,29 +339,17 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 			//write an additional Tab, i.e. "\t", at the end of each row
 			//this is so that the present add-on software as MS Excel Macro can properly copy and paste all the columns with written data
 			hmoPrintWriterContainer.get(key).println(
-											addTabUntilColumn(OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN)+
-											"STA. LUCIA HEALTH CARE CENTRE"+"\t"
+											addTabUntilColumn(OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN)+
+											"STA. LUCIA HEALTH CARE CENTRE, INC."+"\t"
 									   ); 				   											
 			hmoPrintWriterContainer.get(key).println(
-											addTabUntilColumn(OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN)+
+											addTabUntilColumn(OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN)+
 											"HMO UTILIZATION SUMMARY"+"\t"
 									   ); 				   											
-
-			hmoPrintWriterContainer.get(key).println(											
-											"HMO"+
-											addTabUntilColumn(OUTPUT_HMO_BILLING_VAT_EXEMPT_COLUMN)+
-											"TOTAL AMOUNT:"+"\t"
-									   ); 				   											
-
-			hmoPrintWriterContainer.get(key).println(											
-									   		"BILLING PERIOD: FOR THE MONTH OF"+
-											addTabUntilColumn(OUTPUT_HMO_BILLING_VAT_EXEMPT_COLUMN)+
-											"BILLING DATE:"+"\t"
-										); 				   											
 			
-			for(int k=0; k<hmoBillingTableHeaderArrayList.size(); k++) {
+			for(int k=0; k<hmoUtilizationTableHeaderArrayList.size(); k++) {
 				hmoPrintWriterContainer.get(key).print(								
-											hmoBillingTableHeaderArrayList.get(k)+"\t"
+											hmoUtilizationTableHeaderArrayList.get(k)+"\t"
 									   ); 				   											
 			}
 				
@@ -359,29 +359,51 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 		for (Integer key : sortedKeyset) {			
 			hmoNameKey = hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN];
 
-			//added by Mike, 20190228	
+			//edited by Mike, 20190303	
 			if (hmoPrintWriterContainer.containsKey(hmoNameKey)) {				
-				for (int i=0; i<OUTPUT_HMO_BILLING_TOTAL_COLUMNS; i++) {
-										
-					String outputValue = hmoBillingContainer.get(key)[i];
+//				for (int i=0; i<OUTPUT_HMO_UTILIZATION_SUMMARY_TOTAL_COLUMNS; i++) {
+					hmoPrintWriterContainer.get(hmoNameKey).print(								
+													getDateAsHMOBillingFormat(
+														hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_DATE_COLUMN]
+														)+"\t"
+												); 				   											
 
+					hmoPrintWriterContainer.get(hmoNameKey).print(								
+													hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN]+"\t"
+												); 				   											
+
+					hmoPrintWriterContainer.get(hmoNameKey).print(								
+													hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN]+"\t"
+												); 				   											
+
+					hmoPrintWriterContainer.get(hmoNameKey).print(								
+													hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN]+"\t"
+												); 				   											
+
+					//MD'S SIGNATURE
+					hmoPrintWriterContainer.get(hmoNameKey).print(								
+													"\t"
+												); 				   											
+
+					//RECEIVED BY/DATE
+					hmoPrintWriterContainer.get(hmoNameKey).print(								
+													"\t"
+												); 				   											
+												
+/*
 					if (outputValue==null) {
 						outputValue="";
 					}
+*/
 
-					if (i==OUTPUT_HMO_BILLING_DATE_COLUMN) {
-						outputValue = getDateAsHMOBillingFormat(outputValue);
-					}
 
 /*					if (i==OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN) {
 */	
-						outputValue = outputValue.replace("\"","");
+/*						outputValue = outputValue.replace("\"","");
+*/
 /*					}
 */					
-					hmoPrintWriterContainer.get(hmoNameKey).print(								
-												outputValue+"\t"
-										   ); 				   											
-				}
+//				}
 				hmoPrintWriterContainer.get(hmoNameKey).println();
 			}
 		}
@@ -756,6 +778,10 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 							
 						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PAYEE_COLUMN] 
 							= OUTPUT_HMO_BILLING_PAYEE_VALUE;
+
+						//added by Mike, 20190303
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN] 
+							= inputColumns[INPUT_DIAGNOSIS_COLUMN].trim().toUpperCase();
 							
 						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN] 
 							= OUTPUT_HMO_BILLING_DEPARTMENT_PT_VALUE;
@@ -765,6 +791,14 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 							
 						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN] 
 							= inputColumns[INPUT_FEE_COLUMN].trim().toUpperCase();						
+						
+						//added by Mike, 20190303
+						//remove unnecessary quotaion mark, i.e. "
+						for(int h=0; h<hmoBillingColumnValuesArray.length; h++) {
+							if (hmoBillingColumnValuesArray[h]!=null) {
+								hmoBillingColumnValuesArray[h] = hmoBillingColumnValuesArray[h].replace("\"","");
+							}
+						}
 						
 						hmoBillingContainer.put(hmoBillingContainerTransactionCount, hmoBillingColumnValuesArray);
 						hmoBillingContainerTransactionCount++;
@@ -834,6 +868,11 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 							
 						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PAYEE_COLUMN] 
 							= OUTPUT_HMO_BILLING_PAYEE_VALUE;
+							
+						//added by Mike, 20190303
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN] 
+							= inputColumns[INPUT_CONSULTATION_DIAGNOSIS_COLUMN].trim().toUpperCase();
+
 						
 /*						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN] 
 							= OUTPUT_HMO_BILLING_DEPARTMENT_ORTHO_VALUE;
@@ -876,7 +915,16 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 						}
 */											
 						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN] 
-							= inputColumns[INPUT_FEE_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();												
+							= inputColumns[INPUT_FEE_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();	
+
+						//added by Mike, 20190303
+						//remove unnecessary quotaion mark, i.e. "
+						for(int h=0; h<hmoBillingColumnValuesArray.length; h++) {
+							if (hmoBillingColumnValuesArray[h]!=null) {
+								hmoBillingColumnValuesArray[h] = hmoBillingColumnValuesArray[h].replace("\"","");
+							}
+						}
+						
 						hmoBillingContainer.put(hmoBillingContainerTransactionCount, hmoBillingColumnValuesArray);
 						hmoBillingContainerTransactionCount++;
 					}

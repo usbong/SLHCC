@@ -259,12 +259,15 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 		classificationContainerPerMedicalDoctor = new HashMap<String, HashMap<String, double[]>>();				
 		medicalDoctorContainer = new HashMap<String, double[]>(); //added by Mike, 20190202				
 				
-		PrintWriter writer = null;
+		PrintWriter consultationTransactionsWriter = null;
+		PrintWriter treatmentTransactionsWriter = null;
+		
 		if (isOutputMultipleTxtFilesPerHMO) {
 			hmoPrintWriterContainer = new HashMap<String, PrintWriter>(); //added by Mike, 20190228				
 		}
 		else {
-			writer = new PrintWriter("output/output.txt", "UTF-8");
+			consultationTransactionsWriter = new PrintWriter("output/consultationOutput.txt", "UTF-8");
+			treatmentTransactionsWriter = new PrintWriter("output/treatmentOutput.txt", "UTF-8");			
 		}
 		
 		
@@ -423,11 +426,14 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 				hmoPrintWriterContainer.get(hmoNameKey).close();
 			}
 		}	
-		else {
-				SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(hmoBillingContainer.keySet());		
-
-				String hmoNameKey = "";
-			
+		else {				
+				consultationTransactionsWriter = new PrintWriter("output/consultationOutput.txt", "UTF-8");
+				treatmentTransactionsWriter = new PrintWriter("output/treatmentOutput.txt", "UTF-8");			
+				
+				writeOutput(consultationTransactionsWriter, true); //isConsultation = TRUE
+				writeOutput(treatmentTransactionsWriter, false);
+			    
+/*			
 				//added by Mike, 20190301
 				//write the top portion above the table header			
 				//write an additional Tab, i.e. "\t", at the end of each row
@@ -480,29 +486,91 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 															"\t"
 														); 				   											
 														
-		/*
-							if (outputValue==null) {
-								outputValue="";
-							}
-		*/
-
-
-		/*					if (i==OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN) {
-		*/	
-		/*						outputValue = outputValue.replace("\"","");
-		*/
-		/*					}
-		*/					
-		//				}
 						writer.println();
 				}
 				writer.close();			
+*/				
 		}
 		
 /*	
 		writer.print("\n");		
 		writer.close();
 */		
+	}
+	
+	public static void writeOutput(PrintWriter writer, boolean isConsultation) {
+			SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(hmoBillingContainer.keySet());		
+
+			String hmoNameKey = "";
+
+			//added by Mike, 20190301
+			//write the top portion above the table header			
+			//write an additional Tab, i.e. "\t", at the end of each row
+			//this is so that the present add-on software as MS Excel Macro can properly copy and paste all the columns with written data
+			writer.println(
+											addTabUntilColumn(OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN)+
+											"STA. LUCIA HEALTH CARE CENTRE, INC."+"\t"
+									   ); 				   											
+			writer.println(
+											addTabUntilColumn(OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN)+
+											"HMO UTILIZATION SUMMARY"+"\t"
+									   ); 				   											
+				
+			for(int k=0; k<hmoUtilizationTableHeaderArrayList.size(); k++) {
+				writer.print(								
+											hmoUtilizationTableHeaderArrayList.get(k)+"\t"
+									   ); 				   											
+			}
+
+			writer.println(); 				   											
+
+			for (Integer key : sortedKeyset) {
+//				hmoNameKey = hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN];
+				if (isConsultation) {					 
+					if (hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_PROCEDURE_COLUMN].trim().toUpperCase().contains("CONSULT")) {
+							writeTransactionsOutput(writer, key);
+					}										
+				}	
+				else {
+					if (!hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_PROCEDURE_COLUMN].trim().toUpperCase().contains("CONSULT")) {
+							writeTransactionsOutput(writer, key);
+					}										
+				}
+			}
+			
+			writer.close();
+	}
+	
+	private static void writeTransactionsOutput(PrintWriter writer, Integer key) {
+			writer.print(								
+					getDateAsHMOBillingFormat(
+						hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_DATE_COLUMN]
+						)+"\t"
+				); 				   											
+
+			writer.print(								
+											hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN]+"\t"
+										); 				   											
+
+			writer.print(								
+											hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN]+"\t"
+										); 				   											
+
+			writer.print(								
+											hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN]+"\t"
+										); 				   											
+
+			//MD'S SIGNATURE
+			writer.print(								
+											"\t"
+										); 				   											
+
+			//RECEIVED BY/DATE
+			writer.print(								
+											"\t"
+										); 				   											
+										
+			writer.println();
 	}
 	
 	private static String addTabUntilColumn(int column) {

@@ -9,7 +9,7 @@ Sub autoUpdateWorkbookWithHMOBillingTemplate()
 '
 ' @author: Michael Syson
 ' @date created: 20190301
-' @date updated: 20190301
+' @date updated: 20190304
 '
 ' Given:
 ' 1) Workbook with the HMO Billing data
@@ -28,6 +28,17 @@ TableHeaderRow = 5
 
 Set myInput = Sheets(ActiveSheet.Name)
 Set myOutput = Sheets(ActiveSheet.Name)
+
+'Set first custom zoom level to 78%
+ActiveWindow.Zoom = 78
+
+'Auto-fit Date column based on actual value
+myOutput.Range("A" & TableHeaderRow + 1, "A" & TableHeaderRow + 1).Select
+Selection.EntireColumn.ColumnWidth = 12
+
+'Auto-fit select columns based on the table header row
+myOutput.Range("B" & TableHeaderRow, "Q" & TableHeaderRow).Select
+Selection.EntireColumn.AutoFit
 
 'TO-DO: -apply: the auto-update to all the worksheets in the workbook
 For Each row In myInput.Rows

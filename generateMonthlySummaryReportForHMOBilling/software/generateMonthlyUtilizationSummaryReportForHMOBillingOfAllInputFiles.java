@@ -447,12 +447,18 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 												"PERIOD COVERED:"+"\t"
 										   ); 				   											
 
+				medicalDoctorPrintWriterContainer.get(key).println(
+												addTabUntilColumn(OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN)+
+												"CONSULTATION"+"\t"
+										   ); 				   											
 
 				medicalDoctorPrintWriterContainer.get(key).println(
 												addTabUntilColumn(OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN)+
 												"STA. LUCIA HEALTH CARE CENTRE, INC."+"\t"
-										   ); 				   											
+										   ); 	
+										   
 				medicalDoctorPrintWriterContainer.get(key).println(
+
 												addTabUntilColumn(OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN)+
 												"HMO UTILIZATION SUMMARY"+"\t"
 										   ); 				   											
@@ -607,7 +613,13 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 			writer.println(
 										addTabUntilColumn(OUTPUT_HMO_UTILIZATION_MD_SIGNATURE_COLUMN)+
 										"PERIOD COVERED:"+"\t"
+								   ); 		
+
+			writer.println(
+										addTabUntilColumn(OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN)+
+												"PT TREATMENT"+"\t"
 								   ); 				   											
+								   
 
 			writer.println(
 											addTabUntilColumn(OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN)+

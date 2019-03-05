@@ -367,6 +367,12 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 						outputValue = outputValue.replace("\"","");
 /*					}
 */					
+
+					if (i==OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN) {
+						outputValue = getHMOBillingNameFormat(outputValue);
+						System.out.println("medical doctor name: "+outputValue);
+					}
+
 					hmoPrintWriterContainer.get(hmoNameKey).print(								
 												outputValue+"\t"
 										   ); 				   											
@@ -508,6 +514,30 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 		
 
 		return day.concat("/").concat(month).concat("/").concat(year);
+	}
+
+	//added by Mike, 20190305
+	private static String getHMOBillingNameFormat(String name) {		
+		return getNameWithLastNameFirst(name).replace("DR. ","").replace("DRA. ","");
+	}
+	
+	//added by Mike, 20190305
+	//input: MICHAEL SYSON
+	//output: SYSON, MICHAEL
+	//input: MICHAEL DELA PAZ
+	//output: DELA PAZ, MICHAEL
+	private static String getNameWithLastNameFirst(String name) {
+		StringBuffer sb = new StringBuffer(""+name);	
+		String[] nameArray  = name.split(" ");
+		String lastName = nameArray[nameArray.length-1];
+		String firstName = sb.substring(0, sb.indexOf(lastName)); //index lastName is not included
+		
+		if (name.contains("DELA")) {
+			lastName = "DELA ".concat(lastName);
+			firstName = firstName.replace("DELA", "");
+		}
+		
+		return lastName.concat(", ").concat(firstName);
 	}
 	
 	//added by Mike, 20181030

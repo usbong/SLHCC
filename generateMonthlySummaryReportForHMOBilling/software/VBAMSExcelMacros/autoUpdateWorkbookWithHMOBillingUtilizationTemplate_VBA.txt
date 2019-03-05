@@ -22,9 +22,11 @@ Dim myOutput As Worksheet 'the same as myInput
 Dim row As Range
 Dim RowCount As Integer
 Dim TableHeaderRow As Integer
+Dim LastPrintableRow As Integer
 
 RowCount = 1
 TableHeaderRow = 6
+LastPrintableRow = 33
 
 Set myInput = Sheets(ActiveSheet.Name)
 Set myOutput = Sheets(ActiveSheet.Name)
@@ -53,8 +55,10 @@ For Each row In myInput.Rows
        End If
 Next row
 
-myOutput.Range("A" & 1, "Q" & RowCount).Font.Size = 11
-myOutput.Range("A" & 1, "Q" & RowCount).Font.Name = "Calibri"
+myOutput.Range("A" & 1, "F" & RowCount).Font.Size = 11
+myOutput.Range("A" & 1, "F" & RowCount).Font.Name = "Calibri"
 'myOutput.Range("A" & 1, "Q" & RowCount).NumberFormat = "0.00"
 
+'added by Mike, 20190305
+myOutput.Range("A" & TableHeaderRow, "F" & LastPrintableRow).Borders.LineStyle = 1
 End Sub

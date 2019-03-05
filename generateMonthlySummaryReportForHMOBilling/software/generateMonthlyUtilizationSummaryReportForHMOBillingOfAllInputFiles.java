@@ -114,6 +114,11 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 
 	private static final String OUTPUT_HMO_BILLING_PAYEE_VALUE = "STA. LUCIA HEALTH CARE CENTRE, INC.";
 	
+	//added by Mike, 20190305
+	//all PT Treatment transactions based on the HMO Billing Template
+	private static final String OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_PT_VALUE = "SYSON, PEDRO"; 
+	private static final String OUTPUT_HMO_BILLING_UTILIZATION_SUMMARY_MEDICAL_DOCTOR_NAME_PT_VALUE = "PEDRO SYSON"; //added by Mike, 20190305 
+
 	//edited by Mike, 20190202
 	private static final int INPUT_CONSULTATION_PROCEDURE_COLUMN = 2-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET;
@@ -499,7 +504,11 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 					
 			for (Integer key : sortedKeyset) {			
 				medicalDoctorNameKey = hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN];
-				medicalDoctorPrintWriterContainer.get(medicalDoctorNameKey).close();
+/*				medicalDoctorPrintWriterContainer.get(medicalDoctorNameKey).close();
+*/
+				if (medicalDoctorPrintWriterContainer.containsKey(medicalDoctorNameKey)) {
+					medicalDoctorPrintWriterContainer.get(medicalDoctorNameKey).close();
+				}
 			}
 		}	
 		else {				
@@ -1016,10 +1025,18 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 					}
 					//added by Mike, 20190305
 					else if (isOutputMultipleTxtFilesPerMedicalDoctor) {
+						//edited by Mike, 20190305										
+						medicalDoctorPrintWriterContainer.put(OUTPUT_HMO_BILLING_UTILIZATION_SUMMARY_MEDICAL_DOCTOR_NAME_PT_VALUE, new PrintWriter("output/"+
+																getHMOBillingNameFormat(OUTPUT_HMO_BILLING_UTILIZATION_SUMMARY_MEDICAL_DOCTOR_NAME_PT_VALUE)+".txt","UTF-8"));
+						
+/*						return;
+*/
+/*						
 						if (!medicalDoctorPrintWriterContainer.containsKey(medicalDoctorName)) {
 							medicalDoctorPrintWriterContainer.put(medicalDoctorName, new PrintWriter("output/"+
 																			getHMOBillingNameFormat(medicalDoctorName)+".txt","UTF-8"));
 						}
+*/						
 					}
 					
 					if (!hmoBillingContainer.containsKey(hmoBillingContainerTransactionCount)){//chargeSlipNumber)) {

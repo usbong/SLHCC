@@ -546,7 +546,7 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 			firstName = firstName.replace("DELA", "");
 		}
 		
-		return lastName.concat(", ").concat(firstName);
+		return lastName.concat(", ").concat(firstName).trim();
 	}
 	
 	//added by Mike, 20181030

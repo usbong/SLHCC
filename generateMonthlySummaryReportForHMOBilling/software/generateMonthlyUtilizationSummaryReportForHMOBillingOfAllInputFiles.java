@@ -475,6 +475,12 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 			for (Integer key : sortedKeyset) {			
 				medicalDoctorNameKey = hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN];
 
+				//added by Mike, 20190305
+				//Do not write PT Treatment transactions
+				if (hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN].equals(OUTPUT_HMO_BILLING_DEPARTMENT_PT_VALUE)) {
+					continue;
+				}
+				
 				//edited by Mike, 20190303	
 				if (medicalDoctorPrintWriterContainer.containsKey(medicalDoctorNameKey)) {				
 	//				for (int i=0; i<OUTPUT_HMO_UTILIZATION_SUMMARY_TOTAL_COLUMNS; i++) {
@@ -1052,20 +1058,15 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 							hmoPrintWriterContainer.put(hmoName, new PrintWriter("output/"+hmoName+".txt","UTF-8"));
 						}
 					}
-					//added by Mike, 20190305
-					else if (isOutputMultipleTxtFilesPerMedicalDoctor) {
+					//added by Mike, 20190305; edited by Mike, 20190305
+					else if (isOutputMultipleTxtFilesPerMedicalDoctor) { //PT Treatment transactions do not add in the medicalDoctorPrintWriterContainer
+/*						
 						//edited by Mike, 20190305										
 						medicalDoctorPrintWriterContainer.put(OUTPUT_HMO_BILLING_UTILIZATION_SUMMARY_MEDICAL_DOCTOR_NAME_PT_VALUE, new PrintWriter("output/"+
 																getHMOBillingNameFormat(OUTPUT_HMO_BILLING_UTILIZATION_SUMMARY_MEDICAL_DOCTOR_NAME_PT_VALUE)+".txt","UTF-8"));
-						
+*/						
 /*						return;
 */
-/*						
-						if (!medicalDoctorPrintWriterContainer.containsKey(medicalDoctorName)) {
-							medicalDoctorPrintWriterContainer.put(medicalDoctorName, new PrintWriter("output/"+
-																			getHMOBillingNameFormat(medicalDoctorName)+".txt","UTF-8"));
-						}
-*/						
 					}
 					
 					if (!hmoBillingContainer.containsKey(hmoBillingContainerTransactionCount)){//chargeSlipNumber)) {

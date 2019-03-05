@@ -274,6 +274,7 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 		}
 		else if (isOutputMultipleTxtFilesPerMedicalDoctor) {
 			medicalDoctorPrintWriterContainer = new HashMap<String, PrintWriter>(); //added by Mike, 20190228				
+			treatmentTransactionsWriter = new PrintWriter("output/treatmentOutput.txt", "UTF-8"); //added by Mike, 20190305
 		}
 		else {
 			consultationTransactionsWriter = new PrintWriter("output/consultationOutput.txt", "UTF-8");
@@ -510,6 +511,11 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 					medicalDoctorPrintWriterContainer.get(medicalDoctorNameKey).close();
 				}
 			}
+			
+			//added by Mike, 20190305
+			//for PT Treatment transactions
+			treatmentTransactionsWriter = new PrintWriter("output/treatmentOutput.txt", "UTF-8");							
+			writeOutput(treatmentTransactionsWriter, false);		
 		}	
 		else {				
 				consultationTransactionsWriter = new PrintWriter("output/consultationOutput.txt", "UTF-8");
@@ -592,6 +598,17 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 			//write the top portion above the table header			
 			//write an additional Tab, i.e. "\t", at the end of each row
 			//this is so that the present add-on software as MS Excel Macro can properly copy and paste all the columns with written data
+			//added by Mike, 20190305
+			writer.println(
+										addTabUntilColumn(OUTPUT_HMO_UTILIZATION_MD_SIGNATURE_COLUMN)+
+										"PHYSICIAN:"+"\t"+"\t" //add value in MS Excel VBA Marco instructions
+								    ); 				   											
+			//added by Mike, 20190305
+			writer.println(
+										addTabUntilColumn(OUTPUT_HMO_UTILIZATION_MD_SIGNATURE_COLUMN)+
+										"PERIOD COVERED:"+"\t"
+								   ); 				   											
+
 			writer.println(
 											addTabUntilColumn(OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN)+
 											"STA. LUCIA HEALTH CARE CENTRE, INC."+"\t"

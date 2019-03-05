@@ -110,6 +110,10 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 	private static final String OUTPUT_HMO_BILLING_PROCEDURE_REHAB_PROCEDURE_VALUE = "REHAB-PROCEDURE";
 
 	private static final String OUTPUT_HMO_BILLING_PAYEE_VALUE = "STA. LUCIA HEALTH CARE CENTRE, INC.";
+
+	//added by Mike, 20190305
+	//all PT Treatment transactions based on the HMO Billing Template
+	private static final String OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_PT_VALUE = "SYSON, PEDRO"; 
 	
 	//edited by Mike, 20190202
 	private static final int INPUT_CONSULTATION_PROCEDURE_COLUMN = 2-INPUT_NON_MASTER_LIST_OFFSET;
@@ -370,7 +374,12 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 
 					if (i==OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN) {
 						outputValue = getHMOBillingNameFormat(outputValue);
-						System.out.println("medical doctor name: "+outputValue);
+//						System.out.println("medical doctor name: "+outputValue);
+
+						if (hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN].equals(
+								OUTPUT_HMO_BILLING_DEPARTMENT_PT_VALUE)) {
+							outputValue = OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_PT_VALUE;
+						}
 					}
 
 					hmoPrintWriterContainer.get(hmoNameKey).print(								

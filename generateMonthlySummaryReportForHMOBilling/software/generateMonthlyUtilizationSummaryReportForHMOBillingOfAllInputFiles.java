@@ -72,6 +72,7 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 	private static boolean isInDebugMode = true; //edited by Mike, 20190131
 	private static boolean isNetPFComputed = false; //added by Mike, 20190131
 	private static boolean isOutputMultipleTxtFilesPerHMO = false; //added by Mike, 20190303
+	private static boolean isOutputMultipleTxtFilesPerMedicalDoctor = true; //added by Mike, 20190305
 	//added by Mike, 20190131; edited by Mike, 20190303
 	private static final int INPUT_NON_MASTER_LIST_OFFSET = 0;//1; 
 
@@ -147,6 +148,8 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 	private static HashMap<String, double[]> referringDoctorContainer; //added by Mike, 20181218
 	private static HashMap<String, double[]> medicalDoctorContainer; //added by Mike, 20190202
 	private static HashMap<String, PrintWriter> hmoPrintWriterContainer; //added by Mike, 20190228
+	private static HashMap<String, PrintWriter> medicalDoctorPrintWriterContainer; //added by Mike, 20190305
+
 	private static ArrayList<String> hmoBillingTableHeaderArrayList; //added by Mike, 20190301
 	private static ArrayList<String> hmoUtilizationTableHeaderArrayList; //added by Mike, 20190303
 	
@@ -263,6 +266,9 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 		
 		if (isOutputMultipleTxtFilesPerHMO) {
 			hmoPrintWriterContainer = new HashMap<String, PrintWriter>(); //added by Mike, 20190228				
+		}
+		else if (isOutputMultipleTxtFilesPerMedicalDoctor) {
+			medicalDoctorPrintWriterContainer = new HashMap<String, PrintWriter>(); //added by Mike, 20190228				
 		}
 		else {
 			consultationTransactionsWriter = new PrintWriter("output/consultationOutput.txt", "UTF-8");
@@ -401,28 +407,99 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 						hmoPrintWriterContainer.get(hmoNameKey).print(								
 														"\t"
 													); 				   											
-													
-	/*
-						if (outputValue==null) {
-							outputValue="";
-						}
-	*/
 
-
-	/*					if (i==OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN) {
-	*/	
-	/*						outputValue = outputValue.replace("\"","");
-	*/
-	/*					}
-	*/					
-	//				}
-					hmoPrintWriterContainer.get(hmoNameKey).println();
+						hmoPrintWriterContainer.get(hmoNameKey).println();
 				}
 			}
 					
 			for (Integer key : sortedKeyset) {			
 				hmoNameKey = hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN];
 				hmoPrintWriterContainer.get(hmoNameKey).close();
+			}
+		}	
+		else if (isOutputMultipleTxtFilesPerMedicalDoctor) {
+			//added by Mike, 20190227
+			SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(hmoBillingContainer.keySet());		
+			SortedSet<String> sortedMedicalDoctorPrintWriterKeyset = new TreeSet<String>(medicalDoctorPrintWriterContainer.keySet());		
+
+			String medicalDoctorNameKey = "";
+			
+			//added by Mike, 20190301
+			for (String key : sortedMedicalDoctorPrintWriterKeyset) {					
+				//added by Mike, 20190301
+				//write the top portion above the table header			
+				//write an additional Tab, i.e. "\t", at the end of each row
+				//this is so that the present add-on software as MS Excel Macro can properly copy and paste all the columns with written data
+				//added by Mike, 20190305
+				medicalDoctorPrintWriterContainer.get(key).println(
+												addTabUntilColumn(OUTPUT_HMO_UTILIZATION_MD_SIGNATURE_COLUMN)+
+												"PHYSICIAN:"+"\t"+getHMOBillingNameFormat(key)+"\t"
+										   ); 				   											
+				//added by Mike, 20190305
+				medicalDoctorPrintWriterContainer.get(key).println(
+												addTabUntilColumn(OUTPUT_HMO_UTILIZATION_MD_SIGNATURE_COLUMN)+
+												"PERIOD COVERED:"+"\t"
+										   ); 				   											
+
+
+				medicalDoctorPrintWriterContainer.get(key).println(
+												addTabUntilColumn(OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN)+
+												"STA. LUCIA HEALTH CARE CENTRE, INC."+"\t"
+										   ); 				   											
+				medicalDoctorPrintWriterContainer.get(key).println(
+												addTabUntilColumn(OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN)+
+												"HMO UTILIZATION SUMMARY"+"\t"
+										   ); 				   											
+				
+				for(int k=0; k<hmoUtilizationTableHeaderArrayList.size(); k++) {
+					medicalDoctorPrintWriterContainer.get(key).print(								
+												hmoUtilizationTableHeaderArrayList.get(k)+"\t"
+										   ); 				   											
+				}
+					
+				medicalDoctorPrintWriterContainer.get(key).println(); 				   											
+			}
+
+			for (Integer key : sortedKeyset) {			
+				medicalDoctorNameKey = hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN];
+
+				//edited by Mike, 20190303	
+				if (medicalDoctorPrintWriterContainer.containsKey(medicalDoctorNameKey)) {				
+	//				for (int i=0; i<OUTPUT_HMO_UTILIZATION_SUMMARY_TOTAL_COLUMNS; i++) {
+						medicalDoctorPrintWriterContainer.get(medicalDoctorNameKey).print(								
+														getDateAsHMOBillingFormat(
+															hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_DATE_COLUMN]
+															)+"\t"
+													); 				   											
+
+						medicalDoctorPrintWriterContainer.get(medicalDoctorNameKey).print(								
+														hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN]+"\t"
+													); 				   											
+
+						medicalDoctorPrintWriterContainer.get(medicalDoctorNameKey).print(								
+														hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN]+"\t"
+													); 				   											
+
+						medicalDoctorPrintWriterContainer.get(medicalDoctorNameKey).print(								
+														hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN]+"\t"
+													); 				   											
+
+						//MD'S SIGNATURE
+						medicalDoctorPrintWriterContainer.get(medicalDoctorNameKey).print(								
+														"\t"
+													); 				   											
+
+						//RECEIVED BY/DATE
+						medicalDoctorPrintWriterContainer.get(medicalDoctorNameKey).print(								
+														"\t"
+													); 				   											
+					medicalDoctorPrintWriterContainer.get(medicalDoctorNameKey).println();
+				}
+			}
+					
+			for (Integer key : sortedKeyset) {			
+				medicalDoctorNameKey = hmoBillingContainer.get(key)[OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN];
+				medicalDoctorPrintWriterContainer.get(medicalDoctorNameKey).close();
 			}
 		}	
 		else {				
@@ -697,6 +774,30 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 		return day.concat("/").concat(month).concat("/").concat(year);
 	}
 	
+	//added by Mike, 20190305
+	private static String getHMOBillingNameFormat(String name) {		
+		return getNameWithLastNameFirst(name).replace("DR. ","").replace("DRA. ","");
+	}
+	
+	//added by Mike, 20190305
+	//input: MICHAEL SYSON
+	//output: SYSON, MICHAEL
+	//input: MICHAEL DELA PAZ
+	//output: DELA PAZ, MICHAEL
+	private static String getNameWithLastNameFirst(String name) {
+		StringBuffer sb = new StringBuffer(""+name);	
+		String[] nameArray  = name.split(" ");
+		String lastName = nameArray[nameArray.length-1];
+		String firstName = sb.substring(0, sb.indexOf(lastName)); //index lastName is not included
+		
+		if (name.contains("DELA")) {
+			lastName = "DELA ".concat(lastName);
+			firstName = firstName.replace("DELA", "");
+		}
+		
+		return lastName.concat(", ").concat(firstName).trim();
+	}
+
 	//added by Mike, 20181030
 	private static void makeFilePath(String filePath) {
 		File directory = new File(filePath);		
@@ -903,11 +1004,21 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 					String hmoName = inputColumns[INPUT_CLASS_COLUMN].trim().toUpperCase().replace("HMO/","");
 					int chargeSlipNumber = Integer.parseInt(inputColumns[INPUT_CHARGE_SLIP_NUMBER_COLUMN].trim().toUpperCase());
 
+					//added by Mike, 20190305
+					String medicalDoctorName = inputColumns[INPUT_REFERRING_DOCTOR_COLUMN].trim().toUpperCase();
+					
 					//edited by Mike, 20190303					
 					if (isOutputMultipleTxtFilesPerHMO) {
 						//added by Mike, 20190228
 						if (!hmoPrintWriterContainer.containsKey(hmoName)) {
 							hmoPrintWriterContainer.put(hmoName, new PrintWriter("output/"+hmoName+".txt","UTF-8"));
+						}
+					}
+					//added by Mike, 20190305
+					else if (isOutputMultipleTxtFilesPerMedicalDoctor) {
+						if (!medicalDoctorPrintWriterContainer.containsKey(medicalDoctorName)) {
+							medicalDoctorPrintWriterContainer.put(medicalDoctorName, new PrintWriter("output/"+
+																			getHMOBillingNameFormat(medicalDoctorName)+".txt","UTF-8"));
 						}
 					}
 					
@@ -994,6 +1105,9 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 					//int chargeSlipNumber = ""; //no charge slip number for HMO Consultation transactions
 					//Integer.parseInt(inputColumns[INPUT_CHARGE_SLIP_NUMBER_COLUMN].trim().toUpperCase());
 
+					//added by Mike, 20190305
+					String medicalDoctorName = inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
+					
 					String consultationProcedureDetails = inputColumns[INPUT_CONSULTATION_PROCEDURE_DETAILS_COLUMN].trim();
 
 					//edited by Mike, 20190303
@@ -1003,6 +1117,14 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 							hmoPrintWriterContainer.put(hmoName, new PrintWriter("output/"+hmoName+".txt","UTF-8"));
 						}
 					}
+					//added by Mike, 20190305
+					else if (isOutputMultipleTxtFilesPerMedicalDoctor) {
+						if (!medicalDoctorPrintWriterContainer.containsKey(medicalDoctorName)) {
+							medicalDoctorPrintWriterContainer.put(medicalDoctorName, new PrintWriter("output/"+
+																			getHMOBillingNameFormat(medicalDoctorName)+".txt","UTF-8"));
+						}
+					}
+
 					
 					if (!hmoBillingContainer.containsKey(hmoBillingContainerTransactionCount)) {
 						hmoBillingColumnValuesArray = new String[OUTPUT_TOTAL_COLUMNS];

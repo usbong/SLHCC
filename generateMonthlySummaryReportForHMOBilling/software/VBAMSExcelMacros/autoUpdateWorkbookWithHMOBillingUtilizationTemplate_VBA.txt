@@ -9,7 +9,7 @@ Sub autoUpdateWorkbookWithHMOBillingUtilizationTemplate()
 '
 ' @author: Michael Syson
 ' @date created: 20190305
-' @date updated: 20190305
+' @date updated: 20190306
 '
 ' Given:
 ' 1) Workbook with the HMO Billing data
@@ -61,4 +61,6 @@ myOutput.Range("A" & 1, "F" & RowCount).Font.Name = "Calibri"
 
 'added by Mike, 20190305
 myOutput.Range("A" & TableHeaderRow, "F" & LastPrintableRow).Borders.LineStyle = 1
+'added by Mike, 20190306
+myOutput.PageSetup.Orientation = xlLandscape
 End Sub

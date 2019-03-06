@@ -9,7 +9,7 @@ Sub autoUpdateWorkbookWithHMOBillingUtilizationTemplate()
 '
 ' @author: Michael Syson
 ' @date created: 20190305
-' @date updated: 20190306
+' @date updated: 20190305
 '
 ' Given:
 ' 1) Workbook with the HMO Billing data
@@ -63,4 +63,14 @@ myOutput.Range("A" & 1, "F" & RowCount).Font.Name = "Calibri"
 myOutput.Range("A" & TableHeaderRow, "F" & LastPrintableRow).Borders.LineStyle = 1
 'added by Mike, 20190306
 myOutput.PageSetup.Orientation = xlLandscape
+'added by Mike, 20190306
+'Set Margins to Narrow
+'The values below are already in cm or centimeters
+myOutput.PageSetup.TopMargin = 1.91
+myOutput.PageSetup.BottomMargin = 1.91
+myOutput.PageSetup.LeftMargin = 0.64
+myOutput.PageSetup.RightMargin = 0.64
+myOutput.PageSetup.HeaderMargin = 0.76
+myOutput.PageSetup.FooterMargin = 0.76
+
 End Sub

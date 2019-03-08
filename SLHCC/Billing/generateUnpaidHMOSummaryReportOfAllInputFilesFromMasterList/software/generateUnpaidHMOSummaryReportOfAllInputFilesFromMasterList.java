@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Usbong Social Systems, Inc.
+ * Copyright 2018~2019 Usbong Social Systems, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -203,7 +203,7 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 		
 		//init table header names
 //		writer.print("CONSULTATION\n");
-		consultationWriter.print("DATE:\tPATIENT NAME:\tFEE:\tCLASSIFICATION:\tAPPROVAL CODE:\n"); 		
+		consultationWriter.print("DATE:\tPATIENT NAME:\tFEE:\tCLASSIFICATION:\tAPPROVAL CODE:\tUNPAID REASON:\n"); 		
 		for(int i=0; i<transactionDateContainer.size(); i++) {
 			if (transactionDateContainer.get(i)[OUTPUT_HMO_FILE_TYPE_COLUMN].toLowerCase().trim().equals("consultation")){
 				consultationWriter.print(
@@ -224,7 +224,7 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 		treatmentWriter.print("Unpaid HMO Summary Report (PT TREATMENT)\n");
 
 //		treatmentWriter.print("\nPT TREATMENT\n");
-		treatmentWriter.print("DATE:\tPATIENT NAME:\tFEE:\tCLASSIFICATION:\tAPPROVAL CODE:\n"); 		
+		treatmentWriter.print("DATE:\tPATIENT NAME:\tFEE:\tCLASSIFICATION:\tAPPROVAL CODE:\tUNPAID REASON:\n"); 		
 		for(int i=0; i<transactionDateContainer.size(); i++) {
 			if (transactionDateContainer.get(i)[OUTPUT_HMO_FILE_TYPE_COLUMN].toLowerCase().trim().equals("treatment")){
 				treatmentWriter.print(

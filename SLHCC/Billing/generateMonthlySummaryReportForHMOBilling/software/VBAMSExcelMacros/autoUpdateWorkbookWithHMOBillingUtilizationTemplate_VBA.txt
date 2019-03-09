@@ -28,7 +28,7 @@ Dim patientNameFontSize As Integer
 
 RowCount = 1
 TableHeaderRow = 6
-'LastPrintableRow = 33
+LastPrintableRow = 33
 MaxDiagnosisColumnWidthPixels = 506 '11pt font * 46 characters in Pixels
 DiagnosisFontSize = 11
 MaxColumnWidthInCharacters = 46
@@ -112,8 +112,13 @@ myOutput.Range("A" & 1, "F" & RowCount).Font.Size = 11
 myOutput.Range("A" & 1, "F" & RowCount).Font.Name = "Calibri"
 'myOutput.Range("A" & 1, "Q" & RowCount).NumberFormat = "0.00"
 
-'added by Mike, 20190305; edited by Mike, 20190309
-myOutput.Range("A" & TableHeaderRow, "F" & RowCount).Borders.LineStyle = 1
+'added by Mike, 20190305; edited by Mike, 20190310
+If RowCount < LastPrintableRow Then
+    myOutput.Range("A" & TableHeaderRow, "F" & LastPrintableRow).Borders.LineStyle = 1
+Else
+    myOutput.Range("A" & TableHeaderRow, "F" & RowCount - 1).Borders.LineStyle = 1
+End If
+
 'added by Mike, 20190306
 myOutput.PageSetup.Orientation = xlLandscape
 'added by Mike, 20190306

@@ -96,7 +96,9 @@ For Each row In myInput.Rows
                     
             End If
             
-            myInput.Range("D" & RowCount, "D" & RowCount).Value = Trim(output)
+            'edited by Mike, 20190309
+            'remove the excess character encoding, i.e. 'Â', due to reading the file in non-UTF-8 encoding or file origin
+            myInput.Range("D" & RowCount, "D" & RowCount).Value = Replace(Trim(output), "Â", "")
             
             If IsEmpty(myInput.Range("C" & RowCount).Value) Then
                 Exit For

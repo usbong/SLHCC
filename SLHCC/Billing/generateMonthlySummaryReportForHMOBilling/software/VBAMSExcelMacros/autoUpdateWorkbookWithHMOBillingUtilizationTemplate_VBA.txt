@@ -23,10 +23,15 @@ Dim row As Range
 Dim RowCount As Integer
 Dim TableHeaderRow As Integer
 Dim LastPrintableRow As Integer
+Dim MaxPatientNameColumnWidth As Integer
+Dim patientNameFontSize As Integer
 
 RowCount = 1
 TableHeaderRow = 6
 LastPrintableRow = 33
+MaxDiagnosisColumnWidthPixels = 506 '11pt font * 46 characters in Pixels
+DiagnosisFontSize = 11
+MaxColumnWidthInCharacters = 46
 
 Set myInput = Sheets(ActiveSheet.Name)
 Set myOutput = Sheets(ActiveSheet.Name)
@@ -40,20 +45,65 @@ Selection.EntireColumn.AutoFit 'edited by Mike, 20190309
 myOutput.Range("B" & TableHeaderRow, "F" & TableHeaderRow).Select
 Selection.EntireColumn.AutoFit
 
-'TO-DO: -apply: the auto-update to all the worksheets in the workbook
+'Auto-fit DIAGNOSIS column
+myOutput.Range("D" & TableHeaderRow, "D" & TableHeaderRow).Select
+Selection.EntireColumn.ColumnWidth = 46
+
+
+'Auto-update font size of value of DIAGNOSIS based on the following:
+'max column width: 46
+'max number of characters in value: 44
+'default font size: 11
+'font style: Calibri
 For Each row In myInput.Rows
-       If RowCount <= TableHeaderRow Then
+       'added by Mike, 20190309
+        myOutput.Range("D" & RowCount, "D" & RowCount).Font.Name = "Calibri"
+        myOutput.Range("D" & RowCount, "D" & RowCount).Font.Size = DiagnosisFontSize
+
+        If RowCount <= TableHeaderRow Then
             'MsgBox ("RowCount: " & RowCount)
 
             myOutput.Range("A" & RowCount, "F" & RowCount).Font.Bold = True
             RowCount = RowCount + 1
-       Else
+        Else
+        
+            diagnosisValue = myInput.Range("D" & RowCount, "D" & RowCount).Value
+            diagnosisValueLength = Len(myInput.Range("D" & RowCount, "D" & RowCount).Value)
+            diagnosisValueArray = Split(myInput.Range("D" & RowCount, "D" & RowCount).Value, " ")
+            output = Trim(diagnosisValue)
+            
+            'MsgBox ("RowCount: " & RowCount)
+            'MsgBox ("patientNameValueLength: " & patientNameValueLength)
+    
+            If diagnosisValueLength > MaxColumnWidthInCharacters Then
+                output = ""
+                temp = ""
+                'MsgBox ("diagnosisValue: " & diagnosisValue)
+               ' MsgBox ("diagnosisValueLength: " & diagnosisValueLength)
+                'MsgBox ("MaxColumnWidthInCharacters: " & MaxColumnWidthInCharacters)
+                    
+                    For Index = LBound(diagnosisValueArray) To UBound(diagnosisValueArray)
+                   ' MsgBox ("temp: " & temp)
+                        Value = diagnosisValueArray(Index)
+                        temp = temp & " " & Value
+                        If Len(temp) > MaxColumnWidthInCharacters Then
+                            output = output & vbCrLf & Value 'add new line
+                            temp = Value
+                        Else
+                            output = output & " " & Value
+                        End If
+                    Next
+                    
+            End If
+            
+            myInput.Range("D" & RowCount, "D" & RowCount).Value = Trim(output)
+            
             If IsEmpty(myInput.Range("C" & RowCount).Value) Then
                 Exit For
             Else
                 RowCount = RowCount + 1
             End If
-       End If
+        End If
 Next row
 
 myOutput.Range("A" & 1, "F" & RowCount).Font.Size = 11

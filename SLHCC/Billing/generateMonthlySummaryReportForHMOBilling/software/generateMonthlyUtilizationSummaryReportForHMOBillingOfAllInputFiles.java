@@ -611,10 +611,10 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 			//write the top portion above the table header			
 			//write an additional Tab, i.e. "\t", at the end of each row
 			//this is so that the present add-on software as MS Excel Macro can properly copy and paste all the columns with written data
-			//added by Mike, 20190305
+			//added by Mike, 20190305; edited by Mike, 20190310
 			writer.println(
 										addTabUntilColumn(OUTPUT_HMO_UTILIZATION_MD_SIGNATURE_COLUMN)+
-										"PHYSICIAN:"+"\t"+"\t" //add value in MS Excel VBA Marco instructions
+										"PHYSICIAN:"+"\t"+OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_PT_VALUE+"\t" 
 								    ); 				   											
 			//added by Mike, 20190305
 			writer.println(

@@ -68,13 +68,13 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 '   https://commons.apache.org/proper/commons-text/javadocs/api-release/org/apache/commons/text/similarity/LevenshteinDistance.html; last accessed: 20190123
 */ 
 
-public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFilesNonMasterList {	
+public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles {	
 	private static boolean isInDebugMode = true; //edited by Mike, 20190131
 	private static boolean isNetPFComputed = false; //added by Mike, 20190131
 	private static boolean isOutputMultipleTxtFilesPerHMO = false; //added by Mike, 20190303
 	private static boolean isOutputMultipleTxtFilesPerMedicalDoctor = true; //added by Mike, 20190305
 	//added by Mike, 20190131; edited by Mike, 20190303
-	private static final int INPUT_NON_MASTER_LIST_OFFSET = 1;//0; 
+	private static final int INPUT_NON_MASTER_LIST_OFFSET = 0;//1; 
 
 	private static String inputFilename = "input201801"; //without extension; default input file
 	
@@ -251,7 +251,7 @@ public class generateMonthlyUtilizationSummaryReportForHMOBillingOfAllInputFiles
 	private static LevenshteinDistance myLevenshteinDistance;
 	
 	public static void main ( String[] args ) throws Exception
-	{			
+	{		
 		//edited by Mike, 20190310
 		makeFilePath("output/utilization/"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
 		

@@ -1,0 +1,109 @@
+Sub generatePayslipForTheDayPTTreatment()
+' Copyright 2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190307
+' @date updated: 20190311
+'
+' Given:
+' 1) Worksheet with the payslip data
+'
+'Output:
+' 1) New auto-updated Worksheet with the payslip data based on the payslip template for PT Treatment
+'
+Dim myInput As Worksheet
+Dim myOutput As Worksheet 'not the same as myInput
+Dim row As Range
+Dim RowCount As Integer
+Dim TableHeaderRow As Integer
+Dim LastPrintableRow As Integer
+Dim MaxPatientNameColumnWidth As Integer
+Dim patientNameFontSize As Integer
+
+RowCount = 1
+TableHeaderRow = 5
+LastPrintableRow = 15
+MaxPatientNameColumnWidthPixels = 192 '12pt font * 16 characters in Pixels
+patientNameFontSize = 12
+
+Set myTemplate = Sheets("PT Treatment Template")
+Set myInput = Sheets(ActiveSheet.Name)
+
+myTemplate.Copy ActiveWorkbook.Sheets(Sheets.Count)
+Set myOutput = Sheets(ActiveSheet.Name)
+myOutput.Name = Replace(myOutput.Name, "Template (2)", "") & myInput.Name
+
+'---------------------------------------------------------
+'Auto-fit component/part
+'---------------------------------------------------------
+
+'Auto-fit Date column based on actual value
+myOutput.Range("A" & TableHeaderRow + 1, "A" & TableHeaderRow + 1).Select
+Selection.EntireColumn.ColumnWidth = 16
+
+'Auto-fit select columns based on the table header row
+myOutput.Range("B" & TableHeaderRow, "I" & TableHeaderRow).Select
+'Selection.EntireColumn.AutoFit
+Selection.EntireColumn.ColumnWidth = 12
+
+'Auto-fit PATIENT NAME column based on the max length of the actual values
+myOutput.Range("C" & TableHeaderRow, "C" & TableHeaderRow).Select
+Selection.EntireColumn.ColumnWidth = 26
+
+'Auto-fit PARTICULARS column based on the max length of the actual values
+'myOutput.Range("D" & TableHeaderRow, "D" & TableHeaderRow).Select
+'Selection.EntireColumn.ColumnWidth = 20
+
+'Auto-fit PF column based on the max length of the actual values
+'myOutput.Range("G" & TableHeaderRow, "G" & TableHeaderRow).Select
+'Selection.EntireColumn.ColumnWidth = 12
+
+'Auto-update border
+myOutput.Range("A" & TableHeaderRow, "F" & LastPrintableRow).Borders.LineStyle = 1
+
+'Auto-update font size of PATIENT NAME based on the following:
+'max column width: 26
+'max length of value: 16
+'font size: 13 (default)
+'font style: Arial
+RowCount = TableHeaderRow + 1
+For Each row In myInput.Rows
+            myOutput.Range("C" & RowCount, "C" & RowCount).Font.Name = "Arial"
+            myOutput.Range("C" & RowCount, "C" & RowCount).Font.Size = patientNameFontSize
+
+            patientNameValueLength = Len(myInput.Range("C" & RowCount, "C" & RowCount).Value)
+            'MsgBox ("RowCount: " & RowCount)
+            'MsgBox ("patientNameValueLength: " & patientNameValueLength)
+
+            If patientNameValueLength > 16 Then
+                currentPatientNameFontSize = patientNameFontSize
+                currentPatientNameColumnWidthPixels = patientNameValueLength * currentPatientNameFontSize
+                
+                Do Until currentPatientNameColumnWidthPixels < MaxPatientNameColumnWidthPixels
+                    currentPatientNameFontSize = currentPatientNameFontSize - 1
+                    currentPatientNameColumnWidthPixels = patientNameValueLength * currentPatientNameFontSize
+                Loop
+                
+            myOutput.Range("C" & RowCount, "C" & RowCount).Font.Size = currentPatientNameFontSize
+            
+            'MsgBox ("currentPatientNameFontSize: " & currentPatientNameFontSize)
+            'MsgBox ("currentPatientNameColumnWidthPixels : " & currentPatientNameColumnWidthPixels)
+                     
+                     
+            End If
+                   
+       If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+         Exit For
+       Else
+         RowCount = RowCount + 1
+       End If
+
+Next row
+
+End Sub

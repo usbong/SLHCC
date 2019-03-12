@@ -9,7 +9,7 @@ Sub autoUpdateWorkbookWithHMOBillingUtilizationTemplate()
 '
 ' @author: Michael Syson
 ' @date created: 20190305
-' @date updated: 20190309
+' @date updated: 20190312
 '
 ' Given:
 ' 1) Workbook with the HMO Billing data
@@ -28,7 +28,10 @@ Dim patientNameFontSize As Integer
 
 RowCount = 1
 TableHeaderRow = 6
-LastPrintableRow = 33
+'edited by Mike, 20190312
+LastPrintableRow = 39 'updated: 33 to 39, which is actually the last printable row on an A4 paper
+'added by Mike, 20190312
+RowCountOffset = 0 'This is to make the add-on software automatically adjust to rows with new line marks
 MaxDiagnosisColumnWidthPixels = 506 '11pt font * 46 characters in Pixels
 DiagnosisFontSize = 11
 MaxColumnWidthInCharacters = 46
@@ -89,6 +92,7 @@ For Each row In myInput.Rows
                         If Len(temp) > MaxColumnWidthInCharacters Then
                             output = output & vbCrLf & Value 'add new line
                             temp = Value
+                            RowCountOffset = RowCountOffset + 1
                         Else
                             output = output & " " & Value
                         End If
@@ -112,9 +116,9 @@ myOutput.Range("A" & 1, "F" & RowCount).Font.Size = 11
 myOutput.Range("A" & 1, "F" & RowCount).Font.Name = "Calibri"
 'myOutput.Range("A" & 1, "Q" & RowCount).NumberFormat = "0.00"
 
-'added by Mike, 20190305; edited by Mike, 20190310
-If RowCount < LastPrintableRow Then
-    myOutput.Range("A" & TableHeaderRow, "F" & LastPrintableRow).Borders.LineStyle = 1
+'added by Mike, 20190305; edited by Mike, 20190312
+If RowCount + RowCountOffset < LastPrintableRow Then
+    myOutput.Range("A" & TableHeaderRow, "F" & LastPrintableRow - RowCountOffset).Borders.LineStyle = 1
 Else
     myOutput.Range("A" & TableHeaderRow, "F" & RowCount - 1).Borders.LineStyle = 1
 End If

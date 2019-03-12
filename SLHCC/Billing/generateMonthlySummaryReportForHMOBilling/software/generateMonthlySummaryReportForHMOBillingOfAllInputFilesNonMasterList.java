@@ -503,9 +503,11 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFilesNonMasterLi
 		return Integer.parseInt(year.concat(month));
 	}
 	
-	//added by Mike, 20190227
+	//added by Mike, 20190227; edited by Mike, 20190312
 	//input: JAN-05-19
-	//output: 05/01/2019
+	//output: 05/01/2019 (previous)
+	//output: 05-JAN-19
+/*	//previous
 	private static String getDateAsHMOBillingFormat(String date) {
 		StringBuffer sb = new StringBuffer(""+date);	
 		String month = sb.substring(0,sb.indexOf("-")).toLowerCase(); //index "-" is not included
@@ -523,6 +525,16 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFilesNonMasterLi
 		
 
 		return day.concat("/").concat(month).concat("/").concat(year);
+	}
+*/
+	//input: JAN-05-19
+	//output: 05-JAN-19
+	private static String getDateAsHMOBillingFormat(String date) {
+		String day = date.split("-")[1];
+		String month = date.split("-")[0].toUpperCase();
+		String year = date.split("-")[2];
+		
+		return day.concat("-").concat(month).concat("-").concat(year);
 	}
 
 	//added by Mike, 20190305

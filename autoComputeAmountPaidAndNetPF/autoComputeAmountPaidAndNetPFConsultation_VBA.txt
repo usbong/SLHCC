@@ -1,16 +1,4 @@
 Sub autoComputeAmountPaidAndNetPFConsultation()
-' Copyright 2019 Usbong Social Systems, Inc.
-'
-' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
-'
-' http://www.apache.org/licenses/LICENSE-2.0
-'
-' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
-'
-' @author: Michael Syson
-' @date created: 20190129
-' @date updated: 20190302
-'
 ' Given:
 ' 1) Standard Fee (Column H)
 ' 2) CLASS/Classification, i.e. SC, WI, SLC, PWD (Column I)
@@ -36,7 +24,7 @@ For Each row In myInput.Rows
             myOutput.Range("J" & RowCount) = myInput.Range("H" & RowCount).Value * 0.714289
        'ElseIf myInput.Range("I" & RowCount).Value = "WI" Then
        'edited by Mike, 20190301
-       ElseIf InStr(myInput.Range("I" & RowCount).Value, "WI") = 1 Then 'if TRUE
+       ElseIf InStr(myInput.Range("I" & RowCount).Value, "WI") <> 0 Then
             myOutput.Range("J" & RowCount) = myInput.Range("H" & RowCount).Value
        ElseIf myInput.Range("I" & RowCount).Value = "SLC" Then
             myOutput.Range("J" & RowCount) = myInput.Range("H" & RowCount).Value * 0.9
@@ -80,7 +68,7 @@ For Each row In myInput.Rows
             myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value * 0.7 * 0.9
 '       ElseIf myInput.Range("I" & RowCount).Value = "WI" Then
        'edited by Mike, 20190301
-       ElseIf InStr(myInput.Range("I" & RowCount).Value, "WI") = 1 Then 'if TRUE
+       ElseIf InStr(myInput.Range("I" & RowCount).Value, "WI") <> 0 Then
             myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value / 1.12 * 0.7 * 0.9
        ElseIf myInput.Range("I" & RowCount).Value = "SLC" Then
             myOutput.Range("K" & RowCount) = myInput.Range("J" & RowCount).Value / 1.12 * 0.7 * 0.9
@@ -98,4 +86,126 @@ Next row
 myOutput.Range("J" & 1, "K" & RowCount).Font.Size = 11
 myOutput.Range("J" & 1, "K" & RowCount).Font.Name = "Calibri"
 myOutput.Range("J" & 1, "K" & RowCount).NumberFormat = "0.00"
+
+'added by Mike, 20190313
+Call autoComputeAmountPaidAndNetPFFromHMOConsultation
+
+End Sub
+
+Sub autoComputeAmountPaidAndNetPFFromHMOConsultation()
+' Copyright 2018~2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20180604
+' @date updated: 20190313
+'
+' Given:
+' 1) Classification, i.e. HMO... (Column J - inputNonMasterListOffset)
+'
+'Output:
+' 1) Correct FEE (Column I) based on HMO (Column J - inputNonMasterListOffset)
+' 2) AMT.PAID (Column K) which is equivalent to 1) Correct FEE
+' 3) Auto-computed Net PF for HMO payments (Column L - inputNonMasterListOffset)
+' --> This is based on the correct FEE (Column I - inputNonMasterListOffset).
+'
+' Note: in the Master/verified Excel workbook, I inserted a new column at column A for my notes
+
+
+Dim myInput As Worksheet
+Dim myOutput As Worksheet 'the same as myInput
+Dim row As Range
+Dim RowCount As Integer
+
+RowCount = 1
+inputNonMasterListOffset = -1
+
+Set myInput = Sheets(ActiveSheet.Name)
+Set myOutput = Sheets(ActiveSheet.Name)
+
+For Each row In myInput.Rows
+       If (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/Asianlife")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 300
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/Avega")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 300
+       'previously, "Starcare"
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/Benlifecare")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 300
+       'I'm adding "Starcare" here for backward compatibility, i.e. Excel logbooks that still use "Starcare"
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/Starcare")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 300
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/Cocolife")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 300
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/Eastwest")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 300
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/Generaliphil")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 350
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/Getwell")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 250
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/HMI")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 300
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/HPPI")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 300
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/Intellicare")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 400
+       'update this with the actual value used in the Excel logbook
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/Lacson")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 350
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/Maxicare")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 400
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/Medasia")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 300
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/Medicard")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 300
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/Medicareplus")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 300
+       'previously "Bluecross"
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/Pacificcross")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 300
+       'I'm adding "Bluecross" here for backward compatibility, i.e. Excel logbooks that still use "Bluecross"
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/Bluecross")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 300
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/Philcare")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 300
+       ElseIf (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO/Valucare")) Then
+            myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset) = 300
+       End If
+       
+       'added by Mike, 20181106
+       'write the value of the AMT. PAID (Column K), which is equivalent to the Correct FEE (Column I)
+       'This will also overwrite any mistyped value for the AMT. PAID (Column K).
+       If (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO")) Then
+            myInput.Cells(RowCount, myInput.Columns("K").Column + inputNonMasterListOffset) = myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset)
+       End If
+       
+       'The computation of the Net PF takes in as input the correct FEE (Column I), which is based on the HMO (Column J).
+       If (InStr(myInput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset).Value, "HMO")) Then
+            'I've removed the Round(..., 2) function, because as it turned out,
+            'doing ...NumberFormat = "0.00" on the cell would automatically round
+            'the value to the hundredths.
+            'myOutput.Cells(RowCount, myInput.Columns("L").Column + inputNonMasterListOffset) = Round((myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset)).Value - myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset)).Value * 0.02) / 1.12 * 0.7 * 0.9, 2)
+            myOutput.Cells(RowCount, myInput.Columns("L").Column + inputNonMasterListOffset) = (myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset).Value - myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset).Value * 0.02) / 1.12 * 0.7 * 0.9
+       End If
+           
+       If IsEmpty(myInput.Cells(RowCount, myInput.Columns("D").Column + inputNonMasterListOffset).Value) Then
+            Exit For
+       Else
+            RowCount = RowCount + 1
+       End If
+Next row
+
+myOutput.Range(myOutput.Cells(1, myInput.Columns("K").Column + inputNonMasterListOffset), myOutput.Cells(RowCount, myInput.Columns("L").Column + inputNonMasterListOffset)).Font.Size = 11
+myOutput.Range(myOutput.Cells(1, myInput.Columns("K").Column + inputNonMasterListOffset), myOutput.Cells(RowCount, myInput.Columns("L").Column + inputNonMasterListOffset)).Font.Name = "Calibri"
+myOutput.Range(myOutput.Cells(1, myInput.Columns("K").Column + inputNonMasterListOffset), myOutput.Cells(RowCount, myInput.Columns("L").Column + inputNonMasterListOffset)).NumberFormat = "0.00"
+
+
+'myOutput.Range("K" & 1, "L" & RowCount).Font.Size = 11
+'myOutput.Range("K" & 1, "L" & RowCount).Font.Name = "Calibri"
+'myOutput.Range("K" & 1, "L" & RowCount).NumberFormat = "0.00"
+
 End Sub

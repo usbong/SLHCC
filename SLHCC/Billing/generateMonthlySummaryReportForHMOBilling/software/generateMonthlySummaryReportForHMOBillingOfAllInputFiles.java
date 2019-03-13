@@ -1832,8 +1832,9 @@ public class generateMonthlySummaryReportForHMOBillingOfAllInputFiles {
 			Scanner sc = new Scanner(new FileInputStream(f));				
 		
 			String s;		
+/*			TO-DO: -update: instructions to automatically identify if the input file has table headers			
 			s=sc.nextLine(); //skip the first row, which is the input file's table headers
-	
+*/	
 			if (isInDebugMode) {
 				rowCount=0;
 			}

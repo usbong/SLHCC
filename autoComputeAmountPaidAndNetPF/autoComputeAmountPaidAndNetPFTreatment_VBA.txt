@@ -28,8 +28,8 @@ For Each row In myInput.Rows
 '       doing ...NumberFormat = "0.00" on the cell would automatically round
 '       the value to the hundredths.
 
-		'auto-compute the Amount Paid based on Class and PF distribution
-		If myInput.Range("H" & RowCount).Value = "SC" Or myInput.Range("H" & RowCount).Value = "PWD" Then
+        'auto-compute the Amount Paid based on Class and PF distribution
+        If myInput.Range("H" & RowCount).Value = "SC" Or myInput.Range("H" & RowCount).Value = "PWD" Then
             myOutput.Range("I" & RowCount) = myInput.Range("G" & RowCount).Value * 0.714289
         ElseIf myInput.Range("H" & RowCount).Value = "WI" Then
             myOutput.Range("I" & RowCount) = myInput.Range("G" & RowCount).Value
@@ -45,7 +45,7 @@ For Each row In myInput.Rows
 '            myOutput.Range("J" & RowCount) = Round(myInput.Range("I" & RowCount).Value / 1.12 * 0.7 * 0.9, 2)
 '       End If
 
-	   'auto-compute the Net PF (Professional Fee) based on Class and PF distribution
+       'auto-compute the Net PF (Professional Fee) based on Class and PF distribution
        If myInput.Range("H" & RowCount).Value = "SC" Or myInput.Range("H" & RowCount).Value = "PWD" Then
             myOutput.Range("J" & RowCount) = myInput.Range("I" & RowCount).Value * 0.7 * 0.9
        ElseIf myInput.Range("H" & RowCount).Value = "WI" Then
@@ -65,5 +65,82 @@ myOutput.Range("I" & 1, "J" & RowCount).Font.Size = 11
 myOutput.Range("I" & 1, "J" & RowCount).Font.Name = "Calibri"
 myOutput.Range("I" & 1, "J" & RowCount).NumberFormat = "0.00"
 
+'added by Mike, 20190313
+Call autoComputeAmountPaidAndNetPFFromHMOTreatment
+
 End Sub
 
+Sub autoComputeAmountPaidAndNetPFFromHMOTreatment()
+' Copyright 2018~2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20180412
+' @date updated: 20190313
+'
+' Given:
+' 1) Classification, i.e. HMO... (Column I - inputNonMasterListOffset)
+'
+'Output:
+' 1) AMT.PAID (Column J  - inputNonMasterListOffset)
+' 2) Auto-computed Net PF for HMO payments (Column K  - inputNonMasterListOffset)
+'
+'Notes:
+' 1) The Master List is the consolidated Excel workbook based on:
+' a) Excel HMO payment reports from Sta. Lucia
+' b) ORTHO & PT DEPT Clinic logbook (pen and paper)
+' c) ORTHO & PT DEPT Clinic Excel workbook
+'
+' 2) In the Master List/verified Excel workbook, I inserted a new column at column A for my notes
+'
+' 3) This auto-computation applies to all the months of 2018, except March.
+' --> In March 2018, 0.9 was updated to 0.92 due to a change in the EWT (Expanded Withholding Tax)
+' --> However, this update was not applied in actuality.
+' --> This may likely be due to while the transaction was in March 2018, the payment from the HMO was not actually given in March 2018.
+
+Dim myInput As Worksheet
+Dim myOutput As Worksheet 'the same as myInput
+Dim row As Range
+Dim RowCount As Integer
+Dim inputNonMasterListOffset As Integer
+
+RowCount = 1
+inputNonMasterListOffset = -1
+
+Set myInput = Sheets(ActiveSheet.Name)
+Set myOutput = Sheets(ActiveSheet.Name)
+
+For Each row In myInput.Rows
+       'edited by Mike, 20190313
+       'The computation of the Net PF is the same for all HMO payments
+       If (InStr(myInput.Cells(RowCount, myInput.Columns("I").Column + inputNonMasterListOffset).Value, "HMO")) Then
+            myOutput.Cells(RowCount, myInput.Columns("K").Column + inputNonMasterListOffset) = (myInput.Cells(RowCount, myInput.Columns("H").Column + inputNonMasterListOffset).Value - myInput.Cells(RowCount, myInput.Columns("H").Column + inputNonMasterListOffset).Value * 0.02) / 1.12 * 0.7 * 0.9
+       
+            'added by Mike, 20181106; edited by Mike, 20190313
+            'write the value of the AMT. PAID (Column J), which is equivalent to the Correct FEE (Column H)
+            'This will also overwrite any mistyped value for the AMT. PAID (Column J).
+            myOutput.Cells(RowCount, myInput.Columns("J").Column + inputNonMasterListOffset) = myOutput.Cells(RowCount, myInput.Columns("H").Column + inputNonMasterListOffset)
+       End If
+                  
+       If IsEmpty(myInput.Cells(RowCount, myInput.Columns("D").Column + inputNonMasterListOffset).Value) Then
+            Exit For
+       Else
+            RowCount = RowCount + 1
+       End If
+Next row
+
+myOutput.Range(myOutput.Cells(1, myInput.Columns("J").Column + inputNonMasterListOffset), myOutput.Cells(RowCount, myInput.Columns("K").Column + inputNonMasterListOffset)).Font.Size = 11
+myOutput.Range(myOutput.Cells(1, myInput.Columns("J").Column + inputNonMasterListOffset), myOutput.Cells(RowCount, myInput.Columns("K").Column + inputNonMasterListOffset)).Font.Name = "Calibri"
+myOutput.Range(myOutput.Cells(1, myInput.Columns("J").Column + inputNonMasterListOffset), myOutput.Cells(RowCount, myInput.Columns("K").Column + inputNonMasterListOffset)).NumberFormat = "0.00"
+
+
+'myOutput.Range("J" & 1, "K" & RowCount).Font.Size = 11
+'myOutput.Range("J" & 1, "K" & RowCount).Font.Name = "Calibri"
+'myOutput.Range("J" & 1, "K" & RowCount).NumberFormat = "0.00"
+
+End Sub

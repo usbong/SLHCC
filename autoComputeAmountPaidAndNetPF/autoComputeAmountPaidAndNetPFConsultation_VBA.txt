@@ -1,4 +1,12 @@
 Sub autoComputeAmountPaidAndNetPFConsultation()
+' Copyright 2018~2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
 ' Given:
 ' 1) Standard Fee (Column H)
 ' 2) CLASS/Classification, i.e. SC, WI, SLC, PWD (Column I)
@@ -92,7 +100,7 @@ Call autoComputeAmountPaidAndNetPFFromHMOConsultation
 
 End Sub
 
-Sub autoComputeAmountPaidAndNetPFFromHMOConsultation()
+Private Sub autoComputeAmountPaidAndNetPFFromHMOConsultation()
 ' Copyright 2018~2019 Usbong Social Systems, Inc.
 '
 ' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at

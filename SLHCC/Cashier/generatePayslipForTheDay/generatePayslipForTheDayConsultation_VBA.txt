@@ -1,0 +1,155 @@
+Sub generatePayslipForTheDayConsultation()
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190314
+' @date updated: 20190314
+'
+' Given:
+' 1) Worksheet with the payslip data
+'
+'Output:
+' 1) New auto-updated Worksheet with the payslip data based on the payslip template for PT Treatment
+'
+Dim myInput As Worksheet
+Dim myOutput As Worksheet 'not the same as myInput
+Dim row As Range
+Dim RowCount As Integer
+Dim TableHeaderRow As Integer
+Dim LastPrintableRow As Integer
+Dim MaxPatientNameColumnWidth As Integer
+Dim patientNameFontSize As Integer
+Dim defaultFontName As String 'added by Mike, 20190314
+
+RowCount = 1
+TableHeaderRow = 5 'output
+LastPrintableRow = 16 'including the TOTAL PF
+MaxPatientNameColumnWidthPixels = 192 '12pt font * 16 characters in Pixels
+patientNameFontSize = 12
+defaultFontName = "Arial" 'added by Mike, 20190314
+
+Set myTemplate = Sheets("Consultation Template")
+Set myInput = Sheets(ActiveSheet.Name)
+
+'added by Mike, 20190314
+Application.ScreenUpdating = False
+
+myTemplate.Copy ActiveWorkbook.Sheets(Sheets.Count)
+Set myOutput = Sheets(ActiveSheet.Name)
+myOutput.Name = Replace(myOutput.Name, "Template (2)", "") & myInput.Name
+
+'---------------------------------------------------------
+'Auto-copy contents component/part
+'---------------------------------------------------------
+RowCount = TableHeaderRow + 2 'input
+OutputRowCountOffset = -1
+For Each row In myInput.Rows
+'      If RowCount > TableHeaderRow Then
+        myInput.Range("A" & RowCount, "E" & RowCount).Columns.Copy
+        myInput.Select
+        myOutput.Range("A" & RowCount + OutputRowCountOffset, "E" & RowCount + OutputRowCountOffset).PasteSpecial
+      
+        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+           Exit For
+        Else
+           RowCount = RowCount + 1
+        End If
+'      Else
+'           RowCount = RowCount + 1
+'      End If
+Next row
+            
+'---------------------------------------------------------
+'Auto-fit component/part
+'---------------------------------------------------------
+myOutput.Activate
+
+'Auto-fit Date column based on max length of actual value
+myOutput.Range("A" & TableHeaderRow + 1, "A" & TableHeaderRow + 1).Select
+Selection.EntireColumn.ColumnWidth = 12
+Selection.EntireColumn.Font.Size = 13
+'Selection.EntireColumn.AutoFit
+
+'Auto-fit select columns based on the table header row
+myOutput.Range("B" & TableHeaderRow + 1, "I" & TableHeaderRow + 1).Select
+Selection.EntireColumn.AutoFit
+
+'Auto-fit PATIENT NAME column based on the max length of the actual values
+myOutput.Range("C" & TableHeaderRow, "C" & TableHeaderRow).Select
+Selection.EntireColumn.ColumnWidth = 26
+
+'Auto-fit PARTICULARS column based on the max length of the actual values
+myOutput.Range("D" & TableHeaderRow, "D" & TableHeaderRow).Select
+Selection.EntireColumn.ColumnWidth = 12
+
+'Auto-fit PF column based on the max length of the actual values
+myOutput.Range("G" & TableHeaderRow, "G" & TableHeaderRow).Select
+Selection.EntireColumn.ColumnWidth = 12
+
+'Auto-fit EWT column based on the max length of the actual values
+myOutput.Range("H" & TableHeaderRow, "H" & TableHeaderRow).Select
+Selection.EntireColumn.ColumnWidth = 12
+
+'Auto-align OR NO. column to the center horizontally
+myOutput.Range("B" & TableHeaderRow, "B" & TableHeaderRow).Select
+Selection.EntireColumn.HorizontalAlignment = xlCenter
+Selection.EntireColumn.Font.Size = 14
+
+'Auto-update Font Size
+myOutput.Range("D" & TableHeaderRow + 1, "I" & LastPrintableRow).Font.Size = 14
+
+'Auto-update border
+'-1 to not include the Total PF row
+myOutput.Range("A" & TableHeaderRow, "F" & LastPrintableRow - 1).Borders.LineStyle = 1
+
+'Auto-update font size of PATIENT NAME based on the following:
+'max column width: 26
+'max length of value: 16
+'font size: 13 (default)
+'font style: Arial
+RowCount = TableHeaderRow + 1
+For Each row In myOutput.Rows
+            myOutput.Range("C" & RowCount, "C" & RowCount).Font.Name = defaultFontName
+            myOutput.Range("C" & RowCount, "C" & RowCount).Font.Size = patientNameFontSize
+
+            patientNameValueLength = Len(myOutput.Range("C" & RowCount, "C" & RowCount).Value)
+            'MsgBox ("RowCount: " & RowCount)
+            'MsgBox ("patientNameValueLength: " & patientNameValueLength)
+
+            If patientNameValueLength > 16 Then
+                currentPatientNameFontSize = patientNameFontSize
+                currentPatientNameColumnWidthPixels = patientNameValueLength * currentPatientNameFontSize
+                
+                Do Until currentPatientNameColumnWidthPixels < MaxPatientNameColumnWidthPixels
+                    currentPatientNameFontSize = currentPatientNameFontSize - 1
+                    currentPatientNameColumnWidthPixels = patientNameValueLength * currentPatientNameFontSize
+                Loop
+                
+            myOutput.Range("C" & RowCount, "C" & RowCount).Font.Size = currentPatientNameFontSize
+            
+            'MsgBox ("currentPatientNameFontSize: " & currentPatientNameFontSize)
+            'MsgBox ("currentPatientNameColumnWidthPixels : " & currentPatientNameColumnWidthPixels)
+                     
+                     
+            End If
+                   
+       If IsEmpty(myOutput.Range("C" & RowCount).Value) Then
+         Exit For
+       Else
+         RowCount = RowCount + 1
+       End If
+
+Next row
+
+'added by Mike, 20190314
+Application.ScreenUpdating = True
+
+'added by Mike, 201903014
+myOutput.Range("A" & 1, "I" & LastPrintableRow).Font.Name = defaultFontName
+
+End Sub

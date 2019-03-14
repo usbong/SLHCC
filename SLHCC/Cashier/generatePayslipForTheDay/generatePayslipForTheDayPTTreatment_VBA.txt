@@ -9,7 +9,7 @@ Sub generatePayslipForTheDayPTTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190307
-' @date updated: 20190314
+' @date updated: 20190315
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -147,10 +147,10 @@ For Each row In myOutput.Rows
 
 Next row
 
-'added by Mike, 20190314
-Application.ScreenUpdating = True
-
 'added by Mike, 201903014
 myOutput.Range("A" & 1, "I" & LastPrintableRow).Font.Name = defaultFontName
+
+'added by Mike, 20190314
+Application.ScreenUpdating = True
 
 End Sub

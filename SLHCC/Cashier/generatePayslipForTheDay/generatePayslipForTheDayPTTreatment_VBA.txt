@@ -9,7 +9,7 @@ Sub generatePayslipForTheDayPTTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190307
-' @date updated: 20190315
+' @date updated: 20190314
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -26,6 +26,7 @@ Dim LastPrintableRow As Integer
 Dim MaxPatientNameColumnWidth As Integer
 Dim patientNameFontSize As Integer
 Dim defaultFontName As String 'added by Mike, 20190314
+Dim transactionDateValue As String 'added by Mike, 20190315
 
 RowCount = 1
 TableHeaderRow = 5 'output
@@ -83,6 +84,7 @@ Selection.EntireColumn.AutoFit
 'Auto-fit PATIENT NAME column based on the max length of the actual values
 myOutput.Range("C" & TableHeaderRow, "C" & TableHeaderRow).Select
 Selection.EntireColumn.ColumnWidth = 26
+Selection.EntireColumn.HorizontalAlignment = xlCenter
 
 'Auto-fit PARTICULARS column based on the max length of the actual values
 myOutput.Range("D" & TableHeaderRow, "D" & TableHeaderRow).Select
@@ -149,6 +151,12 @@ Next row
 
 'added by Mike, 201903014
 myOutput.Range("A" & 1, "I" & LastPrintableRow).Font.Name = defaultFontName
+
+'added by Mike, 20190315
+transactionDateValue = myOutput.Range("A" & TableHeaderRow + 1).Value
+myOutput.Range("G" & 18).Value = "Date: " & Format(transactionDateValue, "dd mmm yyyy")
+myOutput.Range("G" & 18).Font.Name = defaultFontName
+myOutput.Range("G" & 18).Font.Size = 14
 
 'added by Mike, 20190314
 Application.ScreenUpdating = True

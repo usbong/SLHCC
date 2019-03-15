@@ -8,7 +8,7 @@ Sub generatePayslipForTheDayConsultation()
 '
 ' @author: Michael Syson
 ' @date created: 20190314
-' @date updated: 20190315
+' @date updated: 20190314
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -148,6 +148,12 @@ Next row
 
 'added by Mike, 201903014
 myOutput.Range("A" & 1, "I" & LastPrintableRow).Font.Name = defaultFontName
+
+'added by Mike, 20190315
+transactionDateValue = myOutput.Range("A" & TableHeaderRow + 1).Value
+myOutput.Range("G" & 18).Value = "Date: " & Format(transactionDateValue, "dd mmm yyyy")
+myOutput.Range("G" & 18).Font.Name = defaultFontName
+myOutput.Range("G" & 18).Font.Size = 14
 
 'added by Mike, 20190314
 Application.ScreenUpdating = True

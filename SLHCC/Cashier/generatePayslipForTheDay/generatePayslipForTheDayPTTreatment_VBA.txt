@@ -9,13 +9,14 @@ Sub generatePayslipForTheDayPTTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190307
-' @date updated: 20190315
+' @date updated: 20190316
 '
 ' Given:
 ' 1) Worksheet with the payslip data
 '
 'Output:
 ' 1) New auto-updated Worksheet with the payslip data based on the payslip template for PT Treatment
+' 2) Automatically verified and corrected if necessary the computation in the worksheet with the payslip data
 '
 Dim myInput As Worksheet
 Dim myOutput As Worksheet 'not the same as myInput
@@ -27,6 +28,7 @@ Dim MaxPatientNameColumnWidth As Integer
 Dim patientNameFontSize As Integer
 Dim defaultFontName As String 'added by Mike, 20190314
 Dim transactionDateValue As String 'added by Mike, 20190315
+Dim totalAmountReleasedValue As String 'added by Mike, 20190316
 
 RowCount = 1
 TableHeaderRow = 5 'output
@@ -34,6 +36,7 @@ LastPrintableRow = 16 'including the TOTAL PF
 MaxPatientNameColumnWidthPixels = 192 '12pt font * 16 characters in Pixels
 patientNameFontSize = 12
 defaultFontName = "Arial" 'added by Mike, 20190314
+totalAmountReleasedValue = 0 'added by Mike, 20190316
 
 Set myTemplate = Sheets("PT Treatment Template")
 Set myInput = Sheets(ActiveSheet.Name)
@@ -44,6 +47,65 @@ Application.ScreenUpdating = False
 myTemplate.Copy ActiveWorkbook.Sheets(Sheets.Count)
 Set myOutput = Sheets(ActiveSheet.Name)
 myOutput.Name = Replace(myOutput.Name, "Template (2)", "") & myInput.Name
+
+'---------------------------------------------------------
+'Auto-verify and correct if necessary the computations
+'in the input worksheet component/part
+'---------------------------------------------------------
+RowCount = TableHeaderRow + 2 'input
+For Each row In myInput.Rows
+        If InStr(myInput.Range("D" & RowCount).Value, "SC") = 1 Or InStr(myInput.Range("D" & RowCount).Value, "PWD") = 1 Then 'if TRUE
+          'VAT column
+          myInput.Range("F" & RowCount).Value = 0
+          
+          'ORTHO & PT DEPT/REHAB Share (70%) column
+          myInput.Range("G" & RowCount).Value = myInput.Range("E" & RowCount).Value * 0.7 * 0.9
+        
+          'EWT column
+          myInput.Range("H" & RowCount).Value = myInput.Range("E" & RowCount).Value * 0.7 * 0.1
+        
+          'Management Share column
+          myInput.Range("I" & RowCount).Value = myInput.Range("E" & RowCount).Value * 0.3
+        Else 'if SLC or PT, i.e. Walk-In
+          'VAT column
+          myInput.Range("F" & RowCount).Value = myInput.Range("E" & RowCount).Value / 1.12 * 0.12
+        
+          'ORTHO & PT DEPT/REHAB Share (70%) column
+          myInput.Range("G" & RowCount).Value = myInput.Range("E" & RowCount).Value / 1.12 * 0.7 * 0.9
+        
+          'Amount Released column
+          myInput.Range("N" & RowCount).Value = myInput.Range("G" & RowCount).Value
+          
+          'EWT column
+          myInput.Range("H" & RowCount).Value = myInput.Range("E" & RowCount).Value / 1.12 * 0.7 * 0.1
+        
+          'Management Share column
+          myInput.Range("I" & RowCount).Value = myInput.Range("E" & RowCount).Value / 1.12 * 0.3
+          
+          'Discount Amount column
+          If InStr(myInput.Range("D" & RowCount).Value, "SLC") = 1 Then
+            myInput.Range("L" & RowCount).Value = 500 - myInput.Range("E" & RowCount).Value
+          End If
+        End If
+        
+        'added by Mike, 20190316
+        totalAmountReleasedValue = totalAmountReleasedValue + myInput.Range("G" & RowCount).Value
+        
+        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+           Exit For
+        Else
+           RowCount = RowCount + 1
+        End If
+Next row
+
+myInput.Range("G" & 17).Value = totalAmountReleasedValue
+myInput.Range("G" & 17).Interior.Color = vbYellow
+myInput.Range("N" & 17).Value = totalAmountReleasedValue
+myInput.Range("N" & 17).Interior.Color = vbYellow
+
+'added by Mike, 20190316
+myInput.Range("E" & TableHeaderRow + 2, "L" & RowCount - 1).NumberFormat = "0.00"
+myInput.Range("E" & TableHeaderRow + 2, "L" & RowCount - 1).HorizontalAlignment = xlCenter
 
 '---------------------------------------------------------
 'Auto-copy contents component/part

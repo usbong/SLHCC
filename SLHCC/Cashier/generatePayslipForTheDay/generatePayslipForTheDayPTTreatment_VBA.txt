@@ -9,7 +9,7 @@ Sub generatePayslipForTheDayPTTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190307
-' @date updated: 20190316
+' @date updated: 20190317
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -52,9 +52,11 @@ myOutput.Name = Replace(myOutput.Name, "Template (2)", "") & myInput.Name
 'Auto-verify and correct if necessary the computations
 'in the input worksheet component/part
 '---------------------------------------------------------
+'myInput.Activate
+
 RowCount = TableHeaderRow + 2 'input
 For Each row In myInput.Rows
-        If InStr(myInput.Range("D" & RowCount).Value, "SC") = 1 Or InStr(myInput.Range("D" & RowCount).Value, "PWD") = 1 Then 'if TRUE
+        If InStr(myInput.Range("D" & RowCount).Value, "SC") Or InStr(myInput.Range("D" & RowCount).Value, "PWD") Then 'if TRUE
           'VAT column
           myInput.Range("F" & RowCount).Value = 0
           

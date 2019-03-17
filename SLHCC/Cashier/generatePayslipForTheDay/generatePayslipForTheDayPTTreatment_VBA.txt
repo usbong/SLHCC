@@ -48,66 +48,68 @@ myTemplate.Copy ActiveWorkbook.Sheets(Sheets.Count)
 Set myOutput = Sheets(ActiveSheet.Name)
 myOutput.Name = Replace(myOutput.Name, "Template (2)", "") & myInput.Name
 
+'edited by Mike, 20190317
+'At present, this component/part is not used.
 '---------------------------------------------------------
 'Auto-verify and correct if necessary the computations
 'in the input worksheet component/part
 '---------------------------------------------------------
 'myInput.Activate
 
-RowCount = TableHeaderRow + 2 'input
-For Each row In myInput.Rows
-        If InStr(myInput.Range("D" & RowCount).Value, "SC") Or InStr(myInput.Range("D" & RowCount).Value, "PWD") Then 'if TRUE
-          'VAT column
-          myInput.Range("F" & RowCount).Value = 0
-          
-          'ORTHO & PT DEPT/REHAB Share (70%) column
-          myInput.Range("G" & RowCount).Value = myInput.Range("E" & RowCount).Value * 0.7 * 0.9
-        
-          'EWT column
-          myInput.Range("H" & RowCount).Value = myInput.Range("E" & RowCount).Value * 0.7 * 0.1
-        
-          'Management Share column
-          myInput.Range("I" & RowCount).Value = myInput.Range("E" & RowCount).Value * 0.3
-        Else 'if SLC or PT, i.e. Walk-In
-          'VAT column
-          myInput.Range("F" & RowCount).Value = myInput.Range("E" & RowCount).Value / 1.12 * 0.12
-        
-          'ORTHO & PT DEPT/REHAB Share (70%) column
-          myInput.Range("G" & RowCount).Value = myInput.Range("E" & RowCount).Value / 1.12 * 0.7 * 0.9
-        
-          'Amount Released column
-          myInput.Range("N" & RowCount).Value = myInput.Range("G" & RowCount).Value
-          
-          'EWT column
-          myInput.Range("H" & RowCount).Value = myInput.Range("E" & RowCount).Value / 1.12 * 0.7 * 0.1
-        
-          'Management Share column
-          myInput.Range("I" & RowCount).Value = myInput.Range("E" & RowCount).Value / 1.12 * 0.3
-          
-          'Discount Amount column
-          If InStr(myInput.Range("D" & RowCount).Value, "SLC") = 1 Then
-            myInput.Range("L" & RowCount).Value = 500 - myInput.Range("E" & RowCount).Value
-          End If
-        End If
-        
-        'added by Mike, 20190316
-        totalAmountReleasedValue = totalAmountReleasedValue + myInput.Range("G" & RowCount).Value
-        
-        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
-           Exit For
-        Else
-           RowCount = RowCount + 1
-        End If
-Next row
-
-myInput.Range("G" & 17).Value = totalAmountReleasedValue
-myInput.Range("G" & 17).Interior.Color = vbYellow
-myInput.Range("N" & 17).Value = totalAmountReleasedValue
-myInput.Range("N" & 17).Interior.Color = vbYellow
-
-'added by Mike, 20190316; edited by Mike, 20190317
-myInput.Range("E" & TableHeaderRow + 2, "L" & RowCount - 1).NumberFormat = "_(* #,##0.00_);_(* (#,##0.00);_(* "" - ""??_);_(@_)" '"0.00"
-'myInput.Range("E" & TableHeaderRow + 2, "L" & RowCount - 1).HorizontalAlignment = xlCenter
+'RowCount = TableHeaderRow + 2 'input
+'For Each row In myInput.Rows
+'        If InStr(myInput.Range("D" & RowCount).Value, "SC") Or InStr(myInput.Range("D" & RowCount).Value, "PWD") Then 'if TRUE
+'          'VAT column
+'          myInput.Range("F" & RowCount).Value = 0
+'
+'          'ORTHO & PT DEPT/REHAB Share (70%) column
+'          myInput.Range("G" & RowCount).Value = myInput.Range("E" & RowCount).Value * 0.7 * 0.9
+'
+'          'EWT column
+'          myInput.Range("H" & RowCount).Value = myInput.Range("E" & RowCount).Value * 0.7 * 0.1
+'
+'          'Management Share column
+'          myInput.Range("I" & RowCount).Value = myInput.Range("E" & RowCount).Value * 0.3
+'        Else 'if SLC or PT, i.e. Walk-In
+'          'VAT column
+'          myInput.Range("F" & RowCount).Value = myInput.Range("E" & RowCount).Value / 1.12 * 0.12
+'
+'          'ORTHO & PT DEPT/REHAB Share (70%) column
+'          myInput.Range("G" & RowCount).Value = myInput.Range("E" & RowCount).Value / 1.12 * 0.7 * 0.9
+'
+'          'Amount Released column
+'          myInput.Range("N" & RowCount).Value = myInput.Range("G" & RowCount).Value
+'
+'          'EWT column
+'          myInput.Range("H" & RowCount).Value = myInput.Range("E" & RowCount).Value / 1.12 * 0.7 * 0.1
+'
+'          'Management Share column
+'          myInput.Range("I" & RowCount).Value = myInput.Range("E" & RowCount).Value / 1.12 * 0.3
+'
+'          'Discount Amount column
+'          If InStr(myInput.Range("D" & RowCount).Value, "SLC") = 1 Then
+'            myInput.Range("L" & RowCount).Value = 500 - myInput.Range("E" & RowCount).Value
+'          End If
+'        End If
+'
+'        'added by Mike, 20190316
+'        totalAmountReleasedValue = totalAmountReleasedValue + myInput.Range("G" & RowCount).Value
+'
+'        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+'           Exit For
+'        Else
+'           RowCount = RowCount + 1
+'        End If
+'Next row
+'
+'myInput.Range("G" & 17).Value = totalAmountReleasedValue
+'myInput.Range("G" & 17).Interior.Color = vbYellow
+'myInput.Range("N" & 17).Value = totalAmountReleasedValue
+'myInput.Range("N" & 17).Interior.Color = vbYellow
+'
+''added by Mike, 20190316; edited by Mike, 20190317
+'myInput.Range("E" & TableHeaderRow + 2, "L" & RowCount - 1).NumberFormat = "_(* #,##0.00_);_(* (#,##0.00);_(* "" - ""??_);_(@_)" '"0.00"
+''myInput.Range("E" & TableHeaderRow + 2, "L" & RowCount - 1).HorizontalAlignment = xlCenter
 
 '---------------------------------------------------------
 'Auto-copy contents component/part

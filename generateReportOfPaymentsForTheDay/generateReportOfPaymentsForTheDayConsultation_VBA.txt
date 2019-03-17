@@ -103,8 +103,8 @@ myInput.Range("G" & 17).Interior.Color = vbYellow
 myInput.Range("N" & 17).Value = totalAmountReleasedValue
 myInput.Range("N" & 17).Interior.Color = vbYellow
 
-'added by Mike, 20190316
-myInput.Range("E" & TableHeaderRow + 2, "L" & RowCount - 1).NumberFormat = "0.00"
+'added by Mike, 20190316; edited by Mike, 20190317
+myInput.Range("E" & TableHeaderRow + 2, "L" & RowCount - 1).NumberFormat = "_(* #,##0.00_);_(* (#,##0.00);_(* "" - ""??_);_(@_)" '"0.00"
 'myInput.Range("E" & TableHeaderRow + 2, "L" & RowCount - 1).HorizontalAlignment = xlCenter
 
 '---------------------------------------------------------

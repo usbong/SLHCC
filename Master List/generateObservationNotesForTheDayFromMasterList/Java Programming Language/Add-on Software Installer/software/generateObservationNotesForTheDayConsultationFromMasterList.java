@@ -141,6 +141,12 @@ public class generateObservationNotesForTheDayConsultationFromMasterList {
 			File f = new File(inputFilename+".txt");
 
 			System.out.println("inputFilename: " + inputFilename);
+			
+			//added by Mike, 20190318
+			if (inputFilename.contains("*")) {
+				continue;
+			}
+			
 /*			
 			//added by Mike, 20181206
 			//edited by Mike, 20190106

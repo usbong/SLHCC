@@ -221,11 +221,24 @@ myOutput.Range("G" & 18).Value = "Date: " & Format(transactionDateValue, "dd mmm
 myOutput.Range("G" & 18).Font.Name = defaultFontName
 myOutput.Range("G" & 18).Font.Size = 14
 
-'added by Mike, 20190315
-myOutput.Range("F" & 1).Value = "MANUFACTURED: " & Format(Now(), "yyyy-MM-ddTHH:mm:ss+08:00") 'Format(Now(), "dd/MM/yyyy hh:mm:ss")
+'added by Mike, 20190315; edited by Mike, 20190321
+'myOutput.Range("F" & 1).Value = "MANUFACTURED: " & Format(Now(), "yyyy-MM-ddTHH:mm:ss+08:00") 'Format(Now(), "dd/MM/yyyy hh:mm:ss")
+myOutput.Range("F" & 1).Value = Format(Now(), "yyyy-MM-ddTHH:mm:ss") 'Format(Now(), "dd/MM/yyyy hh:mm:ss")
 myOutput.Range("F" & 1).Font.Name = defaultFontName
 myOutput.Range("F" & 1).Font.Size = 10
 myOutput.Range("F" & 1).Font.FontStyle = "Bold"
+
+'added by Mike, 20190321
+'"OR NO." Column
+myOutput.Range("B" & TableHeaderRow + 1, "B" & RowCount - 1).NumberFormat = 0
+
+'added by Mike, 20190321
+'myOutput.Range("E" & TableHeaderRow + 1, "I" & RowCount - 1).NumberFormat = "0.00"
+'myOutput.Range("E" & TableHeaderRow + 1, "I" & RowCount - 1).HorizontalAlignment = xlRight
+
+myOutput.Range("G" & 16).NumberFormat = "0.00"
+'myOutput.Range("G" & 16).HorizontalAlignment = xlRight
+myOutput.Range("G" & 16).HorizontalAlignment = xlCenter
 
 'added by Mike, 20190314
 Application.ScreenUpdating = True

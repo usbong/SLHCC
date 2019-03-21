@@ -9,7 +9,7 @@ Sub generatePayslipForTheDayPTTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190307
-' @date updated: 20190317
+' @date updated: 20190321
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -118,9 +118,9 @@ RowCount = TableHeaderRow + 2 'input
 OutputRowCountOffset = -1
 For Each row In myInput.Rows
 '      If RowCount > TableHeaderRow Then
-        myInput.Range("A" & RowCount, "E" & RowCount).Columns.Copy
+        myInput.Range("A" & RowCount, "I" & RowCount).Columns.Copy
         myInput.Select
-        myOutput.Range("A" & RowCount + OutputRowCountOffset, "E" & RowCount + OutputRowCountOffset).PasteSpecial
+        myOutput.Range("A" & RowCount + OutputRowCountOffset, "I" & RowCount + OutputRowCountOffset).PasteSpecial
       
         If IsEmpty(myInput.Range("C" & RowCount).Value) Then
            Exit For
@@ -174,7 +174,7 @@ myOutput.Range("D" & TableHeaderRow + 1, "I" & LastPrintableRow).Font.Size = 14
 
 'Auto-update border
 '-1 to not include the Total PF row
-myOutput.Range("A" & TableHeaderRow, "F" & LastPrintableRow - 1).Borders.LineStyle = 1
+myOutput.Range("A" & TableHeaderRow, "I" & LastPrintableRow - 1).Borders.LineStyle = 1
 
 'Auto-update font size of PATIENT NAME based on the following:
 'max column width: 26

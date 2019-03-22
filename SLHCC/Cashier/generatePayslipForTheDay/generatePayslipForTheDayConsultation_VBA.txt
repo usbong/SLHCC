@@ -8,7 +8,7 @@ Sub generatePayslipForTheDayConsultation()
 '
 ' @author: Michael Syson
 ' @date created: 20190314
-' @date updated: 20190321
+' @date updated: 20190322
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -129,11 +129,17 @@ For Each row In myInput.Rows
 '           RowCount = RowCount + 1
 '      End If
 Next row
-            
+                        
 '---------------------------------------------------------
 'Auto-fit component/part
 '---------------------------------------------------------
 myOutput.Activate
+
+'added by Mike, 20190322
+'Auto-set the format of the "AMOUNT", "VAT - OT", "PF", "EWT", "M. SHARE"
+startRowCount = TableHeaderRow + 2 + OutputRowCountOffset
+endRowCount = RowCount - 1 + OutputRowCountOffset
+myOutput.Range("E" & startRowCount, "I" & endRowCount).NumberFormat = "0.00"
 
 'Auto-fit Date column based on max length of actual value
 myOutput.Range("A" & TableHeaderRow + 1, "A" & TableHeaderRow + 1).Select

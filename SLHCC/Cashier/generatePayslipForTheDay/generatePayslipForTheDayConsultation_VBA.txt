@@ -8,7 +8,7 @@ Sub generatePayslipForTheDayConsultation()
 '
 ' @author: Michael Syson
 ' @date created: 20190314
-' @date updated: 20190322
+' @date updated: 20190323
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -25,14 +25,19 @@ Dim TableHeaderRow As Integer
 Dim LastPrintableRow As Integer
 Dim MaxPatientNameColumnWidth As Integer
 Dim patientNameFontSize As Integer
+Dim particularsFontSize As Integer 'added by Mike, 20190323
 Dim defaultFontName As String 'added by Mike, 20190314
 Dim totalAmountReleasedValue As String 'added by Mike, 20190316
 
 RowCount = 1
 TableHeaderRow = 5 'output
 LastPrintableRow = 16 'including the TOTAL PF
-MaxPatientNameColumnWidthPixels = 192 '12pt font * 16 characters in Pixels
+MaxPatientNameValueLength = 18 'characters in Pixels 'added by Mike, 20190323
+MaxPatientNameColumnWidthPixels = 216 '12pt font * 18 characters in Pixels
 patientNameFontSize = 12
+MaxParticularsValueLength = 8 'characters in Pixels 'added by Mike, 20190323
+MaxParticularsColumnWidthPixels = 96 '12pt font * 8 characters in Pixels 'added by Mike, 20190323
+particularsFontSize = 12 'added by Mike, 20190323
 defaultFontName = "Arial" 'added by Mike, 20190314
 totalAmountReleasedValue = 0 'added by Mike, 20190316
 
@@ -183,11 +188,11 @@ myOutput.Range("D" & TableHeaderRow + 1, "I" & LastPrintableRow).Font.Size = 14
 '-1 to not include the Total PF row
 myOutput.Range("A" & TableHeaderRow, "I" & LastPrintableRow - 1).Borders.LineStyle = 1
 
-'Auto-update font size of PATIENT NAME based on the following:
-'max column width: 26
-'max length of value: 16
-'font size: 13 (default)
-'font style: Arial
+'Auto-update font size of PATIENT NAME based on the following whose actual values are set above, at the start of the instructions:
+'max column width
+'max length of value
+'font size
+'font style
 RowCount = TableHeaderRow + 1
 For Each row In myOutput.Rows
             myOutput.Range("C" & RowCount, "C" & RowCount).Font.Name = defaultFontName
@@ -197,7 +202,7 @@ For Each row In myOutput.Rows
             'MsgBox ("RowCount: " & RowCount)
             'MsgBox ("patientNameValueLength: " & patientNameValueLength)
 
-            If patientNameValueLength > 16 Then
+            If patientNameValueLength > MaxPatientNameValueLength Then 'edited by Mike, 20190323
                 currentPatientNameFontSize = patientNameFontSize
                 currentPatientNameColumnWidthPixels = patientNameValueLength * currentPatientNameFontSize
                 
@@ -222,14 +227,57 @@ For Each row In myOutput.Rows
 
 Next row
 
+'added by Mike, 20190323
+'Auto-update font size of PARTICULARS based on the following whose actual values are set above, at the start of the instructions:
+'max column width
+'max length of value
+'font size
+'font style
+RowCount = TableHeaderRow + 1
+For Each row In myOutput.Rows
+            myOutput.Range("D" & RowCount, "D" & RowCount).Font.Name = defaultFontName
+            myOutput.Range("D" & RowCount, "D" & RowCount).Font.Size = particularsFontSize
+
+            particularsValueLength = Len(myOutput.Range("D" & RowCount, "D" & RowCount).Value)
+            'MsgBox ("RowCount: " & RowCount)
+            'MsgBox ("particularsValueLength: " & particularsValueLength)
+            'MsgBox ("value: " & myOutput.Range("D" & RowCount, "D" & RowCount).Value)
+
+            If particularsValueLength > MaxParticularsValueLength Then
+                'MsgBox ("value: " & myOutput.Range("D" & RowCount, "D" & RowCount).Value)
+
+                currentParticularsFontSize = particularsFontSize
+                currentParticularsColumnWidthPixels = particularsValueLength * currentParticularsFontSize
+                
+                Do Until currentParticularsColumnWidthPixels < MaxParticularsColumnWidthPixels
+                    currentParticularsFontSize = currentParticularsFontSize - 1
+                    currentParticularsColumnWidthPixels = particularsValueLength * currentParticularsFontSize
+                Loop
+                
+            myOutput.Range("D" & RowCount, "D" & RowCount).Font.Size = currentParticularsFontSize
+            
+            'MsgBox ("currentParticularsFontSize: " & currentParticularsFontSize)
+            'MsgBox ("currentParticularsColumnWidthPixels : " & currentParticularsColumnWidthPixels)
+                     
+                     
+            End If
+                   
+       If IsEmpty(myOutput.Range("D" & RowCount).Value) Then
+         Exit For
+       Else
+         RowCount = RowCount + 1
+       End If
+
+Next row
+
 'added by Mike, 201903014
 myOutput.Range("A" & 1, "I" & LastPrintableRow).Font.Name = defaultFontName
 
-'added by Mike, 20190315
+'added by Mike, 20190315; edited by Mike, 20190323
 transactionDateValue = myOutput.Range("A" & TableHeaderRow + 1).Value
-myOutput.Range("G" & 18).Value = "Date: " & Format(transactionDateValue, "dd mmm yyyy")
-myOutput.Range("G" & 18).Font.Name = defaultFontName
-myOutput.Range("G" & 18).Font.Size = 14
+myOutput.Range("G" & 19).Value = "Date: " & Format(transactionDateValue, "dd mmm yyyy")
+myOutput.Range("G" & 19).Font.Name = defaultFontName
+myOutput.Range("G" & 19).Font.Size = 14
 
 'added by Mike, 20190315; edited by Mike, 20190321
 'myOutput.Range("F" & 1).Value = "MANUFACTURED: " & Format(Now(), "yyyy-MM-ddTHH:mm:ss+08:00") 'Format(Now(), "dd/MM/yyyy hh:mm:ss")
@@ -242,9 +290,9 @@ myOutput.Range("F" & 1).Font.FontStyle = "Bold"
 '"OR NO." Column
 myOutput.Range("B" & TableHeaderRow + 1, "B" & RowCount - 1).NumberFormat = 0
 
-'added by Mike, 20190322
+'added by Mike, 20190322; edited by Mike, 20190323
 '"PARTICULARS" Column
-myOutput.Range("D" & TableHeaderRow + 1, "D" & RowCount - 1).Font.Size = 12
+'myOutput.Range("D" & TableHeaderRow + 1, "D" & RowCount - 1).Font.Size = 12
 myOutput.Range("D" & TableHeaderRow + 1, "D" & RowCount - 1).Font.FontStyle = "Bold"
 
 'added by Mike, 20190321

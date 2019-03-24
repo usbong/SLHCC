@@ -1,13 +1,13 @@
 # MOSC (Marikina Orthopedic Specialty Clinic)
 <b>Author:</b> Michael B. Syson</br>
 <b>Date Created:</b> 20171121</br>
-<b>Date Updated:</b> 201090324</br>
+<b>Date Updated:</b> 20190324</br>
 <b>Description:</b></br>
-This is a set of add-on software to automate computing tasks and the generation of reports using data from Microsoft Excel workbooks.</br>
+This is a set of add-on software to automate computing tasks and the generation of reports using data from Microsoft EXCEL workbooks.</br>
 
 # Add-on Software
-We've written the add-on software using among others:<br>
-a) Visual Basic for Applications (VBA) that we execute as instructions/Macros on Microsoft Excel</br>
+We've written the add-on software using among others:</br>
+a) Visual Basic for Applications (VBA) that we execute as instructions/Macros on Microsoft EXCEL</br>
 b) Java programming language
 
 # Usbong's Add-on Software Development Service
@@ -16,7 +16,7 @@ http://www.usbong.ph/excel
 # Summary Report File Encryption
 ### Note: I've verified that the steps that I've written here work on Microsoft Office 2013. 
 To encrypt our Summary Reports in PDF (Portable Document Format), we have to do the following:</br>
-1) We transfer the specific Microsoft Excel worksheet with the Summary Report from the Excel workbook to Microsoft WORD.</br>
+1) We transfer the specific Microsoft EXCEL worksheet with the Summary Report from the EXCEL workbook to Microsoft WORD.</br>
 2) In Microsoft WORD, we click "File" -> "Save As".</br>
 3) In the "Save As" Window, we select for the "Save as type:" dropdown menu, "PDF (\*.pdf)".</br>
 4) Before clicking the "Save" button, we click on its left, "Tools" -> "General Options..."</br>

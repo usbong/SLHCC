@@ -1,0 +1,333 @@
+Sub autoGenerateWorkbookWithHMOBillingUtilizationTemplate()
+' Copyright 2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190324
+' @date updated: 20190324
+'
+' Given:
+' 1) Workbook with the HMO Billing data
+'
+'Output:
+' 1) Auto-generated new Workbook with HMO Billing Utilization data from ORTHO & PT TREATMENT DEPT. Workbook
+' 2) Auto-update Workbook with HMO Billing Utilization Template from Sta. Lucia Health Care Centre (SLHCC)
+'
+Dim myInput As Worksheet
+Dim myOutput As Worksheet 'the same as myInput
+Dim row As Range
+Dim RowCount As Integer
+Dim TableHeaderRow As Integer
+Dim LastPrintableRow As Integer
+Dim MaxPatientNameColumnWidth As Integer
+Dim patientNameFontSize As Integer
+
+'added by Mike, 20190324
+
+private static final int INPUT_REFERRING_DOCTOR_COLUMN = 15-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_NOTES_COLUMN = 0; //This column is not included in the INPUT_NON_MASTER_LIST_OFFSET
+	private static final int INPUT_DATE_COLUMN = 1-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_PATIENT_NAME_COLUMN = 3-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_CLASS_COLUMN = 8-INPUT_NON_MASTER_LIST_OFFSET; //HMO and NON-HMO
+	private static final int INPUT_NET_PF_COLUMN = 10-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_NEW_OLD_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_NEW_OLD_PATIENT_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190102
+	private static final int INPUT_CHARGE_SLIP_NUMBER_COLUMN = 11-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190226
+	private static final int INPUT_APPROVAL_CODE_COLUMN = 12-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190226
+	private static final int INPUT_FEE_COLUMN = 7-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190226
+	private static final int INPUT_DIAGNOSIS_COLUMN = 6-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190303
+
+	//added by Mike, 20190226
+	private static final String OUTPUT_HMO_BILLING_DEPARTMENT_PT_VALUE = "PT";
+	private static final String OUTPUT_HMO_BILLING_DEPARTMENT_ORTHO_VALUE = "ORTHO";
+	private static final String OUTPUT_HMO_BILLING_DEPARTMENT_REHAB_VALUE = "REHAB";
+
+	private static final String OUTPUT_HMO_BILLING_PROCEDURE_PT_VALUE = "PT TREATMENT";
+	private static final String OUTPUT_HMO_BILLING_PROCEDURE_ORTHO_VALUE = "ORTHO CONSULT";
+	private static final String OUTPUT_HMO_BILLING_PROCEDURE_REHAB_VALUE = "REHAB CONSULT";
+	private static final String OUTPUT_HMO_BILLING_PROCEDURE_ORTHO_PROCEDURE_VALUE = "ORTHO-PROCEDURE";
+	private static final String OUTPUT_HMO_BILLING_PROCEDURE_REHAB_PROCEDURE_VALUE = "REHAB-PROCEDURE";
+
+	private static final String OUTPUT_HMO_BILLING_PAYEE_VALUE = "STA. LUCIA HEALTH CARE CENTRE, INC.";
+	
+	//added by Mike, 20190305
+	//all PT Treatment transactions based on the HMO Billing Template
+	private static final String OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_PT_VALUE = "SYSON, PEDRO"; 
+	private static final String OUTPUT_HMO_BILLING_UTILIZATION_SUMMARY_MEDICAL_DOCTOR_NAME_PT_VALUE = "PEDRO SYSON"; //added by Mike, 20190305 
+
+	//edited by Mike, 20190202
+	private static final int INPUT_CONSULTATION_PROCEDURE_COLUMN = 2-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET;
+
+	//added by Mike, 20190107
+	private static final int INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN = 2-INPUT_NON_MASTER_LIST_OFFSET; //The int value is the same as "INPUT_CONSULTATION_PROCEDURE_COLUMN".
+
+	//added by Mike, 20181218
+	//CONSULTATION
+	private static final int INPUT_CONSULTATION_PROCEDURE_DETAILS_COLUMN = 12-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_CONSULTATION_APPROVAL_CODE_COLUMN = 15-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_CONSULTATION_DIAGNOSIS_COLUMN = 7-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190303
+	
+/*	
+	private static final int INPUT_CONSULTATION_CLASS_COLUMN = 9;
+	private static final int INPUT_CONSULTATION_NET_PF_COLUMN = 11;
+	private static final int INPUT_CONSULTATION_NEW_OLD_COLUMN = 17;
+*/	
+	private static final int INPUT_CONSULTATION_OFFSET = 1;
+	
+
+'added by Mike, 20190324
+Dim hmoBillingContainer As dictionary
+Set hmoBillingContainer = New dictionary
+
+Dim hmoBillingColumnValuesContainer As dictionary
+Set hmoBillingColumnValuesContainer = New dictionary
+
+Dim hmoBillingContainerTransactionCount As Integer
+
+hmoBillingContainerTransactionCount = 1
+RowCount = 2 'do not include table header row
+RowCountOffset = 0 'This is to make the add-on software automatically adjust to rows with new line marks
+
+Set myInput = Sheets(ActiveSheet.Name)
+Set myOutput = Sheets(ActiveSheet.Name)
+
+For Each row In myInput.Rows
+
+        'dictionary(1) = valuesDictionary
+		hmoBillingContainer(hmoBillingContainerTransactionCount) = hmoBillingColumnValuesContainer
+		hmoBillingContainerTransactionCount = hmoBillingContainerTransactionCount + 1
+
+hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DATE_COLUMN] 
+							= inputColumns[INPUT_DATE_COLUMN].trim().toUpperCase();
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_HMO_NAME_COLUMN] 
+							= hmoName;//.replace("HMO/","")		
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN] 
+							= ""+chargeSlipNumber;
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN] 
+							= inputColumns[INPUT_PATIENT_NAME_COLUMN].trim().toUpperCase();
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN] 
+							= inputColumns[INPUT_APPROVAL_CODE_COLUMN].trim().toUpperCase();
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN] 
+							= inputColumns[INPUT_REFERRING_DOCTOR_COLUMN].trim().toUpperCase();
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PAYEE_COLUMN] 
+							= OUTPUT_HMO_BILLING_PAYEE_VALUE;
+
+						//added by Mike, 20190303
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN] 
+							= inputColumns[INPUT_DIAGNOSIS_COLUMN].trim().toUpperCase();
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN] 
+							= OUTPUT_HMO_BILLING_DEPARTMENT_PT_VALUE;
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_PROCEDURE_COLUMN] 
+							= OUTPUT_HMO_BILLING_PROCEDURE_PT_VALUE;
+							
+						hmoBillingColumnValuesArray[OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN] 
+							= inputColumns[INPUT_FEE_COLUMN].trim().toUpperCase();						
+						
+						//added by Mike, 20190303
+						//remove unnecessary quotaion mark, i.e. "
+						for(int h=0; h<hmoBillingColumnValuesArray.length; h++) {
+							if (hmoBillingColumnValuesArray[h]!=null) {
+								hmoBillingColumnValuesArray[h] = hmoBillingColumnValuesArray[h].replace("\"","");
+							}
+						}
+						
+						hmoBillingContainer.put(hmoBillingContainerTransactionCount, hmoBillingColumnValuesArray);
+						hmoBillingContainerTransactionCount++;
+
+						
+					
+       'added by Mike, 20190309
+        myOutput.Range("D" & RowCount, "D" & RowCount).Font.Name = "Calibri"
+        myOutput.Range("D" & RowCount, "D" & RowCount).Font.Size = DiagnosisFontSize
+
+        If RowCount <= TableHeaderRow Then
+            'MsgBox ("RowCount: " & RowCount)
+
+            myOutput.Range("A" & RowCount, "F" & RowCount).Font.Bold = True
+            RowCount = RowCount + 1
+        Else
+        
+            diagnosisValue = myInput.Range("D" & RowCount, "D" & RowCount).Value
+            diagnosisValueLength = Len(myInput.Range("D" & RowCount, "D" & RowCount).Value)
+            diagnosisValueArray = Split(myInput.Range("D" & RowCount, "D" & RowCount).Value, " ")
+            output = Trim(diagnosisValue)
+            
+            'MsgBox ("RowCount: " & RowCount)
+            'MsgBox ("patientNameValueLength: " & patientNameValueLength)
+    
+            If diagnosisValueLength > MaxColumnWidthInCharacters Then
+                output = ""
+                temp = ""
+                'MsgBox ("diagnosisValue: " & diagnosisValue)
+               ' MsgBox ("diagnosisValueLength: " & diagnosisValueLength)
+                'MsgBox ("MaxColumnWidthInCharacters: " & MaxColumnWidthInCharacters)
+                    
+                    For Index = LBound(diagnosisValueArray) To UBound(diagnosisValueArray)
+                   ' MsgBox ("temp: " & temp)
+                        Value = diagnosisValueArray(Index)
+                        temp = temp & " " & Value
+                        If Len(temp) > MaxColumnWidthInCharacters Then
+                            output = output & vbCrLf & Value 'add new line
+                            temp = Value
+                            RowCountOffset = RowCountOffset + 1
+                        Else
+                            output = output & " " & Value
+                        End If
+                    Next
+                    
+            End If
+            
+            'edited by Mike, 20190309
+            'remove the excess character encoding, i.e. 'Â', due to reading the file in non-UTF-8 encoding or file origin
+            myInput.Range("D" & RowCount, "D" & RowCount).Value = Replace(Trim(output), "Â", "")
+            
+            If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+                Exit For
+            Else
+                RowCount = RowCount + 1
+            End If
+        End If
+Next row
+
+
+
+
+
+
+
+--
+
+'Auto-fit Date column based on actual value
+myOutput.Range("A" & TableHeaderRow + 1, "A" & TableHeaderRow + 1).Select
+Selection.EntireColumn.AutoFit 'edited by Mike, 20190309
+'Selection.EntireColumn.ColumnWidth = 12
+
+'Auto-fit select columns based on the table header row
+myOutput.Range("B" & TableHeaderRow, "F" & TableHeaderRow).Select
+Selection.EntireColumn.AutoFit
+
+'Auto-fit DIAGNOSIS column
+myOutput.Range("D" & TableHeaderRow, "D" & TableHeaderRow).Select
+Selection.EntireColumn.ColumnWidth = 46
+
+
+'Auto-update font size of value of DIAGNOSIS based on the following:
+'max column width: 46
+'max number of characters in value: 44
+'default font size: 11
+'font style: Calibri
+For Each row In myInput.Rows
+       'added by Mike, 20190309
+        myOutput.Range("D" & RowCount, "D" & RowCount).Font.Name = "Calibri"
+        myOutput.Range("D" & RowCount, "D" & RowCount).Font.Size = DiagnosisFontSize
+
+        If RowCount <= TableHeaderRow Then
+            'MsgBox ("RowCount: " & RowCount)
+
+            myOutput.Range("A" & RowCount, "F" & RowCount).Font.Bold = True
+            RowCount = RowCount + 1
+        Else
+        
+            diagnosisValue = myInput.Range("D" & RowCount, "D" & RowCount).Value
+            diagnosisValueLength = Len(myInput.Range("D" & RowCount, "D" & RowCount).Value)
+            diagnosisValueArray = Split(myInput.Range("D" & RowCount, "D" & RowCount).Value, " ")
+            output = Trim(diagnosisValue)
+            
+            'MsgBox ("RowCount: " & RowCount)
+            'MsgBox ("patientNameValueLength: " & patientNameValueLength)
+    
+            If diagnosisValueLength > MaxColumnWidthInCharacters Then
+                output = ""
+                temp = ""
+                'MsgBox ("diagnosisValue: " & diagnosisValue)
+               ' MsgBox ("diagnosisValueLength: " & diagnosisValueLength)
+                'MsgBox ("MaxColumnWidthInCharacters: " & MaxColumnWidthInCharacters)
+                    
+                    For Index = LBound(diagnosisValueArray) To UBound(diagnosisValueArray)
+                   ' MsgBox ("temp: " & temp)
+                        Value = diagnosisValueArray(Index)
+                        temp = temp & " " & Value
+                        If Len(temp) > MaxColumnWidthInCharacters Then
+                            output = output & vbCrLf & Value 'add new line
+                            temp = Value
+                            RowCountOffset = RowCountOffset + 1
+                        Else
+                            output = output & " " & Value
+                        End If
+                    Next
+                    
+            End If
+            
+            'edited by Mike, 20190309
+            'remove the excess character encoding, i.e. 'Â', due to reading the file in non-UTF-8 encoding or file origin
+            myInput.Range("D" & RowCount, "D" & RowCount).Value = Replace(Trim(output), "Â", "")
+            
+            If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+                Exit For
+            Else
+                RowCount = RowCount + 1
+            End If
+        End If
+Next row
+
+myOutput.Range("A" & 1, "F" & RowCount).Font.Size = 11
+myOutput.Range("A" & 1, "F" & RowCount).Font.Name = "Calibri"
+'myOutput.Range("A" & 1, "Q" & RowCount).NumberFormat = "0.00"
+
+'added by Mike, 20190305; edited by Mike, 20190312
+If RowCount + RowCountOffset < LastPrintableRow Then
+    myOutput.Range("A" & TableHeaderRow, "F" & LastPrintableRow - RowCountOffset).Borders.LineStyle = 1
+Else
+    myOutput.Range("A" & TableHeaderRow, "F" & RowCount - 1).Borders.LineStyle = 1
+End If
+
+'added by Mike, 20190306
+myOutput.PageSetup.Orientation = xlLandscape
+'added by Mike, 20190306
+'Set Margins to Narrow
+'The values below are already in cm or centimeters
+myOutput.PageSetup.TopMargin = 1.91
+myOutput.PageSetup.BottomMargin = 1.91
+myOutput.PageSetup.LeftMargin = 0.64
+myOutput.PageSetup.RightMargin = 0.64
+myOutput.PageSetup.HeaderMargin = 0.76
+myOutput.PageSetup.FooterMargin = 0.76
+
+'added by Mike, 20190309
+'add bottom border in F1 and F2
+myOutput.Range("F" & 1).Borders(xlEdgeBottom).LineStyle = 1
+myOutput.Range("F" & 2).Borders(xlEdgeBottom).LineStyle = 1
+
+'added by Mike, 20190309
+'align to the right the values in E1, i.e. "PHYSICIAN:", and E2, i.e. "PERIOD COVERED:"
+myOutput.Range("E" & 1).HorizontalAlignment = xlRight
+myOutput.Range("E" & 2).HorizontalAlignment = xlRight
+
+'added by Mike, 20190309
+'align to the center the values in D3, D4, and D5, above the table header row
+myOutput.Range("D" & 3).HorizontalAlignment = xlCenter
+myOutput.Range("D" & 4).HorizontalAlignment = xlCenter
+myOutput.Range("D" & 5).HorizontalAlignment = xlCenter
+
+'added by Mike, 20190309
+'align to the center the values in the table header row
+myOutput.Range("A" & 6, "F" & 6).HorizontalAlignment = xlCenter
+
+'added by Mike, 20190309
+'align to the center vertically all the values in the table
+myOutput.Range("A" & TableHeaderRow, "F" & RowCount).VerticalAlignment = xlCenter
+End Sub

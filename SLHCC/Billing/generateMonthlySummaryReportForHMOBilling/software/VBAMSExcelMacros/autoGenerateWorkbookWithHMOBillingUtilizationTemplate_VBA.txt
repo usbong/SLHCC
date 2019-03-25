@@ -207,6 +207,15 @@ For Each row In myInput.Rows
             'TO-DO: -put: values in the containers
             hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN))), "" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN
             hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_CLASS_COLUMN))), "" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN
+            hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_CHARGE_SLIP_NUMBER_COLUMN))), "" & OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN
+            hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_PATIENT_NAME_COLUMN))), "" & OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN
+            hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_APPROVAL_CODE_COLUMN))), "" & OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN
+            hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_REFERRING_DOCTOR_COLUMN))), "" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN
+            hmoBillingColumnValuesContainer.Add UCase(Trim("" & OUTPUT_HMO_BILLING_PAYEE_VALUE)), "" & OUTPUT_HMO_BILLING_PAYEE_COLUMN
+            hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_DIAGNOSIS_COLUMN))), "" & OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN
+            hmoBillingColumnValuesContainer.Add UCase(Trim("" & OUTPUT_HMO_BILLING_DEPARTMENT_PT_VALUE)), "" & OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN
+            hmoBillingColumnValuesContainer.Add UCase(Trim("" & OUTPUT_HMO_BILLING_PROCEDURE_PT_VALUE)), "" & OUTPUT_HMO_BILLING_PROCEDURE_COLUMN
+            hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_FEE_COLUMN))), "" & OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN
             
             'MsgBox ("value: " & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
             'myOutput.Cells(RowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
@@ -219,6 +228,7 @@ For Each row In myInput.Rows
             'MsgBox ("value: " & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
             myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
             myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = "" & Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN), "HMO/", "")
+
             
             OutputRowCount = OutputRowCount + 1
         End If

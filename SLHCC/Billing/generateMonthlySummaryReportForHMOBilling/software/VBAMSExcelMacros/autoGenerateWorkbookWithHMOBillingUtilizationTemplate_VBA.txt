@@ -79,6 +79,24 @@ Dim OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN As Integer
 Dim OUTPUT_HMO_UTILIZATION_MD_SIGNATURE_COLUMN As Integer
 Dim OUTPUT_HMO_UTILIZATION_RECEIVED_BY_DATE_COLUMN As Integer
 
+Dim OUTPUT_HMO_BILLING_DATE_COLUMN As Integer
+Dim OUTPUT_HMO_BILLING_HMO_NAME_COLUMN As Integer
+Dim OUTPUT_HMO_BILLING_NUMBER_COLUMN As Integer
+Dim OUTPUT_HMO_BILLING_FORM_COLUMN As Integer
+Dim OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN As Integer
+Dim OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN As Integer
+Dim OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN As Integer
+Dim OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN As Integer
+Dim OUTPUT_HMO_BILLING_PAYEE_COLUMN As Integer
+Dim OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN As Integer
+Dim OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN As Integer
+Dim OUTPUT_HMO_BILLING_PROCEDURE_COLUMN As Integer
+Dim OUTPUT_HMO_BILLING_DOCTORS_COLUMN As Integer
+Dim OUTPUT_HMO_BILLING_VAT_EXEMPT_COLUMN As Integer
+Dim OUTPUT_HMO_BILLING_VATABLE_SALES_COLUMN As Integer
+Dim OUTPUT_HMO_BILLING_VAT_COLUMN As Integer
+Dim OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN As Integer
+
 'added by Mike, 20190325
 'set the values of the defined terms, i.e. value-holders
 INPUT_NON_MASTER_LIST_OFFSET = 1    '0
@@ -136,6 +154,24 @@ OUTPUT_HMO_UTILIZATION_RECEIVED_BY_DATE_COLUMN = 5 + MS_EXCEL_OFFSET
 OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_PT_VALUE = "SYSON, PEDRO"
 OUTPUT_HMO_BILLING_UTILIZATION_SUMMARY_MEDICAL_DOCTOR_NAME_PT_VALUE = "PEDRO SYSON"
 
+OUTPUT_HMO_BILLING_DATE_COLUMN = 0 + MS_EXCEL_OFFSET
+OUTPUT_HMO_BILLING_HMO_NAME_COLUMN = 1 + MS_EXCEL_OFFSET
+OUTPUT_HMO_BILLING_NUMBER_COLUMN = 2 + MS_EXCEL_OFFSET 'for use as table header only
+OUTPUT_HMO_BILLING_FORM_COLUMN = 3 + MS_EXCEL_OFFSET 'for use as table header only
+OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN = 4 + MS_EXCEL_OFFSET
+OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN = 5 + MS_EXCEL_OFFSET
+OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN = 6 + MS_EXCEL_OFFSET 'approval code/account number
+OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN = 7 + MS_EXCEL_OFFSET
+OUTPUT_HMO_BILLING_PAYEE_COLUMN = 8 + MS_EXCEL_OFFSET
+OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN = 9 + MS_EXCEL_OFFSET 'for use as table header only
+OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN = 10 + MS_EXCEL_OFFSET
+OUTPUT_HMO_BILLING_PROCEDURE_COLUMN = 11 + MS_EXCEL_OFFSET
+OUTPUT_HMO_BILLING_DOCTORS_COLUMN = 12 + MS_EXCEL_OFFSET 'for use as table header only
+OUTPUT_HMO_BILLING_VAT_EXEMPT_COLUMN = 13 + MS_EXCEL_OFFSET 'for use as table header only
+OUTPUT_HMO_BILLING_VATABLE_SALES_COLUMN = 14 + MS_EXCEL_OFFSET 'for use as table header only
+OUTPUT_HMO_BILLING_VAT_COLUMN = 15 + MS_EXCEL_OFFSET 'for use as table header only
+OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN = 16 + MS_EXCEL_OFFSET
+
 'added by Mike, 20190324
 Dim hmoBillingContainer As Collection
 Set hmoBillingContainer = New Collection
@@ -168,22 +204,22 @@ For Each row In myInput.Rows
         'MsgBox ("UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN))): " & UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN + 1))))
                 
         If InStr(myInput.Cells(RowCount, INPUT_CLASS_COLUMN).Value, "HMO") = 1 Then
-        
+            'TO-DO: -put: values in the containers
             hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN))), "" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN
+            hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_CLASS_COLUMN))), "" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN
             
             'MsgBox ("value: " & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
-                                
             'myOutput.Cells(RowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
             
-            
-            
-            
+            'MsgBox ("value: " & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN))
             
             hmoBillingContainer.Add hmoBillingColumnValuesContainer, "" & hmoBillingContainerTransactionCount
             hmoBillingContainerTransactionCount = hmoBillingContainerTransactionCount + 1
                                 
             'MsgBox ("value: " & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
             myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
+            myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = "" & Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN), "HMO/", "")
+            
             OutputRowCount = OutputRowCount + 1
         End If
                             

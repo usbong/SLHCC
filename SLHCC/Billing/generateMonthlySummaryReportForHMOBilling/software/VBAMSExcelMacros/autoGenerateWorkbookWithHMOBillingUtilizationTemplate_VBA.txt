@@ -148,6 +148,7 @@ Dim hmoBillingContainerTransactionCount As Integer
 hmoBillingContainerTransactionCount = 1
 RowCount = 2 'do not include table header row
 RowCountOffset = 0 'This is to make the add-on software automatically adjust to rows with new line marks
+OutputRowCount = 1 'added by Mike, 20190325
 
 Set myInput = Sheets(ActiveSheet.Name)
 
@@ -164,30 +165,27 @@ Set myOutput = Sheets(ActiveSheet.Name)
 For Each row In myInput.Rows
         Set hmoBillingColumnValuesContainer = New Collection
 
-
         'MsgBox ("UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN))): " & UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN + 1))))
                 
-        hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN))), "" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN
+        If InStr(myInput.Cells(RowCount, INPUT_CLASS_COLUMN).Value, "HMO") = 1 Then
         
-        'MsgBox ("value: " & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
-                            
-        'myOutput.Cells(RowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
-        
-        
-        
-        
-        
-        hmoBillingContainer.Add hmoBillingColumnValuesContainer, "" & hmoBillingContainerTransactionCount
-        hmoBillingContainerTransactionCount = hmoBillingContainerTransactionCount + 1
-                            
-        'MsgBox ("value: " & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
-        'do a RowCount - 1 to start at the 1st row; table header not included
-        myOutput.Cells(RowCount - 1, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
-                            
-                            
-                            
-                            
-                            
+            hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN))), "" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN
+            
+            'MsgBox ("value: " & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
+                                
+            'myOutput.Cells(RowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
+            
+            
+            
+            
+            
+            hmoBillingContainer.Add hmoBillingColumnValuesContainer, "" & hmoBillingContainerTransactionCount
+            hmoBillingContainerTransactionCount = hmoBillingContainerTransactionCount + 1
+                                
+            'MsgBox ("value: " & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
+            myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
+            OutputRowCount = OutputRowCount + 1
+        End If
                             
         If IsEmpty(myInput.Range("C" & RowCount).Value) Then
             Exit For
@@ -195,4 +193,5 @@ For Each row In myInput.Rows
             RowCount = RowCount + 1
         End If
 Next row
+
 End Sub

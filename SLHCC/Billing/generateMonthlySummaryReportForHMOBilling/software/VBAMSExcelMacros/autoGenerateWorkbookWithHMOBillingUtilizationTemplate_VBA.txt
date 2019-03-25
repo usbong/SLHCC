@@ -9,14 +9,14 @@ Sub autoGenerateWorkbookWithHMOBillingUtilizationTemplate()
 '
 ' @author: Michael Syson
 ' @date created: 20190324
-' @date updated: 20190324
+' @date updated: 20190325
 '
 ' Given:
 ' 1) Workbook with the HMO Billing data
 '
 'Output:
 ' 1) Auto-generated new Workbook with HMO Billing Utilization data from ORTHO & PT TREATMENT DEPT. Workbook
-' 2) Auto-update Workbook with HMO Billing Utilization Template from Sta. Lucia Health Care Centre (SLHCC)
+' 2) Auto-updated Workbook with HMO Billing Utilization Template from Sta. Lucia Health Care Centre (SLHCC)
 '
 Dim myInput As Worksheet
 Dim myOutput As Worksheet 'the same as myInput
@@ -27,7 +27,45 @@ Dim LastPrintableRow As Integer
 Dim MaxPatientNameColumnWidth As Integer
 Dim patientNameFontSize As Integer
 
-'added by Mike, 20190324
+'added by Mike, 20190325
+Dim INPUT_REFERRING_DOCTOR_COLUMN As Integer
+Dim INPUT_NOTES_COLUMN As Integer
+Dim INPUT_DATE_COLUMN As Integer
+Dim INPUT_PATIENT_NAME_COLUMN As Integer
+Dim INPUT_CLASS_COLUMN As Integer
+Dim INPUT_NET_PF_COLUMN As Integer
+Dim INPUT_NEW_OLD_COLUMN As Integer
+Dim INPUT_NEW_OLD_PATIENT_COLUMN As Integer
+Dim INPUT_CHARGE_SLIP_NUMBER_COLUMN As Integer
+Dim INPUT_APPROVAL_CODE_COLUMN As Integer
+Dim INPUT_FEE_COLUMN As Integer
+Dim INPUT_DIAGNOSIS_COLUMN As Integer
+
+Dim OUTPUT_HMO_BILLING_DEPARTMENT_PT_VALUE As Variant
+Dim OUTPUT_HMO_BILLING_DEPARTMENT_ORTHO_VALUE As Variant
+Dim OUTPUT_HMO_BILLING_DEPARTMENT_REHAB_VALUE As Variant
+
+Dim OUTPUT_HMO_BILLING_PROCEDURE_PT_VALUE As Variant
+Dim OUTPUT_HMO_BILLING_PROCEDURE_ORTHO_VALUE As Variant
+Dim OUTPUT_HMO_BILLING_PROCEDURE_REHAB_VALUE As Variant
+Dim OUTPUT_HMO_BILLING_PROCEDURE_ORTHO_PROCEDURE_VALUE As Variant
+Dim OUTPUT_HMO_BILLING_PROCEDURE_REHAB_PROCEDURE_VALUE As Variant
+
+Dim OUTPUT_HMO_BILLING_PAYEE_VALUE As Variant
+
+Dim OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_PT_VALUE As Variant
+Dim OUTPUT_HMO_BILLING_UTILIZATION_SUMMARY_MEDICAL_DOCTOR_NAME_PT_VALUE As Variant
+
+Dim INPUT_CONSULTATION_PROCEDURE_COLUMN As Integer
+Dim INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN As Integer
+Dim INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN As Integer
+
+Dim INPUT_CONSULTATION_PROCEDURE_DETAILS_COLUMN As Integer
+Dim INPUT_CONSULTATION_APPROVAL_CODE_COLUMN As Integer
+Dim INPUT_CONSULTATION_DIAGNOSIS_COLUMN As Integer
+
+Dim INPUT_CONSULTATION_OFFSET As Integer
+
 
 private static final int INPUT_REFERRING_DOCTOR_COLUMN = 15-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_NOTES_COLUMN = 0; //This column is not included in the INPUT_NON_MASTER_LIST_OFFSET

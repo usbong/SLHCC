@@ -189,7 +189,7 @@ RowCount = 2 'do not include table header row
 RowCountOffset = 0 'This is to make the add-on software automatically adjust to rows with new line marks
 OutputRowCount = 1 'added by Mike, 20190325
 
-Set myInput = Sheets(ActiveSheet.Name)
+Set myInput = Sheets(ActiveSheet.name)
 
 'added by Mike, 20190325
 Set NewWorkbook = Workbooks.Add
@@ -199,7 +199,7 @@ Set NewWorkbook = Workbooks.Add
 
 '   ImportTextFilesAsWorksheetsInWorkbookUtilizationHMOMarch2019_20190301~20190308
 
-Set myOutput = Sheets(ActiveSheet.Name)
+Set myOutput = Sheets(ActiveSheet.name)
 
 'added by Mike, 20190327
 Set medicalDoctorWorksheetContainer = New Collection
@@ -217,7 +217,9 @@ For Each row In myInput.Rows
             hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_PATIENT_NAME_COLUMN))), "" & OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN
             hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_APPROVAL_CODE_COLUMN))), "" & OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN
             'hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_REFERRING_DOCTOR_COLUMN))), "" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN
-            hmoBillingColumnValuesContainer.Add Replace(Replace(UCase(Trim(myInput.Cells(RowCount, INPUT_REFERRING_DOCTOR_COLUMN))), "DRA. ", ""), "DR. ", ""), "" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN
+            'hmoBillingColumnValuesContainer.Add Replace(Replace(UCase(Trim(myInput.Cells(RowCount, INPUT_REFERRING_DOCTOR_COLUMN))), "DRA. ", ""), "DR. ", ""), "" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN
+            
+            hmoBillingColumnValuesContainer.Add getNameWithLastNameFirst(Replace(Replace(UCase(Trim(myInput.Cells(RowCount, INPUT_REFERRING_DOCTOR_COLUMN))), "DRA. ", ""), "DR. ", "")), "" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN
             
             'hmoBillingColumnValuesContainer("" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN) = Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN), "DRA. ", "") 'Replace(Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN), "DRA. ", ""), "DR. ", "")
 
@@ -272,7 +274,7 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
     
     'If a workheet with the Medical Doctor's name does not exist
     Else
-            NewWorkbook.Sheets.Add.Name = medicalDoctorName
+            NewWorkbook.Sheets.Add.name = medicalDoctorName
             'write Medical Doctor name as the worksheet name
 '            MsgBox ("medicalDoctorName: " & medicalDoctorName)
 '            medicalDoctorWorksheetContainer(medicalDoctorName).Name = medicalDoctorName
@@ -287,6 +289,39 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
 Next hmoBillingColumnValuesContainer
 
 End Sub
+
+'added by Mike, 20190327
+'input: MICHAEL SYSON
+'output: SYSON, MICHAEL
+'input: MICHAEL DELA PAZ
+'output: DELA PAZ, MICHAEL
+Private Function getNameWithLastNameFirst(name As String) As String
+nameArray = Split(name, " ")
+lastName = Trim(nameArray(UBound(nameArray)))
+firstName = ""
+
+For i = LBound(nameArray) To UBound(nameArray) - 1
+    firstName = firstName & " " & nameArray(i)
+Next
+
+'MsgBox ("value: " & firstName)
+'MsgBox ("name: " & name)
+
+'if the name has "DELA"
+If InStr(Trim(name), "DELA") > 0 Then
+'MsgBox ("name: " & name)
+
+    lastName = "DELA " & lastName
+    firstName = Replace(firstName, "DELA", "")
+End If
+           
+'MsgBox ("lastName: " & lastName)
+           
+getNameWithLastNameFirst = lastName & ", " & Trim(firstName)
+
+'MsgBox ("returnOutput: " & returnOutput)
+
+End Function
 
 
 //added by Mike, 20190227

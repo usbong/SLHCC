@@ -199,7 +199,7 @@ Set NewWorkbook = Workbooks.Add
 
 '   ImportTextFilesAsWorksheetsInWorkbookUtilizationHMOMarch2019_20190301~20190308
 
-Set myOutput = Sheets(ActiveSheet.name)
+'Set myOutput = Sheets(ActiveSheet.name)
 
 'added by Mike, 20190327
 Set medicalDoctorWorksheetContainer = New Collection
@@ -263,7 +263,6 @@ For Each row In myInput.Rows
 Next row
 
 'added by Mike, 20190327
-OutputRowCount = 1
 
 For Each hmoBillingColumnValuesContainer In hmoBillingContainer
     'added by Mike, 20190327
@@ -271,10 +270,22 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
 
     'If a workheet with the Medical Doctor's name exists
     If Evaluate("ISREF('" & medicalDoctorName & "'!A1)") Then
+'        myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
+'        myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = "" & Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN), "HMO/", "")
     
     'If a workheet with the Medical Doctor's name does not exist
     Else
-            NewWorkbook.Sheets.Add.name = medicalDoctorName
+        NewWorkbook.Sheets.Add.name = medicalDoctorName
+            
+        Set myOutput = Sheets(ActiveSheet.name)
+    
+        'added by Mike, 20190327
+        'add the portion above the table header row
+        myOutput.Cells(1, OUTPUT_HMO_UTILIZATION_MD_SIGNATURE_COLUMN).Value = "PHYSICIAN:"
+        myOutput.Cells(1, OUTPUT_HMO_UTILIZATION_MD_SIGNATURE_COLUMN + 1).Value = medicalDoctorName
+'        myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = "" & Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN), "HMO/", "")
+            
+            
             'write Medical Doctor name as the worksheet name
 '            MsgBox ("medicalDoctorName: " & medicalDoctorName)
 '            medicalDoctorWorksheetContainer(medicalDoctorName).Name = medicalDoctorName
@@ -282,8 +293,8 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
 
     End If
 
-    myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
-    myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = "" & Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN), "HMO/", "")
+'    myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
+'    myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = "" & Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN), "HMO/", "")
     
     OutputRowCount = OutputRowCount + 1
 Next hmoBillingColumnValuesContainer
@@ -322,6 +333,7 @@ getNameWithLastNameFirst = lastName & ", " & Trim(firstName)
 'MsgBox ("returnOutput: " & returnOutput)
 
 End Function
+
 
 
 //added by Mike, 20190227

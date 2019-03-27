@@ -9,7 +9,7 @@ Sub autoGenerateWorkbookWithHMOBillingUtilizationTemplate()
 '
 ' @author: Michael Syson
 ' @date created: 20190324
-' @date updated: 20190327
+' @date updated: 20190326
 '
 ' Given:
 ' 1) Workbook with the HMO Billing data
@@ -179,6 +179,9 @@ Set hmoBillingContainer = New Collection
 Dim hmoBillingColumnValuesContainer As Collection
 'Set hmoBillingColumnValuesContainer = New Collection
 
+'added by Mike, 20190327
+Dim medicalDoctorWorksheetContainer As Collection 'each Medical Doctor has a worksheet
+
 Dim hmoBillingContainerTransactionCount As Integer
 
 hmoBillingContainerTransactionCount = 1
@@ -198,6 +201,9 @@ Set NewWorkbook = Workbooks.Add
 
 Set myOutput = Sheets(ActiveSheet.Name)
 
+'added by Mike, 20190327
+Set medicalDoctorWorksheetContainer = New Collection
+
 For Each row In myInput.Rows
         Set hmoBillingColumnValuesContainer = New Collection
 
@@ -210,7 +216,14 @@ For Each row In myInput.Rows
             hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_CHARGE_SLIP_NUMBER_COLUMN))), "" & OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN
             hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_PATIENT_NAME_COLUMN))), "" & OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN
             hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_APPROVAL_CODE_COLUMN))), "" & OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN
-            hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_REFERRING_DOCTOR_COLUMN))), "" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN
+            'hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_REFERRING_DOCTOR_COLUMN))), "" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN
+            hmoBillingColumnValuesContainer.Add Replace(Replace(UCase(Trim(myInput.Cells(RowCount, INPUT_REFERRING_DOCTOR_COLUMN))), "DRA. ", ""), "DR. ", ""), "" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN
+            
+            'hmoBillingColumnValuesContainer("" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN) = Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN), "DRA. ", "") 'Replace(Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN), "DRA. ", ""), "DR. ", "")
+
+            'MsgBox ("input: " & UCase(Trim(myInput.Cells(RowCount, INPUT_REFERRING_DOCTOR_COLUMN))))
+            'MsgBox ("input: " & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN))
+
             hmoBillingColumnValuesContainer.Add UCase(Trim("" & OUTPUT_HMO_BILLING_PAYEE_VALUE)), "" & OUTPUT_HMO_BILLING_PAYEE_COLUMN
             hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_DIAGNOSIS_COLUMN))), "" & OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN
             hmoBillingColumnValuesContainer.Add UCase(Trim("" & OUTPUT_HMO_BILLING_DEPARTMENT_PT_VALUE)), "" & OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN
@@ -229,6 +242,13 @@ For Each row In myInput.Rows
             'myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
             'myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = "" & Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN), "HMO/", "")
 
+            'added by Mike, 20190327
+            'add a worksheet in the output workbook for each medical doctor
+'           medicalDoctorName = hmoBillingColumnValuesContainer("" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN)
+'            medicalDoctorWorksheetContainer.Add NewWorkbook.Sheets.Add, medicalDoctorName
+            'write Medical Doctor name as the worksheet name
+'            MsgBox ("medicalDoctorName: " & medicalDoctorName)
+'            medicalDoctorWorksheetContainer(medicalDoctorName).Name = medicalDoctorName
             
             'OutputRowCount = OutputRowCount + 1
         End If
@@ -244,6 +264,22 @@ Next row
 OutputRowCount = 1
 
 For Each hmoBillingColumnValuesContainer In hmoBillingContainer
+    'added by Mike, 20190327
+    medicalDoctorName = hmoBillingColumnValuesContainer("" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN)
+
+    'If a workheet with the Medical Doctor's name exists
+    If Evaluate("ISREF('" & medicalDoctorName & "'!A1)") Then
+    
+    'If a workheet with the Medical Doctor's name does not exist
+    Else
+            NewWorkbook.Sheets.Add.Name = medicalDoctorName
+            'write Medical Doctor name as the worksheet name
+'            MsgBox ("medicalDoctorName: " & medicalDoctorName)
+'            medicalDoctorWorksheetContainer(medicalDoctorName).Name = medicalDoctorName
+            
+
+    End If
+
     myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
     myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = "" & Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN), "HMO/", "")
     
@@ -251,6 +287,7 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
 Next hmoBillingColumnValuesContainer
 
 End Sub
+
 
 //added by Mike, 20190227
 			SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(hmoBillingContainer.keySet());		

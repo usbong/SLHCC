@@ -9,7 +9,7 @@ Sub autoGenerateWorkbookWithHMOBillingUtilizationTemplate()
 '
 ' @author: Michael Syson
 ' @date created: 20190324
-' @date updated: 20190325
+' @date updated: 20190327
 '
 ' Given:
 ' 1) Workbook with the HMO Billing data
@@ -226,11 +226,11 @@ For Each row In myInput.Rows
             hmoBillingContainerTransactionCount = hmoBillingContainerTransactionCount + 1
                                 
             'MsgBox ("value: " & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
-            myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
-            myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = "" & Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN), "HMO/", "")
+            'myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
+            'myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = "" & Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN), "HMO/", "")
 
             
-            OutputRowCount = OutputRowCount + 1
+            'OutputRowCount = OutputRowCount + 1
         End If
                             
         If IsEmpty(myInput.Range("C" & RowCount).Value) Then
@@ -239,6 +239,16 @@ For Each row In myInput.Rows
             RowCount = RowCount + 1
         End If
 Next row
+
+'added by Mike, 20190327
+OutputRowCount = 1
+
+For Each hmoBillingColumnValuesContainer In hmoBillingContainer
+    myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
+    myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = "" & Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN), "HMO/", "")
+    
+    OutputRowCount = OutputRowCount + 1
+Next hmoBillingColumnValuesContainer
 
 End Sub
 

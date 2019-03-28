@@ -9,7 +9,7 @@ Sub autoGenerateWorkbookWithHMOBillingUtilizationTemplate()
 '
 ' @author: Michael Syson
 ' @date created: 20190324
-' @date updated: 20190326
+' @date updated: 20190328
 '
 ' Given:
 ' 1) Workbook with the HMO Billing data
@@ -283,6 +283,14 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
         'add the portion above the table header row
         myOutput.Cells(1, OUTPUT_HMO_UTILIZATION_MD_SIGNATURE_COLUMN).Value = "PHYSICIAN:"
         myOutput.Cells(1, OUTPUT_HMO_UTILIZATION_MD_SIGNATURE_COLUMN + 1).Value = medicalDoctorName
+        
+        'added by Mike, 20190328
+        myOutput.Cells(2, OUTPUT_HMO_UTILIZATION_MD_SIGNATURE_COLUMN).Value = "PERIOD COVERED:"
+        
+        myOutput.Cells(3, OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN).Value = "CONSULTATION"
+        myOutput.Cells(4, OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN).Value = "STA. LUCIA HEALTH CARE CENTRE, INC."
+        myOutput.Cells(5, OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN).Value = "HMO UTILIZATION SUMMARY"
+        
 '        myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = "" & Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN), "HMO/", "")
             
             
@@ -333,6 +341,7 @@ getNameWithLastNameFirst = lastName & ", " & Trim(firstName)
 'MsgBox ("returnOutput: " & returnOutput)
 
 End Function
+
 
 
 

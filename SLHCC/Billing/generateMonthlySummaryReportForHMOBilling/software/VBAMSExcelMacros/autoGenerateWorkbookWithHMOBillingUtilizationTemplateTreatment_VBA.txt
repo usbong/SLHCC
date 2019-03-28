@@ -235,7 +235,8 @@ For Each row In myInput.Rows
          If InStr(myInput.Cells(RowCount, INPUT_CLASS_COLUMN).Value, "HMO") = 1 Then
          'If InStr(myInput.Cells(RowCount, INPUT_CONSULTATION_CLASS_COLUMN).Value, "HMO") = 1 Then
             'TO-DO: -put: values in the containers
-            hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN))), CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
+'            hmoBillingColumnValuesContainer.Add getDateAsHMOBillingFormat(UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN)))), CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
+            hmoBillingColumnValuesContainer.Add CDate(UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN)))), CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
             hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_CLASS_COLUMN))), CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN)
             'hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_CONSULTATION_CLASS_COLUMN))), CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN)
 
@@ -287,6 +288,8 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
          'OutputRowCount = medicalDoctorWorksheetOutputRowCountContainer(medicalDoctorName)
          
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).NumberFormat = "dd-mmm-yy"
+         
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_PATIENT_NAME_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN))
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = Replace(hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN)), "HMO/", "")
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN))
@@ -382,6 +385,9 @@ getNameWithLastNameFirst = lastName & ", " & Trim(firstName)
 'MsgBox ("returnOutput: " & returnOutput)
 
 End Function
+
+
+
 
 Private Sub autoUpdateWorkbookWithHMOBillingUtilizationTemplate()
 ' Copyright 2019 Usbong Social Systems, Inc.

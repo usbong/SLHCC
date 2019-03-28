@@ -182,6 +182,9 @@ Dim hmoBillingColumnValuesContainer As Collection
 'added by Mike, 20190327
 Dim medicalDoctorWorksheetContainer As Collection 'each Medical Doctor has a worksheet
 
+'added by Mike, 20190328
+Dim hmoUtilizationTableHeaderContainer As Collection
+
 Dim hmoBillingContainerTransactionCount As Integer
 
 hmoBillingContainerTransactionCount = 1
@@ -203,6 +206,16 @@ Set NewWorkbook = Workbooks.Add
 
 'added by Mike, 20190327
 Set medicalDoctorWorksheetContainer = New Collection
+
+'added by Mike, 20190328
+Set hmoUtilizationTableHeaderContainer = New Collection
+
+hmoUtilizationTableHeaderContainer.Add "DATE", CStr(1) 'convert 1 to a String to be accepted as key
+hmoUtilizationTableHeaderContainer.Add "PATIENT'S NAME", CStr(2)
+hmoUtilizationTableHeaderContainer.Add "HMO NAME", CStr(3)
+hmoUtilizationTableHeaderContainer.Add "DIAGNOSIS", CStr(4)
+hmoUtilizationTableHeaderContainer.Add "MD'S SIGNATURE", CStr(5)
+hmoUtilizationTableHeaderContainer.Add "RECEIVED BY/DATE", CStr(6)
 
 For Each row In myInput.Rows
         Set hmoBillingColumnValuesContainer = New Collection
@@ -291,6 +304,11 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
         myOutput.Cells(4, OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN).Value = "STA. LUCIA HEALTH CARE CENTRE, INC."
         myOutput.Cells(5, OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN).Value = "HMO UTILIZATION SUMMARY"
         
+        'added by Mike, 20190328
+        For i = 1 To hmoUtilizationTableHeaderContainer.Count 'from 1 to the total items in the container
+            myOutput.Cells(6, i).Value = hmoUtilizationTableHeaderContainer(i)
+        Next
+        
 '        myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = "" & Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN), "HMO/", "")
             
             
@@ -341,6 +359,9 @@ getNameWithLastNameFirst = lastName & ", " & Trim(firstName)
 'MsgBox ("returnOutput: " & returnOutput)
 
 End Function
+
+
+
 
 
 

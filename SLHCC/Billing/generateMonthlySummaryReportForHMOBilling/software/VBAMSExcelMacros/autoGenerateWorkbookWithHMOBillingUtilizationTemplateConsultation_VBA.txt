@@ -233,9 +233,10 @@ For Each row In myInput.Rows
         'MsgBox ("UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN))): " & UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN + 1))))
                 
 '        If InStr(myInput.Cells(RowCount, INPUT_CLASS_COLUMN).Value, "HMO") = 1 Then
-         If InStr(myInput.Cells(RowCount, INPUT_CONSULTATION_CLASS_COLUMN).Value, "HMO") = 1 Then
+         If InStr(myInput.Cells(RowCount, INPUT_CONSULTATION_CLASS_COLUMN).Value, "HMO") <> 0 Then
             'TO-DO: -put: values in the containers
-            hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN))), CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
+'            hmoBillingColumnValuesContainer.Add getDateAsHMOBillingFormat(UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN)))), CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
+            hmoBillingColumnValuesContainer.Add CDate(UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN)))), CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
             'hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_CLASS_COLUMN))), CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN)
             hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_CONSULTATION_CLASS_COLUMN))), CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN)
 
@@ -244,11 +245,11 @@ For Each row In myInput.Rows
             'hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_APPROVAL_CODE_COLUMN))), "" & OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN
             hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_CONSULTATION_APPROVAL_CODE_COLUMN))), CStr(OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN)
             'hmoBillingColumnValuesContainer.Add getNameWithLastNameFirst(Replace(Replace(UCase(Trim(myInput.Cells(RowCount, INPUT_REFERRING_DOCTOR_COLUMN))), "DRA. ", ""), "DR. ", "")), "" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN
-            hmoBillingColumnValuesContainer.Add getNameWithLastNameFirst(Replace(Replace(UCase(Trim(myInput.Cells(RowCount, INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN))), "DRA. ", ""), "DR. ", "")), "" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN
+            hmoBillingColumnValuesContainer.Add getNameWithLastNameFirst(Replace(Replace(UCase(Trim(myInput.Cells(RowCount, INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN))), "DRA. ", ""), "DR. ", "")), CStr(OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN)
 '            hmoBillingColumnValuesContainer.Add UCase(Trim(CStr(OUTPUT_HMO_BILLING_PAYEE_VALUE))), CStr(OUTPUT_HMO_BILLING_PAYEE_COLUMN)
             
             'hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_DIAGNOSIS_COLUMN))), "" & OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN
-            hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_CONSULTATION_DIAGNOSIS_COLUMN))), "" & OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN
+            hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_CONSULTATION_DIAGNOSIS_COLUMN))), CStr(OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN)
             
 '            hmoBillingColumnValuesContainer.Add UCase(Trim("" & OUTPUT_HMO_BILLING_DEPARTMENT_PT_VALUE)), "" & OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN
 '            hmoBillingColumnValuesContainer.Add UCase(Trim("" & OUTPUT_HMO_BILLING_PROCEDURE_PT_VALUE)), "" & OUTPUT_HMO_BILLING_PROCEDURE_COLUMN
@@ -282,6 +283,8 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
          OutputRowCount = medicalDoctorWorksheetOutputRowCountContainer(medicalDoctorName)
          
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).NumberFormat = "dd-mmm-yy"
+         
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_PATIENT_NAME_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN))
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = Replace(hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN)), "HMO/", "")
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN))
@@ -486,8 +489,8 @@ For Each row In myInput.Rows
             End If
             
             'edited by Mike, 20190309
-            'remove the excess character encoding, i.e. 'Â', due to reading the file in non-UTF-8 encoding or file origin
-            myInput.Range("D" & RowCount, "D" & RowCount).Value = Replace(Trim(output), "Â", "")
+            'remove the excess character encoding, i.e. 'ﾂ', due to reading the file in non-UTF-8 encoding or file origin
+            myInput.Range("D" & RowCount, "D" & RowCount).Value = Replace(Trim(output), "ﾂ", "")
             
             If IsEmpty(myInput.Range("C" & RowCount).Value) Then
                 Exit For

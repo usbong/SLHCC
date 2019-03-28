@@ -290,6 +290,8 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
 
     'If a workheet with the Medical Doctor's name exists
     If Evaluate("ISREF('" & medicalDoctorName & "'!A1)") Then
+         Set myOutput = Sheets(medicalDoctorName)
+
 '        myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
 '        myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = "" & Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN), "HMO/", "")
          OutputRowCount = medicalDoctorWorksheetOutputRowCountContainer(medicalDoctorName)
@@ -376,6 +378,7 @@ getNameWithLastNameFirst = lastName & ", " & Trim(firstName)
 'MsgBox ("returnOutput: " & returnOutput)
 
 End Function
+
 
 
 

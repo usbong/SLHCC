@@ -9,7 +9,7 @@
 '
 ' @author: Michael Syson
 ' @date created: 20190324
-' @date updated: 20190328
+' @date updated: 20190329
 '
 ' Given:
 ' 1) Workbook with the HMO Billing data
@@ -195,7 +195,7 @@ Dim hmoUtilizationTableHeaderContainer As Collection
 Dim hmoBillingContainerTransactionCount As Integer
 
 hmoBillingContainerTransactionCount = 1
-RowCount = 2 'do not include table header row
+RowCount = 1 '2 'do not include table header row
 RowCountOffset = 0 'This is to make the add-on software automatically adjust to rows with new line marks
 OutputRowCount = 1 'added by Mike, 20190325
 
@@ -228,12 +228,18 @@ hmoUtilizationTableHeaderContainer.Add "MD'S SIGNATURE", CStr(5)
 hmoUtilizationTableHeaderContainer.Add "RECEIVED BY/DATE", CStr(6)
 
 For Each row In myInput.Rows
-        Set hmoBillingColumnValuesContainer = New Collection
+'        Set hmoBillingColumnValuesContainer = New Collection
 
-        'MsgBox ("UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN))): " & UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN + 1))))
+         'MsgBox ("UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN))): " & UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN + 1))))
+                
+         'MsgBox ("myInput.Cells(RowCount, INPUT_CONSULTATION_CLASS_COLUMN).Value: " & myInput.Cells(RowCount, INPUT_CONSULTATION_CLASS_COLUMN).Value)
+         'MsgBox ("myInput.Cells(RowCount, 3).Value: " & myInput.Cells(RowCount, 3).Value)
                 
 '        If InStr(myInput.Cells(RowCount, INPUT_CLASS_COLUMN).Value, "HMO") = 1 Then
          If InStr(myInput.Cells(RowCount, INPUT_CONSULTATION_CLASS_COLUMN).Value, "HMO") <> 0 Then
+         'MsgBox ("dito")
+            Set hmoBillingColumnValuesContainer = New Collection
+        
             'TO-DO: -put: values in the containers
 '            hmoBillingColumnValuesContainer.Add getDateAsHMOBillingFormat(UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN)))), CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
             hmoBillingColumnValuesContainer.Add CDate(UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN)))), CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
@@ -269,29 +275,16 @@ Next row
 'added by Mike, 20190328
 Set medicalDoctorWorksheetOutputRowCountContainer = New Collection
 
-'added by Mike, 20190327; edited by Mike, 20190328
+'added by Mike, 20190327; edited by Mike, 20190329
+'write the table header and the portion above it for each Medical Doctor's worksheet
 For Each hmoBillingColumnValuesContainer In hmoBillingContainer
     'added by Mike, 20190327
     medicalDoctorName = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN))
 
     'If a workheet with the Medical Doctor's name exists
     If Evaluate("ISREF('" & medicalDoctorName & "'!A1)") Then
-         Set myOutput = Sheets(medicalDoctorName)
-
-'        myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
-'        myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = "" & Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN), "HMO/", "")
-         OutputRowCount = medicalDoctorWorksheetOutputRowCountContainer(medicalDoctorName)
-         
-         myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
-         myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).NumberFormat = "dd-mmm-yy"
-         
-         myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_PATIENT_NAME_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN))
-         myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = Replace(hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN)), "HMO/", "")
-         myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN))
-                        
-         medicalDoctorWorksheetOutputRowCountContainer.Remove medicalDoctorName
-         medicalDoctorWorksheetOutputRowCountContainer.Add OutputRowCount + 1, medicalDoctorName
-    
+        'write transactions later
+        'do nothing for now
     'If a workheet with the Medical Doctor's name does not exist
     Else
         NewWorkbook.Sheets.Add.name = medicalDoctorName
@@ -316,22 +309,32 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
         For i = 1 To hmoUtilizationTableHeaderContainer.Count 'from 1 to the total items in the container
             myOutput.Cells(6, i).Value = hmoUtilizationTableHeaderContainer(i)
         Next
-        
-'        myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = "" & Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN), "HMO/", "")
-            
-            
-            'write Medical Doctor name as the worksheet name
-'            MsgBox ("medicalDoctorName: " & medicalDoctorName)
-'            medicalDoctorWorksheetContainer(medicalDoctorName).Name = medicalDoctorName
-            
-
     End If
-
-'    myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = "" & hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
-'    myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = "" & Replace(hmoBillingColumnValuesContainer("" & OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN), "HMO/", "")
-    
-    'OutputRowCount = OutputRowCount + 1
 Next hmoBillingColumnValuesContainer
+
+'added by Mike, 20190327; edited by Mike, 20190329
+'write all the transactions in the correct Medical Doctor's worksheet
+For Each hmoBillingColumnValuesContainer In hmoBillingContainer
+    'added by Mike, 20190327
+    medicalDoctorName = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN))
+
+    'If a workheet with the Medical Doctor's name exists
+    If Evaluate("ISREF('" & medicalDoctorName & "'!A1)") Then
+         Set myOutput = Sheets(medicalDoctorName)
+         OutputRowCount = medicalDoctorWorksheetOutputRowCountContainer(medicalDoctorName)
+                  
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).NumberFormat = "dd-mmm-yy"
+         
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_PATIENT_NAME_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN))
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = Replace(hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN)), "HMO/", "")
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN))
+                        
+         medicalDoctorWorksheetOutputRowCountContainer.Remove medicalDoctorName
+         medicalDoctorWorksheetOutputRowCountContainer.Add OutputRowCount + 1, medicalDoctorName
+    End If
+Next hmoBillingColumnValuesContainer
+
 
 'added by Mike, 20190328
 'delete default worksheet automatically included when we created a new workbook
@@ -489,8 +492,8 @@ For Each row In myInput.Rows
             End If
             
             'edited by Mike, 20190309
-            'remove the excess character encoding, i.e. 'ﾂ', due to reading the file in non-UTF-8 encoding or file origin
-            myInput.Range("D" & RowCount, "D" & RowCount).Value = Replace(Trim(output), "ﾂ", "")
+            'remove the excess character encoding, i.e. 'Â', due to reading the file in non-UTF-8 encoding or file origin
+            myInput.Range("D" & RowCount, "D" & RowCount).Value = Replace(Trim(output), "Â", "")
             
             If IsEmpty(myInput.Range("C" & RowCount).Value) Then
                 Exit For

@@ -276,7 +276,7 @@ If Not fso.folderexists(outputPath) Then
     fso.createfolder (outputPath)
 End If
 
-'added by Mike, 20190325
+'added by Mike, 20190325; edited by Mike, 20190329
 Set NewWorkbook = Workbooks.Add
     With NewWorkbook
         .SaveAs Filename:=outputPath & "HMOBillingUtilizationTreatment" & startDateString & "~" & endDateString & ".xls"

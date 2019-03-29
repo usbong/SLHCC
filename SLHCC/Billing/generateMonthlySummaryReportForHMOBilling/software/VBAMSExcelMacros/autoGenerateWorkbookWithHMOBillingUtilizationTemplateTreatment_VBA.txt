@@ -21,6 +21,9 @@
 Dim myInput As Worksheet
 Dim myOutput As Worksheet 'the same as myInput
 Dim outputPath As String 'added by Mike, 20190329
+Dim startDateString As String 'added by Mike, 20190329
+Dim endDateString As String 'added by Mike, 20190329
+
 Dim row As Range
 Dim RowCount As Integer
 Dim TableHeaderRow As Integer
@@ -195,6 +198,7 @@ Dim hmoUtilizationTableHeaderContainer As Collection
 
 Dim hmoBillingContainerTransactionCount As Integer
 
+
 hmoBillingContainerTransactionCount = 1
 RowCount = 1 '2 'do not include table header row
 RowCountOffset = 0 'This is to make the add-on software automatically adjust to rows with new line marks
@@ -274,6 +278,14 @@ For Each row In myInput.Rows
         End If
 Next row
 
+'added by Mike, 20190329
+startDateString = Format(hmoBillingContainer(1)(CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN)), "yyyymmdd")
+endDateString = Format(hmoBillingContainer(hmoBillingContainerTransactionCount - 1)(CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN)), "yyyymmdd")
+
+MsgBox ("startDate: " & startDateString)
+MsgBox ("endDate: " & endDateString)
+
+
 'added by Mike, 20190328
 'Set medicalDoctorWorksheetOutputRowCountContainer = New Collection
 
@@ -292,7 +304,7 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
     'If a workheet with the outputWorksheetName, i.e. "treatment" name, does not exist
     Else
         NewWorkbook.Sheets.Add.name = outputWorksheetName 'edited by Mike, 20190328
-                
+                                               
         'medicalDoctorWorksheetOutputRowCountContainer.Add TableHeaderRow + 1, medicalDoctorName
         OutputRowCount = TableHeaderRow + 1
             
@@ -313,7 +325,7 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
         
         'added by Mike, 20190328
         For i = 1 To hmoUtilizationTableHeaderContainer.Count 'from 1 to the total items in the container
-            myOutput.Cells(6, i).Value = hmoUtilizationTableHeaderContainer(i)
+            myOutput.Cells(TableHeaderRow, i).Value = hmoUtilizationTableHeaderContainer(i)
         Next
     End If
 Next hmoBillingColumnValuesContainer
@@ -331,7 +343,7 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
          
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).NumberFormat = "dd-mmm-yy"
-         
+                  
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_PATIENT_NAME_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN))
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = Replace(hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN)), "HMO/", "")
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN))
@@ -503,8 +515,8 @@ For Each row In myInput.Rows
             End If
             
             'edited by Mike, 20190309
-            'remove the excess character encoding, i.e. 'Â', due to reading the file in non-UTF-8 encoding or file origin
-            myInput.Range("D" & RowCount, "D" & RowCount).Value = Replace(Trim(output), "Â", "")
+            'remove the excess character encoding, i.e. 'ﾂ', due to reading the file in non-UTF-8 encoding or file origin
+            myInput.Range("D" & RowCount, "D" & RowCount).Value = Replace(Trim(output), "ﾂ", "")
             
             If IsEmpty(myInput.Range("C" & RowCount).Value) Then
                 Exit For

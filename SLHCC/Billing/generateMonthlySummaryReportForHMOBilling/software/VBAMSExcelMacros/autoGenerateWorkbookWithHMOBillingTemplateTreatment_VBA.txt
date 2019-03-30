@@ -26,6 +26,7 @@ Dim endDateString As String 'added by Mike, 20190329
 
 Dim row As Range
 Dim RowCount As Integer
+Dim TableHeaderRowUtilization As Integer
 Dim TableHeaderRow As Integer
 Dim LastPrintableRow As Integer
 Dim MaxPatientNameColumnWidth As Integer
@@ -179,7 +180,10 @@ OUTPUT_HMO_BILLING_VAT_COLUMN = 15 + MS_EXCEL_OFFSET 'for use as table header on
 OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN = 16 + MS_EXCEL_OFFSET
 
 'added by Mike, 20190328
-TableHeaderRow = 6
+TableHeaderRowUtilization = 6
+
+'added by Mike, 20190330
+TableHeaderRow = 5
 
 'added by Mike, 20190324
 Dim hmoBillingContainer As Collection
@@ -243,7 +247,7 @@ For Each row In myInput.Rows
             hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_PATIENT_NAME_COLUMN))), CStr(OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN)
             hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_APPROVAL_CODE_COLUMN))), CStr(OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN)
             'hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_CONSULTATION_APPROVAL_CODE_COLUMN))), CStr(OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN)
-            hmoBillingColumnValuesContainer.Add getNameWithLastNameFirst(Replace(Replace(UCase(Trim(myInput.Cells(RowCount, INPUT_REFERRING_DOCTOR_COLUMN))), "DRA. ", ""), "DR. ", "")), "" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN
+            hmoBillingColumnValuesContainer.Add getNameWithLastNameFirst(Replace(Replace(UCase(Trim(myInput.Cells(RowCount, INPUT_REFERRING_DOCTOR_COLUMN))), "DRA. ", ""), "DR. ", "")), CStr(OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN)
             'hmoBillingColumnValuesContainer.Add getNameWithLastNameFirst(Replace(Replace(UCase(Trim(myInput.Cells(RowCount, INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN))), "DRA. ", ""), "DR. ", "")), "" & OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN
             hmoBillingColumnValuesContainer.Add UCase(Trim(CStr(OUTPUT_HMO_BILLING_PAYEE_VALUE))), CStr(OUTPUT_HMO_BILLING_PAYEE_COLUMN)
             
@@ -317,8 +321,8 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
     Else
         NewWorkbook.Sheets.Add.name = outputWorksheetName 'edited by Mike, 20190328
                                                
-        'medicalDoctorWorksheetOutputRowCountContainer.Add TableHeaderRow + 1, medicalDoctorName
-        OutputRowCount = TableHeaderRow + 1
+        'medicalDoctorWorksheetOutputRowCountContainer.Add TableHeaderRowUtilization + 1, medicalDoctorName
+        OutputRowCount = TableHeaderRowUtilization + 1
             
         Set myOutput = Sheets(ActiveSheet.name)
     
@@ -337,7 +341,7 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
         
         'added by Mike, 20190328
         For i = 1 To hmoUtilizationTableHeaderContainer.Count 'from 1 to the total items in the container
-            myOutput.Cells(TableHeaderRow, i).Value = hmoUtilizationTableHeaderContainer(i)
+            myOutput.Cells(TableHeaderRowUtilization, i).Value = hmoUtilizationTableHeaderContainer(i)
         Next
     End If
 Next hmoBillingColumnValuesContainer
@@ -388,7 +392,85 @@ Next
 '--------------------------------------------------------------
 'Process HMO Billing
 '--------------------------------------------------------------
+'edited by Mike, 20190330
+Set newHmoBillingSummaryWorkbook = Workbooks.Open(Filename:=newHmoBillingSummaryWorkbookFilename)
 
+'added by Mike, 20190328
+Set hmoWorksheetOutputRowCountContainer = New Collection
+
+'added by Mike, 20190327; edited by Mike, 20190329
+'write the table header and the portion above it for each HMO worksheet
+For Each hmoBillingColumnValuesContainer In hmoBillingContainer
+    'added by Mike, 20190327
+    hmoName = Replace(hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN)), "HMO/", "")
+
+    'If a workheet with the HMO name exists
+    If Evaluate("ISREF('" & hmoName & "'!A1)") Then
+        'write transactions later
+        'do nothing for now
+    'If a workheet with the Medical Doctor's name does not exist
+    Else
+        newHmoBillingSummaryWorkbook.Sheets("template").Copy After:=newHmoBillingSummaryWorkbook.Sheets(Sheets.Count)
+        Set myOutputWorksheet = Sheets(ActiveSheet.name)
+        'MsgBox ("hmoName: " & hmoName)
+        myOutputWorksheet.name = CStr(hmoName)
+
+        'newHmoBillingSummaryWorkbook.Sheets.Add.name = hmoName
+        
+        hmoWorksheetOutputRowCountContainer.Add TableHeaderRow + 1, hmoName
+            
+'        Set myOutput = Sheets(ActiveSheet.name)
+    
+'        'added by Mike, 20190327
+'        'add the portion above the table header row
+'        myOutput.Cells(1, OUTPUT_HMO_UTILIZATION_MD_SIGNATURE_COLUMN).Value = "PHYSICIAN:"
+'        myOutput.Cells(1, OUTPUT_HMO_UTILIZATION_MD_SIGNATURE_COLUMN + 1).Value = medicalDoctorName
+        
+'        'added by Mike, 20190328
+'        myOutput.Cells(2, OUTPUT_HMO_UTILIZATION_MD_SIGNATURE_COLUMN).Value = "PERIOD COVERED:"
+        
+'        myOutput.Cells(3, OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN).Value = "CONSULTATION"
+'        myOutput.Cells(4, OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN).Value = "STA. LUCIA HEALTH CARE CENTRE, INC."
+'        myOutput.Cells(5, OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN).Value = "HMO UTILIZATION SUMMARY"
+        
+'        'added by Mike, 20190328
+'        For i = 1 To hmoUtilizationTableHeaderContainer.Count 'from 1 to the total items in the container
+'            myOutput.Cells(6, i).Value = hmoUtilizationTableHeaderContainer(i)
+'        Next
+    End If
+Next hmoBillingColumnValuesContainer
+
+
+'added by Mike, 20190327; edited by Mike, 20190330
+'write all the transactions in the correct HMO worksheet
+For Each hmoBillingColumnValuesContainer In hmoBillingContainer
+    hmoName = Replace(hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN)), "HMO/", "")
+
+    'If a workheet with the HMO name exists
+    If Evaluate("ISREF('" & hmoName & "'!A1)") Then
+         Set myOutput = Sheets(hmoName)
+         OutputRowCount = hmoWorksheetOutputRowCountContainer(hmoName)
+                  
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_DATE_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_DATE_COLUMN).NumberFormat = "dd-mmm-yy"
+         
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN))
+         
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN))
+         
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN))
+         
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN).Value = HMO_BILLING_MEDICAL_DOCTOR_NAME_PT_VALUE 'hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN))
+         
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN).Value = HMO_BILLING_DEPARTMENT_PT_VALUE
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_PROCEDURE_COLUMN).Value = HMO_BILLING_PROCEDURE_PT_VALUE
+                  
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN))
+                        
+         hmoWorksheetOutputRowCountContainer.Remove hmoName
+         hmoWorksheetOutputRowCountContainer.Add OutputRowCount + 1, hmoName
+    End If
+Next hmoBillingColumnValuesContainer
 
 '--------------------------------------------------------------
 
@@ -457,13 +539,13 @@ Dim myInput As Worksheet
 Dim myOutput As Worksheet 'the same as myInput
 Dim row As Range
 Dim RowCount As Integer
-Dim TableHeaderRow As Integer
+Dim TableHeaderRowUtilization As Integer
 Dim LastPrintableRow As Integer
 Dim MaxPatientNameColumnWidth As Integer
 Dim patientNameFontSize As Integer
 
 RowCount = 1
-TableHeaderRow = 6
+TableHeaderRowUtilization = 6
 'edited by Mike, 20190312
 LastPrintableRow = 39 'updated: 33 to 39, which is actually the last printable row on an A4 paper
 'added by Mike, 20190312
@@ -476,16 +558,16 @@ Set myInput = Sheets(ActiveSheet.name)
 Set myOutput = Sheets(ActiveSheet.name)
 
 'Auto-fit Date column based on actual value
-myOutput.Range("A" & TableHeaderRow + 1, "A" & TableHeaderRow + 1).Select
+myOutput.Range("A" & TableHeaderRowUtilization + 1, "A" & TableHeaderRowUtilization + 1).Select
 Selection.EntireColumn.AutoFit 'edited by Mike, 20190309
 'Selection.EntireColumn.ColumnWidth = 12
 
 'Auto-fit select columns based on the table header row
-myOutput.Range("B" & TableHeaderRow, "F" & TableHeaderRow).Select
+myOutput.Range("B" & TableHeaderRowUtilization, "F" & TableHeaderRowUtilization).Select
 Selection.EntireColumn.AutoFit
 
 'Auto-fit DIAGNOSIS column
-myOutput.Range("D" & TableHeaderRow, "D" & TableHeaderRow).Select
+myOutput.Range("D" & TableHeaderRowUtilization, "D" & TableHeaderRowUtilization).Select
 Selection.EntireColumn.ColumnWidth = 46
 
 
@@ -499,7 +581,7 @@ For Each row In myInput.Rows
         myOutput.Range("D" & RowCount, "D" & RowCount).Font.name = "Calibri"
         myOutput.Range("D" & RowCount, "D" & RowCount).Font.Size = DiagnosisFontSize
 
-        If RowCount <= TableHeaderRow Then
+        If RowCount <= TableHeaderRowUtilization Then
             'MsgBox ("RowCount: " & RowCount)
 
             myOutput.Range("A" & RowCount, "F" & RowCount).Font.Bold = True
@@ -554,9 +636,9 @@ myOutput.Range("A" & 1, "F" & RowCount).Font.name = "Calibri"
 
 'added by Mike, 20190305; edited by Mike, 20190312
 If RowCount + RowCountOffset < LastPrintableRow Then
-    myOutput.Range("A" & TableHeaderRow, "F" & LastPrintableRow - RowCountOffset).Borders.LineStyle = 1
+    myOutput.Range("A" & TableHeaderRowUtilization, "F" & LastPrintableRow - RowCountOffset).Borders.LineStyle = 1
 Else
-    myOutput.Range("A" & TableHeaderRow, "F" & RowCount - 1).Borders.LineStyle = 1
+    myOutput.Range("A" & TableHeaderRowUtilization, "F" & RowCount - 1).Borders.LineStyle = 1
 End If
 
 'added by Mike, 20190306
@@ -593,5 +675,5 @@ myOutput.Range("A" & 6, "F" & 6).HorizontalAlignment = xlCenter
 
 'added by Mike, 20190309
 'align to the center vertically all the values in the table
-myOutput.Range("A" & TableHeaderRow, "F" & RowCount).VerticalAlignment = xlCenter
+myOutput.Range("A" & TableHeaderRowUtilization, "F" & RowCount).VerticalAlignment = xlCenter
 End Sub

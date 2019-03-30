@@ -287,7 +287,12 @@ End If
 
 templateHmoBillingSummaryWorkbookFilename = outputPath & "\template\HMOBillingWorkbookTemplate.xlsm"
 newHmoBillingSummaryWorkbookFilename = outputPath & "\HMOBillingWorkbookTemplate" & startDateString & "~" & endDateString & ".xlsm"
-fso.CopyFile templateHmoBillingSummaryWorkbookFilename, newHmoBillingSummaryWorkbookFilename
+'fso.CopyFile templateHmoBillingSummaryWorkbookFilename, newHmoBillingSummaryWorkbookFilename
+'edited by Mike, 20190330
+If Dir(newHmoBillingSummaryWorkbookFilename) = "" Then
+    fso.CopyFile templateHmoBillingSummaryWorkbookFilename, newHmoBillingSummaryWorkbookFilename
+End If
+
 
 'added by Mike, 20190329
 outputPath = Application.ActiveWorkbook.Path & "\hmoBilling\utilization\"
@@ -453,7 +458,14 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
          Set myOutput = Sheets(hmoName)
          OutputRowCount = hmoWorksheetOutputRowCountContainer(hmoName)
                   
-         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_DATE_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
+         'edited by Mike, 20190330
+         'transactionDateValue = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
+                           
+         Do Until (IsEmpty(myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_DATE_COLUMN).Value))
+            OutputRowCount = OutputRowCount + 1
+         Loop
+                
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_DATE_COLUMN).Value = transactionDateValue 'hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_DATE_COLUMN).NumberFormat = "dd-mmm-yy"
          
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_HMO_NAME_COLUMN).Value = hmoName
@@ -478,6 +490,7 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
     End If
 Next hmoBillingColumnValuesContainer
 
+newHmoBillingSummaryWorkbook.Close 'added by Mike, 20190330
 '--------------------------------------------------------------
 
 'added by Mike, 20190328

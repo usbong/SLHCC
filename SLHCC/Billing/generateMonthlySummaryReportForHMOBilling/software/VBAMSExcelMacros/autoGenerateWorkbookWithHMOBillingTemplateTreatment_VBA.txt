@@ -17,6 +17,8 @@
 'Output:
 ' 1) Auto-generated new Workbook with HMO Billing Utilization data from ORTHO & PT TREATMENT DEPT. Workbook
 ' 2) Auto-updated Workbook with HMO Billing Utilization Template from Sta. Lucia Health Care Centre (SLHCC)
+' 3) Auto-generated new Workbook with HMO Billing data from ORTHO & PT TREATMENT DEPT. Workbook
+' 4) Auto-updated Workbook with HMO Billing Template from Sta. Lucia Health Care Centre (SLHCC)
 '
 Dim myInput As Worksheet
 Dim myOutput As Worksheet 'the same as myInput
@@ -454,16 +456,20 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_DATE_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_DATE_COLUMN).NumberFormat = "dd-mmm-yy"
          
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_HMO_NAME_COLUMN).Value = hmoName
+         
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN))
          
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN))
          
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_APPROVAL_CODE_COLUMN))
          
-         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN).Value = HMO_BILLING_MEDICAL_DOCTOR_NAME_PT_VALUE 'hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN))
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN).Value = OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_PT_VALUE 'hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN))
          
-         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN).Value = HMO_BILLING_DEPARTMENT_PT_VALUE
-         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_PROCEDURE_COLUMN).Value = HMO_BILLING_PROCEDURE_PT_VALUE
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_PAYEE_COLUMN).Value = OUTPUT_HMO_BILLING_PAYEE_VALUE
+         
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_DEPARTMENT_COLUMN).Value = OUTPUT_HMO_BILLING_DEPARTMENT_PT_VALUE
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_PROCEDURE_COLUMN).Value = OUTPUT_HMO_BILLING_PROCEDURE_PT_VALUE
                   
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_TOTAL_AMOUNT_COLUMN))
                         

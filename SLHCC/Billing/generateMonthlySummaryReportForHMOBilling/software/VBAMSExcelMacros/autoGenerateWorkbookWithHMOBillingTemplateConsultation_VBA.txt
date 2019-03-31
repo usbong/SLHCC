@@ -9,7 +9,7 @@
 '
 ' @author: Michael Syson
 ' @date created: 20190324
-' @date updated: 20190330
+' @date updated: 20190331
 '
 ' Given:
 ' 1) Workbook with the HMO Billing data
@@ -201,6 +201,9 @@ Dim medicalDoctorWorksheetOutputRowCountContainer As Collection 'each Medical Do
 'added by Mike, 20190328
 Dim hmoUtilizationTableHeaderContainer As Collection
 
+'added by Mike, 20190331
+Dim hmoWorksheetOutputRowCountContainer As Collection
+Dim hmoName As String
 
 Dim hmoBillingContainerTransactionCount As Integer
 
@@ -243,7 +246,8 @@ For Each row In myInput.Rows
 '            hmoBillingColumnValuesContainer.Add getDateAsHMOBillingFormat(UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN)))), CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
             hmoBillingColumnValuesContainer.Add CDate(UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN)))), CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN)
             'hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_CLASS_COLUMN))), CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN)
-            hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_CONSULTATION_CLASS_COLUMN))), CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN)
+            'edited by Mike, 20190331
+            hmoBillingColumnValuesContainer.Add Replace(UCase(Trim(myInput.Cells(RowCount, INPUT_CONSULTATION_CLASS_COLUMN))), "HMO/", ""), CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN)
 
             hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_CHARGE_SLIP_NUMBER_COLUMN))), CStr(OUTPUT_HMO_BILLING_CHARGE_SLIP_NUMBER_COLUMN)
             hmoBillingColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_PATIENT_NAME_COLUMN))), CStr(OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN)
@@ -366,7 +370,7 @@ For Each hmoBillingColumnValuesContainer In hmoBillingContainer
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DATE_COLUMN).NumberFormat = "dd-mmm-yy"
          
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_PATIENT_NAME_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_PATIENT_NAME_COLUMN))
-         myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = Replace(hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN)), "HMO/", "")
+         myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN))
          myOutput.Cells(OutputRowCount, OUTPUT_HMO_UTILIZATION_DIAGNOSIS_COLUMN).Value = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_DIAGNOSIS_COLUMN))
                         
          medicalDoctorWorksheetOutputRowCountContainer.Remove medicalDoctorName
@@ -403,8 +407,8 @@ Set hmoWorksheetOutputRowCountContainer = New Collection
 'added by Mike, 20190327; edited by Mike, 20190329
 'write the table header and the portion above it for each HMO worksheet
 For Each hmoBillingColumnValuesContainer In hmoBillingContainer
-    'added by Mike, 20190327
-    hmoName = Replace(hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN)), "HMO/", "")
+    'added by Mike, 20190327; edited by Mike, 20190331
+    hmoName = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN))
 
     'If a workheet with the HMO name exists
     If Evaluate("ISREF('" & hmoName & "'!A1)") Then
@@ -446,15 +450,21 @@ Next hmoBillingColumnValuesContainer
 'added by Mike, 20190327; edited by Mike, 20190330
 'write all the transactions in the correct HMO worksheet
 For Each hmoBillingColumnValuesContainer In hmoBillingContainer
-    hmoName = Replace(hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN)), "HMO/", "")
+    hmoName = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_HMO_NAME_COLUMN))
 
     'If a workheet with the HMO name exists
     If Evaluate("ISREF('" & hmoName & "'!A1)") Then
          Set myOutput = Sheets(hmoName)
+         'MsgBox ("hmoName: " & hmoName)
+         'edited by Mike, 20190331
+         If Not HasKey(hmoWorksheetOutputRowCountContainer, hmoName) Then
+            hmoWorksheetOutputRowCountContainer.Add TableHeaderRow + 1, hmoName
+         End If
+                           
          OutputRowCount = hmoWorksheetOutputRowCountContainer(hmoName)
                            
          'edited by Mike, 20190330
-         'transactionDateValue = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
+         transactionDateValue = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_UTILIZATION_DATE_COLUMN))
                            
          Do Until (IsEmpty(myOutput.Cells(OutputRowCount, OUTPUT_HMO_BILLING_DATE_COLUMN).Value))
             OutputRowCount = OutputRowCount + 1
@@ -527,7 +537,16 @@ getNameWithLastNameFirst = lastName & ", " & Trim(firstName)
 'MsgBox ("returnOutput: " & returnOutput)
 
 End Function
-
+'Reference: https://stackoverflow.com/questions/38007844/generic-way-to-check-if-a-key-is-in-a-collection-in-excel-vba;
+'last accessed: 20190331
+'answer by: Robin Mackenzie on 20160626
+Private Function HasKey(coll As Collection, strKey As String) As Boolean
+    Dim var As Variant
+    On Error Resume Next
+    var = coll(strKey)
+    HasKey = (Err.Number = 0)
+    Err.Clear
+End Function
 
 
 

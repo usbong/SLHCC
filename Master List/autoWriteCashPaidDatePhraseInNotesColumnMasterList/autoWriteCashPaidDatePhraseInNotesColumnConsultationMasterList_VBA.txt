@@ -50,7 +50,7 @@ For Each row In myInput.Rows
        'if the value for the Medical Doctor column includes the keywords
        If (InStr(myInput.Range("Q" & RowCount).Value, keyword) And InStr(myInput.Range("Q" & RowCount).Value, keywordTwo)) Then
           'if not an empty and not an HMO transaction
-          If (IsEmpty(myInput.Range("J" & RowCount).Value) = 0) And (InStr(myInput.Range("J" & RowCount).Value, "HMO") = 0) And (InStr(myInput.Range("J" & RowCount).Value, "NC") = 0) And (Lcase(InStr(myInput.Range("J" & RowCount).Value), "no charge") = 0) Then
+          If (IsEmpty(myInput.Range("J" & RowCount).Value) = 0) And (InStr(myInput.Range("J" & RowCount).Value, "HMO") = 0) And (InStr(myInput.Range("J" & RowCount).Value, "NC") = 0) And (LCase(InStr(myInput.Range("J" & RowCount).Value, "no charge") = 0)) Then
             myOutput.Range("A" & RowCount) = "paid: " & Format(myInput.Range("B" & RowCount).Value, "mmm-dd-yy") & "; " & myInput.Range("A" & RowCount).Value
           End If
        End If

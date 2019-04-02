@@ -1,7 +1,9 @@
-# MOSC (Marikina Orthopedic Specialty Clinic)
+# SLHCC (Sta. Lucia Health Care Centre)
+### ACCOUNTING/BILLING DEPARTMENT
+### ORTHOPEDIC & PHYSICAL THERAPY DEPARTMENT
 <b>Author:</b> Michael B. Syson</br>
 <b>Date Created:</b> 20171121</br>
-<b>Date Updated:</b> 20190324</br>
+<b>Date Updated:</b> 20190402</br>
 <b>Description:</b></br>
 This is a set of add-on software to automate computing tasks and the generation of reports using data from Microsoft EXCEL workbooks.</br>
 

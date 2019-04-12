@@ -57,10 +57,10 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 ' where: * means any set of characters
 '
 ' 5) To compile on Windows' Command Prompt the add-on software with the Apache Commons Text .jar file, i.e. org.apache.commons.text, use the following command:
-'   javac -cp .;org.apache.commons.text.jar generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles.java
+'   javac -cp .;org.apache.commons.text.jar generateMonthlySummaryReportOfAllInputFiles.java
 '
 ' 6) To execute on Windows' Command Prompt the add-on software with the Apache Commons Text .jar file, i.e. org.apache.commons.text, use the following command:
-'   java -cp .;org.apache.commons.text.jar generateMonthlySummaryReporttOfDiagnosedCasesOfAllInputFiles *.txt
+'   java -cp .;org.apache.commons.text.jar generateMonthlySummaryReportOfAllInputFiles *.txt
 '
 ' 7) The Apache Commons Text binaries with the .jar file can be downloaded here:
 '   http://commons.apache.org/proper/commons-text/download_text.cgi; last accessed: 20190123
@@ -69,13 +69,11 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 '   https://commons.apache.org/proper/commons-text/javadocs/api-release/org/apache/commons/text/similarity/LevenshteinDistance.html; last accessed: 20190123
 */ 
 
-public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {	
+public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {	
 	private static boolean isInDebugMode = true; //edited by Mike, 20190131
 	private static boolean isNetPFComputed = false; //added by Mike, 20190131
 
 	private static String inputFilename = "input201801"; //without extension; default input file
-	//added by Mike, 20190222
-	private static String diagnosedCasesListInputFilename = "diagnosedCasesList"; //without extension; default input file 
 	
 	private static String startDate = null;
 	private static String endDate = null;
@@ -98,10 +96,6 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 	private static final int INPUT_NET_PF_COLUMN = 10-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_NEW_OLD_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_NEW_OLD_PATIENT_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190102
-
-	//TO-DO: -add: column for Consultation transactions, which have both Chief Complaint and Diagnosis
-	private static final int INPUT_DIAGNOSIS_COLUMN = 6-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190220
-
 	//edited by Mike, 20190202
 	private static final int INPUT_CONSULTATION_PROCEDURE_COLUMN = 2-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET;
@@ -118,7 +112,7 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 */	
 	private static final int INPUT_CONSULTATION_OFFSET = 1;
 
-	//added by Mike, 20190222
+	//added by Mike, 20190412
 	private static final int INPUT_KNOWN_DIAGNOSED_CASES_LIST_CLASSIFICATION_COLUMN = 0;
 	private static final int INPUT_KNOWN_DIAGNOSED_CASES_LIST_SUB_CLASSIFICATION_COLUMN = 1;
 
@@ -130,9 +124,9 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 	private static HashMap<String, double[]> nonHmoContainer;	//added by Mike, 201801217
 	private static HashMap<String, double[]> referringDoctorContainer; //added by Mike, 20181218
 	private static HashMap<String, double[]> medicalDoctorContainer; //added by Mike, 20190202
-	private static HashMap<String, Integer> diagnosedCasesContainer; //added by Mike, 20190220
-	private static HashMap<String, String> knownDiagnosedCasesContainer; //added by Mike, 20190222
-	private static HashMap<String, Integer> classifiedDiagnosedCasesContainer; //added by Mike, 20190222
+	private static HashMap<String, Integer> diagnosedCasesContainer; //added by Mike, 20190412
+	private static HashMap<String, String> knownDiagnosedCasesContainer; //added by Mike, 20190412
+	private static HashMap<String, Integer> classifiedDiagnosedCasesContainer; //added by Mike, 20190412
 
 	private static double[] columnValuesArray;
 	private static String[] dateValuesArray; //added by Mike, 20180412
@@ -197,9 +191,7 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 	public static void main ( String[] args ) throws Exception
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
-		PrintWriter writer = new PrintWriter("output/MonthlySummaryReportOfDiagnosedCasesOutput.txt", "UTF-8");			
-		PrintWriter classifiedWriter = new PrintWriter("output/MonthlySummaryReportOfDiagnosedCasesClassifiedOutput.txt", "UTF-8");			
-
+		PrintWriter writer = new PrintWriter("output/MonthlySummaryReportOutput.txt", "UTF-8");			
 		/*referringDoctorContainer = new HashMap<String, double[]>();
 		*/
 		
@@ -211,35 +203,32 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 		classificationContainerPerMedicalDoctor = new HashMap<String, HashMap<String, double[]>>();				
 		medicalDoctorContainer = new HashMap<String, double[]>(); //added by Mike, 20190202
 				
-		diagnosedCasesContainer = new HashMap<String, Integer>(); //added by Mike, 20190220						
-		knownDiagnosedCasesContainer = new HashMap<String, String>(); //added by Mike, 20190222						
-		classifiedDiagnosedCasesContainer = new HashMap<String, Integer>(); //added by Mike, 20190222
-				
+		diagnosedCasesContainer = new HashMap<String, Integer>(); //added by Mike, 20190412
+		knownDiagnosedCasesContainer = new HashMap<String, String>(); //added by Mike, 20190412
+		classifiedDiagnosedCasesContainer = new HashMap<String, Integer>(); //added by Mike, 20190412
+		
 		//added by Mike, 20181116
 		startDate = null; //properly set the month and year in the output file of each input file
 		dateValuesArray = new String[args.length]; //added by Mike, 20180412
 		dateValuesArrayInt = new int[args.length]; //added by Mike, 20180412
 		//dateValuesArrayInt = new ArrayList<int>(); //edited by Mike, 20181221
-			
-		//added by Mike, 20190222
+
+		//added by Mike, 20190412
 		//PART/COMPONENT/MODULE/PHASE 1			
 		processKnownDiagnosedCasesInputFile(args);
-		
+
 		//PART/COMPONENT/MODULE/PHASE 2
 		processInputFiles(args, true);
 
-		//PART/COMPONENT/MODULE/PHASE 3	
-		processDiagnosisClassification(); //added by Mike, 20190222
-/*
-		//PART/COMPONENT/MODULE/PHASE 2		
+		//PART/COMPONENT/MODULE/PHASE 3		
 		setClassificationContainerPerMedicalDoctor(classificationContainerPerMedicalDoctor);
 		processInputFiles(args, false);
-				
+						
+		//PART/COMPONENT/MODULE/PHASE 4
+		processDiagnosisClassification();						
 				
 		//added by Mike, 20190125
 		processContainers();
-*/
-		
 /*		
 		//TODO: -apply: this properly in the add-on software to consolidate similar Strings, e.g. Medical Doctor, whose difference may only be an excess space between characters, etc
 		//added by Mike, 20190123
@@ -256,50 +245,9 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 		 * OUTPUT
 		 * --------------------------------------------------------------------
 		*/
-		//edited by Mike, 20190223
-		SortedSet<String> sortedKeyset = new TreeSet<String>(diagnosedCasesContainer.keySet());
-		SortedSet<String> sortedClassifiedKeyset = new TreeSet<String>(classifiedDiagnosedCasesContainer.keySet());
-	
-		int total = 0;
+		//edited by Mike, 20190131
+		writer.print("Monthly Summary Report\n");
 		
-		writer.print("Monthly Summary Report of Diagnosed Cases\n");
-
-		for (String key : sortedKeyset) {	
-			int diagnosedCaseCount = diagnosedCasesContainer.get(key);
-			total+=diagnosedCaseCount;
-			
-			writer.println(
-							key + "\t" + 
-							diagnosedCaseCount+"\n"							
-						); 				   							
-		}
-		
-		writer.println(
-							"TOTAL:\t" + 
-							total+"\n"							
-						); 				   							
-
-		//added by Mike, 20190223
-		classifiedWriter.print("Monthly Summary Report of Classified Diagnosed Cases\n");
-				
-		total = 0;
-		
-		for (String key : sortedClassifiedKeyset) {	
-			int diagnosedCaseCount = classifiedDiagnosedCasesContainer.get(key);
-			total+=diagnosedCaseCount;
-			
-			classifiedWriter.println(
-							key + "\t" + 
-							diagnosedCaseCount+"\n"							
-						); 				   							
-		}
-		
-		classifiedWriter.println(
-							"TOTAL:\t" + 
-							total+"\n"							
-						); 				   							
-
-/*		
 		//--------------------------------------------------------------------
 		//init table header names
 		writer.print("\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\tMEDICAL CERTIFICATE COUNT:\n"); 		
@@ -308,9 +256,14 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 		double totalConsultationCount = 0; //added by Mike, 20181218
 		double totalProcedureCount = 0; //added by Mike, 20190105		
 		double totalMedicalCertificateCount = 0; //added by Mike, 20190107
-
+/*
+		System.out.println("dateValuesArrayInt.length: "+dateValuesArrayInt.length);		
+		System.out.println("dateValuesArrayInt.length/2: "+dateValuesArrayInt.length/2);
+*/		
 		//Note that there should be an even number of input files and at least two (2) input files, one for PT Treatment and another for Consultation
 		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION
+/*		System.out.println("dateValuesArrayInt[i]: "+dateValuesArrayInt[i]);
+*/		
 			//added by Mike, 20190207
 			if (dateValuesArrayInt[i]==0) { //if there is no .txt input file
 				System.out.println("\nThere is no Tab-delimited .txt input file in either the \"consultation\" folder or the \"treatment\" folder.");
@@ -349,6 +302,30 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 
 		//--------------------------------------------------------------------
 		//init table header names
+/*		
+		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\n"); 		
+		double totalTreatmentHMOCount = 0;
+		double totalConsultationHMOCount = 0; //added by Mike, 20181219
+		
+		SortedSet<String> sortedKeyset = new TreeSet<String>(hmoContainer.keySet());
+		for (String key : sortedKeyset) {	
+			double treatmentCount = hmoContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
+			double consultationCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
+			totalTreatmentHMOCount += treatmentCount;
+			totalConsultationHMOCount += consultationCount;
+			
+			writer.print(
+							key + "\t" + 
+							treatmentCount+"\t"+							
+							consultationCount+"\n"							
+						); 				   							
+		}
+		//TOTAL
+		writer.print(
+				"TOTAL:\t"+totalTreatmentHMOCount+"\t"+totalConsultationHMOCount+"\n"							
+				); 				   							
+*/
+
 		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\tMEDICAL CERTIFICATE COUNT:\tTREATMENT NEW PATIENT COUNT:\tCONSULTATION NEW PATIENT COUNT:\n"); 		
 
 		double totalTreatmentHMOCount = 0;
@@ -393,6 +370,30 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 
 		//--------------------------------------------------------------------
 		//init table header names
+/*		
+		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\n"); 		
+		double totalTreatmentNONHMOCount = 0;
+		double totalConsultationNONHMOCount = 0; //added by Mike, 20181219
+		
+		SortedSet<String> sortedNONHMOKeyset = new TreeSet<String>(nonHmoContainer.keySet());
+		for (String key : sortedNONHMOKeyset) {	
+			double treatmentCount = nonHmoContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
+			double consultationCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+			totalTreatmentNONHMOCount += treatmentCount;
+			totalConsultationNONHMOCount += consultationCount;
+			
+			writer.print(
+							key + "\t" + 
+							treatmentCount+"\t"+							
+							consultationCount+"\n"							
+						); 				   							
+		}
+		//TOTAL
+		writer.print(
+				"TOTAL:\t"+totalTreatmentNONHMOCount+"\t"+totalConsultationHMOCount+"\n"							
+				); 				   							
+*/
+
 		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\tMEDICAL CERTIFICATE COUNT:\n"); 		
 
 		double totalTreatmentNONHMOCount = 0;
@@ -497,14 +498,60 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 				totalOldPatientPerDoctorCount+"\n"											
 				); 				   										
 
+/*		
+		writer.print("\n\tTREATMENT COUNT:\tNEW PATIENT REFERRAL COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\n"); 
+		double totalReferringMedicalDoctorTransactionCount = 0;
+		double totalNewPatientReferralTransactionCount = 0;
+		double totalConsultationPerDoctorCount = 0;
+		double totalProcedurePerDoctorCount = 0;
+		
+		SortedSet<String> sortedReferringMedicalDoctorTransactionCountKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
+		for (String key : sortedReferringMedicalDoctorTransactionCountKeyset) {	
+			double count = referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
+			double newPatientReferralTransactionCount = referringDoctorContainer.get(key)[OUTPUT_HMO_NEW_PATIENT_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
+			//added by Mike, 20181219
+			double consultationCount = referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+			//added by Mike, 20181219
+			double procedureCount = referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN];
+			totalReferringMedicalDoctorTransactionCount += count;
+			totalNewPatientReferralTransactionCount += newPatientReferralTransactionCount;
+			totalConsultationPerDoctorCount += consultationCount;
+			totalProcedurePerDoctorCount += procedureCount;
+			
+			writer.print(
+							key + "\t" + 
+							count+"\t" +
+							newPatientReferralTransactionCount+"\t"+							
+							consultationCount+"\t"+
+							procedureCount+"\n"		
+							); 				   							
+		}
+		//TOTAL
+		writer.print(
+				"TOTAL:\t"+totalReferringMedicalDoctorTransactionCount+"\t"+totalNewPatientReferralTransactionCount+"\t"+
+				totalConsultationPerDoctorCount+"\t"+totalProcedurePerDoctorCount+"\n"							
+				); 				   							
+*/
 		//--------------------------------------------------------------------
 		//init table header names
 		writer.print("\nCONSULTATION COUNT under each CLASSIFICATION\n");
 
+/*		SortedSet<String> sortedReferringMedicalDoctorTransactionCountKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
+*/
 		SortedSet<String> sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset = new TreeSet<String>(classificationContainerPerMedicalDoctor.keySet());
 //		String defaultKey=null;
+/*		
+		writer.print("\n");
+		for (String key : sortedNONHMOKeyset) {	
+			writer.print(key+"\t"); 		
+		}		
+		writer.print("\n");
+*/				
 //		SortedSet<String> sortedNonHmoContainerTableHeaderKeyset = new TreeSet<String>(classificationContainerPerMedicalDoctor.get(defaultKey).keySet());
 
+/*
+		double totalNonHmoCount = 0;
+*/
 		HashMap<String, Integer> totalCountForEachClassification = new HashMap<String, Integer>(); //added by Mike, 20190102
 		boolean hasInitTableHeader=false;		
 		SortedSet<String> sortedclassificationKeyset = null;
@@ -548,10 +595,7 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 			writer.print(totalCountForEachClassification.get(classificationKey)+"\t");
 		}			
 		writer.print("\n");		
-*/
-		
 		writer.close();
-		classifiedWriter.close();
 	}
 	
 	private static String convertDateToMonthYearInWords(int date) {
@@ -1728,6 +1772,7 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 */		
 	}
 
+	//added by Mike, 20190412
 	private static void processKnownDiagnosedCasesInputFile(String[] args) throws Exception {
 		//edited by Mike, 20181030
 		for (int i=0; i<args.length; i++) {						
@@ -1838,11 +1883,6 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 				continue;
 			}
 			
-			//added by Mike, 20190222
-			if (inputFilename.toLowerCase().contains("assets")) {
-				continue;
-			}					
-			
 			if (inputFilename.toLowerCase().contains("consultation")) {
 				isConsultation=true;
 			}
@@ -1916,10 +1956,6 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 				}
 */
 				if (isPhaseOne) {
-					//TO-DO: -add: handle consultation transactions
-					processDiagnosedCasesCount(diagnosedCasesContainer, inputColumns, isConsultation); //edited by Mike, 20181219
-
-/*					
 					//added by Mike, 20181216
 	//				processMonthlyCount(dateContainer, inputColumns, i, false);
 					processMonthlyCount(dateContainer, inputColumns, i, isConsultation); //isConsultation = false
@@ -1929,21 +1965,25 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 					
 					//added by Mike, 20181217
 					processNONHMOCount(nonHmoContainer, inputColumns, isConsultation); //edited by Mike, 20181219
+/*					
+					//added by Mike, 20181218
+					processReferringDoctorTransactionCount(referringDoctorContainer, inputColumns, isConsultation); //edited by Mike, 20181219
+*/			
+					//added by Mike, 20181220
+	//				processMedicalDoctorTransactionPerClassificationCount(classificationContainerPerMedicalDoctor, inputColumns, isConsultation);
 	
 					//added by Mike, 20190202
 					processMedicalDoctorTransactionCount(medicalDoctorContainer, inputColumns, isConsultation);
-*/					
 				}
 				else {
 					//added by Mike, 20181220
 					processMedicalDoctorTransactionPerClassificationCount(classificationContainerPerMedicalDoctor, inputColumns, isConsultation);
 				}
 			}		
-/*			
 			//added by Mike, 20181205
-			columnValuesArray[OUTPUT_DATE_ID_COLUMN] = i; 		
-*/			
+			columnValuesArray[OUTPUT_DATE_ID_COLUMN] = i; 			
 		}		
+
 	}
 	
 /*	
@@ -2171,56 +2211,105 @@ public class generateMonthlySummaryReportOfDiagnosedCasesOfAllInputFiles {
 //		classificationContainerPerMedicalDoctor = new HashMap<String, HashMap<String, double[]>>();								
 	}
 	
-	//added by Mike, 20190220
-	private static void processDiagnosedCasesCount(HashMap<String, Integer> diagnosedCasesContainer, String[] inputColumns, boolean isConsultation) {
-			String diagnosedCaseName = inputColumns[INPUT_DIAGNOSIS_COLUMN].trim().toUpperCase();
-
-			if (!isConsultation) {											
-				if (inputColumns[INPUT_NEW_OLD_PATIENT_COLUMN].trim().toLowerCase().contains("new")) {
-					if (!diagnosedCasesContainer.containsKey(diagnosedCaseName)) {
-						diagnosedCasesContainer.put(diagnosedCaseName, 1);
-					}					
-					else {
-						int currentValue = diagnosedCasesContainer.get(diagnosedCaseName);
-						diagnosedCasesContainer.put(diagnosedCaseName, currentValue++); //the existing value of the key is replaced
-					}
-				}
-			}
-			else {	//TO-DO: -add: handle Consultation transactions
-			}
-	}	
-	
-	//added by Mike, 20190222
+	//added by Mike, 20190412
 	private static void processDiagnosisClassification() {
 		SortedSet<String> sortedKeyset = new TreeSet<String>(diagnosedCasesContainer.keySet());
 		SortedSet<String> sortedKnownDiagnosedCasesKeyset = new TreeSet<String>(knownDiagnosedCasesContainer.keySet());
 		
 		String classificationKey = "";
+		String subClassification = ""; 
+		String classification = "";
+		
+		boolean hasKnownDiagnosedCaseKeywords=false;
 		
 		for (String inputString : sortedKeyset) {			
+			//added by Mike, 20190224
+			String[] inputStringArray = inputString.replace("-"," ").split(" ");				
+			System.out.println(">>>>>>> inputString: "+inputString);
+
 			for (String knownDiagnosedCasesKey : sortedKnownDiagnosedCasesKeyset) {	 //the key is the sub-classification
-				boolean hasKnownDiagnosedCaseKeywords=false;
-				String subClassification = knownDiagnosedCasesKey; 
-				String classification = knownDiagnosedCasesContainer.get(knownDiagnosedCasesKey);
+				hasKnownDiagnosedCaseKeywords=false;
+				subClassification = knownDiagnosedCasesKey; 
+				classification = knownDiagnosedCasesContainer.get(knownDiagnosedCasesKey);
+/*				
+				if (inputString.toLowerCase().contains("trigger")) {					
+					System.out.println(">>>>>>> inputString: "+inputString);
+				}
+				
+				if (subClassification.toLowerCase().contains("trigger")) {
+				System.out.println(">>> subClassification: "+subClassification);
+				System.out.println(">>> classification: "+classification);
+				}
+*/
+
 				String[] s = subClassification.split(" ");
 				
 //				System.out.println(">>> subClassification: "+subClassification);
 				
-				for(int i=0; i<s.length; i++) {
+				for(int i=0; i<s.length; i++) {			
+					System.out.println(">>>> : "+s[i]);
+
+					int k;
+					for(k=0; k<inputStringArray.length; k++) {		
+						System.out.println(">> "+inputStringArray[k]);
+						
+						if (inputStringArray[k].trim().toUpperCase().equals(s[i].trim().toUpperCase())) {
+							hasKnownDiagnosedCaseKeywords=true;
+							break;
+						}
+						else {
+							System.out.println(">> true: "+inputString +" : "+s[i]);
+
+						}						
+					}
+
+					if (k==inputStringArray.length) {
+						hasKnownDiagnosedCaseKeywords=false;
+						break;
+					}
+				}			
+				if (hasKnownDiagnosedCaseKeywords) {
+					break;
+				}
+/*				
+				for(int i=0; i<s.length; i++) {					
 					if (!inputString.contains(s[i])) {
 						hasKnownDiagnosedCaseKeywords=false;
 						break;
 					}
+					else {
+												System.out.println(">> true: "+inputString +" : "+s[i]);
+
+					}
 					hasKnownDiagnosedCaseKeywords=true;
 				}
-
+*/
+/*
 				classificationKey = inputString;
 				if (hasKnownDiagnosedCaseKeywords) {
 					classificationKey = classification;
+					
+					if (inputString.toLowerCase().contains("trigger")) {					
+						System.out.println(">>> inputString: "+inputString);
+						System.out.println(">>> classificationKey: "+classificationKey);
+					}
+
 					break;
 				}
-				
+*/				
 //				System.out.println(knownDiagnosedCasesKey + " : " + knownDiagnosedCasesContainer.get(key));
+			}
+			
+			classificationKey = inputString;
+			if (hasKnownDiagnosedCaseKeywords) {
+				classificationKey = classification;
+				
+				if (inputString.toLowerCase().contains("trigger")) {					
+					System.out.println(">>> inputString: "+inputString);
+					System.out.println(">>> classificationKey: "+classificationKey);
+				}
+
+//				break;
 			}
 
 			if (!classifiedDiagnosedCasesContainer.containsKey(classificationKey)) {

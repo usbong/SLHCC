@@ -74,7 +74,9 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static boolean isNetPFComputed = false; //added by Mike, 20190131
 
 	private static String inputFilename = "input201801"; //without extension; default input file
-	
+	//added by Mike, 20190413
+	private static String diagnosedCasesListInputFilename = "diagnosedCasesList"; //without extension; default input file 
+
 	private static String startDate = null;
 	private static String endDate = null;
 	
@@ -96,6 +98,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static final int INPUT_NET_PF_COLUMN = 10-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_NEW_OLD_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_NEW_OLD_PATIENT_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190102
+	
+	//TO-DO: -add: column for Consultation transactions, which have both Chief Complaint and Diagnosis
+	private static final int INPUT_DIAGNOSIS_COLUMN = 6-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190413
+
 	//edited by Mike, 20190202
 	private static final int INPUT_CONSULTATION_PROCEDURE_COLUMN = 2-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET;
@@ -194,6 +200,11 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		PrintWriter writer = new PrintWriter("output/MonthlySummaryReportOutput.txt", "UTF-8");			
 		/*referringDoctorContainer = new HashMap<String, double[]>();
 		*/
+		
+		//added by Mike, 20190413
+		PrintWriter diagnosedCasesWriter = new PrintWriter("output/MonthlySummaryReportOfDiagnosedCasesOutput.txt", "UTF-8");			
+		PrintWriter diagnosedCasesClassifiedWriter = new PrintWriter("output/MonthlySummaryReportOfDiagnosedCasesClassifiedOutput.txt", "UTF-8");			
+
 		
 		dateContainer = new HashMap<Integer, double[]>();
 		hmoContainer = new HashMap<String, double[]>();
@@ -596,6 +607,57 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		}			
 		writer.print("\n");		
 		writer.close();
+		
+		//--------------------------------------------------------------------------------------
+		// OUTPUT FOR DIAGNOSED CASES
+		//--------------------------------------------------------------------------------------
+		//edited by Mike, 20190223
+		SortedSet<String> sortedDiagnosedCasesKeyset = new TreeSet<String>(diagnosedCasesContainer.keySet());
+		SortedSet<String> sortedDiagnosedCasesClassifiedKeyset = new TreeSet<String>(classifiedDiagnosedCasesContainer.keySet());
+	
+		int total = 0;
+		
+		diagnosedCasesWriter.print("Monthly Summary Report of Diagnosed Cases\n");
+
+		for (String key : sortedDiagnosedCasesKeyset) {	
+			int diagnosedCaseCount = diagnosedCasesContainer.get(key);
+			total+=diagnosedCaseCount;
+			
+			diagnosedCasesWriter.println(
+							key + "\t" + 
+							diagnosedCaseCount+"\n"							
+						); 				   							
+		}
+		
+		diagnosedCasesWriter.println(
+							"TOTAL:\t" + 
+							total+"\n"							
+						); 				   							
+
+		//added by Mike, 20190223
+		diagnosedCasesClassifiedWriter.print("Monthly Summary Report of Classified Diagnosed Cases\n");
+				
+		total = 0;
+		
+		for (String key : sortedDiagnosedCasesClassifiedKeyset) {	
+			int diagnosedCaseCount = classifiedDiagnosedCasesContainer.get(key);
+			total+=diagnosedCaseCount;
+			
+			diagnosedCasesClassifiedWriter.println(
+							key + "\t" + 
+							diagnosedCaseCount+"\n"							
+						); 				   							
+		}
+		
+		diagnosedCasesClassifiedWriter.println(
+							"TOTAL:\t" + 
+							total+"\n"							
+						); 				   		
+						
+						
+		
+		diagnosedCasesWriter.close();
+		diagnosedCasesClassifiedWriter.close();
 	}
 	
 	private static String convertDateToMonthYearInWords(int date) {
@@ -1883,6 +1945,11 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				continue;
 			}
 			
+			//added by Mike, 20190413
+			if (inputFilename.toLowerCase().contains("assets")) {
+				continue;
+			}					
+			
 			if (inputFilename.toLowerCase().contains("consultation")) {
 				isConsultation=true;
 			}
@@ -1974,10 +2041,13 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	
 					//added by Mike, 20190202
 					processMedicalDoctorTransactionCount(medicalDoctorContainer, inputColumns, isConsultation);
+					
+					//added by Mike, 20190413
+					processDiagnosedCasesCount(diagnosedCasesContainer, inputColumns, isConsultation); 
 				}
 				else {
 					//added by Mike, 20181220
-					processMedicalDoctorTransactionPerClassificationCount(classificationContainerPerMedicalDoctor, inputColumns, isConsultation);
+					processMedicalDoctorTransactionPerClassificationCount(classificationContainerPerMedicalDoctor, inputColumns, isConsultation);					
 				}
 			}		
 			//added by Mike, 20181205
@@ -2210,6 +2280,25 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 ////		medicalDoctorContainer = new HashMap<String, double[]>();
 //		classificationContainerPerMedicalDoctor = new HashMap<String, HashMap<String, double[]>>();								
 	}
+
+	//added by Mike, 20190413
+	private static void processDiagnosedCasesCount(HashMap<String, Integer> diagnosedCasesContainer, String[] inputColumns, boolean isConsultation) {
+			String diagnosedCaseName = inputColumns[INPUT_DIAGNOSIS_COLUMN].trim().toUpperCase();
+
+			if (!isConsultation) {											
+				if (inputColumns[INPUT_NEW_OLD_PATIENT_COLUMN].trim().toLowerCase().contains("new")) {
+					if (!diagnosedCasesContainer.containsKey(diagnosedCaseName)) {
+						diagnosedCasesContainer.put(diagnosedCaseName, 1);
+					}					
+					else {
+						int currentValue = diagnosedCasesContainer.get(diagnosedCaseName);
+						diagnosedCasesContainer.put(diagnosedCaseName, currentValue++); //the existing value of the key is replaced
+					}
+				}
+			}
+			else {	//TO-DO: -add: handle Consultation transactions
+			}
+	}	
 	
 	//added by Mike, 20190412
 	private static void processDiagnosisClassification() {

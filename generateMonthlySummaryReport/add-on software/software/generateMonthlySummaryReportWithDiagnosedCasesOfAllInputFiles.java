@@ -77,6 +77,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	//added by Mike, 20190413
 	private static String diagnosedCasesListInputFilename = "diagnosedCasesList"; //without extension; default input file 
 
+	//added by Mike, 20190414
+	private static String inputOutputTemplateFilename = "assets\\templates\\generateMonthlySummaryReportOutputTemplate";//without extension; default input file 
+	//Note that I have to use double backslash, i.e. "\\", to use "\" in the filename
+	
 	private static String startDate = null;
 	private static String endDate = null;
 	
@@ -197,14 +201,12 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	public static void main ( String[] args ) throws Exception
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
-		PrintWriter writer = new PrintWriter("output/MonthlySummaryReportOutput.txt", "UTF-8");			
-		/*referringDoctorContainer = new HashMap<String, double[]>();
-		*/
-		
+		PrintWriter writer = new PrintWriter("output/MonthlySummaryReportOutput.html", "UTF-8");			
+/*		
 		//added by Mike, 20190413
 		PrintWriter diagnosedCasesWriter = new PrintWriter("output/MonthlySummaryReportOfDiagnosedCasesOutput.txt", "UTF-8");			
 		PrintWriter diagnosedCasesClassifiedWriter = new PrintWriter("output/MonthlySummaryReportOfDiagnosedCasesClassifiedOutput.txt", "UTF-8");			
-
+*/
 		
 		dateContainer = new HashMap<Integer, double[]>();
 		hmoContainer = new HashMap<String, double[]>();
@@ -238,7 +240,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		//PART/COMPONENT/MODULE/PHASE 4
 		processDiagnosisClassification();						
 				
-		//added by Mike, 20190125
+		//added by Mike, 20190125		
 		processContainers();
 /*		
 		//TODO: -apply: this properly in the add-on software to consolidate similar Strings, e.g. Medical Doctor, whose difference may only be an excess space between characters, etc
@@ -254,363 +256,21 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		/*
 		 * --------------------------------------------------------------------
 		 * OUTPUT
-		 * --------------------------------------------------------------------
+		 * --------------------------------------------------------------------		 
 		*/
+//		System.out.println("args[0]: " + args[0]);
+
 		//edited by Mike, 20190131
-		writer.print("Monthly Summary Report\n");
+		/*writer.print("Monthly Summary Report\n");
+		*/
+		processWriteOutputFile(writer);
 		
-		//--------------------------------------------------------------------
-		//init table header names
-		writer.print("\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\tMEDICAL CERTIFICATE COUNT:\n"); 		
-
-		double totalTreatmentCount = 0;
-		double totalConsultationCount = 0; //added by Mike, 20181218
-		double totalProcedureCount = 0; //added by Mike, 20190105		
-		double totalMedicalCertificateCount = 0; //added by Mike, 20190107
-/*
-		System.out.println("dateValuesArrayInt.length: "+dateValuesArrayInt.length);		
-		System.out.println("dateValuesArrayInt.length/2: "+dateValuesArrayInt.length/2);
-*/		
-		//Note that there should be an even number of input files and at least two (2) input files, one for PT Treatment and another for Consultation
-		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION
-/*		System.out.println("dateValuesArrayInt[i]: "+dateValuesArrayInt[i]);
-*/		
-			//added by Mike, 20190207
-			if (dateValuesArrayInt[i]==0) { //if there is no .txt input file
-				System.out.println("\nThere is no Tab-delimited .txt input file in either the \"consultation\" folder or the \"treatment\" folder.");
-				return;
-			}
-		
-			writer.print(convertDateToMonthYearInWords(dateValuesArrayInt[i])+"\t");
-			
-			double treatmentCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN];
-
-			//added by Mike, 20181218
-			double consultationCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
-
-			//added by Mike, 20190105
-			double procedureCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN];
-
-			//added by Mike, 20190105
-			double medicalCertificateCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN];
-			
-			totalTreatmentCount += treatmentCount;
-			totalConsultationCount += consultationCount;
-			totalProcedureCount += procedureCount;
-			totalMedicalCertificateCount += medicalCertificateCount;
-			
-			writer.print(
-							treatmentCount+"\t"+						
-							consultationCount+"\t"+							
-							procedureCount+"\t"+
-							medicalCertificateCount+"\n"
-						); 				   							
-		}
-		//TOTAL
-		writer.print(
-				"TOTAL:\t"+totalTreatmentCount+"\t"+totalConsultationCount+"\t"+totalProcedureCount+"\t"+totalMedicalCertificateCount+"\n"		
-				); 				   							
-
-		//--------------------------------------------------------------------
-		//init table header names
-/*		
-		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\n"); 		
-		double totalTreatmentHMOCount = 0;
-		double totalConsultationHMOCount = 0; //added by Mike, 20181219
-		
-		SortedSet<String> sortedKeyset = new TreeSet<String>(hmoContainer.keySet());
-		for (String key : sortedKeyset) {	
-			double treatmentCount = hmoContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
-			double consultationCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
-			totalTreatmentHMOCount += treatmentCount;
-			totalConsultationHMOCount += consultationCount;
-			
-			writer.print(
-							key + "\t" + 
-							treatmentCount+"\t"+							
-							consultationCount+"\n"							
-						); 				   							
-		}
-		//TOTAL
-		writer.print(
-				"TOTAL:\t"+totalTreatmentHMOCount+"\t"+totalConsultationHMOCount+"\n"							
-				); 				   							
-*/
-
-		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\tMEDICAL CERTIFICATE COUNT:\tTREATMENT NEW PATIENT COUNT:\tCONSULTATION NEW PATIENT COUNT:\n"); 		
-
-		double totalTreatmentHMOCount = 0;
-		double totalConsultationHMOCount = 0; //added by Mike, 20181219		
-		double totalProcedureHMOCount = 0; //added by Mike, 20190105		
-		double totalMedicalCertificateHMOCount = 0; //added by Mike, 20190107
-		double totalNewPatientTreatmentHMOCount = 0; //added by Mike, 20190102
-		double totalNewPatientConsultationHMOCount = 0; //added by Mike, 20190102
-		
-		SortedSet<String> sortedKeyset = new TreeSet<String>(hmoContainer.keySet());
-		
-		for (String key : sortedKeyset) {	
-			double treatmentCount = hmoContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
-			double consultationCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
-			double procedureCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]; //added by Mike, 20190105		
-			double medicalCertificateCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; //added by Mike, 20190107
-			double newPatientTreatmentCount = hmoContainer.get(key)[OUTPUT_HMO_NEW_PATIENT_COUNT_COLUMN]; //added by Mike, 20190102
-			double newPatientConsultationCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN]; //added by Mike, 20190102
-
-			totalTreatmentHMOCount += treatmentCount;
-			totalConsultationHMOCount += consultationCount;
-			totalProcedureHMOCount += procedureCount;
-			totalMedicalCertificateHMOCount += medicalCertificateCount;
-			totalNewPatientTreatmentHMOCount += newPatientTreatmentCount;
-			totalNewPatientConsultationHMOCount += newPatientConsultationCount;
-			
-			writer.print(
-							key + "\t" + 
-							treatmentCount+"\t"+							
-							consultationCount+"\t"+							
-							procedureCount+"\t"+							
-							medicalCertificateCount+"\t"+							
-							newPatientTreatmentCount+"\t"+							
-							newPatientConsultationCount+"\n"							
-						); 				   							
-		}
-
-		//TOTAL
-		writer.print(
-				"TOTAL:\t"+totalTreatmentHMOCount+"\t"+totalConsultationHMOCount+"\t"+totalProcedureHMOCount+"\t"+totalMedicalCertificateHMOCount+"\t"+totalNewPatientTreatmentHMOCount+"\t"+totalNewPatientConsultationHMOCount+"\n"
-				);					
-
-		//--------------------------------------------------------------------
-		//init table header names
-/*		
-		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\n"); 		
-		double totalTreatmentNONHMOCount = 0;
-		double totalConsultationNONHMOCount = 0; //added by Mike, 20181219
-		
-		SortedSet<String> sortedNONHMOKeyset = new TreeSet<String>(nonHmoContainer.keySet());
-		for (String key : sortedNONHMOKeyset) {	
-			double treatmentCount = nonHmoContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
-			double consultationCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
-			totalTreatmentNONHMOCount += treatmentCount;
-			totalConsultationNONHMOCount += consultationCount;
-			
-			writer.print(
-							key + "\t" + 
-							treatmentCount+"\t"+							
-							consultationCount+"\n"							
-						); 				   							
-		}
-		//TOTAL
-		writer.print(
-				"TOTAL:\t"+totalTreatmentNONHMOCount+"\t"+totalConsultationHMOCount+"\n"							
-				); 				   							
-*/
-
-		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\tMEDICAL CERTIFICATE COUNT:\n"); 		
-
-		double totalTreatmentNONHMOCount = 0;
-		double totalConsultationNONHMOCount = 0; //added by Mike, 20181219		
-		double totalProcedureNONHMOCount = 0; //added by Mike, 20190105		
-		double totalMedicalCertificateNONHMOCount = 0; //added by Mike, 20190107
-		
-		SortedSet<String> sortedNONHMOKeyset = new TreeSet<String>(nonHmoContainer.keySet());
-
-		for (String key : sortedNONHMOKeyset) {	
-			double treatmentNONHMOCount = nonHmoContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
-			double consultationNONHMOCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
-			double procedureNONHMOCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]; //added by Mike, 20190105		
-			double medicalCertificateNONHMOCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; //added by Mike, 20190107
-
-			totalTreatmentNONHMOCount += treatmentNONHMOCount;
-			totalConsultationNONHMOCount += consultationNONHMOCount;
-			totalProcedureNONHMOCount += procedureNONHMOCount;
-			totalMedicalCertificateNONHMOCount += medicalCertificateNONHMOCount;
-			
-			writer.print(
-							key + "\t" + 
-							treatmentNONHMOCount+"\t"+							
-							consultationNONHMOCount+"\t"+							
-							procedureNONHMOCount+"\t"+							
-							medicalCertificateNONHMOCount+"\n"							
-						); 				   							
-		}
-
-		//TOTAL
-		writer.print(
-				"TOTAL:\t"+totalTreatmentNONHMOCount+"\t"+totalConsultationNONHMOCount+"\t"+totalProcedureNONHMOCount+"\t"+totalMedicalCertificateNONHMOCount+"\n"
-				);					
-
-		//--------------------------------------------------------------------
-		//init table header names
-		writer.print("\n\tTREATMENT COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\tMEDICAL CERTIFICATE COUNT:\tNEW PATIENT REFERRAL COUNT:\tCONSULTATION NEW PATIENT COUNT:\tCONSULTATION PATIENT FOLLOW-UP COUNT:\tCONSULTATION OLD PATIENT COUNT:\n"); 		
-
-		double totalReferringMedicalDoctorTransactionCount = 0;
-		double totalNewPatientReferralTransactionCount = 0;
-		double totalConsultationPerDoctorCount = 0;
-		double totalProcedurePerDoctorCount = 0;
-		double totalMedicalCertificatePerDoctorCount = 0;
-		double totalNewPatientPerDoctorCount = 0;
-		double totalFollowUpPerDoctorCount = 0;
-		double totalOldPatientPerDoctorCount = 0;
-		
-		SortedSet<String> sortedMedicalDoctorTransactionCountKeyset = new TreeSet<String>(medicalDoctorContainer.keySet());
-
-		for (String key : sortedMedicalDoctorTransactionCountKeyset) {	
-			double count = medicalDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
-
-			double newPatientReferralTransactionCount = medicalDoctorContainer.get(key)[OUTPUT_HMO_NEW_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
-
-			//added by Mike, 20181219
-			double consultationCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
-
-			//added by Mike, 20181219
-			double procedureCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN];
-
-			//added by Mike, 20190109
-			double medicalCertificateCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN];
-
-			//added by Mike, 20190202
-			double newPatientCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
-
-			//added by Mike, 20190202
-			double followUpCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_FOLLOW_UP_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_FOLLOW_UP_COUNT_COLUMN];
-
-			//added by Mike, 20190202
-			double oldPatientCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_OLD_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_OLD_PATIENT_COUNT_COLUMN];
-			
-			totalReferringMedicalDoctorTransactionCount += count;
-			totalNewPatientReferralTransactionCount += newPatientReferralTransactionCount;
-			totalConsultationPerDoctorCount += consultationCount;
-			totalProcedurePerDoctorCount += procedureCount;
-			totalMedicalCertificatePerDoctorCount += procedureCount;
-			totalFollowUpPerDoctorCount += followUpCount;
-			totalNewPatientPerDoctorCount += newPatientCount;
-			totalOldPatientPerDoctorCount += oldPatientCount;
-			
-			writer.print(
-							key + "\t" + 
-							count+"\t" +
-							consultationCount+"\t"+
-							procedureCount+"\t"+		
-							medicalCertificateCount+"\t"+		
-							newPatientReferralTransactionCount+"\t"+						
-							newPatientCount+"\t"+						
-							followUpCount+"\t"+						
-							oldPatientCount+"\n"						
-							); 				   							
-		}
-
-		//TOTAL
-		writer.print(
-				"TOTAL:\t"+totalReferringMedicalDoctorTransactionCount+"\t"+
-				totalConsultationPerDoctorCount+"\t"+totalProcedurePerDoctorCount+"\t"+
-				totalMedicalCertificatePerDoctorCount+"\t"+totalNewPatientReferralTransactionCount+"\t"+
-				totalNewPatientPerDoctorCount+"\t"+											
-				totalFollowUpPerDoctorCount+"\t"+											
-				totalOldPatientPerDoctorCount+"\n"											
-				); 				   										
-
-/*		
-		writer.print("\n\tTREATMENT COUNT:\tNEW PATIENT REFERRAL COUNT:\tCONSULTATION COUNT:\tPROCEDURE COUNT:\n"); 
-		double totalReferringMedicalDoctorTransactionCount = 0;
-		double totalNewPatientReferralTransactionCount = 0;
-		double totalConsultationPerDoctorCount = 0;
-		double totalProcedurePerDoctorCount = 0;
-		
-		SortedSet<String> sortedReferringMedicalDoctorTransactionCountKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
-		for (String key : sortedReferringMedicalDoctorTransactionCountKeyset) {	
-			double count = referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
-			double newPatientReferralTransactionCount = referringDoctorContainer.get(key)[OUTPUT_HMO_NEW_PATIENT_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
-			//added by Mike, 20181219
-			double consultationCount = referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
-			//added by Mike, 20181219
-			double procedureCount = referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] + referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN];
-			totalReferringMedicalDoctorTransactionCount += count;
-			totalNewPatientReferralTransactionCount += newPatientReferralTransactionCount;
-			totalConsultationPerDoctorCount += consultationCount;
-			totalProcedurePerDoctorCount += procedureCount;
-			
-			writer.print(
-							key + "\t" + 
-							count+"\t" +
-							newPatientReferralTransactionCount+"\t"+							
-							consultationCount+"\t"+
-							procedureCount+"\n"		
-							); 				   							
-		}
-		//TOTAL
-		writer.print(
-				"TOTAL:\t"+totalReferringMedicalDoctorTransactionCount+"\t"+totalNewPatientReferralTransactionCount+"\t"+
-				totalConsultationPerDoctorCount+"\t"+totalProcedurePerDoctorCount+"\n"							
-				); 				   							
-*/
-		//--------------------------------------------------------------------
-		//init table header names
-		writer.print("\nCONSULTATION COUNT under each CLASSIFICATION\n");
-
-/*		SortedSet<String> sortedReferringMedicalDoctorTransactionCountKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
-*/
-		SortedSet<String> sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset = new TreeSet<String>(classificationContainerPerMedicalDoctor.keySet());
-//		String defaultKey=null;
-/*		
-		writer.print("\n");
-		for (String key : sortedNONHMOKeyset) {	
-			writer.print(key+"\t"); 		
-		}		
-		writer.print("\n");
-*/				
-//		SortedSet<String> sortedNonHmoContainerTableHeaderKeyset = new TreeSet<String>(classificationContainerPerMedicalDoctor.get(defaultKey).keySet());
-
-/*
-		double totalNonHmoCount = 0;
-*/
-		HashMap<String, Integer> totalCountForEachClassification = new HashMap<String, Integer>(); //added by Mike, 20190102
-		boolean hasInitTableHeader=false;		
-		SortedSet<String> sortedclassificationKeyset = null;
-		
-		for (String key : sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset) {				
-			sortedclassificationKeyset = new TreeSet<String>(classificationContainerPerMedicalDoctor.get(key).keySet());
-
-			if (!hasInitTableHeader) {
-				writer.print("\t");
-				for (String classificationKey : sortedclassificationKeyset) {	
-					writer.print(classificationKey+"\t");
-					
-					//added by Mike, 20190102
-					totalCountForEachClassification.put(classificationKey, 0);
-				}				
-				writer.print("\n");
-				hasInitTableHeader=true;
-			}
-
-			writer.print(key+"\t");
-
-			for (String classificationKey : sortedclassificationKeyset) {
-				double[] value = classificationContainerPerMedicalDoctor.get(key).get(classificationKey);
-				double classificationCount = value[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + value[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
-				
-				//added by Mike, 20190102
-				totalCountForEachClassification.put(classificationKey, totalCountForEachClassification.get(classificationKey)+(int)classificationCount);
-//				System.out.println(">>" +" "+classificationKey+" "+totalCountForEachClassification.get(classificationKey));
-
-				writer.print(classificationCount+"\t");
-			}			
-			
-			writer.print("\n");
-		}
-		
-		//TOTAL
-		writer.print("TOTAL:\t");
-				
-		//added by Mike, 20190102				
-		for (String classificationKey : sortedclassificationKeyset) {
-			writer.print(totalCountForEachClassification.get(classificationKey)+"\t");
-		}			
-		writer.print("\n");		
-		writer.close();
-		
+		/*writer.close();
+		*/
 		//--------------------------------------------------------------------------------------
 		// OUTPUT FOR DIAGNOSED CASES
 		//--------------------------------------------------------------------------------------
+/*		
 		//edited by Mike, 20190223
 		SortedSet<String> sortedDiagnosedCasesKeyset = new TreeSet<String>(diagnosedCasesContainer.keySet());
 		SortedSet<String> sortedDiagnosedCasesClassifiedKeyset = new TreeSet<String>(classifiedDiagnosedCasesContainer.keySet());
@@ -658,6 +318,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		
 		diagnosedCasesWriter.close();
 		diagnosedCasesClassifiedWriter.close();
+*/		
 	}
 	
 	private static String convertDateToMonthYearInWords(int date) {
@@ -2054,6 +1715,47 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			columnValuesArray[OUTPUT_DATE_ID_COLUMN] = i; 			
 		}		
 
+	}
+	
+	private static void processWriteOutputFile(PrintWriter writer) throws Exception {
+		File f = new File(inputOutputTemplateFilename+".html");
+
+		System.out.println("inputOutputTemplateFilename: " + inputOutputTemplateFilename);
+								
+		Scanner sc = new Scanner(new FileInputStream(f), "UTF-8");				
+	
+		String s;		
+//			s=sc.nextLine(); //skip the first row, which is the input file's table headers
+
+		if (isInDebugMode) {
+			rowCount=0;
+		}
+					
+		//count/compute the number-based values of inputColumns 
+		while (sc.hasNextLine()) {
+			s=sc.nextLine();
+/*			
+			//if the row is blank
+			if (s.trim().equals("")) {
+				continue;
+			}
+*/			
+			if (isInDebugMode) {
+				rowCount++;
+//				System.out.println("rowCount: "+rowCount);
+			}
+			
+			//added by Mike, 20190414
+			//This is to resolve the following character-encoding issue.
+			//This is not anymore necessary due to setting the scanner to use UTF-8
+//			s = s.replace("Â", "");
+
+//			System.out.println("s: "+s);
+			
+			writer.print(s + "\n");
+		}
+		
+		writer.close();
 	}
 	
 /*	

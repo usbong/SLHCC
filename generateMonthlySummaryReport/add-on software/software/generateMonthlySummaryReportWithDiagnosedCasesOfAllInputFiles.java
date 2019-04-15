@@ -1666,8 +1666,11 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			Scanner sc = new Scanner(new FileInputStream(f));				
 		
 			String s;		
-			s=sc.nextLine(); //skip the first row, which is the input file's table headers
-	
+			
+			//edited by Mike, 20190415
+			//Note that there is no table header in the input file.
+/*			s=sc.nextLine(); //skip the first row, which is the input file's table headers
+*/	
 			if (isInDebugMode) {
 				rowCount=0;
 			}

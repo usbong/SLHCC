@@ -198,6 +198,12 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	//added by Mike, 20190126
 	private static LevenshteinDistance myLevenshteinDistance;
 	
+	//added by Mike, 20190415
+	private static int totalTreatmentCount = 0;
+	private static int totalConsultationCount = 0;
+	private static int totalProcedureCount = 0;		
+	private static int totalMedicalCertificateCount = 0;
+	
 	public static void main ( String[] args ) throws Exception
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
@@ -242,6 +248,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				
 		//added by Mike, 20190125		
 		processContainers();
+				
 /*		
 		//TODO: -apply: this properly in the add-on software to consolidate similar Strings, e.g. Medical Doctor, whose difference may only be an excess space between characters, etc
 		//added by Mike, 20190123
@@ -253,6 +260,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		System.out.println(myLevenshteinDistance.apply("123", "132")); //answer: 2
 		System.out.println(myLevenshteinDistance.apply("132", "1 32")); //answer: 1
 */		
+
+		//added by Mike, 20190415
+		processAutoCalculate();
+
 		/*
 		 * --------------------------------------------------------------------
 		 * OUTPUT
@@ -421,6 +432,40 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
     	{
     		System.out.println("File Path to file could not be made.");
     	}    			
+	}
+	
+	//added by Mike, 20190415
+	private static void processAutoCalculate() {		
+
+		System.out.println("dateValuesArrayInt.length: "+dateValuesArrayInt.length);		
+		System.out.println("dateValuesArrayInt.length/2: "+dateValuesArrayInt.length/2);
+		
+		//Note that there should be an even number of input files and at least two (2) input files, one for PT Treatment and another for Consultation
+		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION
+		System.out.println("dateValuesArrayInt[i]: "+dateValuesArrayInt[i]);
+		
+			//added by Mike, 20190207
+			if (dateValuesArrayInt[i]==0) { //if there is no .txt input file
+				System.out.println("\nThere is no Tab-delimited .txt input file in either the \"input\\consultation\" folder or the \"input\\treatment\" folder.");
+				return;
+			}
+					
+			double treatmentCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN];
+
+			//added by Mike, 20181218
+			double consultationCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+
+			//added by Mike, 20190105
+			double procedureCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN];
+
+			//added by Mike, 20190105
+			double medicalCertificateCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN];
+			
+			totalTreatmentCount += treatmentCount;
+			totalConsultationCount += consultationCount;
+			totalProcedureCount += procedureCount;
+			totalMedicalCertificateCount += medicalCertificateCount;		
+		}
 	}
 	
 	private static void processMonthlyCount(HashMap<Integer, double[]> dateContainer, String[] inputColumns, int i, boolean isConsultation) {
@@ -1751,6 +1796,9 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 //			s = s.replace("Â", "");
 
 //			System.out.println("s: "+s);
+//			System.out.println("totalTreatmentCount: "+totalTreatmentCount);
+			
+			s = s.replace("<?php echo $data['total_treatment_count'];?>", "" + totalTreatmentCount);
 			
 			writer.print(s + "\n");
 		}

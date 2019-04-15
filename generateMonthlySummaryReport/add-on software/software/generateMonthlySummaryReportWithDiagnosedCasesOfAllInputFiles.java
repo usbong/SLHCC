@@ -402,7 +402,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 
 		String year = sb.substring(sb.indexOf("-")).substring(sb.indexOf("-")+1);
 
-		System.out.println("year: "+year);
+//		System.out.println("year: "+year);
 
 		//if the year is only 2 digits, e.g. "19", instead of of "2019"
 		if (year.length() < 4) {
@@ -410,7 +410,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		}
 		
 
-		System.out.println("Integer.parseInt(year.concat(month)): "+Integer.parseInt(year.concat(month)));
+//		System.out.println("Integer.parseInt(year.concat(month)): "+Integer.parseInt(year.concat(month)));
 		return Integer.parseInt(year.concat(month));
 	}
 	
@@ -786,11 +786,11 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				(!inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
 
 				String classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
-				System.out.println("classificationName: "+classificationName); 
+//				System.out.println("classificationName: "+classificationName); 
 				
 				if (isInDebugMode) {
 					if (classificationName.trim().equals("")) {
-						System.out.println(">>> "+inputColumns[INPUT_DATE_COLUMN]+"; Name: "+inputColumns[INPUT_NAME_COLUMN]);
+//						System.out.println(">>> "+inputColumns[INPUT_DATE_COLUMN]+"; Name: "+inputColumns[INPUT_NAME_COLUMN]);
 					}
 				}
 /*								
@@ -2016,7 +2016,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		for (String inputString : sortedKeyset) {			
 			//added by Mike, 20190224
 			String[] inputStringArray = inputString.replace("-"," ").split(" ");				
-			System.out.println(">>>>>>> inputString: "+inputString);
+//			System.out.println(">>>>>>> inputString: "+inputString);
 
 			for (String knownDiagnosedCasesKey : sortedKnownDiagnosedCasesKeyset) {	 //the key is the sub-classification
 				hasKnownDiagnosedCaseKeywords=false;
@@ -2038,20 +2038,19 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 //				System.out.println(">>> subClassification: "+subClassification);
 				
 				for(int i=0; i<s.length; i++) {			
-					System.out.println(">>>> : "+s[i]);
+//					System.out.println(">>>> : "+s[i]);
 
 					int k;
 					for(k=0; k<inputStringArray.length; k++) {		
-						System.out.println(">> "+inputStringArray[k]);
+//						System.out.println(">> "+inputStringArray[k]);
 						
 						if (inputStringArray[k].trim().toUpperCase().equals(s[i].trim().toUpperCase())) {
 							hasKnownDiagnosedCaseKeywords=true;
 							break;
 						}
-						else {
-							System.out.println(">> true: "+inputString +" : "+s[i]);
-
-						}						
+//						else {
+//							System.out.println(">> true: "+inputString +" : "+s[i]);
+//						}						
 					}
 
 					if (k==inputStringArray.length) {
@@ -2095,10 +2094,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			if (hasKnownDiagnosedCaseKeywords) {
 				classificationKey = classification;
 				
-				if (inputString.toLowerCase().contains("trigger")) {					
-					System.out.println(">>> inputString: "+inputString);
-					System.out.println(">>> classificationKey: "+classificationKey);
-				}
+//				if (inputString.toLowerCase().contains("trigger")) {					
+//					System.out.println(">>> inputString: "+inputString);
+//					System.out.println(">>> classificationKey: "+classificationKey);
+//				}
 
 //				break;
 			}
@@ -2123,16 +2122,16 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 */						
 		}
 
-		SortedSet<String> sortedClassifiedDiagnosedCasesKeyset = new TreeSet<String>(classifiedDiagnosedCasesContainer.keySet());	
+//		SortedSet<String> sortedClassifiedDiagnosedCasesKeyset = new TreeSet<String>(classifiedDiagnosedCasesContainer.keySet());	
 		
-		for (String key : sortedClassifiedDiagnosedCasesKeyset) {			
-			int diagnosedCaseCount = classifiedDiagnosedCasesContainer.get(key);
-			
-			System.out.print(
-							key + "\t" + 
-							diagnosedCaseCount+"\n"							
-						); 				   						
-		}
+//		for (String key : sortedClassifiedDiagnosedCasesKeyset) {			
+//			int diagnosedCaseCount = classifiedDiagnosedCasesContainer.get(key);
+//			
+//			System.out.print(
+//							key + "\t" + 
+//							diagnosedCaseCount+"\n"							
+//						); 				   						
+//		}
 
 	}
 }

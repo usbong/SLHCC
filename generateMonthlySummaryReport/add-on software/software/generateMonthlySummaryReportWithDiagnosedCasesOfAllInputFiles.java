@@ -38,12 +38,12 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 '
 ' Notes:
 ' 1) To execute the add-on software/application simply use the following command:
-'   java generateMonthlySummaryReportOfAllInputFiles input_201801.txt
+'   java generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles input_201801.txt
 ' 
 ' where: "input_201801.txt" is the name of the file.
 ' 
 ' 2) To execute a set of input files, e.g. input201801.txt, input201802.txt, you can use the following command: 
-'   java generateMonthlySummaryReportOfAllInputFiles input*
+'   java generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles input*
 ' 
 ' where: "input*" means any file in the directory that starts with "input".
 '
@@ -52,15 +52,15 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 ' --> Example: inputConsultation201801.txt
 '
 ' 4) If you use space in your file name, e.g. "input Consultation 201801.txt", you will have to execute the input files as follows.
-'   java generateMonthlySummaryReportOfAllInputFiles *"2018"*.txt
+'   java generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles *"2018"*.txt
 '
 ' where: * means any set of characters
 '
 ' 5) To compile on Windows' Command Prompt the add-on software with the Apache Commons Text .jar file, i.e. org.apache.commons.text, use the following command:
-'   javac -cp .;org.apache.commons.text.jar generateMonthlySummaryReportOfAllInputFiles.java
+'   javac -cp .;org.apache.commons.text.jar generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles.java
 '
 ' 6) To execute on Windows' Command Prompt the add-on software with the Apache Commons Text .jar file, i.e. org.apache.commons.text, use the following command:
-'   java -cp .;org.apache.commons.text.jar generateMonthlySummaryReportOfAllInputFiles *.txt
+'   java -cp .;org.apache.commons.text.jar generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles *.txt
 '
 ' 7) The Apache Commons Text binaries with the .jar file can be downloaded here:
 '   http://commons.apache.org/proper/commons-text/download_text.cgi; last accessed: 20190123
@@ -1860,6 +1860,15 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 
 			//added by Mike, 20190416
 			s = s.replace("<?php echo $data['total_wi_count'];?>", "" + (int) nonHmoContainer.get(classificationWI)[OUTPUT_NON_HMO_COUNT_COLUMN]);
+
+			//added by Mike, 20190416
+			s = s.replace("<?php echo $data['total_slc_count'];?>", "" + (int) nonHmoContainer.get(classificationSLC)[OUTPUT_NON_HMO_COUNT_COLUMN]);
+
+			s = s.replace("<?php echo $data['total_sc_count'];?>", "" + (int) nonHmoContainer.get(classificationSC)[OUTPUT_NON_HMO_COUNT_COLUMN]);
+
+			s = s.replace("<?php echo $data['total_pwd_count'];?>", "" + (int) nonHmoContainer.get(classificationPWD)[OUTPUT_NON_HMO_COUNT_COLUMN]);
+			
+			
 			
 			writer.print(s + "\n");
 		}

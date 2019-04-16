@@ -1881,6 +1881,9 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 //			System.out.println("s: "+s);
 //			System.out.println("totalTreatmentCount: "+totalTreatmentCount);
 			
+			//added by Mike, 20190417
+			s = s.replace("<?php echo $data['date'];?>", "" + dateValuesArray[0].toUpperCase());
+			
 			s = s.replace("<?php echo $data['total_treatment_count'];?>", "" + totalTreatmentCount);
 
 			//added by Mike, 20190416

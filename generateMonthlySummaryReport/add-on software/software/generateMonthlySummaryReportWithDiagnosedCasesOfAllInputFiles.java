@@ -204,6 +204,16 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static int totalProcedureCount = 0;		
 	private static int totalMedicalCertificateCount = 0;
 	
+	//added by Mike, 20190416
+	private static int totalReferringMedicalDoctorTransactionCount = 0;
+	private static int totalNewPatientReferralTransactionCount = 0;
+	private static int totalConsultationPerDoctorCount = 0;
+	private static int totalProcedurePerDoctorCount = 0;
+	private static int totalMedicalCertificatePerDoctorCount = 0;
+	private static int totalNewPatientPerDoctorCount = 0;
+	private static int totalFollowUpPerDoctorCount = 0;
+	private static int totalOldPatientPerDoctorCount = 0;
+	
 	public static void main ( String[] args ) throws Exception
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
@@ -465,6 +475,42 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			totalConsultationCount += consultationCount;
 			totalProcedureCount += procedureCount;
 			totalMedicalCertificateCount += medicalCertificateCount;		
+		}
+		
+		//--------------------------------------------------------------------
+		SortedSet<String> sortedMedicalDoctorTransactionCountKeyset = new TreeSet<String>(medicalDoctorContainer.keySet());
+
+		for (String key : sortedMedicalDoctorTransactionCountKeyset) {	
+			double count = medicalDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
+
+			double newPatientReferralTransactionCount = medicalDoctorContainer.get(key)[OUTPUT_HMO_NEW_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
+
+			//added by Mike, 20181219
+			double consultationCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+
+			//added by Mike, 20181219
+			double procedureCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN];
+
+			//added by Mike, 20190109
+			double medicalCertificateCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN];
+
+			//added by Mike, 20190202
+			double newPatientCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
+
+			//added by Mike, 20190202
+			double followUpCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_FOLLOW_UP_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_FOLLOW_UP_COUNT_COLUMN];
+
+			//added by Mike, 20190202
+			double oldPatientCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_OLD_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_OLD_PATIENT_COUNT_COLUMN];
+			
+			totalReferringMedicalDoctorTransactionCount += count;
+			totalNewPatientReferralTransactionCount += newPatientReferralTransactionCount;
+			totalConsultationPerDoctorCount += consultationCount;
+			totalProcedurePerDoctorCount += procedureCount;
+			totalMedicalCertificatePerDoctorCount += procedureCount;
+			totalFollowUpPerDoctorCount += followUpCount;
+			totalNewPatientPerDoctorCount += newPatientCount;
+			totalOldPatientPerDoctorCount += oldPatientCount;
 		}
 	}
 	
@@ -1802,6 +1848,9 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 //			System.out.println("totalTreatmentCount: "+totalTreatmentCount);
 			
 			s = s.replace("<?php echo $data['total_treatment_count'];?>", "" + totalTreatmentCount);
+
+			//added by Mike, 20190416
+			s = s.replace("<?php echo $data['total_new_patients_count'];?>", "" + totalNewPatientReferralTransactionCount);
 			
 			writer.print(s + "\n");
 		}

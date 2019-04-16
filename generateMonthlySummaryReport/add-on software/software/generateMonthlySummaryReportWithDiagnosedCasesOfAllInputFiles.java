@@ -220,6 +220,14 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static final String classificationSC = "SC";
 	private static final String classificationPWD = "PWD";
 		
+	//added by Mike, 20190417
+	private static double totalTreatmentHMOCount = 0;
+	private static double totalConsultationHMOCount = 0;
+	private static double totalProcedureHMOCount = 0;		
+	private static double totalMedicalCertificateHMOCount = 0;
+	private static double totalNewPatientTreatmentHMOCount = 0;
+	private static double totalNewPatientConsultationHMOCount = 0;
+			
 	public static void main ( String[] args ) throws Exception
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
@@ -517,6 +525,26 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			totalFollowUpPerDoctorCount += followUpCount;
 			totalNewPatientPerDoctorCount += newPatientCount;
 			totalOldPatientPerDoctorCount += oldPatientCount;
+		}
+		
+		//added by Mike, 20190417
+		//--------------------------------------------------------------------		
+		SortedSet<String> sortedKeyset = new TreeSet<String>(hmoContainer.keySet());
+		
+		for (String key : sortedKeyset) {	
+			double treatmentCount = hmoContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
+			double consultationCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
+			double procedureCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]; //added by Mike, 20190105		
+			double medicalCertificateCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; //added by Mike, 20190107
+			double newPatientTreatmentCount = hmoContainer.get(key)[OUTPUT_HMO_NEW_PATIENT_COUNT_COLUMN]; //added by Mike, 20190102
+			double newPatientConsultationCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN]; //added by Mike, 20190102
+
+			totalTreatmentHMOCount += treatmentCount;
+			totalConsultationHMOCount += consultationCount;
+			totalProcedureHMOCount += procedureCount;
+			totalMedicalCertificateHMOCount += medicalCertificateCount;
+			totalNewPatientTreatmentHMOCount += newPatientTreatmentCount;
+			totalNewPatientConsultationHMOCount += newPatientConsultationCount;			
 		}
 	}
 	
@@ -1868,7 +1896,9 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 
 			s = s.replace("<?php echo $data['total_pwd_count'];?>", "" + (int) nonHmoContainer.get(classificationPWD)[OUTPUT_NON_HMO_COUNT_COLUMN]);
 			
-			
+			//added by Mike, 20190417
+			s = s.replace("<?php echo $data['total_hmo_count'];?>", "" + (int) totalTreatmentHMOCount);			
+						
 			
 			writer.print(s + "\n");
 		}

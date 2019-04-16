@@ -214,6 +214,12 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static int totalFollowUpPerDoctorCount = 0;
 	private static int totalOldPatientPerDoctorCount = 0;
 	
+	//added by Mike, 20190416
+	private static final String classificationWI = "WI";
+	private static final String classificationSLC = "SLC";
+	private static final String classificationSC = "SC";
+	private static final String classificationPWD = "PWD";
+		
 	public static void main ( String[] args ) throws Exception
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
@@ -1851,6 +1857,9 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 
 			//added by Mike, 20190416
 			s = s.replace("<?php echo $data['total_new_patients_count'];?>", "" + totalNewPatientReferralTransactionCount);
+
+			//added by Mike, 20190416
+			s = s.replace("<?php echo $data['total_wi_count'];?>", "" + (int) nonHmoContainer.get(classificationWI)[OUTPUT_NON_HMO_COUNT_COLUMN]);
 			
 			writer.print(s + "\n");
 		}

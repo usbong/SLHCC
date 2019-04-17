@@ -1858,7 +1858,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		if (isInDebugMode) {
 			rowCount=0;
 		}
-					
+
+		//added by Mike, 20190417
+		SortedSet<String> sortedClassifiedKeyset = new TreeSet<String>(classifiedDiagnosedCasesContainer.keySet());
+		
 		//count/compute the number-based values of inputColumns 
 		while (sc.hasNextLine()) {
 			s=sc.nextLine();
@@ -1901,7 +1904,23 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			
 			//added by Mike, 20190417
 			s = s.replace("<?php echo $data['total_hmo_count'];?>", "" + (int) totalTreatmentHMOCount);			
-						
+									
+			//added by Mike, 20190417
+			if (s.contains("<!-- Table Values: NEW CASES -->")) {						  
+				for (String key : sortedClassifiedKeyset) {	
+					s = s.concat("\n");
+					s = s.concat("\t\t\t\t\t  <tr>\n");
+					s = s.concat("\t\t\t\t\t	  <!-- Column 1 -->\n");
+					s = s.concat("\t\t\t\t\t     <td>\n");
+					s = s.concat("\t\t\t\t\t		  <b><span>" + key + "</span></b>\n");
+					s = s.concat("\t\t\t\t\t	  </td>\n");
+					s = s.concat("\t\t\t\t\t	  <!-- Column 2 -->\n");
+					s = s.concat("\t\t\t\t\t	  <td>\n");
+					s = s.concat("\t\t\t\t\t	  <b><span>" + classifiedDiagnosedCasesContainer.get(key) + "</span></b>\n");
+					s = s.concat("\t\t\t\t\t     </td>\n");
+					s = s.concat("\t\t\t\t\t  </tr>");
+				}
+			}
 			
 			writer.print(s + "\n");
 		}

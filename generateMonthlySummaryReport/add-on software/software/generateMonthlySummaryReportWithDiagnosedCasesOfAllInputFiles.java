@@ -24,6 +24,7 @@ import java.text.DecimalFormat;
 //import commons-lang3-3.8.1;
 //import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.similarity.LevenshteinDistance;
+import java.util.Map.Entry; //added by Mike, 20190417
 
 /*
 ' Given:
@@ -1861,7 +1862,23 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 
 		//added by Mike, 20190417
 		SortedSet<String> sortedClassifiedKeyset = new TreeSet<String>(classifiedDiagnosedCasesContainer.keySet());
-		
+	
+		//added by Mike, 20190417
+		Set<Entry<String, Integer>> classifiedDiagnosedCasesContainerSet = classifiedDiagnosedCasesContainer.entrySet();
+        List<Entry<String, Integer>> sortedClassifiedDiagnosedCasesContainerList = new ArrayList<Entry<String, Integer>>(classifiedDiagnosedCasesContainerSet);
+		//TO-DO: remove inner class "Comparator" so that there will be no "generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles$1.class" after compiling the "generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles.java"
+        Collections.sort(sortedClassifiedDiagnosedCasesContainerList, new Comparator<Map.Entry<String, Integer>>() {
+            public int compare(Map.Entry<String, Integer> o1,
+                    Map.Entry<String, Integer> o2) {
+                return o2.getValue().compareTo(o1.getValue());
+            }
+        });
+/*
+        for (Entry<String, Integer> entry : list) {
+            System.out.println(entry.getValue());
+
+        }
+*/	
 		//count/compute the number-based values of inputColumns 
 		while (sc.hasNextLine()) {
 			s=sc.nextLine();
@@ -1920,6 +1937,25 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 					s = s.concat("\t\t\t\t\t     </td>\n");
 					s = s.concat("\t\t\t\t\t  </tr>");
 				}
+			}
+			
+			//added by Mike, 20190417
+			if (s.contains("<b><span><?php echo $value['name'];?>;&nbsp;</span></b>")) {
+				s = s.replace("<b><span><?php echo $value['name'];?>;&nbsp;</span></b>", "<b><span>");
+
+				//Write the names of the top 3 cases, separated by a semicolon and a blank space				
+				int rankCount = 0;				
+				for (Entry<String, Integer> entry : sortedClassifiedDiagnosedCasesContainerList) {
+					if (rankCount < 2) {
+						s = s.concat(entry.getKey()+"; ");					
+						rankCount++;
+					}
+					else {
+						s = s.concat(entry.getKey());					
+						break;
+					}
+				}
+				s = s.concat("</span></b>");			
 			}
 			
 			writer.print(s + "\n");

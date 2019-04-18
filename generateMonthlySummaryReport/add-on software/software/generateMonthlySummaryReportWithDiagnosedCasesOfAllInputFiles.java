@@ -25,7 +25,7 @@ import java.text.DecimalFormat;
 //import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import java.util.Map.Entry; //added by Mike, 20190417
-
+import utils.IncidenceNumberComparator; //added by Mike, 20190418
 /*
 ' Given:
 ' 1) Encoding for the Month Input Worksheet
@@ -1866,19 +1866,18 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		//added by Mike, 20190417
 		Set<Entry<String, Integer>> classifiedDiagnosedCasesContainerSet = classifiedDiagnosedCasesContainer.entrySet();
         List<Entry<String, Integer>> sortedClassifiedDiagnosedCasesContainerList = new ArrayList<Entry<String, Integer>>(classifiedDiagnosedCasesContainerSet);
-		//TO-DO: remove inner class "Comparator" so that there will be no "generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles$1.class" after compiling the "generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles.java"
-        Collections.sort(sortedClassifiedDiagnosedCasesContainerList, new Comparator<Map.Entry<String, Integer>>() {
+		
+		//edited by Mike, 20190418
+		//Removed inner class "Comparator" so that there will be no "generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles$1.class" after compiling the "generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles.java"
+		/*Collections.sort(sortedClassifiedDiagnosedCasesContainerList, new Comparator<Map.Entry<String, Integer>>() {
             public int compare(Map.Entry<String, Integer> o1,
                     Map.Entry<String, Integer> o2) {
                 return o2.getValue().compareTo(o1.getValue());
             }
-        });
-/*
-        for (Entry<String, Integer> entry : list) {
-            System.out.println(entry.getValue());
+        });*/
+		
+        Collections.sort(sortedClassifiedDiagnosedCasesContainerList, new IncidenceNumberComparator());
 
-        }
-*/	
 		//count/compute the number-based values of inputColumns 
 		while (sc.hasNextLine()) {
 			s=sc.nextLine();

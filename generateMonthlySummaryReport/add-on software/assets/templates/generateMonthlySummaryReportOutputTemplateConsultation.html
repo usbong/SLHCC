@@ -1,0 +1,453 @@
+<!--
+' Copyright 2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190420
+' @date updated: 20190420
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <style type="text/css">
+	/**/
+	                    body
+                        {
+                                font-family: Arial;
+								font-size: 9pt;
+								/* This makes the width of the output page that is displayed on a browser equal with that of the printed page. */
+								width: 670px 
+                        }
+						
+						div.checkBox
+						{
+								border: 1.5pt solid black; height: 9pt; width: 9pt;
+								text-align: center;
+								float: left
+						}
+						
+						div.option
+						{
+								padding: 2pt;
+								display: inline-block;
+						}
+						
+						div.copyright
+						{
+								text-align: center;
+						}
+						
+						table.pt_census td
+						{
+							outline: thin solid
+						}
+						
+
+    /**/
+    </style>
+    <title>
+      STA. LUCIA HEALTH CARE CENTRE: ORTHOPEDIC AND PHYSICAL THERAPY DEPARTMENT/UNIT
+    </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style type="text/css">
+    </style>
+  </head>
+  <body>
+	<h3>
+	STA. LUCIA HEALTH CARE CENTRE: ORTHOPEDIC AND PHYSICAL THERAPY DEPARTMENT/UNIT
+	</h3>
+	<br />
+	<div>
+		<table width="100%">
+		  <tr>
+			<td>
+			  <!-- Note that the date value must be in Month and Year, e.g. MARCH 2019 -->
+			  <b><span>CONSULTATION <?php echo $data['date'];?></span></b>
+			</td>
+		  </tr>
+		</table>
+	</div>
+	<br />
+	<br />
+	<!-- This portion of the page is divided into two columns -->
+	<div>
+		<table width="100%">
+		  <!-- Table Row -->
+		  <tr>
+		    <!-- Column 1 -->
+			<td>
+				<!-- TABLE 1: NEW CASES -->
+				<div>					
+					<!-- Table Values: CONSULTATION -->
+					<table width="50%" class="pt_census">
+					  <!-- Table Values Row 1 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>TOTAL # OF CONSULTATIONS:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_consultation_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 2 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>TOTAL # OF PROCEDURES:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_procedure_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 3: Blank -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+							<br />
+						</td>
+						<!-- Column 2 -->
+						<td>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 4 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>NEW PATIENTS:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_new_patients_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 5 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>FOLLOW-UP:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_follow_up_patients_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 6 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>OLD PATIENTS:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_old_patients_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 7: Blank-->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+							<br />
+						</td>
+						<!-- Column 2 -->
+						<td>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 8 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>PROCEDURES:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <!-- At present, the value here is equal with the total procedure count -->
+						  <b><span><?php echo $data['total_procedure_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 9: Blank -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+							<br />
+						</td>
+						<!-- Column 2 -->
+						<td>
+						</td>
+					  </tr>
+					   <!-- Table Values Row 10 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>WALK-IN:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_wi_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 11 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>SLC:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_slc_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 12 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>SLR:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <!-- At present, the value here is blank -->
+						  <b><span><!-- update with correct value --> </span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 13 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>NO CHARGE:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <!-- At present, the value here is blank -->
+						  <b><span><!-- update with correct value --> </span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 14 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>HMO:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_hmo_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 15 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>SENIOR CITIZEN:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_sc_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 16 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>PWD:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_pwd_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 17 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>WALK-IN (C/O MCDO):</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_wi_mcdo_count'];?></span></b>
+						</td>
+					  </tr>					  
+					</table>		
+				</div>	
+			</td>
+		    <!-- Column 2 -->
+			<td>
+				<!-- TABLE 2: PT REHABILITATION -->
+				<div>
+					<table width="50%">
+					  <!-- Table Name -->
+					  <!-- Table Name Row 1-->
+					  <tr>
+						<td>
+						  <!-- Note that the date value must be in Month and Year, e.g. MARCH 2019 -->
+						  <b><span>PT REHABILITATION <br />
+								   <?php echo $data['date'];?>
+						     </span>
+						  </b>
+						</td>
+						<td>
+						</td>
+					  </tr>
+					  <!-- Table Name Row 2: Blank-->
+					  <tr>
+						<td>
+							<br />
+						</td>
+						<td>
+						</td>
+					  </tr>
+					</table>
+					<!-- Table Values: PT REHABILITATION -->
+					<table width="50%" class="pt_census">
+					  <!-- Table Values Row 1 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>TOTAL # OF TREATMENT:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_treatment_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 2 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>CLINIC:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <!-- At present, the value here is equal with the total treatment count -->
+						  <b><span><?php echo $data['total_treatment_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 3 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>HOME CARE:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <!-- At present, the value here is blank -->
+						  <b><span><!-- update with correct value --> </span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 4: Blank-->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+							<br />
+						</td>
+						<!-- Column 2 -->
+						<td>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 5 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>NEW PATIENTS:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_new_patients_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 6 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>NEW CASES:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_new_cases_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 7: Blank-->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+							<br />
+						</td>
+						<!-- Column 2 -->
+						<td>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 8 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>WALK-IN:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_wi_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 9 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>SLC:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_slc_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 10 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>HMO:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_hmo_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 11 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>SENIOR CITIZEN:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_sc_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 12 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>PWD:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $data['total_pwd_count'];?></span></b>
+						</td>
+					  </tr>
+					</table>		
+				</div>	
+			</td>
+		  </tr>		  
+		</table>		
+	</div>	
+	<br />
+	<br />
+	<div class="copyright">
+		<!-- TO-DO: -add: automatically write the present year -->
+		<span>© Usbong Social Systems, Inc. 2011~2019. All rights reserved.</span>
+	</div>		 
+  </body>
+</html>

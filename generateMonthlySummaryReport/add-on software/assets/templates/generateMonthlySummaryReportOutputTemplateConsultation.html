@@ -43,7 +43,7 @@
 								text-align: center;
 						}
 						
-						table.pt_census td
+						table.consultation_census td
 						{
 							outline: thin solid
 						}
@@ -85,7 +85,7 @@
 				<!-- TABLE 1: NEW CASES -->
 				<div>					
 					<!-- Table Values: CONSULTATION -->
-					<table width="50%" class="pt_census">
+					<table width="50%" class="consultation_census">
 					  <!-- Table Values Row 1 -->
 					  <tr>
 						<!-- Column 1 -->
@@ -278,16 +278,14 @@
 			</td>
 		    <!-- Column 2 -->
 			<td>
-				<!-- TABLE 2: PT REHABILITATION -->
+				<!-- TABLE 2: SUMMARY FOR EACH MEDICAL DOCTOR PRESENT -->
 				<div>
 					<table width="50%">
 					  <!-- Table Name -->
 					  <!-- Table Name Row 1-->
 					  <tr>
 						<td>
-						  <!-- Note that the date value must be in Month and Year, e.g. MARCH 2019 -->
-						  <b><span>PT REHABILITATION <br />
-								   <?php echo $data['date'];?>
+						  <b><span>MEDICAL DOCTORS<br />
 						     </span>
 						  </b>
 						</td>
@@ -303,140 +301,85 @@
 						</td>
 					  </tr>
 					</table>
-					<!-- Table Values: PT REHABILITATION -->
-					<table width="50%" class="pt_census">
+					<!-- Table Values: MONTHLY SUMMARY FOR EACH MEDICAL DOCTOR PRESENT -->
+					<table width="50%" class="consultation_census">
+					<?php
+						foreach ($result as $value) {
+					?>
 					  <!-- Table Values Row 1 -->
 					  <tr>
 						<!-- Column 1 -->
 						<td>
-						  <b><span>TOTAL # OF TREATMENT:</span></b>
+							<!-- Replace this with the actual value -->
+							<b><span>LAST NAME OF MEDICAL DOCTOR</span></b>
 						</td>
-						<!-- Column 2 -->
+						<!-- Column 2: Blank -->
 						<td>
-						  <b><span><?php echo $data['total_treatment_count'];?></span></b>
+							<!-- This is blank -->
+							<br />
 						</td>
 					  </tr>
 					  <!-- Table Values Row 2 -->
 					  <tr>
 						<!-- Column 1 -->
 						<td>
-						  <b><span>CLINIC:</span></b>
+						  <b><span>CONSULT:</span></b>
 						</td>
 						<!-- Column 2 -->
 						<td>
-						  <!-- At present, the value here is equal with the total treatment count -->
-						  <b><span><?php echo $data['total_treatment_count'];?></span></b>
+						  <!-- The value here is for each Medical Doctor present -->
+						  <b><span><?php echo $value['total_consultation_count'];?></span></b>
 						</td>
 					  </tr>
 					  <!-- Table Values Row 3 -->
 					  <tr>
 						<!-- Column 1 -->
 						<td>
-						  <b><span>HOME CARE:</span></b>
+						  <b><span>NEW:</span></b>
 						</td>
 						<!-- Column 2 -->
 						<td>
-						  <!-- At present, the value here is blank -->
-						  <b><span><!-- update with correct value --> </span></b>
+						  <!-- The value here is for each Medical Doctor present -->
+						  <b><span><?php echo $value['total_new_patients_count'];?></span></b>
 						</td>
 					  </tr>
-					  <!-- Table Values Row 4: Blank-->
+					  <!-- Table Values Row 4 -->
 					  <tr>
 						<!-- Column 1 -->
 						<td>
-							<br />
+						  <b><span>FOLLOW-UP:</span></b>
 						</td>
 						<!-- Column 2 -->
 						<td>
+						  <!-- The value here is for each Medical Doctor present -->
+						  <b><span><?php echo $value['total_follow_up_patients_count'];?></span></b>
 						</td>
 					  </tr>
 					  <!-- Table Values Row 5 -->
 					  <tr>
 						<!-- Column 1 -->
 						<td>
-						  <b><span>NEW PATIENTS:</span></b>
+						  <b><span>OLD:</span></b>
 						</td>
 						<!-- Column 2 -->
 						<td>
-						  <b><span><?php echo $data['total_new_patients_count'];?></span></b>
+						  <b><span><?php echo $value['total_old_patients_count'];?></span></b>
 						</td>
 					  </tr>
 					  <!-- Table Values Row 6 -->
 					  <tr>
 						<!-- Column 1 -->
 						<td>
-						  <b><span>NEW CASES:</span></b>
+						  <b><span>PROCEDURE/S:</span></b>
 						</td>
 						<!-- Column 2 -->
 						<td>
-						  <b><span><?php echo $data['total_new_cases_count'];?></span></b>
+						  <b><span><?php echo $value['total_procedure_count'];?></span></b>
 						</td>
 					  </tr>
-					  <!-- Table Values Row 7: Blank-->
-					  <tr>
-						<!-- Column 1 -->
-						<td>
-							<br />
-						</td>
-						<!-- Column 2 -->
-						<td>
-						</td>
-					  </tr>
-					  <!-- Table Values Row 8 -->
-					  <tr>
-						<!-- Column 1 -->
-						<td>
-						  <b><span>WALK-IN:</span></b>
-						</td>
-						<!-- Column 2 -->
-						<td>
-						  <b><span><?php echo $data['total_wi_count'];?></span></b>
-						</td>
-					  </tr>
-					  <!-- Table Values Row 9 -->
-					  <tr>
-						<!-- Column 1 -->
-						<td>
-						  <b><span>SLC:</span></b>
-						</td>
-						<!-- Column 2 -->
-						<td>
-						  <b><span><?php echo $data['total_slc_count'];?></span></b>
-						</td>
-					  </tr>
-					  <!-- Table Values Row 10 -->
-					  <tr>
-						<!-- Column 1 -->
-						<td>
-						  <b><span>HMO:</span></b>
-						</td>
-						<!-- Column 2 -->
-						<td>
-						  <b><span><?php echo $data['total_hmo_count'];?></span></b>
-						</td>
-					  </tr>
-					  <!-- Table Values Row 11 -->
-					  <tr>
-						<!-- Column 1 -->
-						<td>
-						  <b><span>SENIOR CITIZEN:</span></b>
-						</td>
-						<!-- Column 2 -->
-						<td>
-						  <b><span><?php echo $data['total_sc_count'];?></span></b>
-						</td>
-					  </tr>
-					  <!-- Table Values Row 12 -->
-					  <tr>
-						<!-- Column 1 -->
-						<td>
-						  <b><span>PWD:</span></b>
-						</td>
-						<!-- Column 2 -->
-						<td>
-						  <b><span><?php echo $data['total_pwd_count'];?></span></b>
-						</td>
-					  </tr>
+					<?php
+						}
+					?>			
 					</table>		
 				</div>	
 			</td>

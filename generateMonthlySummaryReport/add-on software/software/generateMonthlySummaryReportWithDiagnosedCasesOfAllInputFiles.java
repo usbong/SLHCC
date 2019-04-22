@@ -79,7 +79,11 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static String diagnosedCasesListInputFilename = "diagnosedCasesList"; //without extension; default input file 
 
 	//added by Mike, 20190414
-	private static String inputOutputTemplateFilename = "assets\\templates\\generateMonthlySummaryReportOutputTemplate";//without extension; default input file 
+	private static String inputOutputTemplateFilenameTreatment = "assets\\templates\\generateMonthlySummaryReportOutputTemplateTreatment";//without extension; default input file 
+	//Note that I have to use double backslash, i.e. "\\", to use "\" in the filename
+
+	//added by Mike, 20190422
+	private static String inputOutputTemplateFilenameConsultation = "assets\\templates\\generateMonthlySummaryReportOutputTemplateConsultation";//without extension; default input file 
 	//Note that I have to use double backslash, i.e. "\\", to use "\" in the filename
 	
 	private static String startDate = null;
@@ -232,7 +236,9 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	public static void main ( String[] args ) throws Exception
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
-		PrintWriter writer = new PrintWriter("output/MonthlySummaryReportOutput.html", "UTF-8");			
+		PrintWriter treatmentWriter = new PrintWriter("output/MonthlySummaryReportOutputTreatment.html", "UTF-8");			
+		PrintWriter consultationWriter = new PrintWriter("output/MonthlySummaryReportOutputConsultation.html", "UTF-8");			
+
 /*		
 		//added by Mike, 20190413
 		PrintWriter diagnosedCasesWriter = new PrintWriter("output/MonthlySummaryReportOfDiagnosedCasesOutput.txt", "UTF-8");			
@@ -299,7 +305,9 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		//edited by Mike, 20190131
 		/*writer.print("Monthly Summary Report\n");
 		*/
-		processWriteOutputFile(writer);
+		//edited by Mike, 20190422
+		processWriteOutputFileTreatment(treatmentWriter);
+		//processWriteOutputFileConsultation(consultationWriter);
 		
 		/*writer.close();
 		*/
@@ -1846,10 +1854,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 
 	}
 	
-	private static void processWriteOutputFile(PrintWriter writer) throws Exception {
-		File f = new File(inputOutputTemplateFilename+".html");
+	private static void processWriteOutputFileTreatment(PrintWriter writer) throws Exception {
+		File f = new File(inputOutputTemplateFilenameTreatment+".html");
 
-		System.out.println("inputOutputTemplateFilename: " + inputOutputTemplateFilename);
+		System.out.println("inputOutputTemplateFilenameTreatment: " + inputOutputTemplateFilenameTreatment);
 								
 		Scanner sc = new Scanner(new FileInputStream(f), "UTF-8");				
 	

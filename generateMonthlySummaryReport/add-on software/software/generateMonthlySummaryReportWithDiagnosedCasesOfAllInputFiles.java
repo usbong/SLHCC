@@ -125,7 +125,8 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static final int INPUT_CONSULTATION_NET_PF_COLUMN = 11;
 	private static final int INPUT_CONSULTATION_NEW_OLD_COLUMN = 17;
 */	
-	private static final int INPUT_CONSULTATION_OFFSET = 1;
+	//TO-DO: -update: this to still use 1 as the offset, and add another offset of 1 for NON-MS EXCEL input files.
+	private static final int INPUT_CONSULTATION_OFFSET = 0;//1;
 
 	//added by Mike, 20190412
 	private static final int INPUT_KNOWN_DIAGNOSED_CASES_LIST_CLASSIFICATION_COLUMN = 0;
@@ -307,7 +308,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		*/
 		//edited by Mike, 20190422
 		processWriteOutputFileTreatment(treatmentWriter);
-		//processWriteOutputFileConsultation(consultationWriter);
+		processWriteOutputFileConsultation(consultationWriter);
 		
 		/*writer.close();
 		*/
@@ -920,7 +921,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				(!inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
 
 				String classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
-//				System.out.println("classificationName: "+classificationName); 
+				System.out.println("classificationName: "+classificationName); 
 				
 				if (isInDebugMode) {
 					if (classificationName.trim().equals("")) {
@@ -1970,6 +1971,128 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		
 		writer.close();
 	}
+
+	//added by Mike, 20190422
+	private static void processWriteOutputFileConsultation(PrintWriter writer) throws Exception {
+		File f = new File(inputOutputTemplateFilenameConsultation+".html");
+
+		System.out.println("inputOutputTemplateFilenameConsultation: " + inputOutputTemplateFilenameConsultation);
+								
+		Scanner sc = new Scanner(new FileInputStream(f), "UTF-8");				
+	
+		String s;		
+//			s=sc.nextLine(); //skip the first row, which is the input file's table headers
+
+		if (isInDebugMode) {
+			rowCount=0;
+		}
+
+		//added by Mike, 20190417
+		SortedSet<String> sortedClassifiedKeyset = new TreeSet<String>(classifiedDiagnosedCasesContainer.keySet());
+	
+		//added by Mike, 20190417
+		Set<Entry<String, Integer>> classifiedDiagnosedCasesContainerSet = classifiedDiagnosedCasesContainer.entrySet();
+        List<Entry<String, Integer>> sortedClassifiedDiagnosedCasesContainerList = new ArrayList<Entry<String, Integer>>(classifiedDiagnosedCasesContainerSet);
+		
+		//edited by Mike, 20190418
+		//Removed inner class "Comparator" so that there will be no "generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles$1.class" after compiling the "generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles.java"
+		/*Collections.sort(sortedClassifiedDiagnosedCasesContainerList, new Comparator<Map.Entry<String, Integer>>() {
+            public int compare(Map.Entry<String, Integer> o1,
+                    Map.Entry<String, Integer> o2) {
+                return o2.getValue().compareTo(o1.getValue());
+            }
+        });*/
+		
+        Collections.sort(sortedClassifiedDiagnosedCasesContainerList, new IncidenceNumberComparator());
+
+		//count/compute the number-based values of inputColumns 
+		while (sc.hasNextLine()) {
+			s=sc.nextLine();
+/*			
+			//if the row is blank
+			if (s.trim().equals("")) {
+				continue;
+			}
+*/			
+			if (isInDebugMode) {
+				rowCount++;
+//				System.out.println("rowCount: "+rowCount);
+			}
+			
+			//added by Mike, 20190414
+			//This is to resolve the following character-encoding issue.
+			//This is not anymore necessary due to setting the scanner to use UTF-8
+//			s = s.replace("Â", "");
+
+//			System.out.println("s: "+s);
+//			System.out.println("totalTreatmentCount: "+totalTreatmentCount);
+			
+			//added by Mike, 20190417
+			s = s.replace("<?php echo $data['date'];?>", "" + dateValuesArray[0].toUpperCase());
+			
+			s = s.replace("<?php echo $data['total_consultation_count'];?>", "" + totalConsultationCount);
+
+			//added by Mike, 20190416
+			//TO-DO: -update: totalNewPatientReferralTransactionCount to correct value storage name
+			s = s.replace("<?php echo $data['total_new_patients_count'];?>", "" + totalNewPatientReferralTransactionCount);
+
+			//added by Mike, 20190416
+			s = s.replace("<?php echo $data['total_wi_count'];?>", "" + (int) nonHmoContainer.get(classificationWI)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);
+
+			//added by Mike, 20190416
+			s = s.replace("<?php echo $data['total_slc_count'];?>", "" + (int) nonHmoContainer.get(classificationSLC)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);
+
+			s = s.replace("<?php echo $data['total_sc_count'];?>", "" + (int) nonHmoContainer.get(classificationSC)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);
+
+			s = s.replace("<?php echo $data['total_pwd_count'];?>", "" + (int) nonHmoContainer.get(classificationPWD)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);
+			
+			//added by Mike, 20190417
+			s = s.replace("<?php echo $data['total_hmo_count'];?>", "" + (int) totalConsultationHMOCount);			
+									
+			//added by Mike, 20190417
+			//TO-DO: -update: this portion
+/*			
+			if (s.contains("<!-- Table Values: NEW CASES -->")) {						  
+				for (String key : sortedClassifiedKeyset) {	
+					s = s.concat("\n");
+					s = s.concat("\t\t\t\t\t  <tr>\n");
+					s = s.concat("\t\t\t\t\t	  <!-- Column 1 -->\n");
+					s = s.concat("\t\t\t\t\t     <td>\n");
+					s = s.concat("\t\t\t\t\t		  <b><span>" + key + "</span></b>\n");
+					s = s.concat("\t\t\t\t\t	  </td>\n");
+					s = s.concat("\t\t\t\t\t	  <!-- Column 2 -->\n");
+					s = s.concat("\t\t\t\t\t	  <td>\n");
+					s = s.concat("\t\t\t\t\t	  <b><span>" + classifiedDiagnosedCasesContainer.get(key) + "</span></b>\n");
+					s = s.concat("\t\t\t\t\t     </td>\n");
+					s = s.concat("\t\t\t\t\t  </tr>");
+				}
+			}
+			
+			//added by Mike, 20190417
+			if (s.contains("<b><span><?php echo $value['name'];?>;&nbsp;</span></b>")) {
+				s = s.replace("<b><span><?php echo $value['name'];?>;&nbsp;</span></b>", "<b><span>");
+
+				//Write the names of the top 3 cases, separated by a semicolon and a blank space				
+				int rankCount = 0;				
+				for (Entry<String, Integer> entry : sortedClassifiedDiagnosedCasesContainerList) {
+					if (rankCount < 2) {
+						s = s.concat(entry.getKey()+"; ");					
+						rankCount++;
+					}
+					else {
+						s = s.concat(entry.getKey());					
+						break;
+					}
+				}
+				s = s.concat("</span></b>");			
+			}
+*/			
+			writer.print(s + "\n");
+		}
+		
+		writer.close();
+	}
+
 	
 /*	
 	private static void resetNonHMOContainerCount() {

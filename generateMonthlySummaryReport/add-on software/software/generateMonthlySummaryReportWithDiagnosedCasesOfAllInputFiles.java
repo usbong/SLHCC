@@ -125,8 +125,8 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static final int INPUT_CONSULTATION_NET_PF_COLUMN = 11;
 	private static final int INPUT_CONSULTATION_NEW_OLD_COLUMN = 17;
 */	
-	//TO-DO: -update: this to still use 1 as the offset, and add another offset of 1 for NON-MS EXCEL input files.
-	private static final int INPUT_CONSULTATION_OFFSET = 0;//1;
+	//edited by Mike, 20190423
+	private static final int INPUT_CONSULTATION_OFFSET = 1;
 
 	//added by Mike, 20190412
 	private static final int INPUT_KNOWN_DIAGNOSED_CASES_LIST_CLASSIFICATION_COLUMN = 0;
@@ -921,7 +921,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				(!inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
 
 				String classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
-				System.out.println("classificationName: "+classificationName); 
+//				System.out.println("classificationName: "+classificationName); 
 				
 				if (isInDebugMode) {
 					if (classificationName.trim().equals("")) {
@@ -2040,6 +2040,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 
 			//added by Mike, 20190423
 			s = s.replace("<?php echo $data['total_old_patients_count'];?>", "" + (int) totalOldPatientPerDoctorCount);
+			
+			//added by Mike, 20190423
+			s = s.replace("<?php echo $data['total_procedure_count'];?>", "" + (int) totalProcedurePerDoctorCount);
+			
 
 			//added by Mike, 20190416
 			s = s.replace("<?php echo $data['total_wi_count'];?>", "" + (int) nonHmoContainer.get(classificationWI)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);

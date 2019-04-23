@@ -2035,6 +2035,12 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			//added by Mike, 20190416; edited by Mike, 20190423
 			s = s.replace("<?php echo $data['total_new_patients_count'];?>", "" + (int) totalNewPatientPerDoctorCount);
 
+			//added by Mike, 20190423
+			s = s.replace("<?php echo $data['total_follow_up_patients_count'];?>", "" + (int) totalFollowUpPerDoctorCount);
+
+			//added by Mike, 20190423
+			s = s.replace("<?php echo $data['total_old_patients_count'];?>", "" + (int) totalOldPatientPerDoctorCount);
+
 			//added by Mike, 20190416
 			s = s.replace("<?php echo $data['total_wi_count'];?>", "" + (int) nonHmoContainer.get(classificationWI)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);
 

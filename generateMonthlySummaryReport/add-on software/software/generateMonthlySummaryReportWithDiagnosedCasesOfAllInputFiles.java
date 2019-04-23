@@ -2032,9 +2032,8 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			
 			s = s.replace("<?php echo $data['total_consultation_count'];?>", "" + totalConsultationCount);
 
-			//added by Mike, 20190416
-			//TO-DO: -update: totalNewPatientReferralTransactionCount to correct value storage name
-			s = s.replace("<?php echo $data['total_new_patients_count'];?>", "" + totalNewPatientReferralTransactionCount);
+			//added by Mike, 20190416; edited by Mike, 20190423
+			s = s.replace("<?php echo $data['total_new_patients_count'];?>", "" + (int) totalNewPatientPerDoctorCount);
 
 			//added by Mike, 20190416
 			s = s.replace("<?php echo $data['total_wi_count'];?>", "" + (int) nonHmoContainer.get(classificationWI)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);

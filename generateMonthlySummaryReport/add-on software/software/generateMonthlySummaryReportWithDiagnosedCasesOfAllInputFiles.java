@@ -2192,7 +2192,21 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 					s = s.concat("\t\t\t\t\t	  </td>\n");
 					s = s.concat("\t\t\t\t\t  </tr>\n");
 
-
+					//This portion is for the Medical Doctor's total count of procedure transactions
+					double procedureCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN];
+					s = s.concat("\t\t\t\t\t  <tr>\n");
+					s = s.concat("\t\t\t\t\t	  <!-- Column 1 -->\n");
+					s = s.concat("\t\t\t\t\t      <td>\n");
+					s = s.concat("\t\t\t\t\t		  <b><span>PROCEDURE/S:</span></b>\n");
+					s = s.concat("\t\t\t\t\t	  </td>\n");
+					s = s.concat("\t\t\t\t\t	  <!-- Column 2: Blank -->\n");
+					s = s.concat("\t\t\t\t\t	  <td>\n");
+					s = s.concat("\t\t\t\t\t		  <b><span>" + (int) procedureCount + "</span></b>\n");
+					s = s.concat("\t\t\t\t\t	  <br />\n");
+					s = s.concat("\t\t\t\t\t	  </td>\n");
+					s = s.concat("\t\t\t\t\t  </tr>\n");
+					
+					
 					s = s.concat("\t\t\t\t\t  </table>\n");
 					s = s.concat("\t\t\t\t\t  <br />");
 					

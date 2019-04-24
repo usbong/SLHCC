@@ -99,6 +99,22 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	//added by Mike, 20190131
 	private static final int INPUT_NON_MASTER_LIST_OFFSET = 1; 
 	
+	//edited by Mike, 20190424
+	private static final int INPUT_REFERRING_DOCTOR_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_NOTES_COLUMN = 0; //This column is not included in the INPUT_NON_MASTER_LIST_OFFSET
+	private static final int INPUT_DATE_COLUMN = 1-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_NAME_COLUMN = 3-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_CLASS_COLUMN = 9-INPUT_NON_MASTER_LIST_OFFSET; //HMO and NON-HMO
+	private static final int INPUT_NET_PF_COLUMN = 11-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_NEW_OLD_COLUMN = 17-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_NEW_OLD_PATIENT_COLUMN = 17-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190102
+
+	private static final int INPUT_CONSULTATION_REFERRING_DOCTOR_COLUMN = 15-INPUT_NON_MASTER_LIST_OFFSET;	
+	private static final int INPUT_CONSULTATION_CLASS_COLUMN = 8-INPUT_NON_MASTER_LIST_OFFSET; //HMO and NON-HMO
+	private static final int INPUT_CONSULTATION_NET_PF_COLUMN = 10-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_CONSULTATION_NEW_OLD_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET;
+	private static final int INPUT_CONSULTATION_NEW_OLD_PATIENT_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 
+/*	
 	private static final int INPUT_REFERRING_DOCTOR_COLUMN = 15-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_NOTES_COLUMN = 0; //This column is not included in the INPUT_NON_MASTER_LIST_OFFSET
 	private static final int INPUT_DATE_COLUMN = 1-INPUT_NON_MASTER_LIST_OFFSET;
@@ -107,7 +123,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static final int INPUT_NET_PF_COLUMN = 10-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_NEW_OLD_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET;
 	private static final int INPUT_NEW_OLD_PATIENT_COLUMN = 16-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190102
-	
+*/	
 	//TO-DO: -add: column for Consultation transactions, which have both Chief Complaint and Diagnosis
 	private static final int INPUT_DIAGNOSIS_COLUMN = 6-INPUT_NON_MASTER_LIST_OFFSET; //added by Mike, 20190413
 
@@ -594,8 +610,8 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 						}
 					}
 					else {												
-						if ((inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) ||
-							(inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
+						if ((inputColumns[INPUT_CONSULTATION_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) ||
+							(inputColumns[INPUT_CONSULTATION_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
 
 							//edited by Mike, 20190107
 							if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN].toLowerCase().trim().contains("mc")) {
@@ -687,8 +703,8 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 						}
 					}
 					else {
-						if ((inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) ||
-							(inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
+						if ((inputColumns[INPUT_CONSULTATION_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) ||
+							(inputColumns[INPUT_CONSULTATION_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
 /*							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;					
 */							
 							//edited by Mike, 20190107
@@ -801,16 +817,16 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				}				
 			}
 			else {																	
-				if ((inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) ||
-					(inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
+				if ((inputColumns[INPUT_CONSULTATION_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) ||
+					(inputColumns[INPUT_CONSULTATION_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
 
-					String hmoName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
+					String hmoName = inputColumns[INPUT_CONSULTATION_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
 					
 					if (!hmoContainer.containsKey(hmoName)) {
 						columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];		
 
 						//added by Mike, 20190102
-						if (inputColumns[INPUT_NEW_OLD_PATIENT_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toLowerCase().contains("new")) {
+						if (inputColumns[INPUT_CONSULTATION_NEW_OLD_PATIENT_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toLowerCase().contains("new")) {
 							columnValuesArray[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN] = 1;
 						}						
 						
@@ -840,7 +856,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 					}
 					else {
 						//added by Mike, 20190102
-						if (inputColumns[INPUT_NEW_OLD_PATIENT_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toLowerCase().contains("new")) {
+						if (inputColumns[INPUT_CONSULTATION_NEW_OLD_PATIENT_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toLowerCase().contains("new")) {
 							hmoContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN]++;
 						}						
 						
@@ -917,10 +933,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			}			
 		}
 		else {			
-			if ((!inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) &&
-				(!inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
+			if ((!inputColumns[INPUT_CONSULTATION_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) &&
+				(!inputColumns[INPUT_CONSULTATION_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
 
-				String classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
+				String classificationName = inputColumns[INPUT_CONSULTATION_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
 //				System.out.println("classificationName: "+classificationName); 
 				
 				if (isInDebugMode) {
@@ -1089,13 +1105,14 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			}
 		}
 		else {
-			//added by Mike, 20190125
-			inputReferringMedicalDoctor = inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
-			
+			//added by Mike, 20190125; edited by Mike, 20190424
+//			inputReferringMedicalDoctor = inputColumns[INPUT_CONSULTATION_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
+			inputReferringMedicalDoctor = inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].trim().toUpperCase();
+	
 			if (!referringDoctorContainer.containsKey(inputReferringMedicalDoctor)) {
 				columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
 				
-				if (inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) {						
+				if (inputColumns[INPUT_CONSULTATION_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) {						
 					//edited by Mike, 20190109
 					if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN].toLowerCase().trim().contains("mc")) {
 						columnValuesArray[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] = 1;						
@@ -1139,7 +1156,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 					}
 				}				
 /*				
-				if (inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) {
+				if (inputColumns[INPUT_CONSULTATION_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) {
 					columnValuesArray[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] = 1;
 				}
 				else {
@@ -1157,7 +1174,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				referringDoctorContainer.put(inputReferringMedicalDoctor, columnValuesArray);
 			}
 			else {													
-				if (inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) {
+				if (inputColumns[INPUT_CONSULTATION_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) {
 					//edited by Mike, 20190109
 					if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN].toLowerCase().trim().contains("mc")) {
 /*						columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]++;							
@@ -1188,12 +1205,12 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 */						
 					}
 
-/*												`		referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;				
+/*												`		referringDoctorContainer.get(inputColumns[INPUT_CONSULTATION_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;				
 					//added by Mike, 20181219
 					if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().contains("p")) {
 						//edited by Mike, 20181221
 						//columnValuesArray[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;
-						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;				
+						referringDoctorContainer.get(inputColumns[INPUT_CONSULTATION_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;				
 					}
 */					
 				}
@@ -1230,12 +1247,12 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 
 					
 /*					
-					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;					
+					referringDoctorContainer.get(inputColumns[INPUT_CONSULTATION_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;					
 					//added by Mike, 20181219
 					if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().contains("p")) {
 						//edited by Mike, 20181221
 						//columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]++;						
-						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]++;				
+						referringDoctorContainer.get(inputColumns[INPUT_CONSULTATION_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]++;				
 					}
 */					
 				}
@@ -1245,10 +1262,13 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 
 	//added by Mike, 20181218
 	private static void processMedicalDoctorTransactionCount(HashMap<String, double[]> medicalDoctorContainer, String[] inputColumns, Boolean isConsultation) {		
-		String inputMedicalDoctor = inputColumns[INPUT_REFERRING_DOCTOR_COLUMN].trim().toUpperCase();
-	
 		//edited by Mike, 20181219
-		if (!isConsultation) {	//only process follow-up count for Consultation transactions			
+		if (!isConsultation) {	//only process follow-up count for Consultation transactions	
+			//edited by Mike, 20190424
+			String inputMedicalDoctor = inputColumns[INPUT_REFERRING_DOCTOR_COLUMN].trim().toUpperCase();
+	
+			System.out.println("inputMedicalDoctor: "+inputMedicalDoctor);
+	
 			if (!medicalDoctorContainer.containsKey(inputMedicalDoctor)) {
 				columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
 				
@@ -1337,24 +1357,26 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			}			
 		}
 		else {
-			//added by Mike, 20190125
-			inputMedicalDoctor = inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].trim().toUpperCase();
+			//added by Mike, 20190125; edited by Mike, 20190424
+			String inputMedicalDoctor = inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].trim().toUpperCase();
+				
+//			System.out.println("inputMedicalDoctor: "+inputMedicalDoctor);
 				
 			if (!medicalDoctorContainer.containsKey(inputMedicalDoctor)) {
 				columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
 								
-				if (inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) {						
-					if (inputColumns[INPUT_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("new")) {
+				if (inputColumns[INPUT_CONSULTATION_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) {						
+					if (inputColumns[INPUT_CONSULTATION_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("new")) {
 						//added by Mike, 20181218
 						columnValuesArray[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN] = 1;
 					}	
 					//added by Mike, 20190202
-					else if (inputColumns[INPUT_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("old")) {
+					else if (inputColumns[INPUT_CONSULTATION_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("old")) {
 						columnValuesArray[OUTPUT_CONSULTATION_HMO_OLD_PATIENT_COUNT_COLUMN] = 1;
 					}	
 					//added by Mike, 20190202
-					else if ((inputColumns[INPUT_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("follow up")) ||
-							(inputColumns[INPUT_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("follow-up"))) {
+					else if ((inputColumns[INPUT_CONSULTATION_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("follow up")) ||
+							(inputColumns[INPUT_CONSULTATION_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("follow-up"))) {
 						columnValuesArray[OUTPUT_CONSULTATION_HMO_FOLLOW_UP_COUNT_COLUMN] = 1;
 					}	
 				
@@ -1381,17 +1403,17 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 					medicalDoctorContainer.put(inputMedicalDoctor, columnValuesArray);
 				}
 				else {
-					if (inputColumns[INPUT_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("new")) {
+					if (inputColumns[INPUT_CONSULTATION_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("new")) {
 						//added by Mike, 20181218
 						columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_NEW_PATIENT_COUNT_COLUMN] = 1;
 					}	
 					//added by Mike, 20190202
-					else if (inputColumns[INPUT_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("old")) {
+					else if (inputColumns[INPUT_CONSULTATION_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("old")) {
 						columnValuesArray[OUTPUT_CONSULTATION_HMO_OLD_PATIENT_COUNT_COLUMN] = 1;
 					}	
 					//added by Mike, 20190202
-					else if ((inputColumns[INPUT_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("follow up")) ||
-							(inputColumns[INPUT_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("follow-up"))) {
+					else if ((inputColumns[INPUT_CONSULTATION_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("follow up")) ||
+							(inputColumns[INPUT_CONSULTATION_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("follow-up"))) {
 						columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_FOLLOW_UP_COUNT_COLUMN] = 1;
 					}	
 
@@ -1417,17 +1439,17 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				medicalDoctorContainer.put(inputMedicalDoctor, columnValuesArray);
 			}
 			else {													
-				if (inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) {
-					if (inputColumns[INPUT_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("new")) {
+				if (inputColumns[INPUT_CONSULTATION_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("HMO")) {
+					if (inputColumns[INPUT_CONSULTATION_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("new")) {
 						medicalDoctorContainer.get(inputMedicalDoctor)[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN]++;				
 					}	
 					//added by Mike, 20190202
-					else if (inputColumns[INPUT_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("old")) {
+					else if (inputColumns[INPUT_CONSULTATION_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("old")) {
 						medicalDoctorContainer.get(inputMedicalDoctor)[OUTPUT_CONSULTATION_HMO_OLD_PATIENT_COUNT_COLUMN]++;
 					}	
 					//added by Mike, 20190202
-					else if ((inputColumns[INPUT_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("follow up")) ||
-							(inputColumns[INPUT_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("follow-up"))) {
+					else if ((inputColumns[INPUT_CONSULTATION_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("follow up")) ||
+							(inputColumns[INPUT_CONSULTATION_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("follow-up"))) {
 						medicalDoctorContainer.get(inputMedicalDoctor)[OUTPUT_CONSULTATION_HMO_FOLLOW_UP_COUNT_COLUMN]++;				
 					}	
 
@@ -1461,26 +1483,26 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 */						
 					}
 
-/*												`		referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;				
+/*												`		referringDoctorContainer.get(inputColumns[INPUT_CONSULTATION_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;				
 					//added by Mike, 20181219
 					if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().contains("p")) {
 						//edited by Mike, 20181221
 						//columnValuesArray[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;
-						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;				
+						referringDoctorContainer.get(inputColumns[INPUT_CONSULTATION_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;				
 					}
 */					
 				}
 				else {
-					if (inputColumns[INPUT_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("new")) {
+					if (inputColumns[INPUT_CONSULTATION_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("new")) {
 						medicalDoctorContainer.get(inputMedicalDoctor)[OUTPUT_CONSULTATION_NON_HMO_NEW_PATIENT_COUNT_COLUMN]++;				
 					}	
 					//added by Mike, 20190202
-					else if (inputColumns[INPUT_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("old")) {
+					else if (inputColumns[INPUT_CONSULTATION_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("old")) {
 						medicalDoctorContainer.get(inputMedicalDoctor)[OUTPUT_CONSULTATION_NON_HMO_OLD_PATIENT_COUNT_COLUMN]++;
 					}	
 					//added by Mike, 20190202
-					else if ((inputColumns[INPUT_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("follow up")) ||
-							(inputColumns[INPUT_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("follow-up"))) {
+					else if ((inputColumns[INPUT_CONSULTATION_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("follow up")) ||
+							(inputColumns[INPUT_CONSULTATION_NEW_OLD_COLUMN+INPUT_CONSULTATION_OFFSET].toLowerCase().contains("follow-up"))) {
 						medicalDoctorContainer.get(inputMedicalDoctor)[OUTPUT_CONSULTATION_NON_HMO_FOLLOW_UP_COUNT_COLUMN]++;				
 					}	
 
@@ -1516,12 +1538,12 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 
 					
 /*					
-					referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;					
+					referringDoctorContainer.get(inputColumns[INPUT_CONSULTATION_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;					
 					//added by Mike, 20181219
 					if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN].toLowerCase().contains("p")) {
 						//edited by Mike, 20181221
 						//columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]++;						
-						referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]++;				
+						referringDoctorContainer.get(inputColumns[INPUT_CONSULTATION_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET])[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]++;				
 					}
 */					
 				}
@@ -1532,17 +1554,17 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	//added by Mike, 20181220
 	private static void processMedicalDoctorTransactionPerClassificationCount(HashMap<String, HashMap<String, double[]>> classificationContainerPerMedicalDoctor, String[] inputColumns, Boolean isConsultation) {				
 
-		String medicalDoctorKey = inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
+		String medicalDoctorKey = inputColumns[INPUT_CONSULTATION_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
 	
 		if (isConsultation) {			
-			String classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase(); //added by Mike, 20181220
+			String classificationName = inputColumns[INPUT_CONSULTATION_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase(); //added by Mike, 20181220
 //			System.out.println(">"+" "+classificationName);
-//			System.out.println(">>> "+inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]);
+//			System.out.println(">>> "+inputColumns[INPUT_CONSULTATION_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]);
 
 				if (!classificationName.contains("HMO")) {					
-//			System.out.println(">>>"+inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]+" "+classificationName);
+//			System.out.println(">>>"+inputColumns[INPUT_CONSULTATION_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]+" "+classificationName);
 
-/*					classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;
+/*					classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_CONSULTATION_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;
 */					
 					//edited by Mike, 20190107
 					if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN].toLowerCase().trim().contains("mc")) {
@@ -1564,12 +1586,12 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 
 					
 
-//					System.out.println(">>> NON-HMO count: "+classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);
+//					System.out.println(">>> NON-HMO count: "+classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_CONSULTATION_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);
 				}
 				else {
-//				System.out.println(">>>>>"+inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]+" "+classificationName);
+//				System.out.println(">>>>>"+inputColumns[INPUT_CONSULTATION_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]+" "+classificationName);
 /*
-					classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;					
+					classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_CONSULTATION_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;					
 */
 
 					//edited by Mike, 20190107
@@ -1590,7 +1612,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 						classificationContainerPerMedicalDoctor.get(medicalDoctorKey).get(classificationName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;
 					}
 
-//					System.out.println(">>>>> HMO count: "+classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]);
+//					System.out.println(">>>>> HMO count: "+classificationContainerPerMedicalDoctor.get(inputColumns[INPUT_CONSULTATION_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]).get(classificationName)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]);
 
 				}
 		}		
@@ -1601,8 +1623,9 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		SortedSet<String> sortedNonHmoContainerKeyset = new TreeSet<String>(nonHmoContainer.keySet());
 		SortedSet<String> sortedMedicalDoctorKeyset = new TreeSet<String>(medicalDoctorContainer.keySet());
 				
-		for (String medicalDoctorKey : sortedMedicalDoctorKeyset) {						
-//System.out.println("medical doctor: "+key);		
+		for (String medicalDoctorKey : sortedMedicalDoctorKeyset) {			
+//TO-DO: resolve issue with OR# (Consultation) also being added into medicalDoctorContainer		
+System.out.println("medical doctor: "+medicalDoctorKey);		
 			classificationContainerHashmap = new HashMap<String, double[]>();
 
 			for (String key : sortedHmoContainerKeyset) {						
@@ -1989,10 +2012,17 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 
 		//added by Mike, 20190417
 		SortedSet<String> sortedClassifiedKeyset = new TreeSet<String>(classifiedDiagnosedCasesContainer.keySet());
-	
+		//added by Mike, 20190424
+		SortedSet<String> sortedMedicalDoctorTransactionCountKeyset = new TreeSet<String>(medicalDoctorContainer.keySet());
+			
 		//added by Mike, 20190417
 		Set<Entry<String, Integer>> classifiedDiagnosedCasesContainerSet = classifiedDiagnosedCasesContainer.entrySet();
         List<Entry<String, Integer>> sortedClassifiedDiagnosedCasesContainerList = new ArrayList<Entry<String, Integer>>(classifiedDiagnosedCasesContainerSet);
+		
+/*		//added by Mike, 20190424
+		Set<Entry<String, Integer>> medicalDoctorContainerSet = medicalDoctorContainer.entrySet();
+        List<Entry<String, Integer>> sortedMedicalDoctorContainerList = new ArrayList<Entry<String, Integer>>(medicalDoctorContainerSet);
+*/		
 		
 		//edited by Mike, 20190418
 		//Removed inner class "Comparator" so that there will be no "generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles$1.class" after compiling the "generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles.java"
@@ -2004,6 +2034,8 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
         });*/
 		
         Collections.sort(sortedClassifiedDiagnosedCasesContainerList, new IncidenceNumberComparator());
+        /*Collections.sort(sortedMedicalDoctorContainerList, new IncidenceNumberComparator()); //added by Mike, 20190424
+*/
 
 		//count/compute the number-based values of inputColumns 
 		while (sc.hasNextLine()) {
@@ -2056,10 +2088,142 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			s = s.replace("<?php echo $data['total_pwd_count'];?>", "" + (int) nonHmoContainer.get(classificationPWD)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);
 			
 			//added by Mike, 20190417
-			s = s.replace("<?php echo $data['total_hmo_count'];?>", "" + (int) totalConsultationHMOCount);			
-									
-			//added by Mike, 20190417
-			//TO-DO: -update: this portion
+			s = s.replace("<?php echo $data['total_hmo_count'];?>", "" + (int) totalConsultationHMOCount);
+
+
+/* //The following set of instructions are my guide.			
+			//added by Mike, 20190424
+			for (String key : sortedMedicalDoctorTransactionCountKeyset) {	
+			double count = medicalDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
+
+			double newPatientReferralTransactionCount = medicalDoctorContainer.get(key)[OUTPUT_HMO_NEW_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
+
+			//added by Mike, 20181219
+			double consultationCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+
+			//added by Mike, 20181219
+			double procedureCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN];
+
+			//added by Mike, 20190109
+			double medicalCertificateCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN];
+
+			//added by Mike, 20190202
+			double newPatientCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
+
+			//added by Mike, 20190202
+			double followUpCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_FOLLOW_UP_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_FOLLOW_UP_COUNT_COLUMN];
+
+			//added by Mike, 20190202
+			double oldPatientCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_OLD_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_OLD_PATIENT_COUNT_COLUMN];
+*/			
+			
+			//added by Mike, 20190417; edited by Mike, 20190424
+			if (s.contains("<!-- Table Values: MONTHLY SUMMARY FOR EACH MEDICAL DOCTOR PRESENT -->")) {			
+				for (String key : sortedMedicalDoctorTransactionCountKeyset) {	
+					s = s.concat("\n");
+					s = s.concat("\t\t\t\t\t  <table width=\"50%\" class=\"consultation_census\">\n");
+					s = s.concat("\t\t\t\t\t  <!-- Table Values Row 1 -->\n");
+					s = s.concat("\t\t\t\t\t  <tr>\n");
+					s = s.concat("\t\t\t\t\t	  <!-- Column 1 -->\n");
+					s = s.concat("\t\t\t\t\t      <td>\n");
+					s = s.concat("\t\t\t\t\t		  <b><span>" + key + "</span></b>\n");
+					s = s.concat("\t\t\t\t\t	  </td>\n");
+					s = s.concat("\t\t\t\t\t	  <!-- Column 2: Blank -->\n");
+					s = s.concat("\t\t\t\t\t	  <td>\n");
+					s = s.concat("\t\t\t\t\t	  <!-- This is blank -->\n");
+					s = s.concat("\t\t\t\t\t	  <br />\n");
+					s = s.concat("\t\t\t\t\t	  </td>\n");
+					s = s.concat("\t\t\t\t\t  </tr>\n");
+					s = s.concat("\t\t\t\t\t  </table>\n");
+					  
+/*					
+					s = s.concat("\t\t\t\t\t	  <b><span>" + classifiedDiagnosedCasesContainer.get(key) + "</span></b>\n");
+					s = s.concat("\t\t\t\t\t     </td>\n");
+					s = s.concat("\t\t\t\t\t  </tr>");
+*/					
+				}
+			}			  
+/*	//The following set of instructions are my guide.		
+			<table width="50%" class="consultation_census">
+					<?php
+						foreach ($result as $value) {
+					?>
+					  <!-- Table Values Row 1 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+							<!-- Replace this with the actual value -->
+							<b><span>LAST NAME OF MEDICAL DOCTOR</span></b>
+						</td>
+						<!-- Column 2: Blank -->
+						<td>
+							<!-- This is blank -->
+							<br />
+						</td>
+					  </tr>
+					  <!-- Table Values Row 2 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>CONSULT:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <!-- The value here is for each Medical Doctor present -->
+						  <b><span><?php echo $value['total_consultation_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 3 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>NEW:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <!-- The value here is for each Medical Doctor present -->
+						  <b><span><?php echo $value['total_new_patients_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 4 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>FOLLOW-UP:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <!-- The value here is for each Medical Doctor present -->
+						  <b><span><?php echo $value['total_follow_up_patients_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 5 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>OLD:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $value['total_old_patients_count'];?></span></b>
+						</td>
+					  </tr>
+					  <!-- Table Values Row 6 -->
+					  <tr>
+						<!-- Column 1 -->
+						<td>
+						  <b><span>PROCEDURE/S:</span></b>
+						</td>
+						<!-- Column 2 -->
+						<td>
+						  <b><span><?php echo $value['total_procedure_count'];?></span></b>
+						</td>
+					  </tr>
+					<?php
+						}
+					?>		
+*/
+					
 /*			
 			if (s.contains("<!-- Table Values: NEW CASES -->")) {						  
 				for (String key : sortedClassifiedKeyset) {	

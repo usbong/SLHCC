@@ -242,6 +242,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static final String classificationSLC = "SLC";
 	private static final String classificationSC = "SC";
 	private static final String classificationPWD = "PWD";
+	private static final String classificationNO_CHARGE = "NO CHARGE"; //added by Mike, 20190425
 		
 	//added by Mike, 20190417
 	private static double totalTreatmentHMOCount = 0;
@@ -2082,12 +2083,24 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 			s = s.replace("<?php echo $data['total_procedure_count'];?>", "" + (int) totalProcedurePerDoctorCount);
 			
 
-			//added by Mike, 20190416; edited by Mike 20190424
-			int totalWI = (int) nonHmoContainer.get(classificationWI)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN] + (int) nonHmoContainer.get(classificationWI_MCDO)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
-			s = s.replace("<?php echo $data['total_wi_count'];?>", "" + totalWI);
-
-			//added by Mike, 20190424
-			s = s.replace("<?php echo $data['total_wi_mcdo_count'];?>", "" + (int) nonHmoContainer.get(classificationWI_MCDO)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);
+			//added by Mike, 20190416; edited by Mike 20190425
+			int totalWI = (int) nonHmoContainer.get(classificationWI)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+					
+			//added by Mike, 20190424; edited by Mike, 20190425
+			if (nonHmoContainer.containsKey(classificationWI_MCDO)) {
+				totalWI += (int) nonHmoContainer.get(classificationWI_MCDO)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+	
+				s = s.replace("<?php echo $data['total_wi_mcdo_count'];?>", "" + (int) nonHmoContainer.get(classificationWI_MCDO)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);				
+			}
+			
+			s = s.replace("<?php echo $data['total_wi_count'];?>", "" + totalWI);			
+	
+			//added by Mike, 20190425			
+			int noChargeValue = 0;
+			if (nonHmoContainer.containsKey(classificationNO_CHARGE)) {
+				noChargeValue = (int) nonHmoContainer.get(classificationNO_CHARGE)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+			}
+			s = s.replace("<?php echo $data['total_no_charge_count'];?>", "" + noChargeValue );
 			
 			//added by Mike, 20190416
 			s = s.replace("<?php echo $data['total_slc_count'];?>", "" + (int) nonHmoContainer.get(classificationSLC)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);

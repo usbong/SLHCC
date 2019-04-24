@@ -2150,7 +2150,7 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 					s = s.concat("\t\t\t\t\t	  </td>\n");
 					s = s.concat("\t\t\t\t\t  </tr>\n");
 
-					//This portion is for the Medical Doctor's total new patient count
+					//This portion is for the Medical Doctor's total count of new patients
 					double newPatientReferralTransactionCount = medicalDoctorContainer.get(key)[OUTPUT_HMO_NEW_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
 					s = s.concat("\t\t\t\t\t  <tr>\n");
 					s = s.concat("\t\t\t\t\t	  <!-- Column 1 -->\n");
@@ -2164,9 +2164,26 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 					s = s.concat("\t\t\t\t\t	  </td>\n");
 					s = s.concat("\t\t\t\t\t  </tr>\n");
 
+					//This portion is for the Medical Doctor's total count of follow-up patients
+					double followUpCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_FOLLOW_UP_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_FOLLOW_UP_COUNT_COLUMN];
+					s = s.concat("\t\t\t\t\t  <tr>\n");
+					s = s.concat("\t\t\t\t\t	  <!-- Column 1 -->\n");
+					s = s.concat("\t\t\t\t\t      <td>\n");
+					s = s.concat("\t\t\t\t\t		  <b><span>FOLLOW-UP:</span></b>\n");
+					s = s.concat("\t\t\t\t\t	  </td>\n");
+					s = s.concat("\t\t\t\t\t	  <!-- Column 2: Blank -->\n");
+					s = s.concat("\t\t\t\t\t	  <td>\n");
+					s = s.concat("\t\t\t\t\t		  <b><span>" + (int) followUpCount + "</span></b>\n");
+					s = s.concat("\t\t\t\t\t	  <br />\n");
+					s = s.concat("\t\t\t\t\t	  </td>\n");
+					s = s.concat("\t\t\t\t\t  </tr>\n");
+
+
+
 					s = s.concat("\t\t\t\t\t  </table>\n");
 					s = s.concat("\t\t\t\t\t  <br />");
-					  
+					
+					
 /*					
 					s = s.concat("\t\t\t\t\t	  <b><span>" + classifiedDiagnosedCasesContainer.get(key) + "</span></b>\n");
 					s = s.concat("\t\t\t\t\t     </td>\n");

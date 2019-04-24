@@ -238,6 +238,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	
 	//added by Mike, 20190416
 	private static final String classificationWI = "WI";
+	private static final String classificationWI_MCDO = "WI (C/O MCDO)"; //added by Mike, 20190424
 	private static final String classificationSLC = "SLC";
 	private static final String classificationSC = "SC";
 	private static final String classificationPWD = "PWD";
@@ -937,8 +938,12 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				(!inputColumns[INPUT_CONSULTATION_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
 
 				String classificationName = inputColumns[INPUT_CONSULTATION_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
-//				System.out.println("classificationName: "+classificationName); 
-				
+/*				System.out.println("classificationName: "+classificationName); 
+
+				if (classificationName.contains("MCDO")) {
+					System.out.println("May MCDO"); 	
+				}
+*/				
 				if (isInDebugMode) {
 					if (classificationName.trim().equals("")) {
 //						System.out.println(">>> "+inputColumns[INPUT_DATE_COLUMN]+"; Name: "+inputColumns[INPUT_NAME_COLUMN]);
@@ -2077,9 +2082,13 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 			s = s.replace("<?php echo $data['total_procedure_count'];?>", "" + (int) totalProcedurePerDoctorCount);
 			
 
-			//added by Mike, 20190416
-			s = s.replace("<?php echo $data['total_wi_count'];?>", "" + (int) nonHmoContainer.get(classificationWI)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);
+			//added by Mike, 20190416; edited by Mike 20190424
+			int totalWI = (int) nonHmoContainer.get(classificationWI)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN] + (int) nonHmoContainer.get(classificationWI_MCDO)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+			s = s.replace("<?php echo $data['total_wi_count'];?>", "" + totalWI);
 
+			//added by Mike, 20190424
+			s = s.replace("<?php echo $data['total_wi_mcdo_count'];?>", "" + (int) nonHmoContainer.get(classificationWI_MCDO)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);
+			
 			//added by Mike, 20190416
 			s = s.replace("<?php echo $data['total_slc_count'];?>", "" + (int) nonHmoContainer.get(classificationSLC)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);
 

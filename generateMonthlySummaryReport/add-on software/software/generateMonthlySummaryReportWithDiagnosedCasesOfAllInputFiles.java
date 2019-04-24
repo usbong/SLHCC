@@ -2115,14 +2115,15 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 
 			//added by Mike, 20190202
 			double oldPatientCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_OLD_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_OLD_PATIENT_COUNT_COLUMN];
-*/			
-			
+*/						
 			//added by Mike, 20190417; edited by Mike, 20190424
 			if (s.contains("<!-- Table Values: MONTHLY SUMMARY FOR EACH MEDICAL DOCTOR PRESENT -->")) {			
 				for (String key : sortedMedicalDoctorTransactionCountKeyset) {	
 					s = s.concat("\n");
 					s = s.concat("\t\t\t\t\t  <table width=\"50%\" class=\"consultation_census\">\n");
 					s = s.concat("\t\t\t\t\t  <!-- Table Values Row 1 -->\n");
+
+					//This portion is for the Medical Doctor's name
 					s = s.concat("\t\t\t\t\t  <tr>\n");
 					s = s.concat("\t\t\t\t\t	  <!-- Column 1 -->\n");
 					s = s.concat("\t\t\t\t\t      <td>\n");
@@ -2134,7 +2135,24 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 					s = s.concat("\t\t\t\t\t	  <br />\n");
 					s = s.concat("\t\t\t\t\t	  </td>\n");
 					s = s.concat("\t\t\t\t\t  </tr>\n");
+
+					//This portion is for the Medical Doctor's total consult count
+					double consultationCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+					s = s.concat("\t\t\t\t\t  <tr>\n");
+					s = s.concat("\t\t\t\t\t	  <!-- Column 1 -->\n");
+					s = s.concat("\t\t\t\t\t      <td>\n");
+					s = s.concat("\t\t\t\t\t		  <b><span>CONSULT:</span></b>\n");
+					s = s.concat("\t\t\t\t\t	  </td>\n");
+					s = s.concat("\t\t\t\t\t	  <!-- Column 2: Blank -->\n");
+					s = s.concat("\t\t\t\t\t	  <td>\n");
+					s = s.concat("\t\t\t\t\t		  <b><span>" + (int) consultationCount + "</span></b>\n");
+					s = s.concat("\t\t\t\t\t	  <br />\n");
+					s = s.concat("\t\t\t\t\t	  </td>\n");
+					s = s.concat("\t\t\t\t\t  </tr>\n");
+
+
 					s = s.concat("\t\t\t\t\t  </table>\n");
+					s = s.concat("\t\t\t\t\t  <br />");
 					  
 /*					
 					s = s.concat("\t\t\t\t\t	  <b><span>" + classifiedDiagnosedCasesContainer.get(key) + "</span></b>\n");

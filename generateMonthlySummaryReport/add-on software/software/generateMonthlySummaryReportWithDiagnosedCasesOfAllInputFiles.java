@@ -243,6 +243,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static final String classificationSC = "SC";
 	private static final String classificationPWD = "PWD";
 	private static final String classificationNO_CHARGE = "NO CHARGE"; //added by Mike, 20190425
+	private static final String classificationSLR = "SLR"; //added by Mike, 20190425
 		
 	//added by Mike, 20190417
 	private static double totalTreatmentHMOCount = 0;
@@ -2108,6 +2109,13 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 				slcValue = (int) nonHmoContainer.get(classificationSLC)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 			}			
 			s = s.replace("<?php echo $data['total_slc_count'];?>", "" + slcValue);
+
+			//added by Mike, 20190425
+			int slrValue = 0;
+			if (nonHmoContainer.containsKey(classificationSLR)) {
+				slrValue = (int) nonHmoContainer.get(classificationSLR)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+			}			
+			s = s.replace("<?php echo $data['total_slr_count'];?>", "" + slrValue);
 
 			//added by Mike, 20190425
 			int scValue = 0;

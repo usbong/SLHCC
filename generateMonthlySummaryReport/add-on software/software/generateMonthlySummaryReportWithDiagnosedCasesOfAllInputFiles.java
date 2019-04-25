@@ -2100,14 +2100,28 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 			if (nonHmoContainer.containsKey(classificationNO_CHARGE)) {
 				noChargeValue = (int) nonHmoContainer.get(classificationNO_CHARGE)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 			}
-			s = s.replace("<?php echo $data['total_no_charge_count'];?>", "" + noChargeValue );
+			s = s.replace("<?php echo $data['total_no_charge_count'];?>", "" + noChargeValue);
 			
-			//added by Mike, 20190416
-			s = s.replace("<?php echo $data['total_slc_count'];?>", "" + (int) nonHmoContainer.get(classificationSLC)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);
+			//added by Mike, 20190416; edited by Mike, 20190425
+			int slcValue = 0;
+			if (nonHmoContainer.containsKey(classificationSLC)) {
+				slcValue = (int) nonHmoContainer.get(classificationSLC)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+			}			
+			s = s.replace("<?php echo $data['total_slc_count'];?>", "" + slcValue);
 
-			s = s.replace("<?php echo $data['total_sc_count'];?>", "" + (int) nonHmoContainer.get(classificationSC)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);
+			//added by Mike, 20190425
+			int scValue = 0;
+			if (nonHmoContainer.containsKey(classificationSC)) {
+				scValue = (int) nonHmoContainer.get(classificationSC)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+			}			
+			s = s.replace("<?php echo $data['total_sc_count'];?>", "" + scValue);
 
-			s = s.replace("<?php echo $data['total_pwd_count'];?>", "" + (int) nonHmoContainer.get(classificationPWD)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);
+			//added by Mike, 20190425
+			int pwdValue = 0;
+			if (nonHmoContainer.containsKey(classificationPWD)) {
+				pwdValue = (int) nonHmoContainer.get(classificationPWD)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+			}			
+			s = s.replace("<?php echo $data['total_pwd_count'];?>", "" + pwdValue);
 			
 			//added by Mike, 20190417
 			s = s.replace("<?php echo $data['total_hmo_count'];?>", "" + (int) totalConsultationHMOCount);

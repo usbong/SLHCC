@@ -1962,12 +1962,26 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 			}			
 			s = s.replace("<?php echo $data['total_wi_count'];?>", "" + totalWiValue);
 
-			//added by Mike, 20190416
-			s = s.replace("<?php echo $data['total_slc_count'];?>", "" + (int) nonHmoContainer.get(classificationSLC)[OUTPUT_NON_HMO_COUNT_COLUMN]);
+			//added by Mike, 20190416; edited by Mike, 20190425
+			slcValue = 0;
+			if (nonHmoContainer.containsKey(classificationSLC)) {
+				slcValue = (int) nonHmoContainer.get(classificationSLC)[OUTPUT_NON_HMO_COUNT_COLUMN];
+			}			
+			s = s.replace("<?php echo $data['total_slc_count'];?>", "" + slcValue);
 
-			s = s.replace("<?php echo $data['total_sc_count'];?>", "" + (int) nonHmoContainer.get(classificationSC)[OUTPUT_NON_HMO_COUNT_COLUMN]);
+			//edited by Mike, 20190425
+			pwdValue = 0;
+			if (nonHmoContainer.containsKey(classificationPWD)) {
+				pwdValue = (int) nonHmoContainer.get(classificationPWD)[OUTPUT_NON_HMO_COUNT_COLUMN];
+			}			
+			s = s.replace("<?php echo $data['total_pwd_count'];?>", "" + pwdValue);
 
-			s = s.replace("<?php echo $data['total_pwd_count'];?>", "" + (int) nonHmoContainer.get(classificationPWD)[OUTPUT_NON_HMO_COUNT_COLUMN]);
+			//edited by Mike, 20190425
+			scValue = 0;
+			if (nonHmoContainer.containsKey(classificationSC)) {
+				scValue = (int) nonHmoContainer.get(classificationSC)[OUTPUT_NON_HMO_COUNT_COLUMN];
+			}			
+			s = s.replace("<?php echo $data['total_sc_count'];?>", "" + scValue);
 			
 			//added by Mike, 20190417
 			s = s.replace("<?php echo $data['total_hmo_count'];?>", "" + (int) totalTreatmentHMOCount);			

@@ -252,6 +252,14 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static double totalMedicalCertificateHMOCount = 0;
 	private static double totalNewPatientTreatmentHMOCount = 0;
 	private static double totalNewPatientConsultationHMOCount = 0;
+	
+	//added by Mike, 20190425
+	private static int totalWiValue = 0;
+	private static int noChargeValue = 0;
+	private static int slcValue = 0;
+	private static int slrValue = 0;
+	private static int scValue = 0;
+	private static int pwdValue = 0;
 			
 	public static void main ( String[] args ) throws Exception
 	{			
@@ -1947,8 +1955,12 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 			//added by Mike, 20190416
 			s = s.replace("<?php echo $data['total_new_patients_count'];?>", "" + totalNewPatientReferralTransactionCount);
 
-			//added by Mike, 20190416
-			s = s.replace("<?php echo $data['total_wi_count'];?>", "" + (int) nonHmoContainer.get(classificationWI)[OUTPUT_NON_HMO_COUNT_COLUMN]);
+			//added by Mike, 20190416; edited by Mike, 20190425
+			totalWiValue = 0;
+			if (nonHmoContainer.containsKey(classificationWI)) {
+				totalWiValue = (int) nonHmoContainer.get(classificationWI)[OUTPUT_NON_HMO_COUNT_COLUMN];
+			}			
+			s = s.replace("<?php echo $data['total_wi_count'];?>", "" + totalWiValue);
 
 			//added by Mike, 20190416
 			s = s.replace("<?php echo $data['total_slc_count'];?>", "" + (int) nonHmoContainer.get(classificationSLC)[OUTPUT_NON_HMO_COUNT_COLUMN]);
@@ -2083,49 +2095,47 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 			//added by Mike, 20190423
 			s = s.replace("<?php echo $data['total_procedure_count'];?>", "" + (int) totalProcedurePerDoctorCount);
 			
-
 			//added by Mike, 20190416; edited by Mike 20190425
-			int totalWI = (int) nonHmoContainer.get(classificationWI)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+			totalWiValue = (int) nonHmoContainer.get(classificationWI)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 					
 			//added by Mike, 20190424; edited by Mike, 20190425
 			if (nonHmoContainer.containsKey(classificationWI_MCDO)) {
-				totalWI += (int) nonHmoContainer.get(classificationWI_MCDO)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+				totalWiValue += (int) nonHmoContainer.get(classificationWI_MCDO)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 	
 				s = s.replace("<?php echo $data['total_wi_mcdo_count'];?>", "" + (int) nonHmoContainer.get(classificationWI_MCDO)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);				
-			}
-			
-			s = s.replace("<?php echo $data['total_wi_count'];?>", "" + totalWI);			
+			}			
+			s = s.replace("<?php echo $data['total_wi_count'];?>", "" + totalWiValue);			
 	
 			//added by Mike, 20190425			
-			int noChargeValue = 0;
+			noChargeValue = 0;
 			if (nonHmoContainer.containsKey(classificationNO_CHARGE)) {
 				noChargeValue = (int) nonHmoContainer.get(classificationNO_CHARGE)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 			}
 			s = s.replace("<?php echo $data['total_no_charge_count'];?>", "" + noChargeValue);
 			
 			//added by Mike, 20190416; edited by Mike, 20190425
-			int slcValue = 0;
+			slcValue = 0;
 			if (nonHmoContainer.containsKey(classificationSLC)) {
 				slcValue = (int) nonHmoContainer.get(classificationSLC)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 			}			
 			s = s.replace("<?php echo $data['total_slc_count'];?>", "" + slcValue);
 
 			//added by Mike, 20190425
-			int slrValue = 0;
+			slrValue = 0;
 			if (nonHmoContainer.containsKey(classificationSLR)) {
 				slrValue = (int) nonHmoContainer.get(classificationSLR)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 			}			
 			s = s.replace("<?php echo $data['total_slr_count'];?>", "" + slrValue);
 
 			//added by Mike, 20190425
-			int scValue = 0;
+			scValue = 0;
 			if (nonHmoContainer.containsKey(classificationSC)) {
 				scValue = (int) nonHmoContainer.get(classificationSC)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 			}			
 			s = s.replace("<?php echo $data['total_sc_count'];?>", "" + scValue);
 
 			//added by Mike, 20190425
-			int pwdValue = 0;
+			pwdValue = 0;
 			if (nonHmoContainer.containsKey(classificationPWD)) {
 				pwdValue = (int) nonHmoContainer.get(classificationPWD)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 			}			

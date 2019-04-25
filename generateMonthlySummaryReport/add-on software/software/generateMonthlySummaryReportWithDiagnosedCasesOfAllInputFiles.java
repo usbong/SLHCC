@@ -2194,7 +2194,15 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 */						
 			//added by Mike, 20190417; edited by Mike, 20190424
 			if (s.contains("<!-- Table Values: MONTHLY SUMMARY FOR EACH MEDICAL DOCTOR PRESENT -->")) {			
-				for (String key : sortedMedicalDoctorTransactionCountKeyset) {	
+				double consultationCount = 0;
+				for (String key : sortedMedicalDoctorTransactionCountKeyset) {					
+					//edited by Mike, 20190426
+					consultationCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+				
+					if (consultationCount == 0) {
+						continue;
+					}
+				
 					s = s.concat("\n");
 					s = s.concat("\t\t\t\t\t  <table width=\"50%\" class=\"consultation_census\">\n");
 					s = s.concat("\t\t\t\t\t  <!-- Table Values Row 1 -->\n");
@@ -2213,7 +2221,7 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 					s = s.concat("\t\t\t\t\t  </tr>\n");
 
 					//This portion is for the Medical Doctor's total consult count
-					double consultationCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+					//edited by Mike, 20190426
 					s = s.concat("\t\t\t\t\t  <tr>\n");
 					s = s.concat("\t\t\t\t\t	  <!-- Column 1 -->\n");
 					s = s.concat("\t\t\t\t\t      <td>\n");

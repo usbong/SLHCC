@@ -85,6 +85,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	//added by Mike, 20190422
 	private static String inputOutputTemplateFilenameConsultation = "assets\\templates\\generateMonthlySummaryReportOutputTemplateConsultation";//without extension; default input file 
 	//Note that I have to use double backslash, i.e. "\\", to use "\" in the filename
+
+	//added by Mike, 20190426	
+	private static String inputOutputTemplateFilenameTreatmentUnclassifiedDiagnosedCases = "assets\\templates\\generateMonthlySummaryReportOutputTemplateTreatmentUnclassifiedDiagnosedCases";//without extension; default input file 
+	//Note that I have to use double backslash, i.e. "\\", to use "\" in the filename
 	
 	private static String startDate = null;
 	private static String endDate = null;
@@ -238,6 +242,9 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static int totalOldPatientPerDoctorCount = 0;
 	private static int totalTreatmentNewCasesCount = 0; //added by Mike, 20190426
 	
+	//added by Mike, 20190426
+	private static int totalDiagnosedCaseCount = 0;
+	
 	//added by Mike, 20190416
 	private static final String classificationWI = "WI";
 	private static final String classificationWI_MCDO = "WI (C/O MCDO)"; //added by Mike, 20190424
@@ -267,7 +274,11 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
 		PrintWriter treatmentWriter = new PrintWriter("output/MonthlySummaryReportOutputTreatment.html", "UTF-8");			
-		PrintWriter consultationWriter = new PrintWriter("output/MonthlySummaryReportOutputConsultation.html", "UTF-8");			
+		PrintWriter consultationWriter = new PrintWriter("output/MonthlySummaryReportOutputConsultation.html", "UTF-8");	
+		
+		//added by Mike, 20190426
+		PrintWriter treatmentUnclassifiedDiagnosedCasesWriter = new PrintWriter("output/MonthlySummaryReportOfUnclassifiedDiagnosedCasesOutput.html", "UTF-8");	
+		
 
 /*		
 		//added by Mike, 20190413
@@ -338,6 +349,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		//edited by Mike, 20190422
 		processWriteOutputFileTreatment(treatmentWriter);
 		processWriteOutputFileConsultation(consultationWriter);
+
+		//added by Mike, 20190426
+		processWriteOutputFileTreatmentUnclassifiedDiagnosedCases(treatmentUnclassifiedDiagnosedCasesWriter);
+		
 		
 		/*writer.close();
 		*/
@@ -499,9 +514,8 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	
 	//added by Mike, 20190415
 	private static void processAutoCalculate() {		
-
-		System.out.println("dateValuesArrayInt.length: "+dateValuesArrayInt.length);		
-		System.out.println("dateValuesArrayInt.length/2: "+dateValuesArrayInt.length/2);
+//		System.out.println("dateValuesArrayInt.length: "+dateValuesArrayInt.length);		
+//		System.out.println("dateValuesArrayInt.length/2: "+dateValuesArrayInt.length/2);
 		
 		//Note that there should be an even number of input files and at least two (2) input files, one for PT Treatment and another for Consultation
 		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION
@@ -1911,6 +1925,70 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 
 	}
 	
+	private static void processWriteOutputFileTreatmentUnclassifiedDiagnosedCases(PrintWriter writer) throws Exception {
+		File f = new File(inputOutputTemplateFilenameTreatmentUnclassifiedDiagnosedCases+".html");
+
+		System.out.println("inputOutputTemplateFilenameTreatmentUnclassifiedDiagnosedCases: " + inputOutputTemplateFilenameTreatmentUnclassifiedDiagnosedCases);
+	
+		Scanner sc = new Scanner(new FileInputStream(f), "UTF-8");				
+	
+		String s;		
+//			s=sc.nextLine(); //skip the first row, which is the input file's table headers
+
+		if (isInDebugMode) {
+			rowCount=0;
+		}
+
+		SortedSet<String> sortedKeyset = new TreeSet<String>(diagnosedCasesContainer.keySet());
+//		SortedSet<String> sortedClassifiedKeyset = new TreeSet<String>(classifiedDiagnosedCasesContainer.keySet());
+
+		//count/compute the number-based values of inputColumns 
+		while (sc.hasNextLine()) {
+			s=sc.nextLine();
+/*			
+			//if the row is blank
+			if (s.trim().equals("")) {
+				continue;
+			}
+*/			
+			if (isInDebugMode) {
+				rowCount++;
+//				System.out.println("rowCount: "+rowCount);
+			}
+			
+			s = s.replace("<?php echo $data['date'];?>", "" + dateValuesArray[0].toUpperCase());
+			
+			if (s.contains("<!-- Table Values: UNCLASSIFIED DIAGNOSED CASES OF NEW PATIENTS -->")) {
+				//added by Mike, 20190426
+				int diagnosedCaseCount = 0;
+				
+				for (String key : sortedKeyset) {	
+					diagnosedCaseCount = diagnosedCasesContainer.get(key);
+					totalDiagnosedCaseCount+=diagnosedCaseCount;			
+
+					s = s.concat("\n");
+					s = s.concat("\t\t\t\t\t  <tr>\n");
+					s = s.concat("\t\t\t\t\t	  <!-- Column 1 -->\n");
+					s = s.concat("\t\t\t\t\t     <td>\n");
+					s = s.concat("\t\t\t\t\t		  <b><span>" + key + "</span></b>\n");
+					s = s.concat("\t\t\t\t\t	  </td>\n");
+					s = s.concat("\t\t\t\t\t	  <!-- Column 2 -->\n");
+					s = s.concat("\t\t\t\t\t	  <td>\n");
+					s = s.concat("\t\t\t\t\t	  <b><span>" + diagnosedCaseCount + "</span></b>\n");
+					s = s.concat("\t\t\t\t\t     </td>\n");
+					s = s.concat("\t\t\t\t\t  </tr>");					
+				}
+			}		
+				
+			//added by Mike, 20190426
+			s = s.replace("<?php echo $data['total_new_cases_count'];?>", "" + (int) totalDiagnosedCaseCount);				
+			writer.print(s + "\n");		
+		}
+		
+		writer.close();
+	}
+						
+						
 	private static void processWriteOutputFileTreatment(PrintWriter writer) throws Exception {
 		File f = new File(inputOutputTemplateFilenameTreatment+".html");
 

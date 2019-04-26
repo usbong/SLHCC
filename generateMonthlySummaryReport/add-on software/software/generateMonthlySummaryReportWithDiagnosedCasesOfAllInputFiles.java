@@ -236,6 +236,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static int totalNewPatientPerDoctorCount = 0;
 	private static int totalFollowUpPerDoctorCount = 0;
 	private static int totalOldPatientPerDoctorCount = 0;
+	private static int totalTreatmentNewCasesCount = 0; //added by Mike, 20190426
 	
 	//added by Mike, 20190416
 	private static final String classificationWI = "WI";
@@ -2002,9 +2003,12 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 			
 			//added by Mike, 20190417
 			s = s.replace("<?php echo $data['total_hmo_count'];?>", "" + (int) totalTreatmentHMOCount);			
-									
+												
 			//added by Mike, 20190417
-			if (s.contains("<!-- Table Values: NEW CASES -->")) {						  
+			if (s.contains("<!-- Table Values: NEW CASES -->")) {
+				//added by Mike, 20190426
+				totalTreatmentNewCasesCount = 0;
+			
 				for (String key : sortedClassifiedKeyset) {	
 					s = s.concat("\n");
 					s = s.concat("\t\t\t\t\t  <tr>\n");
@@ -2017,8 +2021,14 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 					s = s.concat("\t\t\t\t\t	  <b><span>" + classifiedDiagnosedCasesContainer.get(key) + "</span></b>\n");
 					s = s.concat("\t\t\t\t\t     </td>\n");
 					s = s.concat("\t\t\t\t\t  </tr>");
-				}
+					
+					//added by Mike, 20190426
+					totalTreatmentNewCasesCount += classifiedDiagnosedCasesContainer.get(key);
+				}			
 			}
+			
+			//added by Mike, 20190426
+			s = s.replace("<?php echo $data['total_new_cases_count'];?>", "" + (int) totalTreatmentNewCasesCount);
 			
 			//added by Mike, 20190417
 			if (s.contains("<b><span><?php echo $value['name'];?>;&nbsp;</span></b>")) {

@@ -2658,6 +2658,25 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 			if (!isConsultation) {											
 				if (inputColumns[INPUT_NEW_OLD_PATIENT_COLUMN].trim().toLowerCase().contains("new")) {
 					
+					//added by Mike, 20190426
+					String[] diagnosedCaseNameArray = diagnosedCaseName.split(",");
+
+					for (int i=0; i< diagnosedCaseNameArray.length; i++) {										
+						diagnosedCaseName = diagnosedCaseNameArray[i].replace("\"", "").trim();
+					
+						if (diagnosedCaseName.equals("")){
+							System.out.println("STOP!");
+						}
+						
+						if (!diagnosedCasesContainer.containsKey(diagnosedCaseName)) {
+							diagnosedCasesContainer.put(diagnosedCaseName, 1);
+						}					
+						else {
+							int currentValue = diagnosedCasesContainer.get(diagnosedCaseName);
+							diagnosedCasesContainer.put(diagnosedCaseName, currentValue++); //the existing value of the key is replaced
+						}	
+					}
+/*					
 					if (diagnosedCaseName.equals("")){
 						System.out.println("STOP!");
 					}
@@ -2669,6 +2688,7 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 						int currentValue = diagnosedCasesContainer.get(diagnosedCaseName);
 						diagnosedCasesContainer.put(diagnosedCaseName, currentValue++); //the existing value of the key is replaced
 					}
+*/					
 				}
 			}
 			else {	//TO-DO: -add: handle Consultation transactions

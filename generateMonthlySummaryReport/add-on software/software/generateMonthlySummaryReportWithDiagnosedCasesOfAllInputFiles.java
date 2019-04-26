@@ -1881,11 +1881,17 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 					//added by Mike, 20181220
 	//				processMedicalDoctorTransactionPerClassificationCount(classificationContainerPerMedicalDoctor, inputColumns, isConsultation);
 	
-					//added by Mike, 20190202
-					processMedicalDoctorTransactionCount(medicalDoctorContainer, inputColumns, isConsultation);
-					
-					//added by Mike, 20190413
-					processDiagnosedCasesCount(diagnosedCasesContainer, inputColumns, isConsultation); 
+					//edited by Mike, 20190426
+					if (isConsultation) {
+						//added by Mike, 20190202
+						processMedicalDoctorTransactionCount(medicalDoctorContainer, inputColumns, isConsultation);						
+					}
+					else {
+						processMedicalDoctorTransactionCount(referringDoctorContainer, inputColumns, isConsultation);						
+
+						//added by Mike, 20190413
+						processDiagnosedCasesCount(diagnosedCasesContainer, inputColumns, isConsultation); 
+					}
 				}
 				else {
 					//added by Mike, 20181220

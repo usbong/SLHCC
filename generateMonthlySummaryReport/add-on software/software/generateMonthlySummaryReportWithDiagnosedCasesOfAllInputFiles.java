@@ -228,6 +228,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	
 	//added by Mike, 20190416
 	private static int totalReferringMedicalDoctorTransactionCount = 0;
+	private static int totalMedicalDoctorTransactionCount = 0; //added by Mike, 20190426
 	private static int totalNewPatientReferralTransactionCount = 0;
 	private static int totalConsultationPerDoctorCount = 0;
 	private static int totalProcedurePerDoctorCount = 0;
@@ -534,8 +535,11 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		for (String key : sortedMedicalDoctorTransactionCountKeyset) {	
 			double count = medicalDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
 
-			double newPatientReferralTransactionCount = medicalDoctorContainer.get(key)[OUTPUT_HMO_NEW_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
-
+			//edited by Mike, 20190426
+/*			double newPatientReferralTransactionCount = medicalDoctorContainer.get(key)[OUTPUT_HMO_NEW_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
+*/
+			double newPatientReferralTransactionCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
+						
 			//added by Mike, 20181219
 			double consultationCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 
@@ -554,7 +558,9 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			//added by Mike, 20190202
 			double oldPatientCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_OLD_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_OLD_PATIENT_COUNT_COLUMN];
 			
-			totalReferringMedicalDoctorTransactionCount += count;
+			//edited by Mike, 20190426
+//			totalReferringMedicalDoctorTransactionCount += count; 
+			totalMedicalDoctorTransactionCount += count; 			
 			totalNewPatientReferralTransactionCount += newPatientReferralTransactionCount;
 			totalConsultationPerDoctorCount += consultationCount;
 			totalProcedurePerDoctorCount += procedureCount;
@@ -2241,7 +2247,7 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 					s = s.concat("\t\t\t\t\t  </tr>\n");
 
 					//This portion is for the Medical Doctor's total count of new patient transactions
-					double newPatientReferralTransactionCount = medicalDoctorContainer.get(key)[OUTPUT_HMO_NEW_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
+					double newPatientTransactionCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
 					s = s.concat("\t\t\t\t\t  <tr>\n");
 					s = s.concat("\t\t\t\t\t	  <!-- Column 1 -->\n");
 					s = s.concat("\t\t\t\t\t      <td>\n");
@@ -2249,7 +2255,7 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 					s = s.concat("\t\t\t\t\t	  </td>\n");
 					s = s.concat("\t\t\t\t\t	  <!-- Column 2: Blank -->\n");
 					s = s.concat("\t\t\t\t\t	  <td>\n");
-					s = s.concat("\t\t\t\t\t		  <b><span>" + (int) newPatientReferralTransactionCount + "</span></b>\n");
+					s = s.concat("\t\t\t\t\t		  <b><span>" + (int) newPatientTransactionCount + "</span></b>\n");
 					s = s.concat("\t\t\t\t\t	  <br />\n");
 					s = s.concat("\t\t\t\t\t	  </td>\n");
 					s = s.concat("\t\t\t\t\t  </tr>\n");

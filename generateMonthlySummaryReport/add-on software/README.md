@@ -28,6 +28,8 @@ ii) <b>C:\...\Local\Google\Chrome\Application\chrome.exe "file:///%CD%/add-on%%2
 <b>C:\Users\User\AppData\Local\Google\Chrome\Application\chrome.exe "file:///%CD%/add-on%%20software/output/MonthlySummaryReportOutputConsultation.html"</b><br />
 <br />
 --> Update the location of <b>"chrome.exe"</b> to where it is in the computer.<br />
+--> The directory where <b>"chrome.exe"</b> is located must not have space in its folder names; otherwise, you must add quotation marks, e.g. "add-on software".<br />
+--> <b>"%CD%"</b>, i.e. the current directory, must not have space in its folder names.<br />
 <br />
 c) MS EXCEL VBA (Visual Basic for Applications)<br />
 --> The inputWorkbookPath = path where the <b>"generateMonthlySummaryReportWithMacro.xlsm"</b> MS EXCEL workbook file is located.<br />
@@ -35,4 +37,5 @@ c) MS EXCEL VBA (Visual Basic for Applications)<br />
 <b>ChDir inputWorkbookPath & "\add-on software\output"<br />
 Shell "C:\...\Local\Google\Chrome\Application\chrome.exe" & " " & inputWorkbookPath & "\add-on%20software\output\MonthlySummaryReportOutputTreatment.html", vbNormalFocus<br />
 </b><br />
---> Update the location of <b>"chrome.exe"</b> to where it is in the computer.
+--> Update the location of <b>"chrome.exe"</b> to where it is in the computer.<br />
+--> The directory where <b>"chrome.exe"</b> is located must not have space in its folder names; otherwise, you must add quotation marks, e.g. "add-on software".<br />

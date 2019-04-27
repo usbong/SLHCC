@@ -370,7 +370,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			processWriteOutputFileConsultation(consultationWriter);
 		}
 		else {
-			System.out.println("\nThere is no Tab-delimited .txt input file in the \"input\\consultation\" folder.");
+			System.out.println("\nThere is no Tab-delimited .txt input file in the \"input\\consultation\" folder.\n");
 		}
 		
 		if (!isTreatmentInputFileEmpty) {
@@ -379,7 +379,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			processWriteOutputFileTreatmentUnclassifiedDiagnosedCases(treatmentUnclassifiedDiagnosedCasesWriter);
 		}
 		else {
-			System.out.println("\nThere is no Tab-delimited .txt input file in the \"input\\treatment\" folder.");
+			System.out.println("\nThere is no Tab-delimited .txt input file in the \"input\\treatment\" folder.\n");
 		}
 						
 		/*writer.close();

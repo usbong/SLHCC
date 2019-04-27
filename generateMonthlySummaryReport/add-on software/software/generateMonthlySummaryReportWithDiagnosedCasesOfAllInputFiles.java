@@ -2280,6 +2280,10 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 	
 				s = s.replace("<?php echo $data['total_wi_mcdo_count'];?>", "" + (int) nonHmoContainer.get(classificationWI_MCDO)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]);				
 			}			
+			else { //added by Mike, 20190427
+				s = s.replace("<?php echo $data['total_wi_mcdo_count'];?>", "0");				
+			}
+			
 			s = s.replace("<?php echo $data['total_wi_count'];?>", "" + totalWiValue);			
 	
 			//added by Mike, 20190425			

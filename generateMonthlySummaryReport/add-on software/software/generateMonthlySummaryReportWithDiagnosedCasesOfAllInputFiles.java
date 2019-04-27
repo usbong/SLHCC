@@ -169,6 +169,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static int[] dateValuesArrayInt; //added by Mike, 20181206
 	//private static ArrayList<int> dateValuesArrayInt; //edited by Mike, 20181221
 	private static String dateValue; //added by Mike, 20190427
+	private static int dateValueInt; //added by Mike, 20190427
 		
 	//the date and the referring doctor are not yet included here
 	//this is for both HMO and NON-HMO transactions
@@ -274,6 +275,12 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	//added by Mike, 20190426
 	private static boolean isConsultationInputFileEmpty=true;
 	private static boolean isTreatmentInputFileEmpty=true;
+	
+	//added by Mike, 20190427
+	private static double treatmentCount;
+	private static double consultationCount;
+	private static double procedureCount;
+	private static double medicalCertificateCount;	
 			
 	public static void main ( String[] args ) throws Exception
 	{			
@@ -539,33 +546,34 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 //		System.out.println("dateValuesArrayInt.length/2: "+dateValuesArrayInt.length/2);
 		
 		//Note that there should be an even number of input files and at least two (2) input files, one for PT Treatment and another for Consultation
-		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION
-//		System.out.println("dateValuesArrayInt[i]: "+dateValuesArrayInt[i]);
-		
-			//added by Mike, 20190207; edited by Mike, 20190427
-			if (dateValuesArrayInt[i]==0) { //if there is no .txt input file
-/*				System.out.println("\nThere is no Tab-delimited .txt input file in either the \"input\\consultation\" folder or the \"input\\treatment\" folder.");
+/*		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION
 */
+//		System.out.println("dateValuesArrayInt[i]: "+dateValuesArrayInt[i]);
+
+			int i = dateValueInt; //added by Mike, 20190427
+	
+/*			//added by Mike, 20190207; edited by Mike, 20190427
+			if (dateValuesArrayInt[i]==0) { //if there is no .txt input file
 				return false;
 			}
-					
-			double treatmentCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN];
+*/					
+			treatmentCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN];
 
-			//added by Mike, 20181218
-			double consultationCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+			//added by Mike, 20181218; edited by Mike, 20190427
+			consultationCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 
-			//added by Mike, 20190105
-			double procedureCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN];
+			//added by Mike, 20190105; edited by Mike, 20190427
+			procedureCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN];
 
-			//added by Mike, 20190105
-			double medicalCertificateCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN];
+			//added by Mike, 20190105; edited by Mike, 20190427
+			medicalCertificateCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN];
 			
 			totalTreatmentCount += treatmentCount;
 			totalConsultationCount += consultationCount;
 			totalProcedureCount += procedureCount;
 			totalMedicalCertificateCount += medicalCertificateCount;		
-		}
-		
+/*		}
+*/		
 		//--------------------------------------------------------------------
 		SortedSet<String> sortedMedicalDoctorTransactionCountKeyset = new TreeSet<String>(medicalDoctorContainer.keySet());
 
@@ -577,14 +585,14 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 */
 			double newPatientReferralTransactionCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
 						
-			//added by Mike, 20181219
-			double consultationCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+			//added by Mike, 20181219; edited by Mike, 20190427
+			consultationCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 
-			//added by Mike, 20181219
-			double procedureCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN];
+			//added by Mike, 20181219; edited by Mike, 20190427
+			procedureCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN];
 
-			//added by Mike, 20190109
-			double medicalCertificateCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN];
+			//added by Mike, 20190109; edited by Mike, 20190427
+			medicalCertificateCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN];
 
 			//added by Mike, 20190202
 			double newPatientCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
@@ -1884,6 +1892,7 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 				}
 				else {
 					dateValue = dateValuesArray[i].trim();
+					dateValueInt = i; //added by Mike, 20190427
 				}
 
 //				System.out.println(">>>>>>> i: "+ i + "; >>>dateValuesArray["+i+"]: "+dateValuesArray[i]);

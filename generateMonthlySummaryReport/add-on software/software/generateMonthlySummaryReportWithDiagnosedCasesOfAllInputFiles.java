@@ -168,6 +168,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static String[] dateValuesArray; //added by Mike, 20180412
 	private static int[] dateValuesArrayInt; //added by Mike, 20181206
 	//private static ArrayList<int> dateValuesArrayInt; //edited by Mike, 20181221
+	private static String dateValue; //added by Mike, 20190427
 		
 	//the date and the referring doctor are not yet included here
 	//this is for both HMO and NON-HMO transactions
@@ -269,6 +270,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static int slrValue = 0;
 	private static int scValue = 0;
 	private static int pwdValue = 0;
+	
+	//added by Mike, 20190426
+	private static boolean isConsultationInputFileEmpty=true;
+	private static boolean isTreatmentInputFileEmpty=true;
 			
 	public static void main ( String[] args ) throws Exception
 	{			
@@ -333,9 +338,16 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		System.out.println(myLevenshteinDistance.apply("132", "1 32")); //answer: 1
 */		
 
-		//added by Mike, 20190415
+		//added by Mike, 20190415; edited by Mike, 20190426
 		processAutoCalculate();
-
+/*		if (!processAutoCalculate()) { //if there are no input files
+			treatmentWriter.close();
+			consultationWriter.close();		
+			treatmentUnclassifiedDiagnosedCasesWriter.close();
+			
+			return;
+		}
+*/
 		/*
 		 * --------------------------------------------------------------------
 		 * OUTPUT
@@ -346,14 +358,23 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		//edited by Mike, 20190131
 		/*writer.print("Monthly Summary Report\n");
 		*/
-		//edited by Mike, 20190422
-		processWriteOutputFileTreatment(treatmentWriter);
-		processWriteOutputFileConsultation(consultationWriter);
-
-		//added by Mike, 20190426
-		processWriteOutputFileTreatmentUnclassifiedDiagnosedCases(treatmentUnclassifiedDiagnosedCasesWriter);
+		//edited by Mike, 20190427
+		if (!isConsultationInputFileEmpty) {
+			processWriteOutputFileConsultation(consultationWriter);
+		}
+		else {
+			System.out.println("\nThere is no Tab-delimited .txt input file in the \"input\\consultation\" folder.");
+		}
 		
-		
+		if (!isTreatmentInputFileEmpty) {
+			processWriteOutputFileTreatment(treatmentWriter);
+			//added by Mike, 20190426
+			processWriteOutputFileTreatmentUnclassifiedDiagnosedCases(treatmentUnclassifiedDiagnosedCasesWriter);
+		}
+		else {
+			System.out.println("\nThere is no Tab-delimited .txt input file in the \"input\\treatment\" folder.");
+		}
+						
 		/*writer.close();
 		*/
 		//--------------------------------------------------------------------------------------
@@ -513,18 +534,19 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	}
 	
 	//added by Mike, 20190415
-	private static void processAutoCalculate() {		
+	private static boolean processAutoCalculate() {		
 //		System.out.println("dateValuesArrayInt.length: "+dateValuesArrayInt.length);		
 //		System.out.println("dateValuesArrayInt.length/2: "+dateValuesArrayInt.length/2);
 		
 		//Note that there should be an even number of input files and at least two (2) input files, one for PT Treatment and another for Consultation
 		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION
-		System.out.println("dateValuesArrayInt[i]: "+dateValuesArrayInt[i]);
+//		System.out.println("dateValuesArrayInt[i]: "+dateValuesArrayInt[i]);
 		
-			//added by Mike, 20190207
+			//added by Mike, 20190207; edited by Mike, 20190427
 			if (dateValuesArrayInt[i]==0) { //if there is no .txt input file
-				System.out.println("\nThere is no Tab-delimited .txt input file in either the \"input\\consultation\" folder or the \"input\\treatment\" folder.");
-				return;
+/*				System.out.println("\nThere is no Tab-delimited .txt input file in either the \"input\\consultation\" folder or the \"input\\treatment\" folder.");
+*/
+				return false;
 			}
 					
 			double treatmentCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN];
@@ -604,6 +626,8 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			totalNewPatientTreatmentHMOCount += newPatientTreatmentCount;
 			totalNewPatientConsultationHMOCount += newPatientConsultationCount;			
 		}
+		
+		return true; //added by Mike, 20190426
 	}
 	
 	private static void processMonthlyCount(HashMap<Integer, double[]> dateContainer, String[] inputColumns, int i, boolean isConsultation) {
@@ -1844,13 +1868,33 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 				if (dateValuesArray[i]==null) {
 					dateValuesArray[i] = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);
 				}
-
+				
 				//edited by Mike, 20190207
 				if (dateValuesArrayInt[i]==0) {
 					dateValuesArrayInt[i] = getYearMonthAsInt(inputColumns[INPUT_DATE_COLUMN]);					
 /*					
 					dateValuesArrayInt[i] = Integer.parseInt(args[i].substring(args[i].indexOf("_")+1,args[i].indexOf(".txt")));
 */					
+				}
+				
+									
+				//added by Mike, 20190426; edited by Mike, 20190427
+				if (dateValuesArray[i].trim().isEmpty()) {
+					return;
+				}
+				else {
+					dateValue = dateValuesArray[i].trim();
+				}
+
+//				System.out.println(">>>>>>> i: "+ i + "; >>>dateValuesArray["+i+"]: "+dateValuesArray[i]);
+				
+				//added by Mike, 20190426
+				if (inputFilename.toLowerCase().contains("consultation")) {
+					isConsultationInputFileEmpty=false;
+				}
+				else if (inputFilename.toLowerCase().contains("treatment")) {
+//					System.out.println(">>>dateValuesArray[i]: "+dateValuesArray[i]);
+					isTreatmentInputFileEmpty=false;
 				}
 
 				
@@ -1919,8 +1963,9 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 					processMedicalDoctorTransactionPerClassificationCount(classificationContainerPerMedicalDoctor, inputColumns, isConsultation);					
 				}
 			}		
-			//added by Mike, 20181205
+/*			//added by Mike, 20181205
 			columnValuesArray[OUTPUT_DATE_ID_COLUMN] = i; 			
+*/			
 		}		
 
 	}
@@ -1956,7 +2001,7 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 //				System.out.println("rowCount: "+rowCount);
 			}
 			
-			s = s.replace("<?php echo $data['date'];?>", "" + dateValuesArray[0].toUpperCase());
+			s = s.replace("<?php echo $data['date'];?>", "" + dateValue.toUpperCase());
 			
 			if (s.contains("<!-- Table Values: UNCLASSIFIED DIAGNOSED CASES OF NEW PATIENTS -->")) {
 				//added by Mike, 20190426
@@ -2044,7 +2089,7 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 //			System.out.println("totalTreatmentCount: "+totalTreatmentCount);
 			
 			//added by Mike, 20190417
-			s = s.replace("<?php echo $data['date'];?>", "" + dateValuesArray[0].toUpperCase());
+			s = s.replace("<?php echo $data['date'];?>", "" + dateValue.toUpperCase());
 			
 			s = s.replace("<?php echo $data['total_treatment_count'];?>", "" + totalTreatmentCount);
 
@@ -2198,7 +2243,7 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 //			System.out.println("totalTreatmentCount: "+totalTreatmentCount);
 			
 			//added by Mike, 20190417
-			s = s.replace("<?php echo $data['date'];?>", "" + dateValuesArray[0].toUpperCase());
+			s = s.replace("<?php echo $data['date'];?>", "" + dateValue.toUpperCase());
 			
 			s = s.replace("<?php echo $data['total_consultation_count'];?>", "" + totalConsultationCount);
 

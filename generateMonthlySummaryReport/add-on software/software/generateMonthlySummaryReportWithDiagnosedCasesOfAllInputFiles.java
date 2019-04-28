@@ -263,6 +263,17 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static double totalMedicalCertificateHMOCount = 0;
 	private static double totalNewPatientTreatmentHMOCount = 0;
 	private static double totalNewPatientConsultationHMOCount = 0;
+
+	//added by Mike, 20190429
+	private static double totalTreatmentNonHMOCount = 0;
+	private static double totalConsultationNonHMOCount = 0;
+	private static double totalProcedureNonHMOCount = 0;		
+	private static double totalMedicalCertificateNonHMOCount = 0;
+	private static double totalNewPatientTreatmentNonHMOCount = 0;
+	private static double totalNewPatientConsultationNonHMOCount = 0;
+	
+	//added by Mike, 20190429
+	private static int totalNewPatientTreatment = 0;
 	
 	//added by Mike, 20190425
 	private static int totalWiValue = 0;
@@ -583,8 +594,9 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			//edited by Mike, 20190426
 /*			double newPatientReferralTransactionCount = medicalDoctorContainer.get(key)[OUTPUT_HMO_NEW_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
 */
+/*
 			double newPatientReferralTransactionCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_NEW_PATIENT_COUNT_COLUMN];
-						
+*/						
 			//added by Mike, 20181219; edited by Mike, 20190427
 			consultationCount = medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + medicalDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 
@@ -606,7 +618,8 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			//edited by Mike, 20190426
 //			totalReferringMedicalDoctorTransactionCount += count; 
 			totalMedicalDoctorTransactionCount += count; 			
-			totalNewPatientReferralTransactionCount += newPatientReferralTransactionCount;
+/*			totalNewPatientReferralTransactionCount += newPatientReferralTransactionCount;
+*/
 			totalConsultationPerDoctorCount += consultationCount;
 			totalProcedurePerDoctorCount += procedureCount;
 			totalMedicalCertificatePerDoctorCount += procedureCount;
@@ -617,9 +630,9 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		
 		//added by Mike, 20190417
 		//--------------------------------------------------------------------		
-		SortedSet<String> sortedKeyset = new TreeSet<String>(hmoContainer.keySet());
+		SortedSet<String> sortedHMOKeyset = new TreeSet<String>(hmoContainer.keySet());
 		
-		for (String key : sortedKeyset) {	
+		for (String key : sortedHMOKeyset) {	
 			double treatmentCount = hmoContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
 			double consultationCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
 			double procedureCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]; //added by Mike, 20190105		
@@ -635,6 +648,26 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			totalNewPatientConsultationHMOCount += newPatientConsultationCount;			
 		}
 		
+		//added by Mike, 20190429
+		//--------------------------------------------------------------------		
+		SortedSet<String> sortedNonHMOKeyset = new TreeSet<String>(nonHmoContainer.keySet());
+		
+		for (String key : sortedNonHMOKeyset) {	
+			double treatmentCount = nonHmoContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
+			double consultationCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
+			double procedureCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]; //added by Mike, 20190105		
+			double medicalCertificateCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; //added by Mike, 20190107
+			double newPatientTreatmentCount = nonHmoContainer.get(key)[OUTPUT_NON_HMO_NEW_PATIENT_COUNT_COLUMN]; //added by Mike, 20190102
+			double newPatientConsultationCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_NEW_PATIENT_COUNT_COLUMN]; //added by Mike, 20190102
+
+			totalTreatmentNonHMOCount += treatmentCount;
+			totalConsultationNonHMOCount += consultationCount;
+			totalProcedureNonHMOCount += procedureCount;
+			totalMedicalCertificateNonHMOCount += medicalCertificateCount;
+			totalNewPatientTreatmentNonHMOCount += newPatientTreatmentCount;
+			totalNewPatientConsultationNonHMOCount += newPatientConsultationCount;			
+		}
+
 		return true; //added by Mike, 20190426
 	}
 	
@@ -957,19 +990,23 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	}	
 	
 	//added by Mike, 20181217
-	private static void processNONHMOCount(HashMap<String, double[]> nonHmoContainer, String[] inputColumns, boolean isConsultation) {
+	private static void processNonHMOCount(HashMap<String, double[]> nonHmoContainer, String[] inputColumns, boolean isConsultation) {
 		//edited by Mike, 20181219
 		if (!isConsultation) {											
 			//edited by Mike, 20181206
 			if ((!inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) &&
 				(!inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
-
 				String classificationName = inputColumns[INPUT_CLASS_COLUMN].trim().toUpperCase();
 				
 				if (!nonHmoContainer.containsKey(classificationName)) {
 					columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
 				
 					columnValuesArray[OUTPUT_NON_HMO_COUNT_COLUMN] = 1;
+					
+					//added by Mike, 20190429
+					if (inputColumns[INPUT_NEW_OLD_PATIENT_COLUMN].trim().toLowerCase().contains("new")) {
+						columnValuesArray[OUTPUT_NON_HMO_NEW_PATIENT_COUNT_COLUMN] = 1;
+					}
 					
 					if (isNetPFComputed) {							
 						columnValuesArray[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
@@ -987,6 +1024,11 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				else {
 					nonHmoContainer.get(classificationName)[OUTPUT_NON_HMO_COUNT_COLUMN]++;					
 
+					//added by Mike, 20190429
+					if (inputColumns[INPUT_NEW_OLD_PATIENT_COLUMN].trim().toLowerCase().contains("new")) {
+						nonHmoContainer.get(classificationName)[OUTPUT_NON_HMO_NEW_PATIENT_COUNT_COLUMN]++;
+					}
+					
 					if (isNetPFComputed) {							
 						nonHmoContainer.get(classificationName)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
 							+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
@@ -1031,6 +1073,11 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				if (!nonHmoContainer.containsKey(classificationName)) {
 						columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];					
 						
+						//added by Mike, 20190429
+						if (inputColumns[INPUT_CONSULTATION_NEW_OLD_PATIENT_COLUMN].trim().toLowerCase().contains("new")) {
+							columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_NEW_PATIENT_COUNT_COLUMN] = 1;
+						}	
+						
 						//edited by Mike, 20190109
 						if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN].toLowerCase().trim().contains("mc")) {
 							columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] = 1;						
@@ -1055,6 +1102,12 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 						nonHmoContainer.put(classificationName, columnValuesArray);
 					}
 					else {
+						
+						//added by Mike, 20190429
+						if (inputColumns[INPUT_CONSULTATION_NEW_OLD_PATIENT_COLUMN].trim().toLowerCase().contains("new")) {
+							nonHmoContainer.get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_NEW_PATIENT_COUNT_COLUMN]++;
+						}	
+						
 						//edited by Mike, 20190109
 						if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN].toLowerCase().trim().contains("mc")) {
 /*							hmoContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]++;			
@@ -1947,7 +2000,7 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 					processHMOCount(hmoContainer, inputColumns, isConsultation); //edited by Mike, 20181219
 					
 					//added by Mike, 20181217
-					processNONHMOCount(nonHmoContainer, inputColumns, isConsultation); //edited by Mike, 20181219
+					processNonHMOCount(nonHmoContainer, inputColumns, isConsultation); //edited by Mike, 20181219
 /*					
 					//added by Mike, 20181218
 					processReferringDoctorTransactionCount(referringDoctorContainer, inputColumns, isConsultation); //edited by Mike, 20181219
@@ -2102,8 +2155,9 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 			
 			s = s.replace("<?php echo $data['total_treatment_count'];?>", "" + totalTreatmentCount);
 
-			//added by Mike, 20190416
-			s = s.replace("<?php echo $data['total_new_patients_count'];?>", "" + totalNewPatientReferralTransactionCount);
+			//added by Mike, 20190416; edited by Mike, 20190429
+			totalNewPatientTreatment = (int) totalNewPatientTreatmentHMOCount + (int) totalNewPatientTreatmentNonHMOCount;
+			s = s.replace("<?php echo $data['total_new_patients_count'];?>", "" + totalNewPatientTreatment);
 
 			//added by Mike, 20190416; edited by Mike, 20190425
 			totalWiValue = 0;
@@ -2587,8 +2641,8 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 /*	
 	private static void resetNonHMOContainerCount() {
 		//added by Mike, 20181220
-		SortedSet<String> sortedNONHMOKeyset = new TreeSet<String>(nonHmoContainer.keySet());
-		for (String key : sortedNONHMOKeyset) {	
+		SortedSet<String> sortedNonHMOKeyset = new TreeSet<String>(nonHmoContainer.keySet());
+		for (String key : sortedNonHMOKeyset) {	
 			nonHmoContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN] = 0;
 			nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN] = 0;
 		}

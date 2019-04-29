@@ -3010,16 +3010,21 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 
 //				break;
 			}
-
+			
 			if (!classifiedDiagnosedCasesContainer.containsKey(classificationKey)) {
-				//TO-DO: -resolve: issue with incorrect total new cases count
-				classifiedDiagnosedCasesContainer.put(classificationKey,1);
-//				classifiedDiagnosedCasesContainer.put(classificationKey, diagnosedCasesContainer.get(inputString));
+/*				
+				System.out.println(">>> !classifiedDiagnosedCasesContainer. (classificationKey)");				
+				System.out.println(">>> inputString: "+inputString);
+				System.out.println(">>> classificationKey: "+classificationKey);
+*/				
+				//edited by Mike, 20190429
+//				classifiedDiagnosedCasesContainer.put(classificationKey,1);
+				classifiedDiagnosedCasesContainer.put(classificationKey, diagnosedCasesContainer.get(inputString));
 			}
 			else {
 				//edited by Mike, 20190429
-				int currentCount = classifiedDiagnosedCasesContainer.get(classificationKey)+1;
-//				System.out.println(">> classificationKey: "+classificationKey+" : "+currentCount);
+//				int currentCount = classifiedDiagnosedCasesContainer.get(classificationKey)+1;
+				int currentCount = classifiedDiagnosedCasesContainer.get(classificationKey)+ diagnosedCasesContainer.get(inputString);
 				classifiedDiagnosedCasesContainer.put(classificationKey,currentCount);//+1);
 			}	
 			

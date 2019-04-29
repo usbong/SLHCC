@@ -3002,12 +3002,12 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 			classificationKey = inputString;
 			if (hasKnownDiagnosedCaseKeywords) {
 				classificationKey = classification;
-				
-//				if (inputString.toLowerCase().contains("trigger")) {					
-//					System.out.println(">>> inputString: "+inputString);
-//					System.out.println(">>> classificationKey: "+classificationKey);
-//				}
-
+/*				
+				if (inputString.toLowerCase().contains("fx")) {					
+					System.out.println(">>> inputString: "+inputString);
+					System.out.println(">>> classificationKey: "+classificationKey);
+				}
+*/
 //				break;
 			}
 			
@@ -3022,9 +3022,23 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 				classifiedDiagnosedCasesContainer.put(classificationKey, diagnosedCasesContainer.get(inputString));
 			}
 			else {
+/*				System.out.println(">>> ELSE");								
+				System.out.println(">>> inputString: "+inputString);
+				System.out.println(">>> classificationKey: "+classificationKey);
+*/
 				//edited by Mike, 20190429
 //				int currentCount = classifiedDiagnosedCasesContainer.get(classificationKey)+1;
 				int currentCount = classifiedDiagnosedCasesContainer.get(classificationKey)+ diagnosedCasesContainer.get(inputString);
+/*
+				if (inputString.equals("HNP")) {
+					System.out.println(">>> ELSE");								
+					System.out.println(">>> inputString: "+inputString);
+					System.out.println(">>> classificationKey: "+classificationKey);
+					System.out.println(">>> diagnosedCasesContainer.get(inputString): "+diagnosedCasesContainer.get(inputString));
+
+					System.out.println(">>> currentCount: "+currentCount);
+				}
+*/
 				classifiedDiagnosedCasesContainer.put(classificationKey,currentCount);//+1);
 			}	
 			

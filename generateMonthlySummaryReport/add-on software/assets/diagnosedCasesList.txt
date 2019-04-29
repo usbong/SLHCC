@@ -19,6 +19,8 @@ STL LE	PFPS
 STL LE	Achilles Tendinitis
 STL LE	Achilles Bursitis
 STL LE	Peripheral Neuropathy LE
+STL LE	Iliotibial Band Syndrome
+STL LE	Patello Femoral Pain Syndrome
 Cervical Disorder	Cervical Strain
 Cervical Disorder	Cervical OA
 Cervical Disorder	cervical Radiculopathy
@@ -55,6 +57,7 @@ Lumbar disorder	S1
 Lumbar disorder	S2
 Lumbar disorder	S3
 Lumbar disorder	S4
+Lumbar disorder	HNP
 OA/RA/Gouty arthritis	OA
 OA/RA/Gouty arthritis	RA
 OA/RA/Gouty arthritis	Gouty arthritis
@@ -67,6 +70,7 @@ Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Screws
 Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Dislocation
 Fx/S/p ORIF/Plating/Screws; Dislocation	UE
 Fx/S/p ORIF/Plating/Screws; Dislocation	LE
+Fx/S/p ORIF/Plating/Screws; Dislocation	FX
 Scoliosis	Scoliosis
 MPS	MPS
 CTS	CTS
@@ -78,6 +82,7 @@ Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder rotato
 Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder adhesive capsulitis
 Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder
 Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	adhesive capsulitis
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Calcific Tendinitis
 CVA	CVA
 CP/Cerebral Palsy	CP
 CP/Cerebral Palsy	Cerebral Palsy

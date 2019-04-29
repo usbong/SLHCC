@@ -2884,8 +2884,12 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 							diagnosedCasesContainer.put(diagnosedCaseName, 1);
 						}					
 						else {
-							int currentValue = diagnosedCasesContainer.get(diagnosedCaseName);
-							diagnosedCasesContainer.put(diagnosedCaseName, currentValue++); //the existing value of the key is replaced
+							int currentValue = diagnosedCasesContainer.get(diagnosedCaseName)+1;
+							
+/*							System.out.println("diagnosedCaseName: " + diagnosedCaseName);
+							System.out.println("currentValue: " + currentValue);
+*/							
+							diagnosedCasesContainer.put(diagnosedCaseName, currentValue);//++); //the existing value of the key is replaced
 						}	
 					}
 /*					
@@ -3008,14 +3012,16 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 			}
 
 			if (!classifiedDiagnosedCasesContainer.containsKey(classificationKey)) {
+				//TO-DO: -resolve: issue with incorrect total new cases count
 				classifiedDiagnosedCasesContainer.put(classificationKey,1);
+//				classifiedDiagnosedCasesContainer.put(classificationKey, diagnosedCasesContainer.get(inputString));
 			}
 			else {
-				int currentCount = classifiedDiagnosedCasesContainer.get(classificationKey);
+				//edited by Mike, 20190429
+				int currentCount = classifiedDiagnosedCasesContainer.get(classificationKey)+1;
 //				System.out.println(">> classificationKey: "+classificationKey+" : "+currentCount);
-				classifiedDiagnosedCasesContainer.put(classificationKey,currentCount+1);
-			}
-
+				classifiedDiagnosedCasesContainer.put(classificationKey,currentCount);//+1);
+			}	
 			
 /*			
 			double diagnosedCaseCount = diagnosedCasesContainer.get(key);

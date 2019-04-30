@@ -57,6 +57,7 @@ Lumbar disorder	S1
 Lumbar disorder	S2
 Lumbar disorder	S3
 Lumbar disorder	S4
+Lumbar disorder	FX Lumbar
 OA/RA/Gouty arthritis	OA
 OA/RA/Gouty arthritis	RA
 OA/RA/Gouty arthritis	Gouty arthritis

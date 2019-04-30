@@ -161,7 +161,8 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static HashMap<String, double[]> referringDoctorContainer; //added by Mike, 20181218
 	private static HashMap<String, double[]> medicalDoctorContainer; //added by Mike, 20190202
 	private static HashMap<String, Integer> diagnosedCasesContainer; //added by Mike, 20190412
-	private static HashMap<String, String> knownDiagnosedCasesContainer; //added by Mike, 20190412
+//	private static HashMap<String, String> knownDiagnosedCasesContainer; //added by Mike, 20190412
+	private static ArrayList<String[]> knownDiagnosedCasesContainerArrayList; //edited by Mike, 20190430
 	private static HashMap<String, Integer> classifiedDiagnosedCasesContainer; //added by Mike, 20190412
 
 	private static double[] columnValuesArray;
@@ -318,7 +319,8 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		medicalDoctorContainer = new HashMap<String, double[]>(); //added by Mike, 20190202
 				
 		diagnosedCasesContainer = new HashMap<String, Integer>(); //added by Mike, 20190412
-		knownDiagnosedCasesContainer = new HashMap<String, String>(); //added by Mike, 20190412
+//		knownDiagnosedCasesContainer = new HashMap<String, String>(); //added by Mike, 20190412
+		knownDiagnosedCasesContainerArrayList = new ArrayList<String[]>(); //edited by Mike, 20190430
 		classifiedDiagnosedCasesContainer = new HashMap<String, Integer>(); //added by Mike, 20190412
 		
 		//added by Mike, 20181116
@@ -1819,9 +1821,17 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 				String[] inputColumns = s.split("\t");					
 
 //				System.out.println(s);
-				
+
+				//edited by Mike, 20190430
+				String[] knownDiagnosedCasesContainerArrayListValue = {inputColumns[INPUT_KNOWN_DIAGNOSED_CASES_LIST_SUB_CLASSIFICATION_COLUMN].toUpperCase(),
+				inputColumns[INPUT_KNOWN_DIAGNOSED_CASES_LIST_CLASSIFICATION_COLUMN].toUpperCase()};
+				knownDiagnosedCasesContainerArrayList.add(knownDiagnosedCasesContainerArrayListValue);
+
+/*				
 				knownDiagnosedCasesContainer.put(inputColumns[INPUT_KNOWN_DIAGNOSED_CASES_LIST_SUB_CLASSIFICATION_COLUMN].toUpperCase(),
 												 inputColumns[INPUT_KNOWN_DIAGNOSED_CASES_LIST_CLASSIFICATION_COLUMN].toUpperCase());
+*/
+
 				
 /*				
 				SortedSet<String> sortedKnownDiagnosedCasesKeyset = new TreeSet<String>(knownDiagnosedCasesContainer.keySet());
@@ -2914,7 +2924,11 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 	//added by Mike, 20190412
 	private static void processDiagnosisClassification() {
 		SortedSet<String> sortedKeyset = new TreeSet<String>(diagnosedCasesContainer.keySet());
-		SortedSet<String> sortedKnownDiagnosedCasesKeyset = new TreeSet<String>(knownDiagnosedCasesContainer.keySet());
+		
+		//edited by Mike, 20190430
+/*		SortedSet<String> sortedKnownDiagnosedCasesKeyset = new TreeSet<String>(knownDiagnosedCasesContainer.keySet());
+*/		
+		
 		
 		String classificationKey = "";
 		String subClassification = ""; 
@@ -2927,10 +2941,18 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 			String[] inputStringArray = inputString.replace("-"," ").split(" ");				
 //			System.out.println(">>>>>>> inputString: "+inputString);
 
-			for (String knownDiagnosedCasesKey : sortedKnownDiagnosedCasesKeyset) {	 //the key is the sub-classification
+			//edited by Mike, 20190430
+//			for (String knownDiagnosedCasesKey : sortedKnownDiagnosedCasesKeyset) {	 //the key is the sub-classification
+			for (int h=0; h<knownDiagnosedCasesContainerArrayList.size(); h++) {	 //the key is the sub-classification
+			
+//				System.out.println("knownDiagnosedCasesKey: "+knownDiagnosedCasesKey);
+//				System.out.println("knownDiagnosedCasesKey: "+knownDiagnosedCasesContainerArrayList.get(h)[0]);
+			
 				hasKnownDiagnosedCaseKeywords=false;
-				subClassification = knownDiagnosedCasesKey; 
-				classification = knownDiagnosedCasesContainer.get(knownDiagnosedCasesKey);
+//				subClassification = knownDiagnosedCasesKey; 
+				subClassification = knownDiagnosedCasesContainerArrayList.get(h)[0]; 
+//				classification = knownDiagnosedCasesContainer.get(knownDiagnosedCasesKey);
+				classification = knownDiagnosedCasesContainerArrayList.get(h)[1];
 /*				
 				if (inputString.toLowerCase().contains("trigger")) {					
 					System.out.println(">>>>>>> inputString: "+inputString);
@@ -2950,7 +2972,9 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 //					System.out.println(">>>> : "+s[i]);
 
 					int k;
+					//edited by Mike, 20190430
 					for(k=0; k<inputStringArray.length; k++) {		
+//					for(k=inputStringArray.length-1; k>=0; k--) {		
 //						System.out.println(">> "+inputStringArray[k]);
 						
 						if (inputStringArray[k].trim().toUpperCase().equals(s[i].trim().toUpperCase())) {

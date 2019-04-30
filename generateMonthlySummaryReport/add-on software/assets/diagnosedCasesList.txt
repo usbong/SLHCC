@@ -57,7 +57,6 @@ Lumbar disorder	S1
 Lumbar disorder	S2
 Lumbar disorder	S3
 Lumbar disorder	S4
-Lumbar disorder	HNP
 OA/RA/Gouty arthritis	OA
 OA/RA/Gouty arthritis	RA
 OA/RA/Gouty arthritis	Gouty arthritis
@@ -83,6 +82,9 @@ Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder adhesi
 Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder
 Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	adhesive capsulitis
 Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Calcific Tendinitis
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Tendinitis
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	impingement
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	adhesive capsulitis
 CVA	CVA
 CP/Cerebral Palsy	CP
 CP/Cerebral Palsy	Cerebral Palsy

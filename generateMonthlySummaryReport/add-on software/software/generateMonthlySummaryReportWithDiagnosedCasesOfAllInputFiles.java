@@ -89,7 +89,11 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	//added by Mike, 20190426	
 	private static String inputOutputTemplateFilenameTreatmentUnclassifiedDiagnosedCases = "assets\\templates\\generateMonthlySummaryReportOutputTemplateTreatmentUnclassifiedDiagnosedCases";//without extension; default input file 
 	//Note that I have to use double backslash, i.e. "\\", to use "\" in the filename
-	
+
+	//added by Mike, 20190503
+	private static String inputOutputTemplateFilenameTreatmentMonthlyStatistics = "assets\\templates\\generateMonthlySummaryReportOutputTemplateTreatmentMonthlyStatistics";//without extension; default input file 
+	//Note that I have to use double backslash, i.e. "\\", to use "\" in the filename
+	private static String inputDataFilenameTreatmentMonthlyStatistics = "assets\\treatmentCountList";//without 	
 	private static String startDate = null;
 	private static String endDate = null;
 	
@@ -164,6 +168,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 //	private static HashMap<String, String> knownDiagnosedCasesContainer; //added by Mike, 20190412
 	private static ArrayList<String[]> knownDiagnosedCasesContainerArrayList; //edited by Mike, 20190430
 	private static HashMap<String, Integer> classifiedDiagnosedCasesContainer; //added by Mike, 20190412
+	private static HashMap<Integer, Integer[]> treatmentMonthlyStatisticsContainer; //added by Mike, 20190503
 
 	private static double[] columnValuesArray;
 	private static String[] dateValuesArray; //added by Mike, 20180412
@@ -303,6 +308,9 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		//added by Mike, 20190426
 		PrintWriter treatmentUnclassifiedDiagnosedCasesWriter = new PrintWriter("output/MonthlySummaryReportOfUnclassifiedDiagnosedCasesOutput.html", "UTF-8");	
 		
+		//added by Mike, 20190503
+		PrintWriter treatmentCountMonthlyStatisticsWriter = new PrintWriter("output/MonthlyStatisticsTreatment.html", "UTF-8");	
+		
 
 /*		
 		//added by Mike, 20190413
@@ -322,6 +330,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 //		knownDiagnosedCasesContainer = new HashMap<String, String>(); //added by Mike, 20190412
 		knownDiagnosedCasesContainerArrayList = new ArrayList<String[]>(); //edited by Mike, 20190430
 		classifiedDiagnosedCasesContainer = new HashMap<String, Integer>(); //added by Mike, 20190412
+		treatmentMonthlyStatisticsContainer = new HashMap<Integer, Integer[]>(); //added by Mike, 20190503
 		
 		//added by Mike, 20181116
 		startDate = null; //properly set the month and year in the output file of each input file
@@ -345,7 +354,11 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				
 		//added by Mike, 20190125		
 		processContainers();
-				
+	
+		//added by Mike, 20190503		
+		processMonthlyStatisticsTreatmentData();
+
+	
 /*		
 		//TODO: -apply: this properly in the add-on software to consolidate similar Strings, e.g. Medical Doctor, whose difference may only be an excess space between characters, etc
 		//added by Mike, 20190123
@@ -390,6 +403,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			processWriteOutputFileTreatment(treatmentWriter);
 			//added by Mike, 20190426
 			processWriteOutputFileTreatmentUnclassifiedDiagnosedCases(treatmentUnclassifiedDiagnosedCasesWriter);
+			
+			//added by Mike, 20190503
+			//TO-DO: -update: this
+//			processWriteOutputFileTreatmentMonthlyStatistics(treatmentCountMonthlyStatisticsWriter);		
 		}
 		else {
 			System.out.println("\nThere is no Tab-delimited .txt input file in the \"input\\treatment\" folder.\n");
@@ -2105,6 +2122,71 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 		writer.close();
 	}
 						
+	//added by Mike, 20190503
+	private static void processWriteOutputFileTreatmentMonthlyStatistics(PrintWriter writer) throws Exception {	
+		//TO-DO: -add: store the existing values from the assets file into Random Access Memory (RAM)
+		File inputDataFile = new File(inputDataFilenameTreatmentMonthlyStatistics+".txt");	
+		File f = new File(inputOutputTemplateFilenameTreatmentMonthlyStatistics+".html");
+
+		System.out.println("inputOutputTemplateFilenameTreatmentMonthlyStatistics: " + inputOutputTemplateFilenameTreatmentMonthlyStatistics);
+		
+		Scanner sc = new Scanner(new FileInputStream(f), "UTF-8");				
+	
+		String s;		
+//			s=sc.nextLine(); //skip the first row, which is the input file's table headers
+
+		if (isInDebugMode) {
+			rowCount=0;
+		}
+
+		SortedSet<String> sortedKeyset = new TreeSet<String>(diagnosedCasesContainer.keySet());
+//		SortedSet<String> sortedClassifiedKeyset = new TreeSet<String>(classifiedDiagnosedCasesContainer.keySet());
+
+		//count/compute the number-based values of inputColumns 
+		while (sc.hasNextLine()) {
+			s=sc.nextLine();
+/*			
+			//if the row is blank
+			if (s.trim().equals("")) {
+				continue;
+			}
+*/			
+			if (isInDebugMode) {
+				rowCount++;
+//				System.out.println("rowCount: "+rowCount);
+			}
+			
+			s = s.replace("<?php echo $data['date'];?>", "" + dateValue.toUpperCase());
+			
+			if (s.contains("<!-- Table Values: UNCLASSIFIED DIAGNOSED CASES OF NEW PATIENTS -->")) {
+				//added by Mike, 20190426
+				int diagnosedCaseCount = 0;
+				
+				for (String key : sortedKeyset) {	
+					diagnosedCaseCount = diagnosedCasesContainer.get(key);
+					totalDiagnosedCaseCount+=diagnosedCaseCount;			
+
+					s = s.concat("\n");
+					s = s.concat("\t\t\t\t\t  <tr>\n");
+					s = s.concat("\t\t\t\t\t	  <!-- Column 1 -->\n");
+					s = s.concat("\t\t\t\t\t     <td>\n");
+					s = s.concat("\t\t\t\t\t		  <b><span>" + key + "</span></b>\n");
+					s = s.concat("\t\t\t\t\t	  </td>\n");
+					s = s.concat("\t\t\t\t\t	  <!-- Column 2 -->\n");
+					s = s.concat("\t\t\t\t\t	  <td>\n");
+					s = s.concat("\t\t\t\t\t	  <b><span>" + diagnosedCaseCount + "</span></b>\n");
+					s = s.concat("\t\t\t\t\t     </td>\n");
+					s = s.concat("\t\t\t\t\t  </tr>");					
+				}
+			}		
+				
+			//added by Mike, 20190426
+			s = s.replace("<?php echo $data['total_new_cases_count'];?>", "" + (int) totalDiagnosedCaseCount);				
+			writer.print(s + "\n");		
+		}
+		
+		writer.close();
+	}
 						
 	private static void processWriteOutputFileTreatment(PrintWriter writer) throws Exception {
 		File f = new File(inputOutputTemplateFilenameTreatment+".html");
@@ -3087,5 +3169,51 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 //						); 				   						
 //		}
 
+	}
+	
+	//added by Mike, 20190503
+	//store the existing values from the assets file into Random Access Memory (RAM)
+	private static void processMonthlyStatisticsTreatmentData() throws Exception {
+		File inputDataFile = new File(inputDataFilenameTreatmentMonthlyStatistics+".txt");	
+		
+		Scanner sc = new Scanner(new FileInputStream(inputDataFile), "UTF-8");				
+	
+		String s;		
+		
+		s=sc.nextLine(); //process input file's YEAR row
+		String[] inputYearColumns = s.split("\t");					
+
+		for(int i=0; i<inputYearColumns.length; i+=2) {
+/*			//the column number of the year value in the input file is an odd number
+			if (i % 2 == 0) { //there is no remainder, i.e. even number
+				continue;
+			}
+*/			
+			treatmentMonthlyStatisticsContainer.put(Integer.parseInt(inputYearColumns[i].trim()), new Integer[12]); //there are 12 Months
+			System.out.println("inputYearColumns["+i+"]: "+inputYearColumns[i]);
+		}
+		
+/*		
+		
+		if (isInDebugMode) {
+			rowCount=0;
+		}
+
+		while (sc.hasNextLine()) {
+			s=sc.nextLine();
+			
+	
+			//if the row is blank
+			if (s.trim().equals("")) {
+				continue;
+			}
+
+			if (isInDebugMode) {
+				rowCount++;
+//				System.out.println("rowCount: "+rowCount);
+			}
+			
+		}
+*/		
 	}
 }

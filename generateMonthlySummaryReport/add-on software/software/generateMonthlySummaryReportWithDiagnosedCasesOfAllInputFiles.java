@@ -91,7 +91,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	//Note that I have to use double backslash, i.e. "\\", to use "\" in the filename
 
 	//added by Mike, 20190503
-	private static String inputOutputTemplateFilenameTreatmentMonthlyStatistics = "assets\\templates\\generateMonthlySummaryReportOutputTemplateTreatmentMonthlyStatistics";//without extension; default input file 
+	private static String inputOutputTemplateFilenameTreatmentMonthlyStatistics = "assets\\templates\\generateMonthlySummaryReportOutputTemplateMonthlyStatistics";//without extension; default input file 
 	//Note that I have to use double backslash, i.e. "\\", to use "\" in the filename
 	private static String inputDataFilenameTreatmentMonthlyStatistics = "assets\\treatmentCountList";//without 	
 	private static String startDate = null;
@@ -169,7 +169,8 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static ArrayList<String[]> knownDiagnosedCasesContainerArrayList; //edited by Mike, 20190430
 	private static HashMap<String, Integer> classifiedDiagnosedCasesContainer; //added by Mike, 20190412
 	private static HashMap<Integer, Integer[]> treatmentMonthlyStatisticsContainer; //added by Mike, 20190503
-
+	private static ArrayList<Integer> yearsContainerArrayList; //added by Mike, 20190503
+	
 	private static double[] columnValuesArray;
 	private static String[] dateValuesArray; //added by Mike, 20180412
 	private static int[] dateValuesArrayInt; //added by Mike, 20181206
@@ -405,8 +406,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			processWriteOutputFileTreatmentUnclassifiedDiagnosedCases(treatmentUnclassifiedDiagnosedCasesWriter);
 			
 			//added by Mike, 20190503
-			//TO-DO: -update: this
-//			processWriteOutputFileTreatmentMonthlyStatistics(treatmentCountMonthlyStatisticsWriter);		
+			processWriteOutputFileTreatmentMonthlyStatistics(treatmentCountMonthlyStatisticsWriter);		
 		}
 		else {
 			System.out.println("\nThere is no Tab-delimited .txt input file in the \"input\\treatment\" folder.\n");
@@ -2156,32 +2156,25 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 //				System.out.println("rowCount: "+rowCount);
 			}
 			
-			s = s.replace("<?php echo $data['date'];?>", "" + dateValue.toUpperCase());
-			
-			if (s.contains("<!-- Table Values: UNCLASSIFIED DIAGNOSED CASES OF NEW PATIENTS -->")) {
-				//added by Mike, 20190426
-				int diagnosedCaseCount = 0;
-				
-				for (String key : sortedKeyset) {	
-					diagnosedCaseCount = diagnosedCasesContainer.get(key);
-					totalDiagnosedCaseCount+=diagnosedCaseCount;			
-
+//			s = s.replace("<?php echo $data['date'];?>", "" + dateValue.toUpperCase());
+						
+			if (s.contains("<!-- YEAR VALUE Column -->")) {
+				for(int i=0; i<yearsContainerArrayList.size(); i++) {
+					int yearKey = yearsContainerArrayList.get(i);
 					s = s.concat("\n");
-					s = s.concat("\t\t\t\t\t  <tr>\n");
-					s = s.concat("\t\t\t\t\t	  <!-- Column 1 -->\n");
-					s = s.concat("\t\t\t\t\t     <td>\n");
-					s = s.concat("\t\t\t\t\t		  <b><span>" + key + "</span></b>\n");
-					s = s.concat("\t\t\t\t\t	  </td>\n");
-					s = s.concat("\t\t\t\t\t	  <!-- Column 2 -->\n");
-					s = s.concat("\t\t\t\t\t	  <td>\n");
-					s = s.concat("\t\t\t\t\t	  <b><span>" + diagnosedCaseCount + "</span></b>\n");
-					s = s.concat("\t\t\t\t\t     </td>\n");
-					s = s.concat("\t\t\t\t\t  </tr>");					
+					s = s.concat("\t\t\t<!-- YEAR "+yearKey+": Column 1 and 2 -->\n");
+					s = s.concat("\t\t\t<td colspan=\"2\">\n");
+					s = s.concat("\t\t\t\t<div class=\"year\"><b><span>"+yearKey+"</span></b></div>\n");
+					s = s.concat("\t\t\t</td>\n");
+//						System.out.println("yearKey: "+yearKey);
+//						System.out.println(i+": "+inputMonthRowYearColumns[i+1]);					
+
+					for (int monthRowIndex=0; monthRowIndex<12; monthRowIndex++) { //There are 12 months
+//						treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex]
+
+					}
 				}
-			}		
-				
-			//added by Mike, 20190426
-			s = s.replace("<?php echo $data['total_new_cases_count'];?>", "" + (int) totalDiagnosedCaseCount);				
+			}
 			writer.print(s + "\n");		
 		}
 		
@@ -3196,10 +3189,10 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 		
 		SortedSet<Integer> sortedTreatmentMonthlyStatisticsContainerKeyset = new TreeSet<Integer>(treatmentMonthlyStatisticsContainer.keySet());	
 		
-		ArrayList<Integer> monthsContainerArrayList = new ArrayList<Integer>();
+		yearsContainerArrayList = new ArrayList<Integer>();
 		for (Integer key : sortedTreatmentMonthlyStatisticsContainerKeyset) {			
 			//System.out.println("year key: "+key);
-			monthsContainerArrayList.add(key);
+			yearsContainerArrayList.add(key);
 		}
 
 		if (isInDebugMode) {
@@ -3226,7 +3219,7 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 			for(int i=0; i<inputMonthRowYearColumns.length; i+=2) {
 				//the column number of the Month value in the input file is an even number
 				if (i % 2 == 0) { //there is no remainder, i.e. even number
-					int yearKey = monthsContainerArrayList.get(i/2);
+					int yearKey = yearsContainerArrayList.get(i/2);
 					treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex] = Integer.parseInt(inputMonthRowYearColumns[i+1]);
 			
 					System.out.println("yearKey: "+yearKey);

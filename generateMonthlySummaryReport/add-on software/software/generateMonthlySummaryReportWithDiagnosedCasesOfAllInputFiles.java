@@ -3193,16 +3193,23 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 			System.out.println("inputYearColumns["+i+"]: "+inputYearColumns[i]);
 		}
 		
-/*		
 		
+		SortedSet<Integer> sortedTreatmentMonthlyStatisticsContainerKeyset = new TreeSet<Integer>(treatmentMonthlyStatisticsContainer.keySet());	
+		
+		ArrayList<Integer> monthsContainerArrayList = new ArrayList<Integer>();
+		for (Integer key : sortedTreatmentMonthlyStatisticsContainerKeyset) {			
+			//System.out.println("year key: "+key);
+			monthsContainerArrayList.add(key);
+		}
+
 		if (isInDebugMode) {
 			rowCount=0;
 		}
 
+		int monthRowIndex=0;
 		while (sc.hasNextLine()) {
 			s=sc.nextLine();
 			
-	
 			//if the row is blank
 			if (s.trim().equals("")) {
 				continue;
@@ -3213,7 +3220,20 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 //				System.out.println("rowCount: "+rowCount);
 			}
 			
-		}
-*/		
+			//added by Mike, 20190503
+			String[] inputMonthRowYearColumns = s.split("\t");					
+			
+			for(int i=0; i<inputMonthRowYearColumns.length; i+=2) {
+				//the column number of the Month value in the input file is an even number
+				if (i % 2 == 0) { //there is no remainder, i.e. even number
+					int yearKey = monthsContainerArrayList.get(i/2);
+					treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex] = Integer.parseInt(inputMonthRowYearColumns[i+1]);
+			
+					System.out.println("yearKey: "+yearKey);
+					System.out.println(i+": "+inputMonthRowYearColumns[i+1]);					
+				}
+			}
+			monthRowIndex++;
+		}		
 	}
 }

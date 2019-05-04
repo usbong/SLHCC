@@ -8,7 +8,7 @@ Sub generatePayslipForTheDayConsultation()
 '
 ' @author: Michael Syson
 ' @date created: 20190314
-' @date updated: 20190323
+' @date updated: 20190504
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -125,14 +125,14 @@ For Each row In myInput.Rows
         myInput.Select
         myOutput.Range("A" & RowCount + OutputRowCountOffset, "I" & RowCount + OutputRowCountOffset).PasteSpecial
       
+        'edited by Mike, 20190410
+        RowCount = RowCount + 1
+                            
         If IsEmpty(myInput.Range("C" & RowCount).Value) Then
-           Exit For
-        Else
-           RowCount = RowCount + 1
+            Exit For
+'        Else
+'            RowCount = RowCount + 1
         End If
-'      Else
-'           RowCount = RowCount + 1
-'      End If
 Next row
                         
 '---------------------------------------------------------
@@ -219,12 +219,15 @@ For Each row In myOutput.Rows
                      
             End If
                    
-       If IsEmpty(myOutput.Range("C" & RowCount).Value) Then
-         Exit For
-       Else
-         RowCount = RowCount + 1
-       End If
-
+        'edited by Mike, 20190410
+        RowCount = RowCount + 1
+                            
+        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+            Exit For
+'        Else
+'            RowCount = RowCount + 1
+        End If
+                   
 Next row
 
 'added by Mike, 20190323
@@ -254,7 +257,7 @@ For Each row In myOutput.Rows
                     currentParticularsColumnWidthPixels = particularsValueLength * currentParticularsFontSize
                 Loop
                 
-            myOutput.Range("D" & RowCount, "D" & RowCount).Font.Size = currentParticularsFontSize
+                myOutput.Range("D" & RowCount, "D" & RowCount).Font.Size = currentParticularsFontSize
             
             'MsgBox ("currentParticularsFontSize: " & currentParticularsFontSize)
             'MsgBox ("currentParticularsColumnWidthPixels : " & currentParticularsColumnWidthPixels)
@@ -262,12 +265,15 @@ For Each row In myOutput.Rows
                      
             End If
                    
-       If IsEmpty(myOutput.Range("D" & RowCount).Value) Then
-         Exit For
-       Else
-         RowCount = RowCount + 1
-       End If
-
+            'edited by Mike, 20190410
+            RowCount = RowCount + 1
+                            
+            If IsEmpty(myInput.Range("D" & RowCount).Value) Then
+              Exit For
+     '      Else
+     '            RowCount = RowCount + 1
+            End If
+                   
 Next row
 
 'added by Mike, 201903014

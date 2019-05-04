@@ -90,10 +90,19 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static String inputOutputTemplateFilenameTreatmentUnclassifiedDiagnosedCases = "assets\\templates\\generateMonthlySummaryReportOutputTemplateTreatmentUnclassifiedDiagnosedCases";//without extension; default input file 
 	//Note that I have to use double backslash, i.e. "\\", to use "\" in the filename
 
-	//added by Mike, 20190503
-	private static String inputOutputTemplateFilenameTreatmentMonthlyStatistics = "assets\\templates\\generateMonthlySummaryReportOutputTemplateMonthlyStatistics";//without extension; default input file 
+	//added by Mike, 20190503; edited by Mike, 20190504
 	//Note that I have to use double backslash, i.e. "\\", to use "\" in the filename
-	private static String inputDataFilenameTreatmentMonthlyStatistics = "assets\\treatmentCountList";//without 	
+	//without extension; default input file 
+	private static String inputOutputTemplateFilenameMonthlyStatistics = "assets\\templates\\generateMonthlySummaryReportOutputTemplateMonthlyStatistics";
+	private static String inputDataFilenameTreatmentMonthlyStatistics = "assets\\treatmentCountList";
+	private static String inputDataFilenameConsultationMonthlyStatistics = "assets\\consultationCountList";
+	private static String inputDataFilenameProcedureMonthlyStatistics = "assets\\procedureCountList";
+	
+	//added by Mike, 20190504
+	private static final int TREATMENT_FILE_TYPE = 0;
+	private static final int CONSULTATION_FILE_TYPE = 1;
+	private static final int PROCEDURE_FILE_TYPE = 2;
+
 	private static String startDate = null;
 	private static String endDate = null;
 	
@@ -169,6 +178,9 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static ArrayList<String[]> knownDiagnosedCasesContainerArrayList; //edited by Mike, 20190430
 	private static HashMap<String, Integer> classifiedDiagnosedCasesContainer; //added by Mike, 20190412
 	private static HashMap<Integer, Integer[]> treatmentMonthlyStatisticsContainer; //added by Mike, 20190503
+	private static HashMap<Integer, Integer[]> consultationMonthlyStatisticsContainer; //added by Mike, 20190504
+	private static HashMap<Integer, Integer[]> procedureMonthlyStatisticsContainer; //added by Mike, 20190504
+
 	private static ArrayList<Integer> yearsContainerArrayList; //added by Mike, 20190503
 	
 	private static double[] columnValuesArray;
@@ -311,6 +323,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		
 		//added by Mike, 20190503
 		PrintWriter treatmentCountMonthlyStatisticsWriter = new PrintWriter("output/MonthlyStatisticsTreatment.html", "UTF-8");	
+		//added by Mike, 20190503
+		PrintWriter consultationCountMonthlyStatisticsWriter = new PrintWriter("output/MonthlyStatisticsConsultation.html", "UTF-8");	
+		//added by Mike, 20190503
+		PrintWriter procedureCountMonthlyStatisticsWriter = new PrintWriter("output/MonthlyStatisticsProcedure.html", "UTF-8");	
 		
 
 /*		
@@ -332,6 +348,8 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		knownDiagnosedCasesContainerArrayList = new ArrayList<String[]>(); //edited by Mike, 20190430
 		classifiedDiagnosedCasesContainer = new HashMap<String, Integer>(); //added by Mike, 20190412
 		treatmentMonthlyStatisticsContainer = new HashMap<Integer, Integer[]>(); //added by Mike, 20190503
+		consultationMonthlyStatisticsContainer = new HashMap<Integer, Integer[]>(); //added by Mike, 20190504
+		procedureMonthlyStatisticsContainer = new HashMap<Integer, Integer[]>(); //added by Mike, 20190504
 		
 		//added by Mike, 20181116
 		startDate = null; //properly set the month and year in the output file of each input file
@@ -356,8 +374,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		//added by Mike, 20190125		
 		processContainers();
 	
-		//added by Mike, 20190503		
-		processMonthlyStatisticsTreatmentData();
+		//added by Mike, 20190503; edited by Mike, 20190504
+		processMonthlyStatisticsData(TREATMENT_FILE_TYPE);
+		processMonthlyStatisticsData(CONSULTATION_FILE_TYPE);
+//		processMonthlyStatisticsData(PROCEDURE_FILE_TYPE);
 
 	
 /*		
@@ -405,8 +425,11 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			//added by Mike, 20190426
 			processWriteOutputFileTreatmentUnclassifiedDiagnosedCases(treatmentUnclassifiedDiagnosedCasesWriter);
 			
-			//added by Mike, 20190503
-			processWriteOutputFileTreatmentMonthlyStatistics(treatmentCountMonthlyStatisticsWriter);		
+			//added by Mike, 20190503; edited by Mike, 20190504
+			processWriteOutputFileMonthlyStatistics(treatmentCountMonthlyStatisticsWriter, TREATMENT_FILE_TYPE);		
+			processWriteOutputFileMonthlyStatistics(consultationCountMonthlyStatisticsWriter, CONSULTATION_FILE_TYPE);		
+//			processWriteOutputFileMonthlyStatistics(procedureCountMonthlyStatisticsWriter, PROCEDURE_FILE_TYPE);		
+
 		}
 		else {
 			System.out.println("\nThere is no Tab-delimited .txt input file in the \"input\\treatment\" folder.\n");
@@ -2155,13 +2178,12 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 		writer.close();
 	}
 						
-	//added by Mike, 20190503
-	private static void processWriteOutputFileTreatmentMonthlyStatistics(PrintWriter writer) throws Exception {	
-		//TO-DO: -add: store the existing values from the assets file into Random Access Memory (RAM)
-		File inputDataFile = new File(inputDataFilenameTreatmentMonthlyStatistics+".txt");	
-		File f = new File(inputOutputTemplateFilenameTreatmentMonthlyStatistics+".html");
+	//added by Mike, 20190503; edited by Mike, 20190504
+	private static void processWriteOutputFileMonthlyStatistics(PrintWriter writer, int fileType) throws Exception {		
+//		File inputDataFile = new File(inputDataFilenameTreatmentMonthlyStatistics+".txt");	
+		File f = new File(inputOutputTemplateFilenameMonthlyStatistics+".html");
 
-		System.out.println("inputOutputTemplateFilenameTreatmentMonthlyStatistics: " + inputOutputTemplateFilenameTreatmentMonthlyStatistics);
+		System.out.println("inputOutputTemplateFilenameMonthlyStatistics: " + inputOutputTemplateFilenameMonthlyStatistics);
 		
 		Scanner sc = new Scanner(new FileInputStream(f), "UTF-8");				
 	
@@ -2190,6 +2212,24 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 			}
 			
 //			s = s.replace("<?php echo $data['date'];?>", "" + dateValue.toUpperCase());
+
+			//added by Mike, 20190504
+			if (s.contains("<!-- FILE TYPE  -->")) {
+				String fileTypeString = "";
+				switch (fileType) {
+					case TREATMENT_FILE_TYPE:
+						fileTypeString = "TREATMENT";
+						break;
+					case CONSULTATION_FILE_TYPE:
+						fileTypeString = "CONSULTATION";
+						break;
+					default:// PROCEDURE_FILE_TYPE:
+						fileTypeString = "PROCEDURE";
+						break;
+				}			
+				s = s.concat("\n");
+				s = s.concat(fileTypeString+"\n");
+			}			
 						
 			if (s.contains("<!-- YEAR VALUE Column -->")) {
 				for(int i=0; i<yearsContainerArrayList.size(); i++) {
@@ -2224,16 +2264,29 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 						s = s.concat("\t\t\t</td>\n");
 						
 						//edited by Mike, 20190504
-						int treatmentCount = treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex];
+						//int treatmentCount = treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex];
+						int transactionCount = -1;
+												
+						switch (fileType) {
+							case TREATMENT_FILE_TYPE:
+								transactionCount = treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex];
+								break;
+							case CONSULTATION_FILE_TYPE:
+								transactionCount = consultationMonthlyStatisticsContainer.get(yearKey)[monthRowIndex];	
+								break;
+							default:// PROCEDURE_FILE_TYPE:
+								transactionCount = procedureMonthlyStatisticsContainer.get(yearKey)[monthRowIndex];	
+								break;
+						}												
 												
 						s = s.concat("\t\t\t<!-- Column 2 -->\n");
 						s = s.concat("\t\t\t<td>\n");
 						
-						if (treatmentCount < 0) { //the value is still blank/empty, e.g. -1
+						if (transactionCount < 0) { //the value is still blank/empty, e.g. -1
 							s = s.concat("\t\t\t\t<b><span><!-- No value for this month yet --></span></b>\n");
 						}
 						else {
-							s = s.concat("\t\t\t\t<b><span>"+treatmentCount+"</span></b>\n");
+							s = s.concat("\t\t\t\t<b><span>"+transactionCount+"</span></b>\n");
 						}
 						
 						//s = s.concat("\t\t\t\t<b><span>"+treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex]+"</span></b>\n");
@@ -3237,10 +3290,21 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 
 	}
 	
-	//added by Mike, 20190503
+	//added by Mike, 20190503; edited by Mike, 20190504
 	//store the existing values from the assets file into Random Access Memory (RAM)
-	private static void processMonthlyStatisticsTreatmentData() throws Exception {
-		File inputDataFile = new File(inputDataFilenameTreatmentMonthlyStatistics+".txt");	
+	private static void processMonthlyStatisticsData(int fileType) throws Exception {
+		File inputDataFile;
+		switch (fileType) {
+			case TREATMENT_FILE_TYPE:
+				inputDataFile = new File(inputDataFilenameTreatmentMonthlyStatistics+".txt");	
+				break;
+			case CONSULTATION_FILE_TYPE:
+				inputDataFile = new File(inputDataFilenameConsultationMonthlyStatistics+".txt");	
+				break;
+			default:// PROCEDURE_FILE_TYPE:
+				inputDataFile = new File(inputDataFilenameProcedureMonthlyStatistics+".txt");	
+				break;
+		}		
 		
 		Scanner sc = new Scanner(new FileInputStream(inputDataFile), "UTF-8");				
 	
@@ -3249,21 +3313,40 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 		s=sc.nextLine(); //process input file's YEAR row
 		String[] inputYearColumns = s.split("\t");					
 
+		//edited by Mike, 20190504
+		SortedSet<Integer> sortedMonthlyStatisticsContainerKeyset = null;
+	
 		for(int i=0; i<inputYearColumns.length; i+=2) {
 /*			//the column number of the year value in the input file is an odd number
 			if (i % 2 == 0) { //there is no remainder, i.e. even number
 				continue;
 			}
 */			
-			treatmentMonthlyStatisticsContainer.put(Integer.parseInt(inputYearColumns[i].trim()), new Integer[12]); //there are 12 Months
+			switch (fileType) {
+				case TREATMENT_FILE_TYPE:
+					treatmentMonthlyStatisticsContainer.put(Integer.parseInt(inputYearColumns[i].trim()), new Integer[12]); //there are 12 Months
+					
+					sortedMonthlyStatisticsContainerKeyset = new TreeSet<Integer>(treatmentMonthlyStatisticsContainer.keySet());	
+					break;
+				case CONSULTATION_FILE_TYPE:
+					consultationMonthlyStatisticsContainer.put(Integer.parseInt(inputYearColumns[i].trim()), new Integer[12]); //there are 12 Months
+					
+					sortedMonthlyStatisticsContainerKeyset = new TreeSet<Integer>(consultationMonthlyStatisticsContainer.keySet());	
+					break;
+				default:// PROCEDURE_FILE_TYPE:
+					procedureMonthlyStatisticsContainer.put(Integer.parseInt(inputYearColumns[i].trim()), new Integer[12]); //there are 12 Months
+					
+					sortedMonthlyStatisticsContainerKeyset = new TreeSet<Integer>(procedureMonthlyStatisticsContainer.keySet());	
+					break;
+			}		
 			System.out.println("inputYearColumns["+i+"]: "+inputYearColumns[i]);
 		}
 		
 		
-		SortedSet<Integer> sortedTreatmentMonthlyStatisticsContainerKeyset = new TreeSet<Integer>(treatmentMonthlyStatisticsContainer.keySet());	
+//		SortedSet<Integer> sortedTreatmentMonthlyStatisticsContainerKeyset = new TreeSet<Integer>(treatmentMonthlyStatisticsContainer.keySet());	
 		
 		yearsContainerArrayList = new ArrayList<Integer>();
-		for (Integer key : sortedTreatmentMonthlyStatisticsContainerKeyset) {			
+		for (Integer key : sortedMonthlyStatisticsContainerKeyset) {			
 			//System.out.println("year key: "+key);
 			yearsContainerArrayList.add(key);
 		}
@@ -3293,7 +3376,20 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 				//the column number of the Month value in the input file is an even number
 				if (i % 2 == 0) { //there is no remainder, i.e. even number
 					int yearKey = yearsContainerArrayList.get(i/2);
-					treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex] = Integer.parseInt(inputMonthRowYearColumns[i+1]);
+					
+					switch (fileType) {
+						case TREATMENT_FILE_TYPE:
+							treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex] = Integer.parseInt(inputMonthRowYearColumns[i+1]);
+							break;
+						case CONSULTATION_FILE_TYPE:
+							consultationMonthlyStatisticsContainer.get(yearKey)[monthRowIndex] = Integer.parseInt(inputMonthRowYearColumns[i+1]);
+							break;
+						default:// PROCEDURE_FILE_TYPE:
+							procedureMonthlyStatisticsContainer.get(yearKey)[monthRowIndex] = Integer.parseInt(inputMonthRowYearColumns[i+1]);
+							break;
+					}		
+					
+					//treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex] = Integer.parseInt(inputMonthRowYearColumns[i+1]);
 			
 					System.out.println("yearKey: "+yearKey);
 					System.out.println(i+": "+inputMonthRowYearColumns[i+1]);					

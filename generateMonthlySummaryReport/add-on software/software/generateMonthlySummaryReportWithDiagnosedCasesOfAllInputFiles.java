@@ -94,9 +94,9 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	//Note that I have to use double backslash, i.e. "\\", to use "\" in the filename
 	//without extension; default input file 
 	private static String inputOutputTemplateFilenameMonthlyStatistics = "assets\\templates\\generateMonthlySummaryReportOutputTemplateMonthlyStatistics";
-	private static String inputDataFilenameTreatmentMonthlyStatistics = "assets\\treatmentCountList";
-	private static String inputDataFilenameConsultationMonthlyStatistics = "assets\\consultationCountList";
-	private static String inputDataFilenameProcedureMonthlyStatistics = "assets\\procedureCountList";
+	private static String inputDataFilenameTreatmentMonthlyStatistics = "assets\\transactions\\treatmentCountList";
+	private static String inputDataFilenameConsultationMonthlyStatistics = "assets\\transactions\\consultationCountList";
+	private static String inputDataFilenameProcedureMonthlyStatistics = "assets\\transactions\\procedureCountList";
 	
 	//added by Mike, 20190504
 	private static final int TREATMENT_FILE_TYPE = 0;
@@ -377,7 +377,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		//added by Mike, 20190503; edited by Mike, 20190504
 		processMonthlyStatisticsData(TREATMENT_FILE_TYPE);
 		processMonthlyStatisticsData(CONSULTATION_FILE_TYPE);
-//		processMonthlyStatisticsData(PROCEDURE_FILE_TYPE);
+		processMonthlyStatisticsData(PROCEDURE_FILE_TYPE);
 
 	
 /*		
@@ -428,7 +428,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			//added by Mike, 20190503; edited by Mike, 20190504
 			processWriteOutputFileMonthlyStatistics(treatmentCountMonthlyStatisticsWriter, TREATMENT_FILE_TYPE);		
 			processWriteOutputFileMonthlyStatistics(consultationCountMonthlyStatisticsWriter, CONSULTATION_FILE_TYPE);		
-//			processWriteOutputFileMonthlyStatistics(procedureCountMonthlyStatisticsWriter, PROCEDURE_FILE_TYPE);		
+			processWriteOutputFileMonthlyStatistics(procedureCountMonthlyStatisticsWriter, PROCEDURE_FILE_TYPE);		
 
 		}
 		else {

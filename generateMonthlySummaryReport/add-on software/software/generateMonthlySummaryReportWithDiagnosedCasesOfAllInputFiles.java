@@ -2197,6 +2197,8 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 		SortedSet<String> sortedKeyset = new TreeSet<String>(diagnosedCasesContainer.keySet());
 //		SortedSet<String> sortedClassifiedKeyset = new TreeSet<String>(classifiedDiagnosedCasesContainer.keySet());
 
+		boolean hasWrittenAutoCalculatedValue=false;
+
 		//count/compute the number-based values of inputColumns 
 		while (sc.hasNextLine()) {
 			s=sc.nextLine();
@@ -2283,7 +2285,32 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 						s = s.concat("\t\t\t<td>\n");
 						
 						if (transactionCount < 0) { //the value is still blank/empty, e.g. -1
-							s = s.concat("\t\t\t\t<b><span><!-- No value for this month yet --></span></b>\n");
+							//TO-DO: -update this based on the actual month and year
+							//TO-DO: -update this to store the auto-calculated transaction count value
+	//						System.out.println(">>>>>>> dateValue: "+dateValue); //Mar-19
+	//						System.out.println(">>>>>>> dateValueInt: "+dateValueInt);
+																		
+							//edited by Mike, 20190504
+							if (!hasWrittenAutoCalculatedValue) {							
+System.out.println("totalTreatmentCount: "+totalTreatmentCount);
+							
+								switch (fileType) {
+									case TREATMENT_FILE_TYPE:
+										s = s.concat("\t\t\t\t<b><span>"+totalTreatmentCount+"</span></b>\n");
+										break;
+									case CONSULTATION_FILE_TYPE:
+										s = s.concat("\t\t\t\t<b><span>"+totalConsultationCount+"</span></b>\n");
+										break;
+									default:// PROCEDURE_FILE_TYPE:
+										s = s.concat("\t\t\t\t<b><span>"+totalProcedureCount+"</span></b>\n");
+										break;
+								}	
+								hasWrittenAutoCalculatedValue = true;
+							}
+							else {
+								s = s.concat("\t\t\t\t<b><span><!-- No value for this month yet --></span></b>\n");
+							}						
+//							s = s.concat("\t\t\t\t<b><span><!-- No value for this month yet --></span></b>\n");
 						}
 						else {
 							s = s.concat("\t\t\t\t<b><span>"+transactionCount+"</span></b>\n");

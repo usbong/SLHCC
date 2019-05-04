@@ -2168,13 +2168,39 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 					s = s.concat("\t\t\t</td>\n");
 //						System.out.println("yearKey: "+yearKey);
 //						System.out.println(i+": "+inputMonthRowYearColumns[i+1]);					
-
-					for (int monthRowIndex=0; monthRowIndex<12; monthRowIndex++) { //There are 12 months
-//						treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex]
-
-					}
 				}
+				//s = s.concat("\n");				
 			}
+
+			if (s.contains("<!-- MONTH and TRANSACTION COUNT VALUE Rows -->")) {
+				for (int monthRowIndex=0; monthRowIndex<12; monthRowIndex++) { //There are 12 months
+					s = s.concat("\n");											
+					s = s.concat("\t\t  <!-- MONTH "+monthRowIndex+": Row -->\n");
+					s = s.concat("\t\t  <tr>\n");
+
+					for(int i=0; i<yearsContainerArrayList.size(); i++) {
+						int yearKey = yearsContainerArrayList.get(i);						
+												
+						s = s.concat("\t\t\t<!-- YEAR "+yearKey+": Columns -->\n");
+						s = s.concat("\t\t\t<!-- Column 1 -->\n");
+						s = s.concat("\t\t\t<td>\n");
+						s = s.concat("\t\t\t\t<b><span>"+monthRowIndex+"</span></b>\n");
+						s = s.concat("\t\t\t</td>\n");
+						
+						s = s.concat("\t\t\t<!-- Column 2 -->\n");
+						s = s.concat("\t\t\t<td>\n");
+						s = s.concat("\t\t\t\t<b><span>"+treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex]+"</span></b>\n");
+						s = s.concat("\t\t\t</td>\n");
+					}
+					s = s.concat("\t\t  </tr>\n");
+
+//						System.out.println("yearKey: "+yearKey);
+//						System.out.println(i+": "+inputMonthRowYearColumns[i+1]);					
+				}
+//				s = s.concat("\n");				
+			
+			}
+							
 			writer.print(s + "\n");		
 		}
 		

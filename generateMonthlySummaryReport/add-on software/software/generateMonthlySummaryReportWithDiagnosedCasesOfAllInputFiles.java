@@ -2292,7 +2292,7 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 																		
 							//edited by Mike, 20190504
 							if (!hasWrittenAutoCalculatedValue) {							
-System.out.println("totalTreatmentCount: "+totalTreatmentCount);
+//System.out.println("totalTreatmentCount: "+totalTreatmentCount);
 							
 								switch (fileType) {
 									case TREATMENT_FILE_TYPE:
@@ -3366,7 +3366,7 @@ System.out.println("totalTreatmentCount: "+totalTreatmentCount);
 					sortedMonthlyStatisticsContainerKeyset = new TreeSet<Integer>(procedureMonthlyStatisticsContainer.keySet());	
 					break;
 			}		
-			System.out.println("inputYearColumns["+i+"]: "+inputYearColumns[i]);
+//			System.out.println("inputYearColumns["+i+"]: "+inputYearColumns[i]);
 		}
 		
 		
@@ -3418,8 +3418,8 @@ System.out.println("totalTreatmentCount: "+totalTreatmentCount);
 					
 					//treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex] = Integer.parseInt(inputMonthRowYearColumns[i+1]);
 			
-					System.out.println("yearKey: "+yearKey);
-					System.out.println(i+": "+inputMonthRowYearColumns[i+1]);					
+//					System.out.println("yearKey: "+yearKey);
+//					System.out.println(i+": "+inputMonthRowYearColumns[i+1]);					
 				}
 			}
 			monthRowIndex++;

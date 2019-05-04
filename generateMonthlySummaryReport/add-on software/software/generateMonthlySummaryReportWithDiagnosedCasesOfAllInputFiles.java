@@ -2223,9 +2223,20 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 						s = s.concat("\t\t\t\t<b><span>"+monthString+"</span></b>\n"); //edited by Mike, 20190504
 						s = s.concat("\t\t\t</td>\n");
 						
+						//edited by Mike, 20190504
+						int treatmentCount = treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex];
+												
 						s = s.concat("\t\t\t<!-- Column 2 -->\n");
 						s = s.concat("\t\t\t<td>\n");
-						s = s.concat("\t\t\t\t<b><span>"+treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex]+"</span></b>\n");
+						
+						if (treatmentCount < 0) { //the value is still blank/empty, e.g. -1
+							s = s.concat("\t\t\t\t<b><span><!-- No value for this month yet --></span></b>\n");
+						}
+						else {
+							s = s.concat("\t\t\t\t<b><span>"+treatmentCount+"</span></b>\n");
+						}
+						
+						//s = s.concat("\t\t\t\t<b><span>"+treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex]+"</span></b>\n");
 						s = s.concat("\t\t\t</td>\n");
 					}
 					s = s.concat("\t\t  </tr>\n");

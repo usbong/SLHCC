@@ -1,0 +1,66 @@
+Sub generateORSlipForTheDayPTTreatment()
+' Copyright 2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190509
+' @date updated: 20190509
+'
+' Given:
+' 1) Worksheet with the payslip data
+'
+'Output:
+' 1) New workbook with auto-updated Worksheets for each transaction based on the OR template for PT Treatment
+' 2) Automatically verified and corrected if necessary the computation in each of the worksheets with the transaction data in the new Workbook
+'
+Dim myInput As Worksheet
+Dim myOutput As Worksheet 'not the same as myInput
+Dim row As Range
+Dim RowCount As Integer
+Dim TableHeaderRow As Integer
+Dim LastPrintableRow As Integer
+Dim MaxPatientNameColumnWidth As Integer
+Dim patientNameFontSize As Integer
+Dim particularsFontSize As Integer 'added by Mike, 20190323
+Dim defaultFontName As String 'added by Mike, 20190314
+Dim totalAmountReleasedValue As String 'added by Mike, 20190316
+
+RowCount = 1
+TableHeaderRow = 5 'output
+LastPrintableRow = 16 'including the TOTAL PF
+MaxPatientNameValueLength = 18 'characters in Pixels 'added by Mike, 20190323
+MaxPatientNameColumnWidthPixels = 216 '12pt font * 18 characters in Pixels
+patientNameFontSize = 12
+MaxParticularsValueLength = 8 'characters in Pixels 'added by Mike, 20190323
+MaxParticularsColumnWidthPixels = 96 '12pt font * 8 characters in Pixels 'added by Mike, 20190323
+particularsFontSize = 12 'added by Mike, 20190323
+defaultFontName = "Arial" 'added by Mike, 20190314
+totalAmountReleasedValue = 0 'added by Mike, 20190316
+
+Set myTemplate = Sheets("OR Template")
+Set myInput = Sheets(ActiveSheet.Name)
+
+'added by Mike, 20190314
+Application.ScreenUpdating = False
+
+'myTemplate.Copy ActiveWorkbook.Sheets(Sheets.Count)
+'Set myOutput = Sheets(ActiveSheet.Name)
+'myOutput.Name = Replace(myOutput.Name, "Template (2)", "") & myInput.Name
+
+newWorkbookFileName = "OR Workbook " & myInput.Name
+
+'added by Mike, 20190509
+Set NewWorkbook = Workbooks.Add
+    With NewWorkbook
+        .SaveAs Filename:=newWorkbookFileName
+    End With
+    
+'added by Mike, 20190314
+Application.ScreenUpdating = True
+
+End Sub

@@ -60,6 +60,26 @@ Set NewWorkbook = Workbooks.Add
         .SaveAs Filename:=newWorkbookFileName
     End With
     
+'added by Mike, 20190509
+'---------------------------------------------------------
+'Auto-make worksheet based on OR template component part
+'---------------------------------------------------------
+RowCount = TableHeaderRow + 2 'input
+OutputRowCountOffset = -1
+For Each row In myInput.Rows
+        myTemplate.Copy NewWorkbook.Sheets(Sheets.Count)
+        Set myOutput = Sheets(ActiveSheet.Name)
+        
+        'We use the name of the patient as part of the worksheet name
+        myOutput.Name = "OR PT " & myInput.Range("C" & RowCount).Value
+      
+        RowCount = RowCount + 1
+                            
+        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+            Exit For
+        End If
+Next row
+
 'added by Mike, 20190314
 Application.ScreenUpdating = True
 

@@ -89,8 +89,12 @@ For Each row In myInput.Rows
         'added by Mike, 20190510
         'Copy and paste the Cashier person name from the input worksheet to the transaction's corresponding output worksheet
         myInput.Range("A" & 4).Columns.Copy
-        'myInput.Select
         myOutput.Range("I" & 47).PasteSpecial
+        
+        'added by Mike, 20190510
+        'Copy and paste the current/present date from the input worksheet to the transaction's corresponding output worksheet
+        myInput.Range("A" & 3).Columns.Copy
+        myOutput.Range("J" & 7).PasteSpecial
         
         'We use the name of the patient as part of the worksheet name
         myOutput.Name = "OR PT " & myInput.Range("C" & RowCount).Value
@@ -101,3 +105,8 @@ For Each row In myInput.Rows
             Exit For
         End If
 Next row
+
+'added by Mike, 20190314
+Application.ScreenUpdating = True
+
+End Sub

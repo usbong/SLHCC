@@ -1,4 +1,4 @@
-Sub generateORSlipForTheDayPTTreatment()
+Sub generatePayslipForTheDayPTTreatment()
 ' Copyright 2019 Usbong Social Systems, Inc.
 '
 ' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
@@ -8,17 +8,18 @@ Sub generateORSlipForTheDayPTTreatment()
 ' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
 '
 ' @author: Michael Syson
-' @date created: 20190509
-' @date updated: 20190510
+' @date created: 20190307
+' @date updated: 20190509
 '
 ' Given:
 ' 1) Worksheet with the payslip data
 '
 'Output:
-' 1) New workbook with auto-updated Worksheets for each transaction based on the OR template for PT Treatment
-' 2) Automatically verified and corrected if necessary the computation in each of the worksheets with the transaction data in the new Workbook
+' 1) New auto-updated Worksheet with the payslip data based on the payslip template for PT Treatment
+' 2) Automatically verified and corrected if necessary the computation in the worksheet with the payslip data
+' 3) New workbook with auto-updated Worksheets for each transaction based on the OR template for PT Treatment
+' 4) Automatically verified and corrected if necessary the computation in each of the worksheets with the transaction data in the new Workbook
 '
-Dim myInputWorkbook As Workbook 'added by Mike, 20190509
 Dim myInput As Worksheet
 Dim myOutput As Worksheet 'not the same as myInput
 Dim row As Range
@@ -43,58 +44,275 @@ particularsFontSize = 12 'added by Mike, 20190323
 defaultFontName = "Arial" 'added by Mike, 20190314
 totalAmountReleasedValue = 0 'added by Mike, 20190316
 
-Set myTemplate = Sheets("OR Template")
+Set myTemplate = Sheets("PT Treatment Template")
 Set myInput = Sheets(ActiveSheet.Name)
 
 'added by Mike, 20190314
 Application.ScreenUpdating = False
 
-'myTemplate.Copy ActiveWorkbook.Sheets(Sheets.Count)
-'Set myOutput = Sheets(ActiveSheet.Name)
-'myOutput.Name = Replace(myOutput.Name, "Template (2)", "") & myInput.Name
+myTemplate.Copy ActiveWorkbook.Sheets(Sheets.Count)
+Set myOutput = Sheets(ActiveSheet.Name)
+myOutput.Name = Replace(myOutput.Name, "Template (2)", "") & myInput.Name
 
-newWorkbookFileName = "OR Workbook " & myInput.Name
-
-'added by Mike, 20190509
-Set NewWorkbook = Workbooks.Add
-    With NewWorkbook
-        .SaveAs Filename:=newWorkbookFileName
-    End With
-    
-'added by Mike, 20190509
+'edited by Mike, 20190317
+'At present, this component/part is not used.
 '---------------------------------------------------------
-'Auto-make worksheet based on OR template component part
+'Auto-verify and correct if necessary the computations
+'in the input worksheet component/part
+'---------------------------------------------------------
+'myInput.Activate
+
+'RowCount = TableHeaderRow + 2 'input
+'For Each row In myInput.Rows
+'        If InStr(myInput.Range("D" & RowCount).Value, "SC") Or InStr(myInput.Range("D" & RowCount).Value, "PWD") Then 'if TRUE
+'          'VAT column
+'          myInput.Range("F" & RowCount).Value = 0
+'
+'          'ORTHO & PT DEPT/REHAB Share (70%) column
+'          myInput.Range("G" & RowCount).Value = myInput.Range("E" & RowCount).Value * 0.7 * 0.9
+'
+'          'EWT column
+'          myInput.Range("H" & RowCount).Value = myInput.Range("E" & RowCount).Value * 0.7 * 0.1
+'
+'          'Management Share column
+'          myInput.Range("I" & RowCount).Value = myInput.Range("E" & RowCount).Value * 0.3
+'        Else 'if SLC or PT, i.e. Walk-In
+'          'VAT column
+'          myInput.Range("F" & RowCount).Value = myInput.Range("E" & RowCount).Value / 1.12 * 0.12
+'
+'          'ORTHO & PT DEPT/REHAB Share (70%) column
+'          myInput.Range("G" & RowCount).Value = myInput.Range("E" & RowCount).Value / 1.12 * 0.7 * 0.9
+'
+'          'Amount Released column
+'          myInput.Range("N" & RowCount).Value = myInput.Range("G" & RowCount).Value
+'
+'          'EWT column
+'          myInput.Range("H" & RowCount).Value = myInput.Range("E" & RowCount).Value / 1.12 * 0.7 * 0.1
+'
+'          'Management Share column
+'          myInput.Range("I" & RowCount).Value = myInput.Range("E" & RowCount).Value / 1.12 * 0.3
+'
+'          'Discount Amount column
+'          If InStr(myInput.Range("D" & RowCount).Value, "SLC") = 1 Then
+'            myInput.Range("L" & RowCount).Value = 500 - myInput.Range("E" & RowCount).Value
+'          End If
+'        End If
+'
+'        'added by Mike, 20190316
+'        totalAmountReleasedValue = totalAmountReleasedValue + myInput.Range("G" & RowCount).Value
+'
+'        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+'           Exit For
+'        Else
+'           RowCount = RowCount + 1
+'        End If
+'Next row
+'
+'myInput.Range("G" & 17).Value = totalAmountReleasedValue
+'myInput.Range("G" & 17).Interior.Color = vbYellow
+'myInput.Range("N" & 17).Value = totalAmountReleasedValue
+'myInput.Range("N" & 17).Interior.Color = vbYellow
+'
+''added by Mike, 20190316; edited by Mike, 20190317
+'myInput.Range("E" & TableHeaderRow + 2, "L" & RowCount - 1).NumberFormat = "_(* #,##0.00_);_(* (#,##0.00);_(* "" - ""??_);_(@_)" '"0.00"
+''myInput.Range("E" & TableHeaderRow + 2, "L" & RowCount - 1).HorizontalAlignment = xlCenter
+
+'---------------------------------------------------------
+'Auto-copy contents component/part
 '---------------------------------------------------------
 RowCount = TableHeaderRow + 2 'input
 OutputRowCountOffset = -1
 For Each row In myInput.Rows
-        myTemplate.Copy NewWorkbook.Sheets(Sheets.Count)
-        Set myOutput = Sheets(ActiveSheet.Name)
-        
-        'added by Mike, 20190510
-        'This resolves the issue with the image/picture logo not being in the correct scale.
-        'This is when the template worksheet is copied to the new workbook.
-        For Each p In ActiveSheet.Shapes
-            'MsgBox ("There's a picture with the name: " & p.Name)
-            p.ScaleHeight 1, msoScaleFromTopLeft
-            p.ScaleWidth 0.96, msoScaleFromTopLeft
-        Next p
-        
-        'added by Mike, 20190510
-        'Copy and paste the patient name from the input worksheet to the transaction's corresponding output worksheet
-        myInput.Range("C" & RowCount).Columns.Copy
-        'myInput.Select
-        myOutput.Range("C" & 9).PasteSpecial
-        
-        'We use the name of the patient as part of the worksheet name
-        myOutput.Name = "OR PT " & myInput.Range("C" & RowCount).Value
+'      If RowCount > TableHeaderRow Then
+        myInput.Range("A" & RowCount, "I" & RowCount).Columns.Copy
+        myInput.Select
+        myOutput.Range("A" & RowCount + OutputRowCountOffset, "I" & RowCount + OutputRowCountOffset).PasteSpecial
       
+        'edited by Mike, 20190504
         RowCount = RowCount + 1
                             
         If IsEmpty(myInput.Range("C" & RowCount).Value) Then
             Exit For
+'        Else
+'            RowCount = RowCount + 1
         End If
 Next row
+            
+'---------------------------------------------------------
+'Auto-fit component/part
+'---------------------------------------------------------
+myOutput.Activate
+
+'added by Mike, 20190322
+startRowCount = TableHeaderRow + 2 + OutputRowCountOffset
+endRowCount = RowCount - 1 + OutputRowCountOffset
+
+'added by Mike, 20190322
+'Auto-set the format of the "AMOUNT", "VAT - OT", "PF", "EWT", "M. SHARE"
+myOutput.Range("E" & startRowCount, "I" & endRowCount).NumberFormat = "0.00"
+
+'Auto-fit Date column based on max length of actual value
+myOutput.Range("A" & TableHeaderRow + 1, "A" & TableHeaderRow + 1).Select
+Selection.EntireColumn.ColumnWidth = 12
+Selection.EntireColumn.Font.Size = 13
+'Selection.EntireColumn.AutoFit
+
+'Auto-fit select columns based on the table header row
+myOutput.Range("B" & TableHeaderRow + 1, "I" & TableHeaderRow + 1).Select
+Selection.EntireColumn.AutoFit
+
+'Auto-fit PATIENT NAME column based on the max length of the actual values
+myOutput.Range("C" & TableHeaderRow, "C" & TableHeaderRow).Select
+Selection.EntireColumn.ColumnWidth = 26
+Selection.EntireColumn.HorizontalAlignment = xlCenter
+myOutput.Range("C" & startRowCount, "C" & endRowCount).Font.FontStyle = "Bold"
+
+'Auto-fit PARTICULARS column based on the max length of the actual values
+myOutput.Range("D" & TableHeaderRow, "D" & TableHeaderRow).Select
+Selection.EntireColumn.ColumnWidth = 12
+
+'Auto-fit PF column based on the max length of the actual values
+myOutput.Range("G" & TableHeaderRow, "G" & TableHeaderRow).Select
+Selection.EntireColumn.ColumnWidth = 12
+
+'Auto-fit EWT column based on the max length of the actual values
+myOutput.Range("H" & TableHeaderRow, "H" & TableHeaderRow).Select
+Selection.EntireColumn.ColumnWidth = 12
+
+'Auto-align OR NO. column to the center horizontally
+myOutput.Range("B" & TableHeaderRow, "B" & TableHeaderRow).Select
+Selection.EntireColumn.HorizontalAlignment = xlCenter
+Selection.EntireColumn.Font.Size = 14
+
+'Auto-update Font Size
+myOutput.Range("D" & TableHeaderRow + 1, "I" & LastPrintableRow).Font.Size = 14
+
+'Auto-update border
+'-1 to not include the Total PF row
+myOutput.Range("A" & TableHeaderRow, "I" & LastPrintableRow - 1).Borders.LineStyle = 1
+
+'Auto-update font size of PATIENT NAME based on the following whose actual values are set above, at the start of the instructions:
+'max column width
+'max length of value
+'font size
+'font style
+RowCount = TableHeaderRow + 1
+For Each row In myOutput.Rows
+            myOutput.Range("C" & RowCount, "C" & RowCount).Font.Name = defaultFontName
+            myOutput.Range("C" & RowCount, "C" & RowCount).Font.Size = patientNameFontSize
+
+            patientNameValueLength = Len(myOutput.Range("C" & RowCount, "C" & RowCount).Value)
+            'MsgBox ("RowCount: " & RowCount)
+            'MsgBox ("patientNameValueLength: " & patientNameValueLength)
+
+            If patientNameValueLength > MaxPatientNameValueLength Then 'edited by Mike, 20190323
+                currentPatientNameFontSize = patientNameFontSize
+                currentPatientNameColumnWidthPixels = patientNameValueLength * currentPatientNameFontSize
+                
+                Do Until currentPatientNameColumnWidthPixels < MaxPatientNameColumnWidthPixels
+                    currentPatientNameFontSize = currentPatientNameFontSize - 1
+                    currentPatientNameColumnWidthPixels = patientNameValueLength * currentPatientNameFontSize
+                Loop
+                
+            myOutput.Range("C" & RowCount, "C" & RowCount).Font.Size = currentPatientNameFontSize
+            
+            'MsgBox ("currentPatientNameFontSize: " & currentPatientNameFontSize)
+            'MsgBox ("currentPatientNameColumnWidthPixels : " & currentPatientNameColumnWidthPixels)
+                     
+                     
+            End If
+                   
+                   
+        'edited by Mike, 20190504
+        RowCount = RowCount + 1
+                            
+        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+            Exit For
+'        Else
+'            RowCount = RowCount + 1
+        End If
+        
+Next row
+
+'added by Mike, 20190323
+'Auto-update font size of PARTICULARS based on the following whose actual values are set above, at the start of the instructions:
+'max column width
+'max length of value
+'font size
+'font style
+RowCount = TableHeaderRow + 1
+For Each row In myOutput.Rows
+            myOutput.Range("D" & RowCount, "D" & RowCount).Font.Name = defaultFontName
+            myOutput.Range("D" & RowCount, "D" & RowCount).Font.Size = particularsFontSize
+
+            particularsValueLength = Len(myOutput.Range("D" & RowCount, "D" & RowCount).Value)
+            'MsgBox ("RowCount: " & RowCount)
+            'MsgBox ("particularsValueLength: " & particularsValueLength)
+            'MsgBox ("value: " & myOutput.Range("D" & RowCount, "D" & RowCount).Value)
+
+            If particularsValueLength > MaxParticularsValueLength Then
+                'MsgBox ("value: " & myOutput.Range("D" & RowCount, "D" & RowCount).Value)
+
+                currentParticularsFontSize = particularsFontSize
+                currentParticularsColumnWidthPixels = particularsValueLength * currentParticularsFontSize
+                
+                Do Until currentParticularsColumnWidthPixels < MaxParticularsColumnWidthPixels
+                    currentParticularsFontSize = currentParticularsFontSize - 1
+                    currentParticularsColumnWidthPixels = particularsValueLength * currentParticularsFontSize
+                Loop
+                
+            myOutput.Range("D" & RowCount, "D" & RowCount).Font.Size = currentParticularsFontSize
+            
+            'MsgBox ("currentParticularsFontSize: " & currentParticularsFontSize)
+            'MsgBox ("currentParticularsColumnWidthPixels : " & currentParticularsColumnWidthPixels)
+                     
+                     
+            End If
+                   
+        'edited by Mike, 20190504
+        RowCount = RowCount + 1
+                            
+        If IsEmpty(myInput.Range("D" & RowCount).Value) Then
+            Exit For
+'        Else
+'            RowCount = RowCount + 1
+        End If
+
+Next row
+
+'added by Mike, 201903014
+myOutput.Range("A" & 1, "I" & LastPrintableRow).Font.Name = defaultFontName
+
+'added by Mike, 20190315; edited by Mike, 20190323
+transactionDateValue = myOutput.Range("A" & TableHeaderRow + 1).Value
+myOutput.Range("G" & 19).Value = "Date: " & Format(transactionDateValue, "dd mmm yyyy")
+myOutput.Range("G" & 19).Font.Name = defaultFontName
+myOutput.Range("G" & 19).Font.Size = 14
+
+'added by Mike, 20190315; edited by Mike, 20190321
+'myOutput.Range("F" & 1).Value = "MANUFACTURED: " & Format(Now(), "yyyy-MM-ddTHH:mm:ss+08:00") 'Format(Now(), "dd/MM/yyyy hh:mm:ss")
+myOutput.Range("F" & 1).Value = Format(Now(), "yyyy-MM-ddTHH:mm:ss") 'Format(Now(), "dd/MM/yyyy hh:mm:ss")
+myOutput.Range("F" & 1).Font.Name = defaultFontName
+myOutput.Range("F" & 1).Font.Size = 10
+myOutput.Range("F" & 1).Font.FontStyle = "Bold"
+
+'added by Mike, 20190321
+'"OR NO." Column
+myOutput.Range("B" & TableHeaderRow + 1, "B" & RowCount - 1).NumberFormat = 0
+
+'added by Mike, 20190322
+'"PARTICULARS" Column
+myOutput.Range("D" & TableHeaderRow + 1, "D" & RowCount - 1).Font.Size = 12
+myOutput.Range("D" & TableHeaderRow + 1, "D" & RowCount - 1).Font.FontStyle = "Bold"
+
+'added by Mike, 20190321
+'myOutput.Range("E" & TableHeaderRow + 1, "I" & RowCount - 1).NumberFormat = "0.00"
+'myOutput.Range("E" & TableHeaderRow + 1, "I" & RowCount - 1).HorizontalAlignment = xlRight
+
+myOutput.Range("G" & 16).NumberFormat = "0.00"
+myOutput.Range("G" & 16).HorizontalAlignment = xlRight
+'myOutput.Range("G" & 16).HorizontalAlignment = xlCenter
+'myOutput.Range("G" & 16).Font.FontStyle = "Bold"
 
 'added by Mike, 20190314
 Application.ScreenUpdating = True

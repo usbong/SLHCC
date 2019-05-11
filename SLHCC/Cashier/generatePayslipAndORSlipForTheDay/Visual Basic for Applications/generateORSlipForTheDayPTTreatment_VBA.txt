@@ -9,7 +9,7 @@ Sub generateORSlipForTheDayPTTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190509
-' @date updated: 20190511
+' @date updated: 20190512
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -30,6 +30,9 @@ Dim patientNameFontSize As Integer
 Dim particularsFontSize As Integer 'added by Mike, 20190323
 Dim defaultFontName As String 'added by Mike, 20190314
 Dim totalAmountReleasedValue As String 'added by Mike, 20190316
+'Dim amountPaidInBytePerCharacter() As Byte 'added by Mike, 20190511
+Dim amountPaidValue As Double 'added by Mike, 20190511
+Dim placeValue As Integer 'added by Mike, 20190512
 
 RowCount = 1
 TableHeaderRow = 5 'output
@@ -44,7 +47,7 @@ defaultFontName = "Arial" 'added by Mike, 20190314
 totalAmountReleasedValue = 0 'added by Mike, 20190316
 
 Set myTemplate = Sheets("OR Template")
-Set myInput = Sheets(ActiveSheet.Name)
+Set myInput = Sheets(ActiveSheet.name)
 
 'added by Mike, 20190314
 Application.ScreenUpdating = False
@@ -53,7 +56,7 @@ Application.ScreenUpdating = False
 'Set myOutput = Sheets(ActiveSheet.Name)
 'myOutput.Name = Replace(myOutput.Name, "Template (2)", "") & myInput.Name
 
-newWorkbookFileName = "OR Workbook " & myInput.Name
+newWorkbookFileName = "OR Workbook " & myInput.name
 
 'added by Mike, 20190509
 Set NewWorkbook = Workbooks.Add
@@ -69,7 +72,7 @@ RowCount = TableHeaderRow + 2 'input
 OutputRowCountOffset = -1
 For Each row In myInput.Rows
         myTemplate.Copy NewWorkbook.Sheets(Sheets.Count)
-        Set myOutput = Sheets(ActiveSheet.Name)
+        Set myOutput = Sheets(ActiveSheet.name)
         
         'added by Mike, 20190510
         'This resolves the issue with the image/picture logo not being in the correct scale.
@@ -99,8 +102,8 @@ For Each row In myInput.Rows
         myInput.Range("K" & RowCount).Columns.Copy
         myOutput.Range("M" & 11).PasteSpecial
 
-        'added by Mike, 20190511
-        myOutput.Range("E" & 7).Value = Format(Now(), "yyyy-MM-ddTHH:mm:ss")
+        'added by Mike, 20190511; edited by Mike, 20190512
+        myOutput.Range("F" & 7).Value = Format(Now(), "yyyy-MM-ddTHH:mm:ss")
         
         'added by Mike, 20190511
         'Copy and paste the AMOUNT PAID from the input worksheet to the transaction's corresponding output worksheet
@@ -111,8 +114,52 @@ For Each row In myInput.Rows
             myOutput.Range("D" & 18).Value = myInput.Range("E" & RowCount)
         End If
         
+        'added by Mike, 20190511; edited by Mike, 21090512
+        '-----------------------------------------------------------------------------
+        ' Value of the "SUM OF PESOS" field in Words
+        '-----------------------------------------------------------------------------
+        inputAmountPaidValue = myInput.Range("E" & RowCount).Value
+        amountPaidValue = inputAmountPaidValue
+        placeValue = 1000
+        amountPaidInString = ""
+
+        'MsgBox ("amountPaidValue: " & amountPaidValue)
+        Do Until amountPaidValue <= 0
+            'MsgBox ("hello: " & amountPaidValue)
+            placeValue = placeValue / 10
+            
+            'MsgBox ("hello: " & getWordOfOneDigitNumberWithPlaceValue(CInt(Fix(amountPaidValue / placeValue)), placeValue))
+
+            amountPaidInString = amountPaidInString & getWordOfOneDigitNumberWithPlaceValue(CInt(Fix(amountPaidValue / placeValue)), placeValue) & " "
+            
+            amountPaidValue = amountPaidValue Mod placeValue
+            'MsgBox ("inside amountPaidValue: " & amountPaidValue)
+        Loop
+                
+        amountPaidInString = amountPaidInString & "PESOS"
+        amountPaidDecimalValues = Round(inputAmountPaidValue - CInt(Fix(inputAmountPaidValue)), 2)
+        
+        'MsgBox ("decimal? " & amountPaidDecimalValues)
+        
+        If amountPaidDecimalValues > 0 Then
+            amountPaidDecimalValues = amountPaidDecimalValues * 100
+            amountPaidInString = amountPaidInString & " & " & amountPaidDecimalValues & "/100"
+        End If
+        
+        amountPaidInString = amountPaidInString & " ONLY"
+        
+        myOutput.Range("C" & 13).Value = amountPaidInString
+        
+        'amountPaidInBytePerCharacter = StrConv(myInput.Range("E" & RowCount).Value, vbFromUnicode)
+        'amountPaidInString = ""
+        'For Each currentCharacter In amountPaidInBytePerCharacter
+            'MsgBox ("hello: " & Chr(currentCharacter))
+        '    If Chr(currentCharacter)
+        'Next currentCharacter
+        '-----------------------------------------------------------------------------
+        
         'We use the name of the patient as part of the worksheet name
-        myOutput.Name = "OR PT " & myInput.Range("C" & RowCount).Value
+        myOutput.name = "OR PT " & myInput.Range("C" & RowCount).Value
       
         RowCount = RowCount + 1
                             
@@ -125,3 +172,126 @@ Next row
 Application.ScreenUpdating = True
 
 End Sub
+Private Function getWordOfOneDigitNumberWithPlaceValue(number As Integer, placeValue As Integer) As String
+' Copyright 2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190512
+' @date updated: 20190512
+'
+' Input:
+' 1) 1 digit number character
+' Example: 5
+' 2) place value of number character
+' Example: 100, i.e. hundreds place
+'
+'Output:
+' 1) The equivalent word of the 1 digit number character with the place value
+' Example: "FIVE HUNDRED"
+'
+
+If (placeValue = 100) Then
+    getWordOfOneDigitNumberWithPlaceValue = getWordOfOneDigitNumber(number) & " HUNDRED"
+ElseIf (placeValue = 10) Then
+    getWordOfOneDigitNumberWithPlaceValue = getWordOfOneDigitNumberTensPlace(number)
+ElseIf (placeValue = 1) Then
+    getWordOfOneDigitNumberWithPlaceValue = getWordOfOneDigitNumber(number)
+End If
+
+End Function
+
+Private Function getWordOfOneDigitNumber(number As Integer) As String
+' Copyright 2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190511
+' @date updated: 20190511
+'
+' Input:
+' 1) 1 digit number character
+' Example: 5
+'
+'Output:
+' 1) The equivalent word of the 1 digit number character
+' Example: "FIVE"
+'
+
+If (number = 1) Then
+    getWordOfOneDigitNumber = "ONE"
+ElseIf (number = 2) Then
+    getWordOfOneDigitNumber = "TWO"
+ElseIf (number = 3) Then
+    getWordOfOneDigitNumber = "THREE"
+ElseIf (number = 4) Then
+    getWordOfOneDigitNumber = "FOUR"
+ElseIf (number = 5) Then
+    getWordOfOneDigitNumber = "FIVE"
+ElseIf (number = 6) Then
+    getWordOfOneDigitNumber = "SIX"
+ElseIf (number = 7) Then
+    getWordOfOneDigitNumber = "SEVEN"
+ElseIf (number = 8) Then
+    getWordOfOneDigitNumber = "EIGHT"
+ElseIf (number = 9) Then
+    getWordOfOneDigitNumber = "NINE"
+End If
+
+'MsgBox ("returnOutput: " & returnOutput)
+
+End Function
+
+Private Function getWordOfOneDigitNumberTensPlace(number As Integer) As String
+' Copyright 2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190512
+' @date updated: 20190512
+'
+' Input:
+' 1) 1 digit number character
+' Example: 5
+'
+'Output:
+' 1) The equivalent word of the 1 digit number character in Tens place
+' Example: "FIFTY"
+'
+
+If (number = 1) Then
+    getWordOfOneDigitNumberTensPlace = "TEN"
+ElseIf (number = 2) Then
+    getWordOfOneDigitNumberTensPlace = "TWENTY"
+ElseIf (number = 3) Then
+    getWordOfOneDigitNumberTensPlace = "THIRTY"
+ElseIf (number = 4) Then
+    getWordOfOneDigitNumberTensPlace = "FORTY"
+ElseIf (number = 5) Then
+    getWordOfOneDigitNumberTensPlace = "FIFTY"
+ElseIf (number = 6) Then
+    getWordOfOneDigitNumberTensPlace = "SIXTY"
+ElseIf (number = 7) Then
+    getWordOfOneDigitNumberTensPlace = "SEVENTY"
+ElseIf (number = 8) Then
+    getWordOfOneDigitNumberTensPlace = "EIGHTY"
+ElseIf (number = 9) Then
+    getWordOfOneDigitNumberTensPlace = "NINETY"
+End If
+
+End Function

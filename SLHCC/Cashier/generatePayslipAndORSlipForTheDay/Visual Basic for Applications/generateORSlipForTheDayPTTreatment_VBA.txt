@@ -94,6 +94,12 @@ For Each row In myInput.Rows
         myOutput.Range("J" & 7).Value = myInput.Range("A" & 3).Value
         
         'added by Mike, 20190511
+        'Copy and paste the "OSCA/PWD/Other ID No.:" value from the input worksheet to the transaction's corresponding output worksheet
+        'myOutput.Range("M" & 11).Value = myInput.Range("K" & RowCount).Value
+        myInput.Range("K" & RowCount).Columns.Copy
+        myOutput.Range("M" & 11).PasteSpecial
+
+        'added by Mike, 20190511
         myOutput.Range("E" & 7).Value = Format(Now(), "yyyy-MM-ddTHH:mm:ss")
         
         'added by Mike, 20190511

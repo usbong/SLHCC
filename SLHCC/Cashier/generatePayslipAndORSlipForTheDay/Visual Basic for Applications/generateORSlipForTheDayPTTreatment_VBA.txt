@@ -80,21 +80,18 @@ For Each row In myInput.Rows
             p.ScaleWidth 0.96, msoScaleFromTopLeft
         Next p
         
-        'added by Mike, 20190510
-        'Copy and paste the patient name from the input worksheet to the transaction's corresponding output worksheet
-        myInput.Range("C" & RowCount).Columns.Copy
-        'myInput.Select
-        myOutput.Range("C" & 9).PasteSpecial
+        'added by Mike, 20190510; edited by Mike, 20190511
+        'Write the value of the patient name from the input worksheet to the transaction's corresponding output worksheet
+        myOutput.Range("C" & 9).Value = myInput.Range("C" & RowCount)
         
         'added by Mike, 20190510
-        'Copy and paste the Cashier person name from the input worksheet to the transaction's corresponding output worksheet
+        'Copy and paste the value of the Cashier person name from the input worksheet to the transaction's corresponding output worksheet
         myInput.Range("A" & 4).Columns.Copy
         myOutput.Range("I" & 47).PasteSpecial
         
-        'added by Mike, 20190510
-        'Copy and paste the current/present date from the input worksheet to the transaction's corresponding output worksheet
-        myInput.Range("A" & 3).Columns.Copy
-        myOutput.Range("J" & 7).PasteSpecial
+        'added by Mike, 20190510; edited by Mike, 20190511
+        'Write the current/present date from the input worksheet to the transaction's corresponding output worksheet
+        myOutput.Range("J" & 7).Value = myInput.Range("A" & 3).Value
         
         'added by Mike, 20190511
         myOutput.Range("E" & 7).Value = Format(Now(), "yyyy-MM-ddTHH:mm:ss")

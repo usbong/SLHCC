@@ -9,7 +9,7 @@ Sub generateORSlipForTheDayPTTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190509
-' @date updated: 20190510
+' @date updated: 20190511
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -96,6 +96,9 @@ For Each row In myInput.Rows
         myInput.Range("A" & 3).Columns.Copy
         myOutput.Range("J" & 7).PasteSpecial
         
+        'added by Mike, 20190511
+        myOutput.Range("E" & 7).Value = Format(Now(), "yyyy-MM-ddTHH:mm:ss")
+        
         'We use the name of the patient as part of the worksheet name
         myOutput.Name = "OR PT " & myInput.Range("C" & RowCount).Value
       
@@ -105,8 +108,3 @@ For Each row In myInput.Rows
             Exit For
         End If
 Next row
-
-'added by Mike, 20190314
-Application.ScreenUpdating = True
-
-End Sub

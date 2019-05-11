@@ -99,6 +99,15 @@ For Each row In myInput.Rows
         'added by Mike, 20190511
         myOutput.Range("E" & 7).Value = Format(Now(), "yyyy-MM-ddTHH:mm:ss")
         
+        'added by Mike, 20190511
+        'Copy and paste the AMOUNT PAID from the input worksheet to the transaction's corresponding output worksheet
+        If InStr(myInput.Range("D" & RowCount).Value, "SC") Or InStr(myInput.Range("D" & RowCount).Value, "PWD") Then
+            myOutput.Range("E" & 18).Value = myInput.Range("E" & RowCount).Value
+            myOutput.Range("D" & 18).Value = myOutput.Range("E" & 18).Value / 0.71428
+        Else
+            myOutput.Range("D" & 18).Value = myInput.Range("E" & RowCount)
+        End If
+        
         'We use the name of the patient as part of the worksheet name
         myOutput.Name = "OR PT " & myInput.Range("C" & RowCount).Value
       
@@ -108,3 +117,8 @@ For Each row In myInput.Rows
             Exit For
         End If
 Next row
+
+'added by Mike, 20190314
+Application.ScreenUpdating = True
+
+End Sub

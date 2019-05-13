@@ -124,7 +124,8 @@ For Each row In myInput.Rows
         'Copy and paste the AMOUNT PAID from the input worksheet to the transaction's corresponding output worksheet
         If InStr(myInput.Range("D" & RowCount).Value, "SC") Or InStr(myInput.Range("D" & RowCount).Value, "PWD") Then
             myOutput.Range("E" & 18).Value = myInput.Range("E" & RowCount).Value
-            myOutput.Range("D" & 18).Value = myOutput.Range("E" & 18).Value / 0.71428
+            myOutput.Range("D" & 18).Value = Application.RoundDown(myOutput.Range("E" & 18).Value / 0.71428, 2)
+            'myOutput.Range("D" & 18).NumberFormat = "0.00"
         Else
             myOutput.Range("D" & 18).Value = myInput.Range("E" & RowCount)
         End If

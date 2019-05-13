@@ -9,7 +9,7 @@ Sub generateORSlipForTheDayPTTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190509
-' @date updated: 20190512
+' @date updated: 20190513
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -33,6 +33,7 @@ Dim totalAmountReleasedValue As String 'added by Mike, 20190316
 'Dim amountPaidInBytePerCharacter() As Byte 'added by Mike, 20190511
 Dim amountPaidValue As Double 'added by Mike, 20190511
 Dim placeValue As Integer 'added by Mike, 20190512
+Dim outputPath As String 'added by Mike, 20190513
 
 RowCount = 1
 TableHeaderRow = 5 'output
@@ -52,11 +53,26 @@ Set myInput = Sheets(ActiveSheet.name)
 'added by Mike, 20190314
 Application.ScreenUpdating = False
 
+'added by Mike, 20190513
+Application.DisplayAlerts = False
+Set fso = CreateObject("scripting.filesystemobject")
+
 'myTemplate.Copy ActiveWorkbook.Sheets(Sheets.Count)
 'Set myOutput = Sheets(ActiveSheet.Name)
 'myOutput.Name = Replace(myOutput.Name, "Template (2)", "") & myInput.Name
 
-newWorkbookFileName = "OR Workbook " & myInput.name
+outputPath = Application.ThisWorkbook.Path & "\"
+newWorkbookFileName = outputPath & "OR Workbook " & myInput.name & ".xlsx"
+
+'added by Mike, 20190513
+If Dir(newWorkbookFileName) <> "" Then
+    MsgBox ("hello")
+    'close workbook if it's open
+    Set PreviousWorkbook = Workbooks.Open(newWorkbookFileName)
+    PreviousWorkbook.Close
+    
+    fso.DeleteFile newWorkbookFileName
+End If
 
 'added by Mike, 20190509
 Set NewWorkbook = Workbooks.Add
@@ -167,6 +183,9 @@ For Each row In myInput.Rows
             Exit For
         End If
 Next row
+
+'added by Mike, 20190513
+Application.DisplayAlerts = True
 
 'added by Mike, 20190314
 Application.ScreenUpdating = True

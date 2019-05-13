@@ -66,7 +66,6 @@ newWorkbookFileName = outputPath & "OR Workbook " & myInput.name & ".xlsx"
 
 'added by Mike, 20190513
 If Dir(newWorkbookFileName) <> "" Then
-    MsgBox ("hello")
     'close workbook if it's open
     Set PreviousWorkbook = Workbooks.Open(newWorkbookFileName)
     PreviousWorkbook.Close
@@ -79,7 +78,7 @@ Set NewWorkbook = Workbooks.Add
     With NewWorkbook
         .SaveAs Filename:=newWorkbookFileName
     End With
-    
+        
 'added by Mike, 20190509
 '---------------------------------------------------------
 'Auto-make worksheet based on OR template component part
@@ -183,6 +182,10 @@ For Each row In myInput.Rows
             Exit For
         End If
 Next row
+
+'added by Mike, 20190513
+'Delete the default worksheet when the Macro automatically makes the new workbook
+Worksheets("Sheet1").Delete
 
 'added by Mike, 20190513
 Application.DisplayAlerts = True

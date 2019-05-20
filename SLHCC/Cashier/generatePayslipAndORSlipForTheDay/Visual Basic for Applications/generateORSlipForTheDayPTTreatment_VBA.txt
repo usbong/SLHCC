@@ -330,7 +330,7 @@ Sub generateORSlipForTheDayPTTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190509
-' @date updated: 20190519
+' @date updated: 20190520
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -452,6 +452,10 @@ For Each row In myInput.Rows
             myOutput.Range("D" & 18).Value = myInput.Range("E" & RowCount)
         End If
         
+        'added by Mike, 20190520
+        'Copy and paste the CASH PAID from the input worksheet to the transaction's corresponding output worksheet
+        myOutput.Range("C" & 41).Value = myInput.Range("L" & RowCount).Value
+                
         'added by Mike, 20190511; edited by Mike, 21090512
         '-----------------------------------------------------------------------------
         ' Value of the "SUM OF PESOS" field in Words

@@ -36,9 +36,9 @@ import java.text.DecimalFormat;
 ' --> a) NON-HMO (net)
 ' --> b) HMO & Sta. Lucia Reality/SLR (net)
 ' --> c) TOTAL (net)
-' --> d) HMO & Sta. Lucia Reality/SLR (net) : PAID
-' --> e) HMO & Sta. Lucia Reality/SLR (net) : UNPAID
-' --> f) HMO & Sta. Lucia Reality/SLR (net) : TOTAL
+' --> d) HMO & Sta. Lucia Reality/SLR (net) : PAID (Php)
+' --> e) HMO & Sta. Lucia Reality/SLR (net) : UNPAID (Php)
+' --> f) HMO & Sta. Lucia Reality/SLR (net) : TOTAL (Php)
 '
 ' Notes:
 ' 1) To execute the add-on software/application simply use the following command:
@@ -81,12 +81,12 @@ public class generateMonthlyConsultationSummaryReportOfAllInputFilesFromMasterLi
 	//this is for both HMO and NON-HMO transactions
 	private static final int OUTPUT_TOTAL_COLUMNS = 9; 
 	
-	private static final int OUTPUT_HMO_COUNT_COLUMN = 0; //transaction count
+	private static final int OUTPUT_HMO_COUNT_COLUMN = 0; //COUNT
 	private static final int OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN = 1;
 	private static final int OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN = 2;
 	private static final int OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN = 3;
 
-	private static final int OUTPUT_NON_HMO_COUNT_COLUMN = 4; //transaction count
+	private static final int OUTPUT_NON_HMO_COUNT_COLUMN = 4; //COUNT
 	private static final int OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN = 5;
 	private static final int OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN = 6;
 	private static final int OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN = 7;
@@ -297,7 +297,7 @@ public class generateMonthlyConsultationSummaryReportOfAllInputFilesFromMasterLi
 		 * --------------------------------------------------------------------
 		*/
 		//added by Mike, 20181118
-		writer.print("HMO and NON-HMO/Cash Consultation Monthly Summary Report\n");
+		writer.print("Cash and HMO CONSULTATION Monthly Summary Report\n");
 
 		//init table header names
 		writer.print("DATE:\t"); //"PT TREATMENT:" column
@@ -308,7 +308,7 @@ public class generateMonthlyConsultationSummaryReportOfAllInputFilesFromMasterLi
 		}
 		
 		//--------------------------------------------------------------------
-		writer.print("\nNON-HMO/Cash (net) : TOTAL"); 		
+		writer.print("\nCash (net) : TOTAL (Php)"); 		
 /*
        for (Map.Entry<String, double[]> entry : dateContainer.entrySet())
        {
@@ -347,7 +347,7 @@ public class generateMonthlyConsultationSummaryReportOfAllInputFilesFromMasterLi
 							); 				   							
 		}
 
-		writer.print("\nNON-HMO/Cash (net) : PAID"); 		
+		writer.print("\nCash (net) : PAID (Php)"); 		
 		
 		for (Integer key : sortedKeyset) {	
 			writer.print( 
@@ -355,7 +355,7 @@ public class generateMonthlyConsultationSummaryReportOfAllInputFilesFromMasterLi
 							); 				   							
 		}
 
-		writer.print("\nNON-HMO/Cash (net) : UNPAID"); 		
+		writer.print("\nCash (net) : UNPAID (Php)"); 		
 		
 		for (Integer key : sortedKeyset) {	
 			writer.print( 
@@ -363,7 +363,7 @@ public class generateMonthlyConsultationSummaryReportOfAllInputFilesFromMasterLi
 							); 				   							
 		}
 		
-		writer.print("\nNON-HMO/Cash (net) : TRANSACTION COUNT"); 		
+		writer.print("\nCash (net) : COUNT"); 		
 		
 		for (Integer key : sortedKeyset) {	
 			writer.print( 
@@ -372,7 +372,7 @@ public class generateMonthlyConsultationSummaryReportOfAllInputFilesFromMasterLi
 		}
 
 		writer.print("\n"); //blank row 				
-		writer.print("\nHMO (net) : TOTAL"); 		
+		writer.print("\nHMO (net) : TOTAL (Php)"); 		
 		
 		for (Integer key : sortedKeyset) {	
 			writer.print( 
@@ -380,7 +380,7 @@ public class generateMonthlyConsultationSummaryReportOfAllInputFilesFromMasterLi
 							); 				   							
 		}
 
-		writer.print("\nHMO (net) : PAID"); 		
+		writer.print("\nHMO (net) : PAID (Php)"); 		
 		
 		for (Integer key : sortedKeyset) {	
 			writer.print( 
@@ -388,7 +388,7 @@ public class generateMonthlyConsultationSummaryReportOfAllInputFilesFromMasterLi
 							); 				   							
 		}
 
-		writer.print("\nHMO (net) : UNPAID"); 		
+		writer.print("\nHMO (net) : UNPAID (Php)"); 		
 		
 		for (Integer key : sortedKeyset) {	
 			writer.print( 
@@ -396,7 +396,7 @@ public class generateMonthlyConsultationSummaryReportOfAllInputFilesFromMasterLi
 							); 				   							
 		}
 		
-		writer.print("\nHMO (net) : TRANSACTION COUNT"); 		
+		writer.print("\nHMO (net) : COUNT"); 		
 		
 		for (Integer key : sortedKeyset) {	
 			writer.print( 
@@ -405,7 +405,7 @@ public class generateMonthlyConsultationSummaryReportOfAllInputFilesFromMasterLi
 		}
 
 		writer.print("\n"); //blank row
-		writer.print("\nHMO and NON-HMO/Cash (net) : TOTAL"); 		
+		writer.print("\nCash and HMO (net) : TOTAL (Php)"); 		
 
 		for (Integer key : sortedKeyset) {	
 			double count = dateContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN];
@@ -415,7 +415,7 @@ public class generateMonthlyConsultationSummaryReportOfAllInputFilesFromMasterLi
 							); 				   							
 		}
 
-		writer.print("\nHMO and NON-HMO/Cash (net) : PAID"); 		
+		writer.print("\nCash and HMO (net) : PAID (Php)"); 		
 
 		for (Integer key : sortedKeyset) {	
 			double count = dateContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN];
@@ -425,7 +425,7 @@ public class generateMonthlyConsultationSummaryReportOfAllInputFilesFromMasterLi
 							); 				   							
 		}
 
-		writer.print("\nHMO and NON-HMO/Cash (net) : UNPAID"); 		
+		writer.print("\nCash and HMO (net) : UNPAID (Php)"); 		
 
 		for (Integer key : sortedKeyset) {	
 			double count = dateContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN];
@@ -435,7 +435,7 @@ public class generateMonthlyConsultationSummaryReportOfAllInputFilesFromMasterLi
 							); 				   							
 		}
 
-		writer.print("\nHMO and NON-HMO/Cash (net) : TRANSACTION COUNT"); 		
+		writer.print("\nCash and HMO (net) : COUNT"); 		
 
 		for (Integer key : sortedKeyset) {	
 			double count = dateContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];

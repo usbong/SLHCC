@@ -330,7 +330,7 @@ Sub generateORSlipForTheDayPTTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190509
-' @date updated: 20190520
+' @date updated: 20190522
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -431,12 +431,45 @@ For Each row In myInput.Rows
         'added by Mike, 20190510; edited by Mike, 20190511
         'Write the current/present date from the input worksheet to the transaction's corresponding output worksheet
         myOutput.Range("J" & 7).Value = myInput.Range("A" & 3).Value
+        'added by Mike, 20190522
+        myOutput.Range("J" & 7).Value = UCase(myOutput.Range("J" & 7).Text)
         
-        'added by Mike, 20190511
+        'added by Mike, 20190511; edited by Mike, 20190522
         'Copy and paste the "OSCA/PWD/Other ID No.:" value from the input worksheet to the transaction's corresponding output worksheet
         'myOutput.Range("M" & 11).Value = myInput.Range("K" & RowCount).Value
-        myInput.Range("K" & RowCount).Columns.Copy
-        myOutput.Range("M" & 11).PasteSpecial
+'        myInput.Range("K" & RowCount).Columns.Copy
+'        myOutput.Range("M" & 11).PasteSpecial
+        
+        'added by Mike, 20190522
+        MaxColumnWidthInCharacters = 15
+        oscaPWDOtherIDNoNameValue = Trim(myInput.Range("K" & RowCount).Value)
+        oscaPWDOtherIDNoNameValueLength = Len(oscaPWDOtherIDNoNameValue)
+        oscaPWDOtherIDNoNameValueArray = Split(oscaPWDOtherIDNoNameValue, " ")
+        output = oscaPWDOtherIDNoNameValue
+
+        'MsgBox ("oscaPWDOtherIDNoNameValueLength: " & oscaPWDOtherIDNoNameValueLength)
+
+        If oscaPWDOtherIDNoNameValueLength > MaxColumnWidthInCharacters Then
+            output = ""
+            temp = ""
+                                                    
+            For Index = LBound(oscaPWDOtherIDNoNameValueArray) To UBound(oscaPWDOtherIDNoNameValueArray)
+                Value = oscaPWDOtherIDNoNameValueArray(Index)
+                temp = temp & " " & Value
+                
+'                MsgBox ("temp: " & temp)
+'                MsgBox ("Len(temp): " & Len(temp))
+                
+                If Len(temp) > MaxColumnWidthInCharacters Then
+                    output = output & vbLf & Value 'add new line
+                    temp = Value
+                Else
+                    output = output & " " & Value
+                End If
+            Next
+        End If
+            
+         myOutput.Range("M" & 11).Value = Trim(output)
 
         'added by Mike, 20190511; edited by Mike, 20190519
         'myOutput.Range("F" & 7).Value = Format(Now(), "yyyy-MM-ddTHH:mm:ss")

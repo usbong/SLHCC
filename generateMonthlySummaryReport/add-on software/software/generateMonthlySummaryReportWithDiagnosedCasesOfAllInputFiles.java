@@ -2284,14 +2284,22 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 						s = s.concat("\t\t\t<!-- Column 2 -->\n");
 						s = s.concat("\t\t\t<td>\n");
 						
+						//edited by Mike, 20190522
+						String inputMonthString = dateValuesArray[0].split("-")[0].toUpperCase(); //MAR
+						//TO-DO: -update: this to not need to add 20; note that the input file does not use 2019, but 19, as its date format
+						int inputYear = Integer.parseInt("20"+dateValuesArray[0].split("-")[1]); //e.g. 2019
+	
 						if (transactionCount < 0) { //the value is still blank/empty, e.g. -1
-							//TO-DO: -update this based on the actual month and year
+//							System.out.println("dateValuesArray: "+dateValuesArray[0]);
+												
 							//TO-DO: -update this to store the auto-calculated transaction count value
 	//						System.out.println(">>>>>>> dateValue: "+dateValue); //Mar-19
 	//						System.out.println(">>>>>>> dateValueInt: "+dateValueInt);
 																		
-							//edited by Mike, 20190504
-							if (!hasWrittenAutoCalculatedValue) {							
+							//edited by Mike, 20190522
+//							if (!hasWrittenAutoCalculatedValue) {							
+							if ((inputMonthString.equals(monthString)) && yearKey == inputYear) {
+
 //System.out.println("totalTreatmentCount: "+totalTreatmentCount);
 							
 								switch (fileType) {

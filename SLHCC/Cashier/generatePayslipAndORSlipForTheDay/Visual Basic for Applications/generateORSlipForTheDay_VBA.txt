@@ -198,9 +198,11 @@ For Each row In myInput.Rows
             myOutput.Range("D" & feeRowCount).Value = myInput.Range("E" & RowCount)
         End If
         
-        'added by Mike, 20190520
+        'added by Mike, 20190520; edited by Mike, 20190523
         'Copy and paste the CASH PAID from the input worksheet to the transaction's corresponding output worksheet
-        myOutput.Range("C" & 41).Value = myInput.Range("L" & RowCount).Value
+        If (Not isSamePatientWithAnotherTransaction) Then
+            myOutput.Range("C" & 41).Value = myInput.Range("L" & RowCount).Value
+        End If
                 
         'added by Mike, 20190511; edited by Mike, 21090523
         '-----------------------------------------------------------------------------
@@ -257,7 +259,8 @@ For Each row In myInput.Rows
         
 '            If InStr(myInput.Range("D" & RowCount).Value, CONSULT) Then
 '                myOutput.Range("A" & classificationRowCount).Value = "CONSULTATION FEE"
-            If InStr(myInput.Range("D" & RowCount).Value, "MC") Then
+            'edited by Mike, 20190523
+            If myInput.Range("D" & RowCount).Value = "MC" Then
                 myOutput.Range("A" & feeRowCount).Value = "MEDICAL CERTIFICATE"
             ElseIf InStr(myInput.Range("D" & RowCount).Value, "PROCEDURE") Then
                 myOutput.Range("A" & feeRowCount).Value = "PROCEDURE FEE"

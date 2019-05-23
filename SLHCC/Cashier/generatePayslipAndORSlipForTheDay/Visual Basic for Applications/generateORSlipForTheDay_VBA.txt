@@ -1,0 +1,426 @@
+Sub generateORSlipForTheDay()
+' Copyright 2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190509
+' @date updated: 20190523
+'
+' Given:
+' 1) Worksheet with the payslip data
+'
+'Output:
+' 1) New workbook with auto-updated Worksheets for each transaction based on the OR template for PT Treatment
+' 2) Automatically verified and corrected if necessary the computation in each of the worksheets with the transaction data in the new Workbook
+'
+Dim myInputWorkbook As Workbook 'added by Mike, 20190509
+Dim myInput As Worksheet
+Dim myOutput As Worksheet 'not the same as myInput
+Dim row As Range
+Dim RowCount As Integer
+Dim TableHeaderRow As Integer
+Dim LastPrintableRow As Integer
+Dim MaxPatientNameColumnWidth As Integer
+Dim patientNameFontSize As Integer
+Dim particularsFontSize As Integer 'added by Mike, 20190323
+Dim defaultFontName As String 'added by Mike, 20190314
+Dim totalAmountReleasedValue As String 'added by Mike, 20190316
+'Dim amountPaidInBytePerCharacter() As Byte 'added by Mike, 20190511
+Dim amountPaidValue As Double 'added by Mike, 20190511
+Dim placeValue As Integer 'added by Mike, 20190512
+Dim outputPath As String 'added by Mike, 20190513
+Dim currentPatientNameValue As String 'added by Mike, 20190523
+Dim isSamePatientWithAnotherTransaction As Boolean 'added by Mike, 20190523
+Dim feeRowCountOffset As Integer 'added by Mike, 20190523
+Dim feeRowCount As Integer 'added by Mike, 20190523
+
+RowCount = 1
+TableHeaderRow = 5 'output
+LastPrintableRow = 16 'including the TOTAL PF
+MaxPatientNameValueLength = 18 'characters in Pixels 'added by Mike, 20190323
+MaxPatientNameColumnWidthPixels = 216 '12pt font * 18 characters in Pixels
+patientNameFontSize = 12
+MaxParticularsValueLength = 8 'characters in Pixels 'added by Mike, 20190323
+MaxParticularsColumnWidthPixels = 96 '12pt font * 8 characters in Pixels 'added by Mike, 20190323
+particularsFontSize = 12 'added by Mike, 20190323
+defaultFontName = "Arial" 'added by Mike, 20190314
+totalAmountReleasedValue = 0 'added by Mike, 20190316
+
+currentPatientNameValue = "" 'added by Mike, 20190523
+isSamePatientWithAnotherTransaction = False 'added by Mike, 20190523
+feeRowCountOffset = 0 'added by Mike, 20190523
+feeRowCount = 18 'added by Mike, 20190523
+
+Set myTemplate = Sheets("OR Template")
+Set myInput = Sheets(ActiveSheet.Name)
+
+'added by Mike, 20190314
+Application.ScreenUpdating = False
+
+'added by Mike, 20190513
+Application.DisplayAlerts = False
+Set fso = CreateObject("scripting.filesystemobject")
+
+'myTemplate.Copy ActiveWorkbook.Sheets(Sheets.Count)
+'Set myOutput = Sheets(ActiveSheet.Name)
+'myOutput.Name = Replace(myOutput.Name, "Template (2)", "") & myInput.Name
+
+outputPath = Application.ThisWorkbook.Path & "\"
+newWorkbookFileName = outputPath & "OR Workbook " & myInput.Name & ".xlsx"
+
+'added by Mike, 20190513
+If Dir(newWorkbookFileName) <> "" Then
+    'close workbook if it's open
+    Set PreviousWorkbook = Workbooks.Open(newWorkbookFileName)
+    PreviousWorkbook.Close
+    
+    fso.DeleteFile newWorkbookFileName
+End If
+
+'added by Mike, 20190509
+Set NewWorkbook = Workbooks.Add
+    With NewWorkbook
+        .SaveAs Filename:=newWorkbookFileName
+    End With
+        
+'added by Mike, 20190509
+'---------------------------------------------------------
+'Auto-make worksheet based on OR template component part
+'---------------------------------------------------------
+RowCount = TableHeaderRow + 2 'input
+OutputRowCountOffset = -1
+For Each row In myInput.Rows
+        'added by Mike, 20190523
+        If (currentPatientNameValue <> myInput.Range("C" & RowCount)) Then
+            currentPatientNameValue = myInput.Range("C" & RowCount)
+            isSamePatientWithAnotherTransaction = False
+        Else
+            isSamePatientWithAnotherTransaction = True
+        End If
+        
+        'edited by Mike, 20190523
+        If (Not isSamePatientWithAnotherTransaction) Then
+            myTemplate.Copy NewWorkbook.Sheets(Sheets.Count)
+            Set myOutput = Sheets(ActiveSheet.Name)
+        End If
+                
+        'added by Mike, 20190510
+        'This resolves the issue with the image/picture logo not being in the correct scale.
+        'This is when the template worksheet is copied to the new workbook.
+        For Each p In ActiveSheet.Shapes
+            'MsgBox ("There's a picture with the name: " & p.Name)
+            p.ScaleHeight 1, msoScaleFromTopLeft
+            p.ScaleWidth 0.96, msoScaleFromTopLeft
+        Next p
+        
+        'added by Mike, 20190510; edited by Mike, 20190522
+        'Write the value of the patient name from the input worksheet to the transaction's corresponding output worksheet
+        'myOutput.Range("C" & 9).Value = myInput.Range("C" & RowCount)
+        myOutput.Range("B" & 9).Value = myInput.Range("C" & RowCount)
+        
+        'added by Mike, 20190510
+        'Copy and paste the value of the Cashier person name from the input worksheet to the transaction's corresponding output worksheet
+        myInput.Range("A" & 4).Columns.Copy
+        myOutput.Range("I" & 47).PasteSpecial
+        
+        'added by Mike, 20190510; edited by Mike, 20190522
+        'Write the current/present date from the input worksheet to the transaction's corresponding output worksheet
+'        myOutput.Range("J" & 7).Value = myInput.Range("A" & 3).Value
+        myOutput.Range("J" & 6).Value = myInput.Range("A" & 3).Value
+        'added by Mike, 20190522
+'        myOutput.Range("J" & 7).Value = UCase(myOutput.Range("J" & 7).Text)
+        myOutput.Range("J" & 6).Value = UCase(myOutput.Range("J" & 6).Text)
+        
+        'added by Mike, 20190511; edited by Mike, 20190522
+        'Copy and paste the "OSCA/PWD/Other ID No.:" value from the input worksheet to the transaction's corresponding output worksheet
+        'myOutput.Range("M" & 11).Value = myInput.Range("K" & RowCount).Value
+'        myInput.Range("K" & RowCount).Columns.Copy
+'        myOutput.Range("M" & 11).PasteSpecial
+        
+        'added by Mike, 20190522
+        MaxColumnWidthInCharacters = 15
+        oscaPWDOtherIDNoNameValue = Trim(myInput.Range("K" & RowCount).Value)
+        oscaPWDOtherIDNoNameValueLength = Len(oscaPWDOtherIDNoNameValue)
+        oscaPWDOtherIDNoNameValueArray = Split(oscaPWDOtherIDNoNameValue, " ")
+        output = oscaPWDOtherIDNoNameValue
+
+        'MsgBox ("oscaPWDOtherIDNoNameValueLength: " & oscaPWDOtherIDNoNameValueLength)
+
+        If oscaPWDOtherIDNoNameValueLength > MaxColumnWidthInCharacters Then
+            output = ""
+            temp = ""
+                                                    
+            For Index = LBound(oscaPWDOtherIDNoNameValueArray) To UBound(oscaPWDOtherIDNoNameValueArray)
+                Value = oscaPWDOtherIDNoNameValueArray(Index)
+                temp = temp & " " & Value
+                
+'                MsgBox ("temp: " & temp)
+'                MsgBox ("Len(temp): " & Len(temp))
+                
+                If Len(temp) > MaxColumnWidthInCharacters Then
+                    output = output & vbLf & Value 'add new line
+                    temp = Value
+                Else
+                    output = output & " " & Value
+                End If
+            Next
+        End If
+            
+        'edited by Mike, 20190522
+        'myOutput.Range("M" & 11).Value = Trim(output)
+        myOutput.Range("M" & 9).Value = Trim(output)
+
+        'added by Mike, 20190511; edited by Mike, 20190519
+        'myOutput.Range("F" & 7).Value = Format(Now(), "yyyy-MM-ddTHH:mm:ss")
+        myOutput.Range("G" & 4).Value = Format(Now(), "yyyy-MM-ddTHH:mm:ss")
+        
+        'added by Mike, 20190523
+        If (isSamePatientWithAnotherTransaction) Then
+            feeRowCountOffset = feeRowCountOffset + 2
+        Else
+            feeRowCountOffset = 0
+        End If
+        
+        feeRowCount = 18 + feeRowCountOffset
+        
+        'added by Mike, 20190511; edited by Mike, 20190523
+        'Copy and paste the AMOUNT PAID from the input worksheet to the transaction's corresponding output worksheet
+        If InStr(myInput.Range("D" & RowCount).Value, "SC") Or InStr(myInput.Range("D" & RowCount).Value, "PWD") Then
+            myOutput.Range("E" & feeRowCount).Value = myInput.Range("E" & RowCount).Value
+            myOutput.Range("D" & feeRowCount).Value = Application.RoundDown(myOutput.Range("E" & feeRowCount).Value / 0.71428, 2)
+            'myOutput.Range("D" & 18).NumberFormat = "0.00"
+        Else
+            myOutput.Range("D" & feeRowCount).Value = myInput.Range("E" & RowCount)
+        End If
+        
+        'added by Mike, 20190520
+        'Copy and paste the CASH PAID from the input worksheet to the transaction's corresponding output worksheet
+        myOutput.Range("C" & 41).Value = myInput.Range("L" & RowCount).Value
+                
+        'added by Mike, 20190511; edited by Mike, 21090523
+        '-----------------------------------------------------------------------------
+        ' Value of the "SUM OF PESOS" field in Words
+        '-----------------------------------------------------------------------------
+        'edited by Mike, 20190523
+'        inputAmountPaidValue = myInput.Range("E" & RowCount).Value
+'        amountPaidValue = inputAmountPaidValue
+        inputAmountPaidValue = myOutput.Range("N" & 43).Value
+        amountPaidValue = CInt(Fix(inputAmountPaidValue))
+        placeValue = 10000
+        amountPaidInString = ""
+
+        'MsgBox ("amountPaidValue: " & amountPaidValue)
+        Do Until amountPaidValue <= 0
+            'MsgBox ("hello: " & amountPaidValue)
+            placeValue = placeValue / 10
+            
+            'MsgBox ("hello: " & getWordOfOneDigitNumberWithPlaceValue(CInt(Fix(amountPaidValue / placeValue)), placeValue))
+
+            amountPaidInString = amountPaidInString & getWordOfOneDigitNumberWithPlaceValue(CInt(Fix(amountPaidValue / placeValue)), placeValue) & " "
+            
+            amountPaidValue = amountPaidValue Mod placeValue
+            'MsgBox ("inside amountPaidValue: " & amountPaidValue)
+        Loop
+                
+        amountPaidInString = amountPaidInString & "PESOS"
+        amountPaidDecimalValues = Round(inputAmountPaidValue - CInt(Fix(inputAmountPaidValue)), 2)
+        
+        'MsgBox ("decimal? " & amountPaidDecimalValues)
+        
+        If amountPaidDecimalValues > 0 Then
+            amountPaidDecimalValues = amountPaidDecimalValues * 100
+            amountPaidInString = amountPaidInString & " & " & amountPaidDecimalValues & "/100"
+        End If
+        
+        amountPaidInString = amountPaidInString & " ONLY"
+        
+        'edited by Mike, 20190522
+        'myOutput.Range("C" & 13).Value = amountPaidInString
+        myOutput.Range("B" & 13).Value = amountPaidInString
+        
+        'amountPaidInBytePerCharacter = StrConv(myInput.Range("E" & RowCount).Value, vbFromUnicode)
+        'amountPaidInString = ""
+        'For Each currentCharacter In amountPaidInBytePerCharacter
+            'MsgBox ("hello: " & Chr(currentCharacter))
+        '    If Chr(currentCharacter)
+        'Next currentCharacter
+        '-----------------------------------------------------------------------------
+        
+        'added by Mike, 20190523
+        If (InStr(myInput.Name, "CONSULT")) Then
+'            classificationRowCount = feeRowCount - 1
+        
+'            If InStr(myInput.Range("D" & RowCount).Value, CONSULT) Then
+'                myOutput.Range("A" & classificationRowCount).Value = "CONSULTATION FEE"
+            If InStr(myInput.Range("D" & RowCount).Value, "MC") Then
+                myOutput.Range("A" & feeRowCount).Value = "MEDICAL CERTIFICATE"
+            ElseIf InStr(myInput.Range("D" & RowCount).Value, "PROCEDURE") Then
+                myOutput.Range("A" & feeRowCount).Value = "PROCEDURE FEE"
+            Else
+                myOutput.Range("A" & feeRowCount).Value = "CONSULTATION FEE"
+            End If
+                        
+            If (Not isSamePatientWithAnotherTransaction) Then
+                'We use the name of the patient as part of the worksheet name
+                myOutput.Name = "OR CONSULT " & myInput.Range("C" & RowCount).Value
+            End If
+        Else 'PT
+            myOutput.Range("A" & 18).Value = "PT TREATMENT"
+            
+            'We use the name of the patient as part of the worksheet name
+            myOutput.Name = "OR PT " & myInput.Range("C" & RowCount).Value
+        End If
+              
+        RowCount = RowCount + 1
+                            
+        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+            Exit For
+        End If
+Next row
+
+'added by Mike, 20190513
+'Delete the default worksheet when the Macro automatically makes the new workbook
+Worksheets("Sheet1").Delete
+
+'added by Mike, 20190513
+Application.DisplayAlerts = True
+
+'added by Mike, 20190314
+Application.ScreenUpdating = True
+
+End Sub
+Private Function getWordOfOneDigitNumberWithPlaceValue(number As Integer, placeValue As Integer) As String
+' Copyright 2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190512
+' @date updated: 20190523
+'
+' Input:
+' 1) 1 digit number character
+' Example: 5
+' 2) place value of number character
+' Example: 100, i.e. hundreds place
+'
+'Output:
+' 1) The equivalent word of the 1 digit number character with the place value
+' Example: "FIVE HUNDRED"
+'
+
+'added by Mike, 20190523
+If number = 0 Then
+    Exit Function
+End If
+
+If (placeValue = 1000) Then
+    getWordOfOneDigitNumberWithPlaceValue = getWordOfOneDigitNumber(number) & " THOUSAND"
+ElseIf (placeValue = 100) Then
+    getWordOfOneDigitNumberWithPlaceValue = getWordOfOneDigitNumber(number) & " HUNDRED"
+ElseIf (placeValue = 10) Then
+    getWordOfOneDigitNumberWithPlaceValue = getWordOfOneDigitNumberTensPlace(number)
+ElseIf (placeValue = 1) Then
+    getWordOfOneDigitNumberWithPlaceValue = getWordOfOneDigitNumber(number)
+End If
+
+End Function
+
+Private Function getWordOfOneDigitNumber(number As Integer) As String
+' Copyright 2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190511
+' @date updated: 20190511
+'
+' Input:
+' 1) 1 digit number character
+' Example: 5
+'
+'Output:
+' 1) The equivalent word of the 1 digit number character
+' Example: "FIVE"
+'
+
+If (number = 1) Then
+    getWordOfOneDigitNumber = "ONE"
+ElseIf (number = 2) Then
+    getWordOfOneDigitNumber = "TWO"
+ElseIf (number = 3) Then
+    getWordOfOneDigitNumber = "THREE"
+ElseIf (number = 4) Then
+    getWordOfOneDigitNumber = "FOUR"
+ElseIf (number = 5) Then
+    getWordOfOneDigitNumber = "FIVE"
+ElseIf (number = 6) Then
+    getWordOfOneDigitNumber = "SIX"
+ElseIf (number = 7) Then
+    getWordOfOneDigitNumber = "SEVEN"
+ElseIf (number = 8) Then
+    getWordOfOneDigitNumber = "EIGHT"
+ElseIf (number = 9) Then
+    getWordOfOneDigitNumber = "NINE"
+End If
+
+'MsgBox ("returnOutput: " & returnOutput)
+
+End Function
+
+Private Function getWordOfOneDigitNumberTensPlace(number As Integer) As String
+' Copyright 2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190512
+' @date updated: 20190512
+'
+' Input:
+' 1) 1 digit number character
+' Example: 5
+'
+'Output:
+' 1) The equivalent word of the 1 digit number character in Tens place
+' Example: "FIFTY"
+'
+
+If (number = 1) Then
+    getWordOfOneDigitNumberTensPlace = "TEN"
+ElseIf (number = 2) Then
+    getWordOfOneDigitNumberTensPlace = "TWENTY"
+ElseIf (number = 3) Then
+    getWordOfOneDigitNumberTensPlace = "THIRTY"
+ElseIf (number = 4) Then
+    getWordOfOneDigitNumberTensPlace = "FORTY"
+ElseIf (number = 5) Then
+    getWordOfOneDigitNumberTensPlace = "FIFTY"
+ElseIf (number = 6) Then
+    getWordOfOneDigitNumberTensPlace = "SIXTY"
+ElseIf (number = 7) Then
+    getWordOfOneDigitNumberTensPlace = "SEVENTY"
+ElseIf (number = 8) Then
+    getWordOfOneDigitNumberTensPlace = "EIGHTY"
+ElseIf (number = 9) Then
+    getWordOfOneDigitNumberTensPlace = "NINETY"
+End If
+
+End Function

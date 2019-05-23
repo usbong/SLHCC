@@ -2261,7 +2261,7 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 												
 						s = s.concat("\t\t\t<!-- YEAR "+yearKey+": Columns -->\n");
 						s = s.concat("\t\t\t<!-- Column 1 -->\n");
-						s = s.concat("\t\t\t<td>\n");
+						s = s.concat("\t\t\t<td width='4%'>\n"); //edited by Mike, 20190523
 						s = s.concat("\t\t\t\t<b><span>"+monthString+"</span></b>\n"); //edited by Mike, 20190504
 						s = s.concat("\t\t\t</td>\n");
 						
@@ -2282,8 +2282,9 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 						}												
 												
 						s = s.concat("\t\t\t<!-- Column 2 -->\n");
-						s = s.concat("\t\t\t<td>\n");
-						
+						//TO-DO: -update: this to resolve the issue in the Consultation output HTML file, where setting the width to 4% does not equal with the length of 3 digit characters
+						s = s.concat("\t\t\t<td width='4%'>\n"); //edited by Mike, 20190523
+
 						//edited by Mike, 20190522
 						String inputMonthString = dateValuesArray[0].split("-")[0].toUpperCase(); //MAR
 						//TO-DO: -update: this to not need to add 20; note that the input file does not use 2019, but 19, as its date format

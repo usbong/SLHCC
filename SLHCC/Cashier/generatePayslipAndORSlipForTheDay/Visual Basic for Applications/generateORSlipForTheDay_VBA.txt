@@ -123,10 +123,12 @@ For Each row In myInput.Rows
         'myOutput.Range("C" & 9).Value = myInput.Range("C" & RowCount)
         myOutput.Range("B" & 9).Value = myInput.Range("C" & RowCount)
         
-        'added by Mike, 20190510
+        'added by Mike, 20190510; edited by Mike, 20190524
         'Copy and paste the value of the Cashier person name from the input worksheet to the transaction's corresponding output worksheet
-        myInput.Range("A" & 4).Columns.Copy
-        myOutput.Range("I" & 47).PasteSpecial
+        'myInput.Range("A" & 4).Columns.Copy
+        'myOutput.Range("I" & 47).PasteSpecial
+        'Write the value of the Cashier person name from the input worksheet to the transaction's corresponding output worksheet
+        myOutput.Range("I" & 46).Value = myInput.Range("A" & 4)
         
         'added by Mike, 20190510; edited by Mike, 20190522
         'Write the current/present date from the input worksheet to the transaction's corresponding output worksheet
@@ -259,7 +261,6 @@ For Each row In myInput.Rows
         
 '            If InStr(myInput.Range("D" & RowCount).Value, CONSULT) Then
 '                myOutput.Range("A" & classificationRowCount).Value = "CONSULTATION FEE"
-            'edited by Mike, 20190523
             If myInput.Range("D" & RowCount).Value = "MC" Then
                 myOutput.Range("A" & feeRowCount).Value = "MEDICAL CERTIFICATE"
             ElseIf InStr(myInput.Range("D" & RowCount).Value, "PROCEDURE") Then

@@ -8,7 +8,7 @@ Sub generatePayslipForTheDayConsultation()
 '
 ' @author: Michael Syson
 ' @date created: 20190314
-' @date updated: 20190504
+' @date updated: 20190524
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -124,7 +124,11 @@ For Each row In myInput.Rows
         myInput.Range("A" & RowCount, "I" & RowCount).Columns.Copy
         myInput.Select
         myOutput.Range("A" & RowCount + OutputRowCountOffset, "I" & RowCount + OutputRowCountOffset).PasteSpecial
-      
+                
+        'added by Mike, 20190524
+        'Write the value of the Cashier person name from the input worksheet to the transaction's corresponding output worksheet
+        myOutput.Range("D" & 19).Value = myInput.Range("A" & 4).Text 'Cashier person name
+ 
         'edited by Mike, 20190410
         RowCount = RowCount + 1
                             
@@ -180,6 +184,14 @@ Selection.EntireColumn.ColumnWidth = 12
 myOutput.Range("B" & TableHeaderRow, "B" & TableHeaderRow).Select
 Selection.EntireColumn.HorizontalAlignment = xlCenter
 Selection.EntireColumn.Font.Size = 14
+
+'added by Mike, 20190524
+'Auto-align "Released by:" cell to the right
+myOutput.Range("C" & 17).HorizontalAlignment = xlRight
+
+'added by Mike, 20190524
+'Auto-align "Released by:" cell to the right
+myOutput.Range("C" & 19).HorizontalAlignment = xlRight
 
 'Auto-update Font Size
 myOutput.Range("D" & TableHeaderRow + 1, "I" & LastPrintableRow).Font.Size = 14

@@ -9,7 +9,7 @@ Sub generateORSlipForTheDay()
 '
 ' @author: Michael Syson
 ' @date created: 20190509
-' @date updated: 20190527
+' @date updated: 20190528
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -192,12 +192,16 @@ For Each row In myInput.Rows
         
         feeRowCount = 18 + feeRowCountOffset
         
-        'added by Mike, 20190511; edited by Mike, 20190523
+        'added by Mike, 20190511; edited by Mike, 20190528
         'Copy and paste the AMOUNT PAID from the input worksheet to the transaction's corresponding output worksheet
         If InStr(myInput.Range("D" & RowCount).Value, "SC") Or InStr(myInput.Range("D" & RowCount).Value, "PWD") Then
             myOutput.Range("E" & feeRowCount).Value = myInput.Range("E" & RowCount).Value
             myOutput.Range("D" & feeRowCount).Value = Application.RoundDown(myOutput.Range("E" & feeRowCount).Value / 0.71428, 2)
             'myOutput.Range("D" & 18).NumberFormat = "0.00"
+        'added by Mike, 20190528
+        ElseIf InStr(myInput.Range("D" & RowCount).Value, "SLC") Then
+            myOutput.Range("E" & feeRowCount).Value = myInput.Range("E" & RowCount).Value
+            myOutput.Range("D" & feeRowCount).Value = Application.RoundDown(myOutput.Range("E" & feeRowCount).Value / 0.9, 2)
         Else
             myOutput.Range("D" & feeRowCount).Value = myInput.Range("E" & RowCount)
         End If

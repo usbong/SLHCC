@@ -9,7 +9,7 @@ Sub generateORSlipForTheDay()
 '
 ' @author: Michael Syson
 ' @date created: 20190509
-' @date updated: 20190523
+' @date updated: 20190527
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -130,10 +130,12 @@ For Each row In myInput.Rows
         'Write the value of the Cashier person name from the input worksheet to the transaction's corresponding output worksheet
         myOutput.Range("I" & 46).Value = myInput.Range("A" & 4)
         
-        'added by Mike, 20190510; edited by Mike, 20190522
+        'added by Mike, 20190510; edited by Mike, 20190527
         'Write the current/present date from the input worksheet to the transaction's corresponding output worksheet
 '        myOutput.Range("J" & 7).Value = myInput.Range("A" & 3).Value
-        myOutput.Range("J" & 6).Value = myInput.Range("A" & 3).Value
+'        myOutput.Range("J" & 6).Value = myInput.Range("A" & 3).Value
+        myOutput.Range("J" & 6).Value = UCase(Format(myInput.Range("A" & 7), "dddd, mmm dd, yyyy"))
+        
         'added by Mike, 20190522
 '        myOutput.Range("J" & 7).Value = UCase(myOutput.Range("J" & 7).Text)
         myOutput.Range("J" & 6).Value = UCase(myOutput.Range("J" & 6).Text)

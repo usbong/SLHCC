@@ -9,7 +9,7 @@ Sub generatePayslipForTheDayPTTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190307
-' @date updated: 20190524
+' @date updated: 20190529
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -124,9 +124,17 @@ RowCount = TableHeaderRow + 2 'input
 OutputRowCountOffset = -1
 For Each row In myInput.Rows
 '      If RowCount > TableHeaderRow Then
-        myInput.Range("A" & RowCount, "I" & RowCount).Columns.Copy
+        'edited by Mike, 20190529
+'        myInput.Range("A" & RowCount, "I" & RowCount).Columns.Copy
+'        myInput.Select
+'        myOutput.Range("A" & RowCount + OutputRowCountOffset, "I" & RowCount + OutputRowCountOffset).PasteSpecial
+        myInput.Range("A" & RowCount, "D" & RowCount).Columns.Copy
         myInput.Select
-        myOutput.Range("A" & RowCount + OutputRowCountOffset, "I" & RowCount + OutputRowCountOffset).PasteSpecial
+        myOutput.Range("A" & RowCount + OutputRowCountOffset, "D" & RowCount + OutputRowCountOffset).PasteSpecial
+      
+        myInput.Range("F" & RowCount, "J" & RowCount).Columns.Copy
+        myInput.Select
+        myOutput.Range("E" & RowCount + OutputRowCountOffset, "I" & RowCount + OutputRowCountOffset).PasteSpecial xlPasteValues
       
         'added by Mike, 20190524
         'Write the value of the Cashier person name from the input worksheet to the transaction's corresponding output worksheet

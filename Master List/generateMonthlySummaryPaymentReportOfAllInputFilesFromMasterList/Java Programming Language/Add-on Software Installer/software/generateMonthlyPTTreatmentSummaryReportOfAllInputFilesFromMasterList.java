@@ -639,14 +639,19 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = s.concat(fileTypeString+"\n");
 			}			
 						
-			if (s.contains("<!-- YEAR VALUE Column -->")) {
+			if (s.contains("<!-- DATE VALUE Column -->")) {
+				s = s.concat("\n");
+				s = s.concat("\t\t\t<!-- DATE: Column 1 -->\n");
+				s = s.concat("\t\t\t<td colspan=\"1\">\n");
+				s = s.concat("\t\t\t\t<div class=\"date\"><b><span>DATE:</span></b></div>\n");
+				s = s.concat("\t\t\t</td>\n");
 				
 				for(int i=0; i<dateValuesArrayInt.length; i++) {
-					int yearKey = dateValuesArrayInt[i];
+					int dateKey = dateValuesArrayInt[i];
 					s = s.concat("\n");
-					s = s.concat("\t\t\t<!-- YEAR "+yearKey+": Column 1 -->\n");
+					s = s.concat("\t\t\t<!-- DATE "+dateKey+": Column 1 -->\n");
 					s = s.concat("\t\t\t<td colspan=\"1\">\n");
-					s = s.concat("\t\t\t\t<div class=\"year\"><b><span>"+yearKey+"</span></b></div>\n");
+					s = s.concat("\t\t\t\t<div class=\"date\"><b><span>"+dateKey+"</span></b></div>\n");
 					s = s.concat("\t\t\t</td>\n");
 //						System.out.println("yearKey: "+yearKey);
 //						System.out.println(i+": "+inputMonthRowYearColumns[i+1]);					

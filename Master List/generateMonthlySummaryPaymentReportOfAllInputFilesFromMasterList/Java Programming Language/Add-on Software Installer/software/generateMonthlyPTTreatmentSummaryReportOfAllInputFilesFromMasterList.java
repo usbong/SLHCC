@@ -53,7 +53,7 @@ import java.text.DecimalFormat;
 */ 
 
 public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterList {	
-	private static boolean inDebugMode = true;
+	private static boolean isInDebugMode = true;
 	private static String inputFilename = "input201801"; //without extension; default input file
 	
 	private static String startDate = null;
@@ -68,6 +68,13 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 /*	private static HashMap<String, double[]> referringDoctorContainer;	
 */
 	private static HashMap<Integer, double[]> dateContainer;	//added by Mike, 201801205
+
+	//added by Mike, 20190531
+	private static HashMap<Integer, Integer[]> treatmentMonthlyPaymentSummaryContainer; 
+	private static HashMap<Integer, Integer[]> consultationMonthlyPaymentSummaryContainer; 
+	private static HashMap<Integer, Integer[]> procedureMonthlyPaymentSummaryContainer; 
+	
+//	private static ArrayList<Integer> yearsContainerArrayList; //added by Mike, 20190531
 
 	private static double[] columnValuesArray;
 	private static String[] dateValuesArray; //added by Mike, 20180412
@@ -100,10 +107,29 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 	private static double totalUnpaidNetTreatmentFeeForAllReferringDoctors;
 	private static double totalFivePercentShareOfNetPaidForAllReferringDoctors;
 				
+	//added by Mike, 20190531
+	//Note that I have to use double backslash, i.e. "\\", to use "\" in the filename
+	//without extension; default input file 
+	private static String inputOutputTemplateFilenameMonthlyPaymentSummary = "assets\\templates\\generateMonthlyPaymentSummaryReportOutputTemplate";
+
+	//added by Mike, 20190504
+	private static final int TREATMENT_FILE_TYPE = 0;
+	private static final int CONSULTATION_FILE_TYPE = 1;
+	private static final int PROCEDURE_FILE_TYPE = 2;
+	
+	//added by Mike, 20190531
+	private static boolean isConsultationInputFileEmpty=true;
+	private static boolean isTreatmentInputFileEmpty=true;
+	
 	public static void main ( String[] args ) throws Exception
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
-		PrintWriter writer = new PrintWriter("output/TreatmentMonthlySummaryPaymentReportOutput.txt", "UTF-8");			
+		PrintWriter writer = new PrintWriter("output/TreatmentMonthlyPaymentSummaryReportOutput.txt", "UTF-8");
+
+		//added by Mike, 20190531
+		PrintWriter MonthlyPaymentSummaryWriter = new PrintWriter("output/MonthlyPaymentSummaryTreatment.html", "UTF-8");	
+				
+		
 		/*referringDoctorContainer = new HashMap<String, double[]>();
 		*/
 		
@@ -113,7 +139,12 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		startDate = null; //properly set the month and year in the output file of each input file
 		dateValuesArray = new String[args.length]; //added by Mike, 20180412
 		dateValuesArrayInt = new int[args.length]; //added by Mike, 20180412
-		
+				
+		//added by Mike, 20190531
+		treatmentMonthlyPaymentSummaryContainer = new HashMap<Integer, Integer[]>(); 
+		consultationMonthlyPaymentSummaryContainer = new HashMap<Integer, Integer[]>();
+		procedureMonthlyPaymentSummaryContainer  = new HashMap<Integer, Integer[]>();
+
 		//edited by Mike, 20181030
 		for (int i=0; i<args.length; i++) {						
 			//added by Mike, 20181030
@@ -142,7 +173,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 			String s;		
 			s=sc.nextLine(); //skip the first row, which is the input file's table headers
 	
-			if (inDebugMode) {
+			if (isInDebugMode) {
 				rowCount=0;
 			}
 						
@@ -175,7 +206,18 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 					}
 				}
 
-				if (inDebugMode) {
+				//added by Mike, 20190426
+				if (inputFilename.toLowerCase().contains("consultation")) {
+					isConsultationInputFileEmpty=false;
+				}
+				else if (inputFilename.toLowerCase().contains("treatment")) {
+//					System.out.println(">>>dateValuesArray[i]: "+dateValuesArray[i]);
+					isTreatmentInputFileEmpty=false;
+				}
+
+				
+				
+				if (isInDebugMode) {
 					rowCount++;
 					System.out.println("rowCount: "+rowCount);
 				}
@@ -280,6 +322,33 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		 * OUTPUT
 		 * --------------------------------------------------------------------
 		*/
+		//added by Mike, 20190531
+/*		if (!isConsultationInputFileEmpty) {
+			processWriteOutputFileConsultation(consultationWriter);
+		}
+		else {
+			System.out.println("\nThere is no Tab-delimited .txt input file in the \"input\\consultation\" folder.\n");
+		}
+*/
+		
+		if (!isTreatmentInputFileEmpty) {			
+			processWriteOutputFileMonthlyPaymentSummary(MonthlyPaymentSummaryWriter, TREATMENT_FILE_TYPE);
+/*			
+			processWriteOutputFileTreatment(treatmentWriter);
+			//added by Mike, 20190426
+			processWriteOutputFileTreatmentUnclassifiedDiagnosedCases(treatmentUnclassifiedDiagnosedCasesWriter);
+			
+			//added by Mike, 20190503; edited by Mike, 20190504
+			processWriteOutputFileMonthlyStatistics(treatmentCountMonthlyStatisticsWriter, TREATMENT_FILE_TYPE);		
+			processWriteOutputFileMonthlyStatistics(consultationCountMonthlyStatisticsWriter, CONSULTATION_FILE_TYPE);		
+			processWriteOutputFileMonthlyStatistics(procedureCountMonthlyStatisticsWriter, PROCEDURE_FILE_TYPE);		
+*/
+		}
+		else {
+			System.out.println("\nThere is no Tab-delimited .txt input file in the \"input\\treatment\" folder.\n");
+		}
+
+		//TO-DO: -remove: these
 		//added by Mike, 20181118
 		writer.print("Cash and HMO PT TREATMENT Monthly Summary Report\n");
 
@@ -516,5 +585,168 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
     	{
     		System.out.println("File Path to file could not be made.");
     	}    			
+	}
+	
+	//added by Mike, 20190531
+	private static void processWriteOutputFileMonthlyPaymentSummary(PrintWriter writer, int fileType) throws Exception {		
+//		File inputDataFile = new File(inputDataFilenameTreatmentMonthlyStatistics+".txt");	
+		File f = new File(inputOutputTemplateFilenameMonthlyPaymentSummary+".html");
+
+//		System.out.println("inputOutputTemplateFilenameMonthlyStatistics: " + inputOutputTemplateFilenameMonthlyStatistics);
+		
+		Scanner sc = new Scanner(new FileInputStream(f), "UTF-8");				
+	
+		String s;		
+//			s=sc.nextLine(); //skip the first row, which is the input file's table headers
+
+		if (isInDebugMode) {
+			rowCount=0;
+		}
+
+		boolean hasWrittenAutoCalculatedValue=false;
+
+		//count/compute the number-based values of inputColumns 
+		while (sc.hasNextLine()) {
+			s=sc.nextLine();
+/*			
+			//if the row is blank
+			if (s.trim().equals("")) {
+				continue;
+			}
+*/			
+			if (isInDebugMode) {
+				rowCount++;
+//				System.out.println("rowCount: "+rowCount);
+			}
+			
+//			s = s.replace("<?php echo $data['date'];?>", "" + dateValue.toUpperCase());
+
+			//added by Mike, 20190504
+			if (s.contains("<!-- FILE TYPE  -->")) {
+				String fileTypeString = "";
+				switch (fileType) {
+					case TREATMENT_FILE_TYPE:
+						fileTypeString = "TREATMENT";
+						break;
+					case CONSULTATION_FILE_TYPE:
+						fileTypeString = "CONSULTATION";
+						break;
+					default:// PROCEDURE_FILE_TYPE:
+						fileTypeString = "PROCEDURE";
+						break;
+				}			
+				s = s.concat("\n");
+				s = s.concat(fileTypeString+"\n");
+			}			
+						
+			if (s.contains("<!-- YEAR VALUE Column -->")) {
+				
+				for(int i=0; i<dateValuesArrayInt.length; i++) {
+					int yearKey = dateValuesArrayInt[i];
+					s = s.concat("\n");
+					s = s.concat("\t\t\t<!-- YEAR "+yearKey+": Column 1 -->\n");
+					s = s.concat("\t\t\t<td colspan=\"1\">\n");
+					s = s.concat("\t\t\t\t<div class=\"year\"><b><span>"+yearKey+"</span></b></div>\n");
+					s = s.concat("\t\t\t</td>\n");
+//						System.out.println("yearKey: "+yearKey);
+//						System.out.println(i+": "+inputMonthRowYearColumns[i+1]);					
+				}
+				//s = s.concat("\n");				
+			}
+/*
+			if (s.contains("<!-- MONTH and TRANSACTION COUNT VALUE Rows -->")) {
+				for (int monthRowIndex=0; monthRowIndex<12; monthRowIndex++) { //There are 12 months				
+					//edited by Mike, 20190504
+					String monthString = convertMonthNumberToThreeLetterWord(monthRowIndex);
+				
+					s = s.concat("\n");											
+					s = s.concat("\t\t  <!-- MONTH "+monthString+": Row -->\n");
+					s = s.concat("\t\t  <tr>\n");
+
+					for(int i=0; i<yearsContainerArrayList.size(); i++) {
+						int yearKey = yearsContainerArrayList.get(i);						
+												
+						s = s.concat("\t\t\t<!-- YEAR "+yearKey+": Columns -->\n");
+						s = s.concat("\t\t\t<!-- Column 1 -->\n");
+						s = s.concat("\t\t\t<td width='4%'>\n"); //edited by Mike, 20190523
+						s = s.concat("\t\t\t\t<b><span>"+monthString+"</span></b>\n"); //edited by Mike, 20190504
+						s = s.concat("\t\t\t</td>\n");
+						
+						//edited by Mike, 20190504
+						//int treatmentCount = treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex];
+						int transactionCount = -1;
+												
+						switch (fileType) {
+							case TREATMENT_FILE_TYPE:
+								transactionCount = treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex];
+								break;
+							case CONSULTATION_FILE_TYPE:
+								transactionCount = consultationMonthlyStatisticsContainer.get(yearKey)[monthRowIndex];	
+								break;
+							default:// PROCEDURE_FILE_TYPE:
+								transactionCount = procedureMonthlyStatisticsContainer.get(yearKey)[monthRowIndex];	
+								break;
+						}												
+												
+						s = s.concat("\t\t\t<!-- Column 2 -->\n");
+						//TO-DO: -update: this to resolve the issue in the Consultation output HTML file, where setting the width to 4% does not equal with the length of 3 digit characters
+						s = s.concat("\t\t\t<td width='4%'>\n"); //edited by Mike, 20190523
+
+						//edited by Mike, 20190522
+						String inputMonthString = dateValuesArray[0].split("-")[0].toUpperCase(); //MAR
+						//TO-DO: -update: this to not need to add 20; note that the input file does not use 2019, but 19, as its date format
+						int inputYear = Integer.parseInt("20"+dateValuesArray[0].split("-")[1]); //e.g. 2019
+	
+						if (transactionCount < 0) { //the value is still blank/empty, e.g. -1
+//							System.out.println("dateValuesArray: "+dateValuesArray[0]);
+												
+							//TO-DO: -update this to store the auto-calculated transaction count value
+	//						System.out.println(">>>>>>> dateValue: "+dateValue); //Mar-19
+	//						System.out.println(">>>>>>> dateValueInt: "+dateValueInt);
+																		
+							//edited by Mike, 20190522
+//							if (!hasWrittenAutoCalculatedValue) {							
+							if ((inputMonthString.equals(monthString)) && yearKey == inputYear) {
+
+//System.out.println("totalTreatmentCount: "+totalTreatmentCount);
+							
+								switch (fileType) {
+									case TREATMENT_FILE_TYPE:
+										s = s.concat("\t\t\t\t<b><span>"+totalTreatmentCount+"</span></b>\n");
+										break;
+									case CONSULTATION_FILE_TYPE:
+										s = s.concat("\t\t\t\t<b><span>"+totalConsultationCount+"</span></b>\n");
+										break;
+									default:// PROCEDURE_FILE_TYPE:
+										s = s.concat("\t\t\t\t<b><span>"+totalProcedureCount+"</span></b>\n");
+										break;
+								}	
+								hasWrittenAutoCalculatedValue = true;
+							}
+							else {
+								s = s.concat("\t\t\t\t<b><span><!-- No value for this month yet --></span></b>\n");
+							}						
+//							s = s.concat("\t\t\t\t<b><span><!-- No value for this month yet --></span></b>\n");
+						}
+						else {
+							s = s.concat("\t\t\t\t<b><span>"+transactionCount+"</span></b>\n");
+						}
+						
+						//s = s.concat("\t\t\t\t<b><span>"+treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex]+"</span></b>\n");
+						s = s.concat("\t\t\t</td>\n");
+					}
+					s = s.concat("\t\t  </tr>\n");
+
+//						System.out.println("yearKey: "+yearKey);
+//						System.out.println(i+": "+inputMonthRowYearColumns[i+1]);					
+				}
+//				s = s.concat("\n");				
+			
+			}
+*/							
+			writer.print(s + "\n");		
+		}
+		
+		writer.close();
 	}
 }

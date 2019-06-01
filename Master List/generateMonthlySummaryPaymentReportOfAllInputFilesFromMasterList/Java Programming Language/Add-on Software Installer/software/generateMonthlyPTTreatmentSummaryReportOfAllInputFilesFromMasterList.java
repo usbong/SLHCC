@@ -20,6 +20,7 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
+
 //import java.lang.Integer;
 
 /*
@@ -98,7 +99,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 	
 	private static boolean isConsultation; //added by Mike, 20190106
 
-	private static DecimalFormat df = new DecimalFormat("0.00"); //added by Mike, 20181105
+	private static DecimalFormat df = new DecimalFormat("0.00");//("0.00"); //added by Mike, 20181105; edited by Mike, 20190601
 	private static int rowCount; //added by Mike, 20181105
 				
 	private static int totalCountForAllReferringDoctors;
@@ -656,102 +657,243 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 //						System.out.println("yearKey: "+yearKey);
 //						System.out.println(i+": "+inputMonthRowYearColumns[i+1]);					
 				}
-				//s = s.concat("\n");				
-			}
-/*
-			if (s.contains("<!-- MONTH and TRANSACTION COUNT VALUE Rows -->")) {
-				for (int monthRowIndex=0; monthRowIndex<12; monthRowIndex++) { //There are 12 months				
-					//edited by Mike, 20190504
-					String monthString = convertMonthNumberToThreeLetterWord(monthRowIndex);
+				//s = s.concat("\n");			
 				
-					s = s.concat("\n");											
-					s = s.concat("\t\t  <!-- MONTH "+monthString+": Row -->\n");
-					s = s.concat("\t\t  <tr>\n");
-
-					for(int i=0; i<yearsContainerArrayList.size(); i++) {
-						int yearKey = yearsContainerArrayList.get(i);						
-												
-						s = s.concat("\t\t\t<!-- YEAR "+yearKey+": Columns -->\n");
-						s = s.concat("\t\t\t<!-- Column 1 -->\n");
-						s = s.concat("\t\t\t<td width='4%'>\n"); //edited by Mike, 20190523
-						s = s.concat("\t\t\t\t<b><span>"+monthString+"</span></b>\n"); //edited by Mike, 20190504
-						s = s.concat("\t\t\t</td>\n");
-						
-						//edited by Mike, 20190504
-						//int treatmentCount = treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex];
-						int transactionCount = -1;
-												
-						switch (fileType) {
-							case TREATMENT_FILE_TYPE:
-								transactionCount = treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex];
-								break;
-							case CONSULTATION_FILE_TYPE:
-								transactionCount = consultationMonthlyStatisticsContainer.get(yearKey)[monthRowIndex];	
-								break;
-							default:// PROCEDURE_FILE_TYPE:
-								transactionCount = procedureMonthlyStatisticsContainer.get(yearKey)[monthRowIndex];	
-								break;
-						}												
-												
-						s = s.concat("\t\t\t<!-- Column 2 -->\n");
-						//TO-DO: -update: this to resolve the issue in the Consultation output HTML file, where setting the width to 4% does not equal with the length of 3 digit characters
-						s = s.concat("\t\t\t<td width='4%'>\n"); //edited by Mike, 20190523
-
-						//edited by Mike, 20190522
-						String inputMonthString = dateValuesArray[0].split("-")[0].toUpperCase(); //MAR
-						//TO-DO: -update: this to not need to add 20; note that the input file does not use 2019, but 19, as its date format
-						int inputYear = Integer.parseInt("20"+dateValuesArray[0].split("-")[1]); //e.g. 2019
-	
-						if (transactionCount < 0) { //the value is still blank/empty, e.g. -1
-//							System.out.println("dateValuesArray: "+dateValuesArray[0]);
-												
-							//TO-DO: -update this to store the auto-calculated transaction count value
-	//						System.out.println(">>>>>>> dateValue: "+dateValue); //Mar-19
-	//						System.out.println(">>>>>>> dateValueInt: "+dateValueInt);
-																		
-							//edited by Mike, 20190522
-//							if (!hasWrittenAutoCalculatedValue) {							
-							if ((inputMonthString.equals(monthString)) && yearKey == inputYear) {
-
-//System.out.println("totalTreatmentCount: "+totalTreatmentCount);
-							
-								switch (fileType) {
-									case TREATMENT_FILE_TYPE:
-										s = s.concat("\t\t\t\t<b><span>"+totalTreatmentCount+"</span></b>\n");
-										break;
-									case CONSULTATION_FILE_TYPE:
-										s = s.concat("\t\t\t\t<b><span>"+totalConsultationCount+"</span></b>\n");
-										break;
-									default:// PROCEDURE_FILE_TYPE:
-										s = s.concat("\t\t\t\t<b><span>"+totalProcedureCount+"</span></b>\n");
-										break;
-								}	
-								hasWrittenAutoCalculatedValue = true;
-							}
-							else {
-								s = s.concat("\t\t\t\t<b><span><!-- No value for this month yet --></span></b>\n");
-							}						
-//							s = s.concat("\t\t\t\t<b><span><!-- No value for this month yet --></span></b>\n");
-						}
-						else {
-							s = s.concat("\t\t\t\t<b><span>"+transactionCount+"</span></b>\n");
-						}
-						
-						//s = s.concat("\t\t\t\t<b><span>"+treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex]+"</span></b>\n");
-						s = s.concat("\t\t\t</td>\n");
-					}
-					s = s.concat("\t\t  </tr>\n");
-
-//						System.out.println("yearKey: "+yearKey);
-//						System.out.println(i+": "+inputMonthRowYearColumns[i+1]);					
-				}
-//				s = s.concat("\n");				
-			
+				s = s.concat("\n");				
+				s = s.concat("\t\t\t<!-- TOTAL: Column 1 -->\n");
+				s = s.concat("\t\t\t<td colspan=\"1\">\n");
+				s = s.concat("\t\t\t\t<b><span>TOTAL</span></b>\n");
+				s = s.concat("\t\t\t</td>\n");
 			}
-*/							
+
+			if (s.contains("<!-- TRANSACTION TYPE AND VALUE Rows -->")) {		
+				s = s.concat("\n");
+				
+				//--------------------------------------------------------------------
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<b><span>Cash (net) : TOTAL (PHP)</span></b>"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN);
+				s = s.concat("\t\t\t</tr>\n");
+				
+/*				
+				writer.print("\nCash (net) : PAID (Php)"); 		
+
+				//added by Mike, 20190521
+				rowTotal = 0;
+				
+				for (Integer key : sortedKeyset) {	
+					writer.print( 
+									"\t" + dateContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN]
+									); 				   							
+
+					//added by Mike, 20190521
+					rowTotal += dateContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN];
+				}
+				//added by Mike, 20190521
+				writer.print("\t" + rowTotal); 		
+
+				writer.print("\nCash (net) : UNPAID (Php)"); 		
+
+				//added by Mike, 20190521
+				rowTotal = 0;
+				
+				for (Integer key : sortedKeyset) {	
+					writer.print( 
+									"\t" + dateContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]
+									); 				   							
+
+					//added by Mike, 20190521
+					rowTotal += dateContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN];
+				}
+				//added by Mike, 20190521
+				writer.print("\t" + rowTotal); 		
+				
+				writer.print("\nCash (net) : COUNT"); 		
+
+				//added by Mike, 20190521
+				rowTotal = 0;
+				
+				for (Integer key : sortedKeyset) {	
+					writer.print( 
+									"\t" + dateContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN]
+									); 				   							
+
+					//added by Mike, 20190521
+					rowTotal += dateContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
+				}
+				//added by Mike, 20190521
+				writer.print("\t" + rowTotal); 		
+
+				writer.print("\n"); //blank row 				
+				writer.print("\nHMO (net) : TOTAL (Php)"); 		
+
+				//added by Mike, 20190521
+				rowTotal = 0;
+				
+				for (Integer key : sortedKeyset) {	
+					writer.print( 
+									"\t" + dateContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]
+									); 				   							
+
+					//added by Mike, 20190521
+					rowTotal += dateContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN];
+				}
+				//added by Mike, 20190521
+				writer.print("\t" + rowTotal); 		
+
+				writer.print("\nHMO (net) : PAID (Php)"); 		
+
+				//added by Mike, 20190521
+				rowTotal = 0;
+				
+				for (Integer key : sortedKeyset) {	
+					writer.print( 
+									"\t" + dateContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN]
+									); 				   							
+
+					//added by Mike, 20190521
+					rowTotal += dateContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN];
+				}
+				//added by Mike, 20190521
+				writer.print("\t" + rowTotal); 		
+
+				writer.print("\nHMO (net) : UNPAID (Php)"); 		
+
+				//added by Mike, 20190521
+				rowTotal = 0;
+				
+				for (Integer key : sortedKeyset) {	
+					writer.print( 
+									"\t" + dateContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]
+									); 				   							
+					
+					//added by Mike, 20190521
+					rowTotal += dateContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN];
+				}
+				//added by Mike, 20190521
+				writer.print("\t" + rowTotal); 		
+				
+				writer.print("\nHMO (net) : COUNT"); 		
+
+				//added by Mike, 20190521
+				rowTotal = 0;
+				
+				for (Integer key : sortedKeyset) {	
+					writer.print( 
+									"\t" + dateContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN]
+									); 				   							
+					
+					//added by Mike, 20190521
+					rowTotal += dateContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
+				}
+				//added by Mike, 20190521
+				writer.print("\t" + rowTotal); 		
+
+				writer.print("\n"); //blank row
+				writer.print("\nCash and HMO (net) : TOTAL (Php)"); 		
+
+				//added by Mike, 20190521
+				rowTotal = 0;
+
+				for (Integer key : sortedKeyset) {	
+					double count = dateContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN];
+				
+					writer.print( 
+									"\t" + count
+									); 				   							
+
+					//added by Mike, 20190521
+					rowTotal += (dateContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]);
+				}
+				//added by Mike, 20190521
+				writer.print("\t" + rowTotal); 		
+
+				writer.print("\nCash and HMO (net) : PAID (Php)"); 		
+
+				//added by Mike, 20190521
+				rowTotal = 0;
+
+				for (Integer key : sortedKeyset) {	
+					double count = dateContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN];
+				
+					writer.print( 
+									"\t" + count
+									); 				   							
+									
+					//added by Mike, 20190521
+					rowTotal += (dateContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN]);		
+				}
+				//added by Mike, 20190521
+				writer.print("\t" + rowTotal); 		
+
+				writer.print("\nCash and HMO (net) : UNPAID (Php)"); 		
+
+				//added by Mike, 20190521
+				rowTotal = 0;
+
+				for (Integer key : sortedKeyset) {	
+					double count = dateContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN];
+				
+					writer.print( 
+									"\t" + count
+									); 				   							
+
+					//added by Mike, 20190521
+					rowTotal += (dateContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]);		
+				}
+				//added by Mike, 20190521
+				writer.print("\t" + rowTotal); 		
+
+				writer.print("\nCash and HMO (net) : COUNT"); 		
+
+				//added by Mike, 20190521
+				rowTotal = 0;
+
+				for (Integer key : sortedKeyset) {	
+					double count = dateContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
+				
+					writer.print( 
+									"\t" + count
+									); 				   							
+
+					//added by Mike, 20190521
+					rowTotal += (dateContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN]);		
+				}
+
+			//added by Mike, 20190521
+			writer.print("\t" + rowTotal); 		
+*/
+				
+			}
 			writer.print(s + "\n");		
+			
 		}
 		
 		writer.close();
+	}
+
+	//added by Mike, 20190601
+	private static String autoWriteValuesInRowForAllDateColumns(String s, PrintWriter writer, int columnIndex) {
+		SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(dateContainer.keySet());
+
+		double rowTotal = 0;				
+		for (Integer key : sortedKeyset) {
+			s = s.concat("\t\t\t<td>\n");				
+			s = s.concat( 
+							"\t\t\t\t<b><span>" + df.format(dateContainer.get(key)[columnIndex]) + "</span></b>"
+							); 				   							
+			s = s.concat("\t\t\t</td>\n");
+		
+			rowTotal += dateContainer.get(key)[columnIndex];
+		}
+		
+		s = s.concat("\t\t\t<td>\n");				
+		s = s.concat("\t\t\t\t<b><span>" + df.format(rowTotal) + "</b></span>"); 
+		s = s.concat("\t\t\t</td>\n");
+		
+		return s;
 	}
 }

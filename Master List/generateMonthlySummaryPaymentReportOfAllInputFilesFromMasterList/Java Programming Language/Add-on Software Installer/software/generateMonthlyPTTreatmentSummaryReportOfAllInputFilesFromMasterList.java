@@ -644,7 +644,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = s.concat("\n");
 				s = s.concat("\t\t\t<!-- DATE: Column 1 -->\n");
 				s = s.concat("\t\t\t<td colspan=\"1\">\n");
-				s = s.concat("\t\t\t\t<div class=\"date\"><b><span>DATE:</span></b></div>\n");
+				s = s.concat("\t\t\t\t<div class=\"date\"><b><span class=\"transaction_type_column_header\">DATE:</span></b></div>\n");
 				s = s.concat("\t\t\t</td>\n");
 				
 				for(int i=0; i<dateValuesArrayInt.length; i++) {
@@ -672,7 +672,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				//--------------------------------------------------------------------
 				s = s.concat("\t\t\t<tr>\n");
 				s = s.concat("\t\t\t<td>\n");				
-				s = s.concat("\t\t\t\t<b><span>Cash (net) : TOTAL (PHP)</span></b>"); 		
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>Cash (net) : TOTAL (PHP)</span></b></div>\n"); 		
 				s = s.concat("\t\t\t</td>\n");
 
 				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN);
@@ -681,7 +681,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 
 				s = s.concat("\t\t\t<tr>\n");
 				s = s.concat("\t\t\t<td>\n");				
-				s = s.concat("\t\t\t\t<b><span>Cash (net) : PAID (PHP)</span></b>"); 		
+				s = s.concat("\t\t\t\t<b><div class=\"transaction_type_column\"><span>Cash (net) : PAID (PHP)</span></b></div>"); 		
 				s = s.concat("\t\t\t</td>\n");
 
 				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN);
@@ -690,7 +690,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 
 				s = s.concat("\t\t\t<tr>\n");
 				s = s.concat("\t\t\t<td>\n");				
-				s = s.concat("\t\t\t\t<b><span>Cash (net) : UNPAID (PHP)</span></b>"); 		
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>Cash (net) : UNPAID (PHP)</span></b></div>"); 		
 				s = s.concat("\t\t\t</td>\n");
 
 				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN);
@@ -699,7 +699,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 
 				s = s.concat("\t\t\t<tr>\n");
 				s = s.concat("\t\t\t<td>\n");				
-				s = s.concat("\t\t\t\t<b><span>Cash (net) : COUNT</span></b>"); 		
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>Cash (net) : COUNT</span></b></div>"); 		
 				s = s.concat("\t\t\t</td>\n");
 
 				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_COUNT_COLUMN);

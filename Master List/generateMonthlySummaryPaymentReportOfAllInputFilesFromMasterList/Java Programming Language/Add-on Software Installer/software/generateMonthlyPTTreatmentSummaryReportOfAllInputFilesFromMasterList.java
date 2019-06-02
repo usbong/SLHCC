@@ -99,7 +99,8 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 	
 	private static boolean isConsultation; //added by Mike, 20190106
 
-	private static DecimalFormat df = new DecimalFormat("0.00");//("0.00"); //added by Mike, 20181105; edited by Mike, 20190601
+	//To include the zero (0) in the hundredths place, e.g. 432.10, we use "0.00", instead of "#.##"
+	private static DecimalFormat df = new DecimalFormat("0.00");//("#.##"); //added by Mike, 20181105; edited by Mike, 20190602
 	private static int rowCount; //added by Mike, 20181105
 				
 	private static int totalCountForAllReferringDoctors;
@@ -670,6 +671,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = s.concat("\n");
 				
 				//--------------------------------------------------------------------
+				//CASH payment transactions
 				s = s.concat("\t\t\t<tr>\n");
 				s = s.concat("\t\t\t<td>\n");				
 				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>Cash (net) : TOTAL (PHP)</span></b></div>\n"); 		
@@ -678,7 +680,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN);
 				s = s.concat("\t\t\t</tr>\n");
 				//--------------------------------------------------------------------
-
+				
 				s = s.concat("\t\t\t<tr>\n");
 				s = s.concat("\t\t\t<td>\n");				
 				s = s.concat("\t\t\t\t<b><div class=\"transaction_type_column\"><span>Cash (net) : PAID (PHP)</span></b></div>"); 		
@@ -687,7 +689,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN);
 				s = s.concat("\t\t\t</tr>\n");
 				//--------------------------------------------------------------------
-
+				
 				s = s.concat("\t\t\t<tr>\n");
 				s = s.concat("\t\t\t<td>\n");				
 				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>Cash (net) : UNPAID (PHP)</span></b></div>"); 		
@@ -696,7 +698,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN);
 				s = s.concat("\t\t\t</tr>\n");
 				//--------------------------------------------------------------------
-
+				
 				s = s.concat("\t\t\t<tr>\n");
 				s = s.concat("\t\t\t<td>\n");				
 				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>Cash (net) : COUNT</span></b></div>"); 		
@@ -704,72 +706,52 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 
 				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_COUNT_COLUMN);
 				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+				//space
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t<div><br /></div>\n");
+				s = s.concat("\t\t\t</td>\n");				
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+				//HMO payment transactions
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>HMO (net) : TOTAL (PHP)</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN);
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>HMO (net) : PAID (PHP)</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN);
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>HMO (net) : UNPAID (PHP)</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN);
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>HMO (net) : COUNT</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_COUNT_COLUMN);
+				s = s.concat("\t\t\t</tr>\n");
 				
-/*				
-				writer.print("\nCash (net) : COUNT"); 		
-
-				//added by Mike, 20190521
-				rowTotal = 0;
-				
-				for (Integer key : sortedKeyset) {	
-					writer.print( 
-									"\t" + dateContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN]
-									); 				   							
-
-					//added by Mike, 20190521
-					rowTotal += dateContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
-				}
-				//added by Mike, 20190521
-				writer.print("\t" + rowTotal); 		
-
-				writer.print("\n"); //blank row 				
-				writer.print("\nHMO (net) : TOTAL (Php)"); 		
-
-				//added by Mike, 20190521
-				rowTotal = 0;
-				
-				for (Integer key : sortedKeyset) {	
-					writer.print( 
-									"\t" + dateContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN]
-									); 				   							
-
-					//added by Mike, 20190521
-					rowTotal += dateContainer.get(key)[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN];
-				}
-				//added by Mike, 20190521
-				writer.print("\t" + rowTotal); 		
-
-				writer.print("\nHMO (net) : PAID (Php)"); 		
-
-				//added by Mike, 20190521
-				rowTotal = 0;
-				
-				for (Integer key : sortedKeyset) {	
-					writer.print( 
-									"\t" + dateContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN]
-									); 				   							
-
-					//added by Mike, 20190521
-					rowTotal += dateContainer.get(key)[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN];
-				}
-				//added by Mike, 20190521
-				writer.print("\t" + rowTotal); 		
-
-				writer.print("\nHMO (net) : UNPAID (Php)"); 		
-
-				//added by Mike, 20190521
-				rowTotal = 0;
-				
-				for (Integer key : sortedKeyset) {	
-					writer.print( 
-									"\t" + dateContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN]
-									); 				   							
-					
-					//added by Mike, 20190521
-					rowTotal += dateContainer.get(key)[OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN];
-				}
-				//added by Mike, 20190521
-				writer.print("\t" + rowTotal); 		
+/*								
+			
 				
 				writer.print("\nHMO (net) : COUNT"); 		
 

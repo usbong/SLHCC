@@ -750,25 +750,53 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_COUNT_COLUMN);
 				s = s.concat("\t\t\t</tr>\n");
 				
+				//added by Mike, 20190602
+				//--------------------------------------------------------------------
+				//space
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t<div><br /></div>\n");
+				s = s.concat("\t\t\t</td>\n");				
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+				//CASH and HMO payment transactions
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>CASH and HMO (net) : TOTAL (PHP)</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+									
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN, OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN);
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>CASH and HMO (net) : PAID (PHP)</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN, OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN);
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>CASH and HMO (net) : UNPAID (PHP)</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN, OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN);
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>CASH and HMO (net) : COUNT</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_COUNT_COLUMN, OUTPUT_NON_HMO_COUNT_COLUMN);
+				s = s.concat("\t\t\t</tr>\n");
+				
 /*								
-			
-				
-				writer.print("\nHMO (net) : COUNT"); 		
-
-				//added by Mike, 20190521
-				rowTotal = 0;
-				
-				for (Integer key : sortedKeyset) {	
-					writer.print( 
-									"\t" + dateContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN]
-									); 				   							
-					
-					//added by Mike, 20190521
-					rowTotal += dateContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
-				}
-				//added by Mike, 20190521
-				writer.print("\t" + rowTotal); 		
-
+	
 				writer.print("\n"); //blank row
 				writer.print("\nCash and HMO (net) : TOTAL (Php)"); 		
 
@@ -852,6 +880,28 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		writer.close();
 	}
 
+	//added by Mike, 20190601
+	private static String autoWriteValuesInRowForAllDateColumns(String s, PrintWriter writer, int columnIndexOne, int columnIndexTwo) {
+		SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(dateContainer.keySet());
+
+		double rowTotal = 0;				
+		for (Integer key : sortedKeyset) {
+			s = s.concat("\t\t\t<td>\n");				
+			s = s.concat( 
+							"\t\t\t\t<b><span>" + df.format(dateContainer.get(key)[columnIndexOne] + dateContainer.get(key)[columnIndexTwo]) + "</span></b>"
+							); 				   							
+			s = s.concat("\t\t\t</td>\n");
+		
+			rowTotal += (dateContainer.get(key)[columnIndexOne] + dateContainer.get(key)[columnIndexTwo]);
+		}
+		
+		s = s.concat("\t\t\t<td>\n");				
+		s = s.concat("\t\t\t\t<b><span>" + df.format(rowTotal) + "</b></span>"); 
+		s = s.concat("\t\t\t</td>\n");
+		
+		return s;
+	}
+	
 	//added by Mike, 20190601
 	private static String autoWriteValuesInRowForAllDateColumns(String s, PrintWriter writer, int columnIndex) {
 		SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(dateContainer.keySet());

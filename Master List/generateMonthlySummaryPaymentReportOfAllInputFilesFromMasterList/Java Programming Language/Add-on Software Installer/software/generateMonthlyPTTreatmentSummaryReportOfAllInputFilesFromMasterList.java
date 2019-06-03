@@ -880,29 +880,29 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		writer.close();
 	}
 
-	//added by Mike, 20190601
+	//added by Mike, 20190601; edited by Mike, 20190602
 	private static String autoWriteValuesInRowForAllDateColumns(String s, PrintWriter writer, int columnIndexOne, int columnIndexTwo) {
 		SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(dateContainer.keySet());
 
 		double rowTotal = 0;				
-		for (Integer key : sortedKeyset) {
+		for (Integer key : sortedKeyset) {			
 			s = s.concat("\t\t\t<td>\n");				
 			s = s.concat( 
-							"\t\t\t\t<b><span>" + df.format(dateContainer.get(key)[columnIndexOne] + dateContainer.get(key)[columnIndexTwo]) + "</span></b>"
-							); 				   							
+							"\t\t\t\t<b><span>" + autoAddCommaToNumberStringValue(df.format(dateContainer.get(key)[columnIndexOne] + dateContainer.get(key)[columnIndexTwo])) + "</span></b>"
+							); 				   														
 			s = s.concat("\t\t\t</td>\n");
 		
 			rowTotal += (dateContainer.get(key)[columnIndexOne] + dateContainer.get(key)[columnIndexTwo]);
 		}
 		
 		s = s.concat("\t\t\t<td>\n");				
-		s = s.concat("\t\t\t\t<b><span>" + df.format(rowTotal) + "</b></span>"); 
+		s = s.concat("\t\t\t\t<b><span>" + autoAddCommaToNumberStringValue(df.format(rowTotal)) + "</b></span>"); 
 		s = s.concat("\t\t\t</td>\n");
 		
 		return s;
 	}
 	
-	//added by Mike, 20190601
+	//added by Mike, 20190601; edited by Mike, 20190602
 	private static String autoWriteValuesInRowForAllDateColumns(String s, PrintWriter writer, int columnIndex) {
 		SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(dateContainer.keySet());
 
@@ -910,7 +910,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		for (Integer key : sortedKeyset) {
 			s = s.concat("\t\t\t<td>\n");				
 			s = s.concat( 
-							"\t\t\t\t<b><span>" + df.format(dateContainer.get(key)[columnIndex]) + "</span></b>"
+							"\t\t\t\t<b><span>" + autoAddCommaToNumberStringValue(df.format(dateContainer.get(key)[columnIndex])) + "</span></b>"
 							); 				   							
 			s = s.concat("\t\t\t</td>\n");
 		
@@ -918,9 +918,30 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		}
 		
 		s = s.concat("\t\t\t<td>\n");				
-		s = s.concat("\t\t\t\t<b><span>" + df.format(rowTotal) + "</b></span>"); 
+		s = s.concat("\t\t\t\t<b><span>" + autoAddCommaToNumberStringValue(df.format(rowTotal)) + "</b></span>"); 
 		s = s.concat("\t\t\t</td>\n");
 		
 		return s;
+	}
+	
+	//added by Mike, 20190602; edited by Mike, 20190603
+	private static String autoAddCommaToNumberStringValue(String number) {
+		StringBuffer sb = new StringBuffer(number);		
+		int placeValueCount=0;
+		int sbLength = sb.length();
+		
+		for (int i=sbLength-3; i>0; i--) { //do not include tenths, hundredths, and the dot 		
+			if (placeValueCount<3) {
+				placeValueCount++;
+			}
+			else {
+				sb.insert(i, ",");
+				placeValueCount=1;
+			}	
+
+//			System.out.println(">>>>" + sb.toString());
+		}
+		
+		return sb.toString();
 	}
 }

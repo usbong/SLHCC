@@ -43,24 +43,27 @@ import java.text.DecimalFormat;
 '
 ' Notes:
 ' 1) To execute the add-on software/application simply use the following command:
-'   java generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterList input201801.txt
+'   java generateMonthlyTreatmentSummaryReportOfAllInputFilesFromMasterList input201801.txt
 ' 
 ' where: "input201801.txt" is the name of the file.
 ' 
 ' 2) To execute a set of input files, e.g. input201801.txt, input201802.txt, you can use the following command: 
-'  java generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterList input*
+'  java generateMonthlyTreatmentSummaryReportOfAllInputFilesFromMasterList input*
 '
 ' where: "input*" means any file in the directory that starts with "input".
 */ 
 
-public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterList {	
+public class generateMonthlyPaymentSummaryReportOfAllInputFilesFromMasterList {	
 	private static boolean isInDebugMode = true;
 	private static String inputFilename = "input201801"; //without extension; default input file
 	
 	private static String startDate = null;
 	private static String endDate = null;
 	
+	private static final int offset = 1;
+	
 	private static final int INPUT_REFERRING_DOCTOR_COLUMN = 15;
+	private static final int INPUT_MEDICAL_DOCTOR_COLUMN = 15+offset; //added by Mike, 20190603
 	private static final int INPUT_NOTES_COLUMN = 0;
 	private static final int INPUT_DATE_COLUMN = 1;
 	private static final int INPUT_CLASS_COLUMN = 8; //HMO and NON-HMO
@@ -83,19 +86,35 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		
 	//the date and the referring doctor are not yet included here
 	//this is for both HMO and NON-HMO transactions
-	private static final int OUTPUT_TOTAL_COLUMNS = 9; 
+	private static final int OUTPUT_TOTAL_COLUMNS = 16; //9; //edited by Mike, 20190603 
 	
-	private static final int OUTPUT_HMO_COUNT_COLUMN = 0; //COUNT
+	private static final int OUTPUT_HMO_TREATMENT_COUNT_COLUMN = 0; //COUNT
 	private static final int OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN = 1;
 	private static final int OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN = 2;
 	private static final int OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN = 3;
 
-	private static final int OUTPUT_NON_HMO_COUNT_COLUMN = 4; //COUNT
+	private static final int OUTPUT_NON_HMO_TREATMENT_COUNT_COLUMN = 4; //COUNT
 	private static final int OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN = 5;
 	private static final int OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN = 6;
 	private static final int OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN = 7;
 
-	private static final int OUTPUT_DATE_ID_COLUMN = 8; //added by Mike, 20181205
+	//edited by Mike, 20190603
+	//private static final int OUTPUT_DATE_ID_COLUMN = 8; //added by Mike, 20181205
+
+	//added by Mike, 20190603
+	private static final int OUTPUT_CONSULTATION_NOT_TREATMENT_OFFSET = 8;
+	
+	//added by Mike, 20190603
+	private static final int OUTPUT_HMO_CONSULTATION_COUNT_COLUMN = 8; //COUNT
+	private static final int OUTPUT_HMO_TOTAL_NET_CONSULTATION_FEE_COLUMN = 9;
+	private static final int OUTPUT_HMO_PAID_NET_CONSULTATION_FEE_COLUMN = 10;
+	private static final int OUTPUT_HMO_UNPAID_NET_CONSULTATION_FEE_COLUMN = 11;
+
+	private static final int OUTPUT_NON_HMO_CONSULTATION_COUNT_COLUMN = 12; //COUNT
+	private static final int OUTPUT_NON_HMO_TOTAL_NET_CONSULTATION_FEE_COLUMN = 13;
+	private static final int OUTPUT_NON_HMO_PAID_NET_CONSULTATION_FEE_COLUMN = 14;
+	private static final int OUTPUT_NON_HMO_UNPAID_NET_CONSULTATION_FEE_COLUMN = 15;
+
 	
 	private static boolean isConsultation; //added by Mike, 20190106
 
@@ -129,8 +148,11 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		PrintWriter writer = new PrintWriter("output/TreatmentMonthlyPaymentSummaryReportOutput.txt", "UTF-8");
 
 		//added by Mike, 20190531
-		PrintWriter MonthlyPaymentSummaryWriter = new PrintWriter("output/MonthlyPaymentSummaryTreatment.html", "UTF-8");	
-				
+		PrintWriter MonthlyPaymentSummaryTreatmentWriter = new PrintWriter("output/MonthlyPaymentSummaryTreatment.html", "UTF-8");	
+
+		//added by Mike, 20190603
+		PrintWriter MonthlyPaymentSummaryConsultationWriter = new PrintWriter("output/MonthlyPaymentSummaryConsultation.html", "UTF-8");	
+		
 		
 		/*referringDoctorContainer = new HashMap<String, double[]>();
 		*/
@@ -163,7 +185,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 			
 			if (inputFilename.toLowerCase().contains("consultation")) {
 				isConsultation=true;
-				continue;
+//				continue; //edited by Mike, 20190603
 			}
 			else {
 				isConsultation=false;
@@ -230,8 +252,14 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 					continue;
 				}
 
-				//edited by Mike, 20190603
-				processPTTreatment(inputColumns, i);						
+				if (isConsultation) {
+					//added by Mike, 20190603
+					processConsultationTransaction(inputColumns, i);						
+				}
+				else {
+					//edited by Mike, 20190603
+					processTreatmentTransaction(inputColumns, i);						
+				}				
 			}			
 /*			
 			//added by Mike, 20181205
@@ -253,21 +281,13 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		}
 */
 		
-		if (!isTreatmentInputFileEmpty) {			
-			processWriteOutputFileMonthlyPaymentSummary(MonthlyPaymentSummaryWriter, TREATMENT_FILE_TYPE);
-/*			
-			processWriteOutputFileTreatment(treatmentWriter);
-			//added by Mike, 20190426
-			processWriteOutputFileTreatmentUnclassifiedDiagnosedCases(treatmentUnclassifiedDiagnosedCasesWriter);
-			
-			//added by Mike, 20190503; edited by Mike, 20190504
-			processWriteOutputFileMonthlyStatistics(treatmentCountMonthlyStatisticsWriter, TREATMENT_FILE_TYPE);		
-			processWriteOutputFileMonthlyStatistics(consultationCountMonthlyStatisticsWriter, CONSULTATION_FILE_TYPE);		
-			processWriteOutputFileMonthlyStatistics(procedureCountMonthlyStatisticsWriter, PROCEDURE_FILE_TYPE);		
-*/
-		}
-		else {
+		processWriteOutputFileMonthlyPaymentSummary(MonthlyPaymentSummaryTreatmentWriter, TREATMENT_FILE_TYPE);
+		
+		processWriteOutputFileMonthlyPaymentSummary(MonthlyPaymentSummaryConsultationWriter, CONSULTATION_FILE_TYPE);
+		
+		if ((isTreatmentInputFileEmpty) && (isConsultationInputFileEmpty)) {
 			System.out.println("\nThere is no Tab-delimited .txt input file in the \"input\\treatment\" folder.\n");
+			return;
 		}
 
 		//TO-DO: -remove: these
@@ -344,11 +364,11 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		
 		for (Integer key : sortedKeyset) {	
 			writer.print( 
-							"\t" + dateContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN]
+							"\t" + dateContainer.get(key)[OUTPUT_NON_HMO_TREATMENT_COUNT_COLUMN]
 							); 				   							
 
 			//added by Mike, 20190521
-			rowTotal += dateContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
+			rowTotal += dateContainer.get(key)[OUTPUT_NON_HMO_TREATMENT_COUNT_COLUMN];
 		}
 		//added by Mike, 20190521
 		writer.print("\t" + rowTotal); 		
@@ -409,11 +429,11 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		
 		for (Integer key : sortedKeyset) {	
 			writer.print( 
-							"\t" + dateContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN]
+							"\t" + dateContainer.get(key)[OUTPUT_HMO_TREATMENT_COUNT_COLUMN]
 							); 				   							
 			
 			//added by Mike, 20190521
-			rowTotal += dateContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
+			rowTotal += dateContainer.get(key)[OUTPUT_HMO_TREATMENT_COUNT_COLUMN];
 		}
 		//added by Mike, 20190521
 		writer.print("\t" + rowTotal); 		
@@ -479,14 +499,14 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 		rowTotal = 0;
 
 		for (Integer key : sortedKeyset) {	
-			double count = dateContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN];
+			double count = dateContainer.get(key)[OUTPUT_HMO_TREATMENT_COUNT_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_TREATMENT_COUNT_COLUMN];
 		
 			writer.print( 
 							"\t" + count
 							); 				   							
 
 			//added by Mike, 20190521
-			rowTotal += (dateContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN]);		
+			rowTotal += (dateContainer.get(key)[OUTPUT_HMO_TREATMENT_COUNT_COLUMN] + dateContainer.get(key)[OUTPUT_NON_HMO_TREATMENT_COUNT_COLUMN]);		
 		}
 
 		//added by Mike, 20190521
@@ -525,7 +545,12 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 			rowCount=0;
 		}
 
-		boolean hasWrittenAutoCalculatedValue=false;
+		//edited by Mike, 20190603
+		//boolean hasWrittenAutoCalculatedValue=false;
+		
+		//added by Mike, 20190603
+		int offset = 0;
+
 
 		//count/compute the number-based values of inputColumns 
 		while (sc.hasNextLine()) {
@@ -552,6 +577,9 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 						break;
 					case CONSULTATION_FILE_TYPE:
 						fileTypeString = "CONSULTATION";
+						offset = OUTPUT_CONSULTATION_NOT_TREATMENT_OFFSET;
+						
+						System.out.println(">>>> CONSULTATION" + offset);
 						break;
 					default:// PROCEDURE_FILE_TYPE:
 						fileTypeString = "PROCEDURE";
@@ -561,6 +589,9 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = s.concat(fileTypeString+"\n");
 			}			
 						
+						
+			System.out.println(">>>>" + offset);
+						
 			if (s.contains("<!-- DATE VALUE Column -->")) {
 				s = s.concat("\n");
 				s = s.concat("\t\t\t<!-- DATE: Column 1 -->\n");
@@ -568,7 +599,10 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = s.concat("\t\t\t\t<div class=\"date\"><b><span class=\"transaction_type_column_header\">DATE:</span></b></div>\n");
 				s = s.concat("\t\t\t</td>\n");
 				
-				for(int i=0; i<dateValuesArrayInt.length; i++) {
+				//edited by Mike, 20190603
+//				for(int i=0; i<dateValuesArrayInt.length; i++) {
+				//TO-DO: -update: this
+				for(int i=0; i<dateValuesArrayInt.length/2; i++) {
 					int dateKey = dateValuesArrayInt[i];
 					s = s.concat("\n");
 					s = s.concat("\t\t\t<!-- DATE "+dateKey+": Column 1 -->\n");
@@ -597,7 +631,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>Cash (net) : TOTAL (PHP)</span></b></div>\n"); 		
 				s = s.concat("\t\t\t</td>\n");
 
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN);
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN+offset);
 				s = s.concat("\t\t\t</tr>\n");
 				//--------------------------------------------------------------------
 				
@@ -606,7 +640,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = s.concat("\t\t\t\t<b><div class=\"transaction_type_column\"><span>Cash (net) : PAID (PHP)</span></b></div>"); 		
 				s = s.concat("\t\t\t</td>\n");
 
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN);
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN+offset);
 				s = s.concat("\t\t\t</tr>\n");
 				//--------------------------------------------------------------------
 				
@@ -615,7 +649,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>Cash (net) : UNPAID (PHP)</span></b></div>"); 		
 				s = s.concat("\t\t\t</td>\n");
 
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN);
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN+offset);
 				s = s.concat("\t\t\t</tr>\n");
 				//--------------------------------------------------------------------
 				
@@ -624,7 +658,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>Cash (net) : COUNT</span></b></div>"); 		
 				s = s.concat("\t\t\t</td>\n");
 
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_COUNT_COLUMN);
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_TREATMENT_COUNT_COLUMN+offset);
 				s = s.concat("\t\t\t</tr>\n");
 				//--------------------------------------------------------------------
 				//space
@@ -640,7 +674,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>HMO (net) : TOTAL (PHP)</span></b></div>"); 		
 				s = s.concat("\t\t\t</td>\n");
 
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN);
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN+offset);
 				s = s.concat("\t\t\t</tr>\n");
 				//--------------------------------------------------------------------
 
@@ -649,7 +683,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>HMO (net) : PAID (PHP)</span></b></div>"); 		
 				s = s.concat("\t\t\t</td>\n");
 
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN);
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN+offset);
 				s = s.concat("\t\t\t</tr>\n");
 				//--------------------------------------------------------------------
 
@@ -658,7 +692,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>HMO (net) : UNPAID (PHP)</span></b></div>"); 		
 				s = s.concat("\t\t\t</td>\n");
 
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN);
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN+offset);
 				s = s.concat("\t\t\t</tr>\n");
 				//--------------------------------------------------------------------
 
@@ -667,7 +701,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>HMO (net) : COUNT</span></b></div>"); 		
 				s = s.concat("\t\t\t</td>\n");
 
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_COUNT_COLUMN);
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_TREATMENT_COUNT_COLUMN+offset);
 				s = s.concat("\t\t\t</tr>\n");
 				
 				//added by Mike, 20190602
@@ -685,7 +719,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>CASH and HMO (net) : TOTAL (PHP)</span></b></div>"); 		
 				s = s.concat("\t\t\t</td>\n");
 									
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN, OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN);
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN+offset, OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN+offset);
 				s = s.concat("\t\t\t</tr>\n");
 				//--------------------------------------------------------------------
 
@@ -694,7 +728,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>CASH and HMO (net) : PAID (PHP)</span></b></div>"); 		
 				s = s.concat("\t\t\t</td>\n");
 
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN, OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN);
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN+offset, OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN+offset);
 				s = s.concat("\t\t\t</tr>\n");
 				//--------------------------------------------------------------------
 
@@ -703,7 +737,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>CASH and HMO (net) : UNPAID (PHP)</span></b></div>"); 		
 				s = s.concat("\t\t\t</td>\n");
 
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN, OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN);
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN+offset, OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN+offset);
 				s = s.concat("\t\t\t</tr>\n");
 				//--------------------------------------------------------------------
 
@@ -712,7 +746,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>CASH and HMO (net) : COUNT</span></b></div>"); 		
 				s = s.concat("\t\t\t</td>\n");
 
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_COUNT_COLUMN, OUTPUT_NON_HMO_COUNT_COLUMN);
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_TREATMENT_COUNT_COLUMN+offset, OUTPUT_NON_HMO_TREATMENT_COUNT_COLUMN+offset);
 				s = s.concat("\t\t\t</tr>\n");
 			}
 			writer.print(s + "\n");		
@@ -788,7 +822,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 	}
 	
 	//added by Mike, 20190603
-	private static void processPTTreatment(String[] inputColumns, int i) {
+	private static void processTreatmentTransaction(String[] inputColumns, int i) {
 //				if (!referringDoctorContainer.containsKey(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])) {
 		if (!dateContainer.containsKey(dateValuesArrayInt[i])) {
 			columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
@@ -797,7 +831,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 			if ((inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) ||
 				(inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
 
-				columnValuesArray[OUTPUT_HMO_COUNT_COLUMN] = 1;
+				columnValuesArray[OUTPUT_HMO_TREATMENT_COUNT_COLUMN] = 1;
 				columnValuesArray[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 
 				if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
@@ -808,7 +842,7 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 				}
 			}
 			else {
-				columnValuesArray[OUTPUT_NON_HMO_COUNT_COLUMN] = 1;
+				columnValuesArray[OUTPUT_NON_HMO_TREATMENT_COUNT_COLUMN] = 1;
 				columnValuesArray[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 
 				if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
@@ -827,11 +861,11 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 			if ((inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) ||
 				(inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
 /*							
-				referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_COUNT_COLUMN]++;					
+				referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_TREATMENT_COUNT_COLUMN]++;					
 				referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
 					+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 */
-				dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN]++;					
+				dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_TREATMENT_COUNT_COLUMN]++;					
 				dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
 					+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 					
@@ -850,11 +884,11 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 			}
 			else {
 /*						
-				referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_COUNT_COLUMN]++;					
+				referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_TREATMENT_COUNT_COLUMN]++;					
 				referringDoctorContainer.get(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
 					+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 */
-				dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN]++;					
+				dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_TREATMENT_COUNT_COLUMN]++;					
 				dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
 					+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 					
@@ -872,5 +906,122 @@ public class generateMonthlyPTTreatmentSummaryReportOfAllInputFilesFromMasterLis
 
 			}
 		}
-	}
+	}	
+	
+	//added by Mike, 20190603
+	private static void processConsultationTransaction(String[] inputColumns, int i) {//added by Mike, 20190110
+		if (!inputColumns[INPUT_MEDICAL_DOCTOR_COLUMN].toLowerCase().trim().contains("syson")) { //TODO: update this if there are two (2) Medical Doctors with the keyword Syson
+			return;
+		}
+		
+		//added by Mike, 20190110
+		if (inputColumns[INPUT_CLASS_COLUMN+offset].toLowerCase().trim().contains("nc")) {
+			return;
+		}		
+
+//				if (!referringDoctorContainer.containsKey(inputColumns[INPUT_MEDICAL_DOCTOR_COLUMN])) {
+		if (!dateContainer.containsKey(dateValuesArrayInt[i])) {
+			columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
+			
+			//edited by Mike, 20181206
+			if ((inputColumns[INPUT_CLASS_COLUMN+offset].contains("HMO")) ||
+				(inputColumns[INPUT_CLASS_COLUMN+offset].contains("SLR"))) {
+
+				columnValuesArray[OUTPUT_HMO_CONSULTATION_COUNT_COLUMN] = 1;
+				
+				//added by Mike, 20190603
+				if (inputColumns[INPUT_NET_PF_COLUMN+offset].toLowerCase().equals("no charge")) {
+					return;
+				}
+
+				columnValuesArray[OUTPUT_HMO_TOTAL_NET_CONSULTATION_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN+offset]);
+
+				if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+					columnValuesArray[OUTPUT_HMO_PAID_NET_CONSULTATION_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN+offset]);
+				}
+				else {
+					columnValuesArray[OUTPUT_HMO_UNPAID_NET_CONSULTATION_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN+offset]);
+				}
+			}
+			else {
+				columnValuesArray[OUTPUT_NON_HMO_CONSULTATION_COUNT_COLUMN] = 1;
+				
+				//added by Mike, 20190603
+				if (inputColumns[INPUT_NET_PF_COLUMN+offset].toLowerCase().equals("no charge")) {
+					return;
+				}
+
+				columnValuesArray[OUTPUT_NON_HMO_TOTAL_NET_CONSULTATION_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN+offset]);
+
+				if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+					columnValuesArray[OUTPUT_NON_HMO_PAID_NET_CONSULTATION_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN+offset]);
+				}
+				else {
+					columnValuesArray[OUTPUT_NON_HMO_UNPAID_NET_CONSULTATION_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN+offset]);
+				}
+			}
+
+//					referringDoctorContainer.put(inputColumns[INPUT_MEDICAL_DOCTOR_COLUMN], columnValuesArray);
+			dateContainer.put(dateValuesArrayInt[i], columnValuesArray);
+		}
+		else {
+			//edited by Mike, 20181206
+			if ((inputColumns[INPUT_CLASS_COLUMN+offset].contains("HMO")) ||
+				(inputColumns[INPUT_CLASS_COLUMN+offset].contains("SLR"))) {
+/*							
+				referringDoctorContainer.get(inputColumns[INPUT_MEDICAL_DOCTOR_COLUMN])[OUTPUT_HMO_CONSULTATION_COUNT_COLUMN]++;					
+				referringDoctorContainer.get(inputColumns[INPUT_MEDICAL_DOCTOR_COLUMN])[OUTPUT_HMO_TOTAL_NET_CONSULTATION_FEE_COLUMN] 
+					+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+*/
+				dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_CONSULTATION_COUNT_COLUMN]++;					
+				//added by Mike, 20190603
+				if (inputColumns[INPUT_NET_PF_COLUMN+offset].toLowerCase().equals("no charge")) {
+					return;
+				}
+
+				dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_TOTAL_NET_CONSULTATION_FEE_COLUMN] 
+					+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN+offset]);
+					
+				if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+/*							referringDoctorContainer.get(inputColumns[INPUT_MEDICAL_DOCTOR_COLUMN])[OUTPUT_HMO_PAID_NET_CONSULTATION_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+*/
+					dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_PAID_NET_CONSULTATION_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN+offset]);
+				}
+				else {
+/*							
+					referringDoctorContainer.get(inputColumns[INPUT_MEDICAL_DOCTOR_COLUMN])[OUTPUT_HMO_UNPAID_NET_CONSULTATION_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+*/
+					dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_UNPAID_NET_CONSULTATION_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN+offset]);
+					
+				}
+			}
+			else {
+/*						
+				referringDoctorContainer.get(inputColumns[INPUT_MEDICAL_DOCTOR_COLUMN])[OUTPUT_NON_HMO_CONSULTATION_COUNT_COLUMN]++;					
+				referringDoctorContainer.get(inputColumns[INPUT_MEDICAL_DOCTOR_COLUMN])[OUTPUT_NON_HMO_TOTAL_NET_CONSULTATION_FEE_COLUMN] 
+					+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+*/
+				dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_CONSULTATION_COUNT_COLUMN]++;					
+				//added by Mike, 20190603
+				if (inputColumns[INPUT_NET_PF_COLUMN+offset].toLowerCase().equals("no charge")) {
+					return;
+				}
+				
+				dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_TOTAL_NET_CONSULTATION_FEE_COLUMN] 
+					+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN+offset]);
+					
+				if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
+/*							referringDoctorContainer.get(inputColumns[INPUT_MEDICAL_DOCTOR_COLUMN])[OUTPUT_NON_HMO_PAID_NET_CONSULTATION_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+*/
+					dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_PAID_NET_CONSULTATION_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN+offset]);
+				}
+				else {
+/*							
+					referringDoctorContainer.get(inputColumns[INPUT_MEDICAL_DOCTOR_COLUMN])[OUTPUT_NON_HMO_UNPAID_NET_CONSULTATION_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
+*/
+					dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_UNPAID_NET_CONSULTATION_FEE_COLUMN] += Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN+offset]);							
+				}
+			}
+		}					
+	}			
 }

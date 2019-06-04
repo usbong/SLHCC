@@ -75,8 +75,8 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static boolean isNetPFComputed = false; //added by Mike, 20190131
 
 	private static String inputFilename = "input201801"; //without extension; default input file
-	//added by Mike, 20190413
-	private static String diagnosedCasesListInputFilename = "diagnosedCasesList"; //without extension; default input file 
+	//added by Mike, 20190413; edited by Mike, 20190604
+	private static String diagnosedCasesListInputFilename = "KnownDiagnosedCasesList"; //without extension; default input file 
 
 	//added by Mike, 20190414
 	private static String inputOutputTemplateFilenameTreatment = "assets\\templates\\generateMonthlySummaryReportOutputTemplateTreatment";//without extension; default input file 
@@ -1468,7 +1468,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			//edited by Mike, 20190424
 			String inputMedicalDoctor = inputColumns[INPUT_REFERRING_DOCTOR_COLUMN].trim().toUpperCase();
 	
-			System.out.println("inputMedicalDoctor: "+inputMedicalDoctor);
+//			System.out.println("inputMedicalDoctor: "+inputMedicalDoctor);
 	
 			if (!medicalDoctorContainer.containsKey(inputMedicalDoctor)) {
 				columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
@@ -1561,7 +1561,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			//added by Mike, 20190125; edited by Mike, 20190424
 			String inputMedicalDoctor = inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].trim().toUpperCase();
 				
-			System.out.println("CONSULTATION inputMedicalDoctor: "+inputMedicalDoctor);
+//			System.out.println("CONSULTATION inputMedicalDoctor: "+inputMedicalDoctor);
 				
 			if (!medicalDoctorContainer.containsKey(inputMedicalDoctor)) {
 				columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
@@ -1826,7 +1826,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				
 		for (String medicalDoctorKey : sortedMedicalDoctorKeyset) {			
 //TO-DO: resolve issue with OR# (Consultation) also being added into medicalDoctorContainer		
-System.out.println("medical doctor: "+medicalDoctorKey);		
+//System.out.println("medical doctor: "+medicalDoctorKey);		
 			classificationContainerHashmap = new HashMap<String, double[]>();
 
 			for (String key : sortedHmoContainerKeyset) {						
@@ -2118,7 +2118,7 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 	private static void processWriteOutputFileTreatmentUnclassifiedDiagnosedCases(PrintWriter writer) throws Exception {
 		File f = new File(inputOutputTemplateFilenameTreatmentUnclassifiedDiagnosedCases+".html");
 
-		System.out.println("inputOutputTemplateFilenameTreatmentUnclassifiedDiagnosedCases: " + inputOutputTemplateFilenameTreatmentUnclassifiedDiagnosedCases);
+//		System.out.println("inputOutputTemplateFilenameTreatmentUnclassifiedDiagnosedCases: " + inputOutputTemplateFilenameTreatmentUnclassifiedDiagnosedCases);
 	
 		Scanner sc = new Scanner(new FileInputStream(f), "UTF-8");				
 	
@@ -2183,7 +2183,7 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 //		File inputDataFile = new File(inputDataFilenameTreatmentMonthlyStatistics+".txt");	
 		File f = new File(inputOutputTemplateFilenameMonthlyStatistics+".html");
 
-		System.out.println("inputOutputTemplateFilenameMonthlyStatistics: " + inputOutputTemplateFilenameMonthlyStatistics);
+//		System.out.println("inputOutputTemplateFilenameMonthlyStatistics: " + inputOutputTemplateFilenameMonthlyStatistics);
 		
 		Scanner sc = new Scanner(new FileInputStream(f), "UTF-8");				
 	
@@ -2346,7 +2346,7 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 	private static void processWriteOutputFileTreatment(PrintWriter writer) throws Exception {
 		File f = new File(inputOutputTemplateFilenameTreatment+".html");
 
-		System.out.println("inputOutputTemplateFilenameTreatment: " + inputOutputTemplateFilenameTreatment);
+//		System.out.println("inputOutputTemplateFilenameTreatment: " + inputOutputTemplateFilenameTreatment);
 								
 		Scanner sc = new Scanner(new FileInputStream(f), "UTF-8");				
 	
@@ -2492,7 +2492,7 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 	private static void processWriteOutputFileConsultation(PrintWriter writer) throws Exception {
 		File f = new File(inputOutputTemplateFilenameConsultation+".html");
 
-		System.out.println("inputOutputTemplateFilenameConsultation: " + inputOutputTemplateFilenameConsultation);
+//		System.out.println("inputOutputTemplateFilenameConsultation: " + inputOutputTemplateFilenameConsultation);
 								
 		Scanner sc = new Scanner(new FileInputStream(f), "UTF-8");				
 	
@@ -3092,7 +3092,7 @@ System.out.println("medical doctor: "+medicalDoctorKey);
 		SortedSet<String> sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset = new TreeSet<String>(classificationContainerPerMedicalDoctor.keySet());
 		
 		for (String key : sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset) {	
-			System.out.println(">>>> key: "+key);
+//			System.out.println(">>>> key: "+key);
 			consolidateKeysAndTheirValuesInContainer(classificationContainerPerMedicalDoctor.get(key), HMO_CLASSIFICATION_CONTAINER_PER_MEDICAL_DOCTOR_CONTAINER_TYPE);
 /*			consolidateKeysAndTheirValuesInContainer(classificationContainerPerMedicalDoctor.get(key), NON_HMO_CLASSIFICATION_CONTAINER_PER_MEDICAL_DOCTOR_CONTAINER_TYPE);
 */

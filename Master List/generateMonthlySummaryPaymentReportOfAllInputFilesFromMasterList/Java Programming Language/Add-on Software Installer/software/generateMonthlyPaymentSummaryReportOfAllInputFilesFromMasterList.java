@@ -145,8 +145,9 @@ public class generateMonthlyPaymentSummaryReportOfAllInputFilesFromMasterList {
 	public static void main ( String[] args ) throws Exception
 	{			
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
+/*		//edited by Mike, 20190604		
 		PrintWriter writer = new PrintWriter("output/TreatmentMonthlyPaymentSummaryReportOutput.txt", "UTF-8");
-
+*/
 		//added by Mike, 20190531
 		PrintWriter MonthlyPaymentSummaryTreatmentWriter = new PrintWriter("output/MonthlyPaymentSummaryTreatment.html", "UTF-8");	
 
@@ -289,8 +290,254 @@ public class generateMonthlyPaymentSummaryReportOfAllInputFilesFromMasterList {
 			System.out.println("\nThere is no Tab-delimited .txt input file in the \"input\\treatment\" folder.\n");
 			return;
 		}
+	}
+	
+	private static String getMonthYear(String date) {
+		StringBuffer sb = new StringBuffer(date);				
+		return sb.substring(0,3).concat("-").concat(sb.substring(sb.length()-2,sb.length()));
+	}
+	
+	//added by Mike, 20181030
+	private static void makeFilePath(String filePath) {
+		File directory = new File(filePath);		
+		if (!directory.exists() && !directory.mkdirs()) 
+    	{
+    		System.out.println("File Path to file could not be made.");
+    	}    			
+	}
+	
+	//added by Mike, 20190531
+	private static void processWriteOutputFileMonthlyPaymentSummary(PrintWriter writer, int fileType) throws Exception {		
+//		File inputDataFile = new File(inputDataFilenameTreatmentMonthlyStatistics+".txt");	
+		File f = new File(inputOutputTemplateFilenameMonthlyPaymentSummary+".html");
 
-		//TO-DO: -remove: these
+//		System.out.println("inputOutputTemplateFilenameMonthlyStatistics: " + inputOutputTemplateFilenameMonthlyStatistics);
+		
+		Scanner sc = new Scanner(new FileInputStream(f), "UTF-8");				
+	
+		String s;		
+//			s=sc.nextLine(); //skip the first row, which is the input file's table headers
+
+		if (isInDebugMode) {
+			rowCount=0;
+		}
+
+		//edited by Mike, 20190603
+		//boolean hasWrittenAutoCalculatedValue=false;
+		
+		//added by Mike, 20190603
+		int offset = 0;
+
+
+		//count/compute the number-based values of inputColumns 
+		while (sc.hasNextLine()) {
+			s=sc.nextLine();
+/*			
+			//if the row is blank
+			if (s.trim().equals("")) {
+				continue;
+			}
+*/			
+			if (isInDebugMode) {
+				rowCount++;
+//				System.out.println("rowCount: "+rowCount);
+			}
+			
+//			s = s.replace("<?php echo $data['date'];?>", "" + dateValue.toUpperCase());
+
+			//added by Mike, 20190504
+			if (s.contains("<!-- FILE TYPE  -->")) {
+				String fileTypeString = "";
+				switch (fileType) {
+					case TREATMENT_FILE_TYPE:
+						fileTypeString = "TREATMENT";
+						break;
+					case CONSULTATION_FILE_TYPE:
+						fileTypeString = "CONSULTATION";
+						offset = OUTPUT_CONSULTATION_NOT_TREATMENT_OFFSET;
+						
+//						System.out.println(">>>> CONSULTATION" + offset);
+						break;
+					default:// PROCEDURE_FILE_TYPE:
+						fileTypeString = "PROCEDURE";
+						break;
+				}			
+				s = s.concat("\n");
+				s = s.concat(fileTypeString+"\n");
+			}			
+						
+						
+//			System.out.println(">>>>" + offset);
+						
+			if (s.contains("<!-- DATE VALUE Column -->")) {
+				s = s.concat("\n");
+				s = s.concat("\t\t\t<!-- DATE: Column 1 -->\n");
+				s = s.concat("\t\t\t<td colspan=\"1\">\n");
+				s = s.concat("\t\t\t\t<div class=\"date\"><b><span class=\"transaction_type_column_header\">DATE:</span></b></div>\n");
+				s = s.concat("\t\t\t</td>\n");
+				
+				//edited by Mike, 20190603
+//				for(int i=0; i<dateValuesArrayInt.length; i++) {
+				//TO-DO: -update: this
+				for(int i=0; i<dateValuesArrayInt.length/2; i++) {
+					int dateKey = dateValuesArrayInt[i];
+					s = s.concat("\n");
+					s = s.concat("\t\t\t<!-- DATE "+dateKey+": Column 1 -->\n");
+					s = s.concat("\t\t\t<td colspan=\"1\">\n");
+					s = s.concat("\t\t\t\t<div class=\"date\"><b><span>"+dateKey+"</span></b></div>\n");
+					s = s.concat("\t\t\t</td>\n");
+//						System.out.println("yearKey: "+yearKey);
+//						System.out.println(i+": "+inputMonthRowYearColumns[i+1]);					
+				}
+				//s = s.concat("\n");			
+				
+				s = s.concat("\n");				
+				s = s.concat("\t\t\t<!-- TOTAL: Column 1 -->\n");
+				s = s.concat("\t\t\t<td colspan=\"1\">\n");
+				s = s.concat("\t\t\t\t<b><span>TOTAL</span></b>\n");
+				s = s.concat("\t\t\t</td>\n");
+			}
+
+			if (s.contains("<!-- TRANSACTION TYPE AND VALUE Rows -->")) {		
+				s = s.concat("\n");
+				
+				//--------------------------------------------------------------------
+				//CASH payment transactions
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>Cash (net) : TOTAL (PHP)</span></b></div>\n"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN+offset);
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+				
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<b><div class=\"transaction_type_column\"><span>Cash (net) : PAID (PHP)</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN+offset);
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+				
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>Cash (net) : UNPAID (PHP)</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN+offset);
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+				
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>Cash (net) : COUNT</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_TREATMENT_COUNT_COLUMN+offset);
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+				//space
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t<div><br /></div>\n");
+				s = s.concat("\t\t\t</td>\n");				
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+				//HMO payment transactions
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>HMO (net) : TOTAL (PHP)</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN+offset);
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>HMO (net) : PAID (PHP)</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN+offset);
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>HMO (net) : UNPAID (PHP)</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN+offset);
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>HMO (net) : COUNT</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_TREATMENT_COUNT_COLUMN+offset);
+				s = s.concat("\t\t\t</tr>\n");
+				
+				//added by Mike, 20190602
+				//--------------------------------------------------------------------
+				//space
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t<div><br /></div>\n");
+				s = s.concat("\t\t\t</td>\n");				
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+				//CASH and HMO payment transactions
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>CASH and HMO (net) : TOTAL (PHP)</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+									
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN+offset, OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN+offset);
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>CASH and HMO (net) : PAID (PHP)</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN+offset, OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN+offset);
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>CASH and HMO (net) : UNPAID (PHP)</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN+offset, OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN+offset);
+				s = s.concat("\t\t\t</tr>\n");
+				//--------------------------------------------------------------------
+
+				s = s.concat("\t\t\t<tr>\n");
+				s = s.concat("\t\t\t<td>\n");				
+				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>CASH and HMO (net) : COUNT</span></b></div>"); 		
+				s = s.concat("\t\t\t</td>\n");
+
+				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_TREATMENT_COUNT_COLUMN+offset, OUTPUT_NON_HMO_TREATMENT_COUNT_COLUMN+offset);
+				s = s.concat("\t\t\t</tr>\n");
+			}
+			writer.print(s + "\n");		
+			
+		}
+		
+		writer.close();
+	}
+
+	//added by Mike, 20190604
+	//Note that the output .txt file is Tab-delimited.
+	//At present, we do not use this method. 
+	//TO-DO: -update: this to also be for Consultation transactions
+	private static void processWriteOutputFileMonthlyPaymentSummaryAsTxtFile(PrintWriter writer, int fileType) throws Exception {		
 		//added by Mike, 20181118
 		writer.print("Cash and HMO PT TREATMENT Monthly Summary Report\n");
 
@@ -515,247 +762,6 @@ public class generateMonthlyPaymentSummaryReportOfAllInputFilesFromMasterList {
 		writer.close();
 	}
 	
-	private static String getMonthYear(String date) {
-		StringBuffer sb = new StringBuffer(date);				
-		return sb.substring(0,3).concat("-").concat(sb.substring(sb.length()-2,sb.length()));
-	}
-	
-	//added by Mike, 20181030
-	private static void makeFilePath(String filePath) {
-		File directory = new File(filePath);		
-		if (!directory.exists() && !directory.mkdirs()) 
-    	{
-    		System.out.println("File Path to file could not be made.");
-    	}    			
-	}
-	
-	//added by Mike, 20190531
-	private static void processWriteOutputFileMonthlyPaymentSummary(PrintWriter writer, int fileType) throws Exception {		
-//		File inputDataFile = new File(inputDataFilenameTreatmentMonthlyStatistics+".txt");	
-		File f = new File(inputOutputTemplateFilenameMonthlyPaymentSummary+".html");
-
-//		System.out.println("inputOutputTemplateFilenameMonthlyStatistics: " + inputOutputTemplateFilenameMonthlyStatistics);
-		
-		Scanner sc = new Scanner(new FileInputStream(f), "UTF-8");				
-	
-		String s;		
-//			s=sc.nextLine(); //skip the first row, which is the input file's table headers
-
-		if (isInDebugMode) {
-			rowCount=0;
-		}
-
-		//edited by Mike, 20190603
-		//boolean hasWrittenAutoCalculatedValue=false;
-		
-		//added by Mike, 20190603
-		int offset = 0;
-
-
-		//count/compute the number-based values of inputColumns 
-		while (sc.hasNextLine()) {
-			s=sc.nextLine();
-/*			
-			//if the row is blank
-			if (s.trim().equals("")) {
-				continue;
-			}
-*/			
-			if (isInDebugMode) {
-				rowCount++;
-//				System.out.println("rowCount: "+rowCount);
-			}
-			
-//			s = s.replace("<?php echo $data['date'];?>", "" + dateValue.toUpperCase());
-
-			//added by Mike, 20190504
-			if (s.contains("<!-- FILE TYPE  -->")) {
-				String fileTypeString = "";
-				switch (fileType) {
-					case TREATMENT_FILE_TYPE:
-						fileTypeString = "TREATMENT";
-						break;
-					case CONSULTATION_FILE_TYPE:
-						fileTypeString = "CONSULTATION";
-						offset = OUTPUT_CONSULTATION_NOT_TREATMENT_OFFSET;
-						
-						System.out.println(">>>> CONSULTATION" + offset);
-						break;
-					default:// PROCEDURE_FILE_TYPE:
-						fileTypeString = "PROCEDURE";
-						break;
-				}			
-				s = s.concat("\n");
-				s = s.concat(fileTypeString+"\n");
-			}			
-						
-						
-			System.out.println(">>>>" + offset);
-						
-			if (s.contains("<!-- DATE VALUE Column -->")) {
-				s = s.concat("\n");
-				s = s.concat("\t\t\t<!-- DATE: Column 1 -->\n");
-				s = s.concat("\t\t\t<td colspan=\"1\">\n");
-				s = s.concat("\t\t\t\t<div class=\"date\"><b><span class=\"transaction_type_column_header\">DATE:</span></b></div>\n");
-				s = s.concat("\t\t\t</td>\n");
-				
-				//edited by Mike, 20190603
-//				for(int i=0; i<dateValuesArrayInt.length; i++) {
-				//TO-DO: -update: this
-				for(int i=0; i<dateValuesArrayInt.length/2; i++) {
-					int dateKey = dateValuesArrayInt[i];
-					s = s.concat("\n");
-					s = s.concat("\t\t\t<!-- DATE "+dateKey+": Column 1 -->\n");
-					s = s.concat("\t\t\t<td colspan=\"1\">\n");
-					s = s.concat("\t\t\t\t<div class=\"date\"><b><span>"+dateKey+"</span></b></div>\n");
-					s = s.concat("\t\t\t</td>\n");
-//						System.out.println("yearKey: "+yearKey);
-//						System.out.println(i+": "+inputMonthRowYearColumns[i+1]);					
-				}
-				//s = s.concat("\n");			
-				
-				s = s.concat("\n");				
-				s = s.concat("\t\t\t<!-- TOTAL: Column 1 -->\n");
-				s = s.concat("\t\t\t<td colspan=\"1\">\n");
-				s = s.concat("\t\t\t\t<b><span>TOTAL</span></b>\n");
-				s = s.concat("\t\t\t</td>\n");
-			}
-
-			if (s.contains("<!-- TRANSACTION TYPE AND VALUE Rows -->")) {		
-				s = s.concat("\n");
-				
-				//--------------------------------------------------------------------
-				//CASH payment transactions
-				s = s.concat("\t\t\t<tr>\n");
-				s = s.concat("\t\t\t<td>\n");				
-				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>Cash (net) : TOTAL (PHP)</span></b></div>\n"); 		
-				s = s.concat("\t\t\t</td>\n");
-
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN+offset);
-				s = s.concat("\t\t\t</tr>\n");
-				//--------------------------------------------------------------------
-				
-				s = s.concat("\t\t\t<tr>\n");
-				s = s.concat("\t\t\t<td>\n");				
-				s = s.concat("\t\t\t\t<b><div class=\"transaction_type_column\"><span>Cash (net) : PAID (PHP)</span></b></div>"); 		
-				s = s.concat("\t\t\t</td>\n");
-
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN+offset);
-				s = s.concat("\t\t\t</tr>\n");
-				//--------------------------------------------------------------------
-				
-				s = s.concat("\t\t\t<tr>\n");
-				s = s.concat("\t\t\t<td>\n");				
-				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>Cash (net) : UNPAID (PHP)</span></b></div>"); 		
-				s = s.concat("\t\t\t</td>\n");
-
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN+offset);
-				s = s.concat("\t\t\t</tr>\n");
-				//--------------------------------------------------------------------
-				
-				s = s.concat("\t\t\t<tr>\n");
-				s = s.concat("\t\t\t<td>\n");				
-				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>Cash (net) : COUNT</span></b></div>"); 		
-				s = s.concat("\t\t\t</td>\n");
-
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_NON_HMO_TREATMENT_COUNT_COLUMN+offset);
-				s = s.concat("\t\t\t</tr>\n");
-				//--------------------------------------------------------------------
-				//space
-				s = s.concat("\t\t\t<tr>\n");
-				s = s.concat("\t\t\t<td>\n");				
-				s = s.concat("\t\t\t<div><br /></div>\n");
-				s = s.concat("\t\t\t</td>\n");				
-				s = s.concat("\t\t\t</tr>\n");
-				//--------------------------------------------------------------------
-				//HMO payment transactions
-				s = s.concat("\t\t\t<tr>\n");
-				s = s.concat("\t\t\t<td>\n");				
-				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>HMO (net) : TOTAL (PHP)</span></b></div>"); 		
-				s = s.concat("\t\t\t</td>\n");
-
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN+offset);
-				s = s.concat("\t\t\t</tr>\n");
-				//--------------------------------------------------------------------
-
-				s = s.concat("\t\t\t<tr>\n");
-				s = s.concat("\t\t\t<td>\n");				
-				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>HMO (net) : PAID (PHP)</span></b></div>"); 		
-				s = s.concat("\t\t\t</td>\n");
-
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN+offset);
-				s = s.concat("\t\t\t</tr>\n");
-				//--------------------------------------------------------------------
-
-				s = s.concat("\t\t\t<tr>\n");
-				s = s.concat("\t\t\t<td>\n");				
-				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>HMO (net) : UNPAID (PHP)</span></b></div>"); 		
-				s = s.concat("\t\t\t</td>\n");
-
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN+offset);
-				s = s.concat("\t\t\t</tr>\n");
-				//--------------------------------------------------------------------
-
-				s = s.concat("\t\t\t<tr>\n");
-				s = s.concat("\t\t\t<td>\n");				
-				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>HMO (net) : COUNT</span></b></div>"); 		
-				s = s.concat("\t\t\t</td>\n");
-
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_TREATMENT_COUNT_COLUMN+offset);
-				s = s.concat("\t\t\t</tr>\n");
-				
-				//added by Mike, 20190602
-				//--------------------------------------------------------------------
-				//space
-				s = s.concat("\t\t\t<tr>\n");
-				s = s.concat("\t\t\t<td>\n");				
-				s = s.concat("\t\t\t<div><br /></div>\n");
-				s = s.concat("\t\t\t</td>\n");				
-				s = s.concat("\t\t\t</tr>\n");
-				//--------------------------------------------------------------------
-				//CASH and HMO payment transactions
-				s = s.concat("\t\t\t<tr>\n");
-				s = s.concat("\t\t\t<td>\n");				
-				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>CASH and HMO (net) : TOTAL (PHP)</span></b></div>"); 		
-				s = s.concat("\t\t\t</td>\n");
-									
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN+offset, OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN+offset);
-				s = s.concat("\t\t\t</tr>\n");
-				//--------------------------------------------------------------------
-
-				s = s.concat("\t\t\t<tr>\n");
-				s = s.concat("\t\t\t<td>\n");				
-				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>CASH and HMO (net) : PAID (PHP)</span></b></div>"); 		
-				s = s.concat("\t\t\t</td>\n");
-
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN+offset, OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN+offset);
-				s = s.concat("\t\t\t</tr>\n");
-				//--------------------------------------------------------------------
-
-				s = s.concat("\t\t\t<tr>\n");
-				s = s.concat("\t\t\t<td>\n");				
-				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>CASH and HMO (net) : UNPAID (PHP)</span></b></div>"); 		
-				s = s.concat("\t\t\t</td>\n");
-
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN+offset, OUTPUT_NON_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN+offset);
-				s = s.concat("\t\t\t</tr>\n");
-				//--------------------------------------------------------------------
-
-				s = s.concat("\t\t\t<tr>\n");
-				s = s.concat("\t\t\t<td>\n");				
-				s = s.concat("\t\t\t\t<div class=\"transaction_type_column\"><b><span>CASH and HMO (net) : COUNT</span></b></div>"); 		
-				s = s.concat("\t\t\t</td>\n");
-
-				s = autoWriteValuesInRowForAllDateColumns(s, writer, OUTPUT_HMO_TREATMENT_COUNT_COLUMN+offset, OUTPUT_NON_HMO_TREATMENT_COUNT_COLUMN+offset);
-				s = s.concat("\t\t\t</tr>\n");
-			}
-			writer.print(s + "\n");		
-			
-		}
-		
-		writer.close();
-	}
-
 	//added by Mike, 20190601; edited by Mike, 20190602
 	private static String autoWriteValuesInRowForAllDateColumns(String s, PrintWriter writer, int columnIndexOne, int columnIndexTwo) {
 		SortedSet<Integer> sortedKeyset = new TreeSet<Integer>(dateContainer.keySet());

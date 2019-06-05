@@ -9,7 +9,7 @@ Sub generatePayslipForTheDayPTTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190307
-' @date updated: 20190529
+' @date updated: 20190605
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -303,9 +303,9 @@ Next row
 'added by Mike, 201903014
 myOutput.Range("A" & 1, "I" & LastPrintableRow).Font.Name = defaultFontName
 
-'added by Mike, 20190315; edited by Mike, 20190323
-transactionDateValue = myOutput.Range("A" & TableHeaderRow + 1).Value
-myOutput.Range("G" & 19).Value = "Date: " & Format(transactionDateValue, "dd mmm yyyy")
+'added by Mike, 20190315; edited by Mike, 20190605
+'transactionDateValue = myOutput.Range("A" & TableHeaderRow + 1).Value
+myOutput.Range("G" & 19).Value = "Date: " & UCase(Format(Now(), "dd mmm yyyy"))
 myOutput.Range("G" & 19).Font.Name = defaultFontName
 myOutput.Range("G" & 19).Font.Size = 14
 

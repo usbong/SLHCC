@@ -9,7 +9,7 @@ Sub generateORSlipForTheDay()
 '
 ' @author: Michael Syson
 ' @date created: 20190509
-' @date updated: 20190529
+' @date updated: 20190605
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -218,6 +218,10 @@ For Each row In myInput.Rows
         If InStr(myInput.Range("D" & RowCount).Value, "SC") Or InStr(myInput.Range("D" & RowCount).Value, "PWD") Or InStr(myInput.Range("D" & RowCount).Value, "SLC") Or InStr(myInput.Range("D" & RowCount).Value, "MCDO") Then
             myOutput.Range("E" & feeRowCount).Value = myInput.Range("F" & RowCount).Value
             myOutput.Range("D" & feeRowCount).Value = myInput.Range("E" & RowCount).Value 'Application.RoundDown(myOutput.Range("F" & feeRowCount).Value / 0.71428, 2)
+        'added by Mike, 20190605
+        ElseIf InStr(myInput.Range("D" & RowCount).Value, "MC") Then
+            myOutput.Range("E" & feeRowCount).Value = 0
+            myOutput.Range("D" & feeRowCount).Value = myInput.Range("F" & RowCount)
         Else
             myOutput.Range("D" & feeRowCount).Value = myInput.Range("F" & RowCount)
         End If

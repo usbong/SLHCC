@@ -9,7 +9,7 @@ Sub generateORSlipForTheDay()
 '
 ' @author: Michael Syson
 ' @date created: 20190509
-' @date updated: 20190605
+' @date updated: 20190606
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -181,8 +181,8 @@ For Each row In myInput.Rows
         'myOutput.Range("M" & 11).Value = Trim(output)
         myOutput.Range("M" & 9).Value = Trim(output)
         
-        'added by Mike, 20190529
-        If (InStr(output, "SLC")) Then
+        'added by Mike, 20190529; edited by Mike, 20190606
+        If (InStr(output, "SLC") Or InStr(output, "MC")) Then
 '           myOutput.Range("O" & 37).Value = "=ROUND(SUM(D18:D28)-SUM(E18:E28),2)"
             'Do this due to Medical Certificate (MC) transactions do not have discounts
             myOutput.Range("O" & 37).Value = "=ROUND(IF(E18=0,0,D18-E18)+IF(E20=0,0,D20-E20)+IF(E22=0,0,D22-E22)+IF(E24=0,0,D24-E24)+IF(E26=0,0,D26-E26)+IF(E28=0,0,D28-E28),2)"

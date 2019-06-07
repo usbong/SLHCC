@@ -9,7 +9,7 @@ Sub autoWriteCashPaidDatePhraseInNotesColumnConsultationMasterList()
 '
 ' @author: Michael Syson
 ' @date created: 20190209
-' @date updated: 20190209
+' @date updated: 20190607
 '
 ' Master List: Consultation 2018
 ' Given:
@@ -43,15 +43,22 @@ RowCount = 2 'do not include the table header
 keyword = "Syson"
 keywordTwo = "Pedro"
 
-Set myInput = Sheets(ActiveSheet.Name)
-Set myOutput = Sheets(ActiveSheet.Name)
+Set myInput = Sheets(ActiveSheet.name)
+Set myOutput = Sheets(ActiveSheet.name)
 
 For Each row In myInput.Rows
        'if the value for the Medical Doctor column includes the keywords
        If (InStr(myInput.Range("Q" & RowCount).Value, keyword) And InStr(myInput.Range("Q" & RowCount).Value, keywordTwo)) Then
           'if not an empty and not an HMO transaction
-          If (IsEmpty(myInput.Range("J" & RowCount).Value) = 0) And (InStr(myInput.Range("J" & RowCount).Value, "HMO") = 0) And (InStr(myInput.Range("J" & RowCount).Value, "NC") = 0) And (LCase(InStr(myInput.Range("J" & RowCount).Value, "no charge") = 0)) Then
-            myOutput.Range("A" & RowCount) = "paid: " & Format(myInput.Range("B" & RowCount).Value, "mmm-dd-yy") & "; " & myInput.Range("A" & RowCount).Value
+          If (IsEmpty(myInput.Range("J" & RowCount).Value) = 0) And (InStr(myInput.Range("J" & RowCount).Value, "HMO") = 0) And (InStr(myInput.Range("J" & RowCount).Value, "NC") = 0) And (LCase(InStr(myInput.Range("J" & RowCount).Value, "no charge") = 0)) Then            
+            'edited by Mike, 20190607
+            'myOutput.Range("A" & RowCount) = "paid: " & Format(myInput.Range("B" & RowCount).Value, "mmm-dd-yy") & "; " & myInput.Range("A" & RowCount).Value
+          
+            output = "paid: " & Format(myInput.Range("B" & RowCount).Value, "mmm-dd-yy") & "; "
+            'if we haven't added the "paid:..."
+            If (InStr(myOutput.Range("A" & RowCount).Value, output) = 0) Then
+                myOutput.Range("A" & RowCount).Value = output & myInput.Range("A" & RowCount).Value
+            End If
           End If
        End If
        
@@ -63,7 +70,7 @@ For Each row In myInput.Rows
 Next row
 
 myOutput.Range("A" & 1, "A" & RowCount).Font.Size = 11
-myOutput.Range("A" & 1, "A" & RowCount).Font.Name = "Calibri"
+myOutput.Range("A" & 1, "A" & RowCount).Font.name = "Calibri"
 'myOutput.Range("A" & 1, "A" & RowCount).NumberFormat = "mmm-dd-yy"
 'myOutput.Range("A" & 1, "A" & RowCount).NumberFormat = "0.00"
 

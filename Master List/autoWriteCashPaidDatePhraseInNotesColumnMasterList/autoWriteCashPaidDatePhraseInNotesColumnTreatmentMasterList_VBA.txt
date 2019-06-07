@@ -9,7 +9,7 @@ Sub autoWriteCashPaidDatePhraseInNotesColumnTreatmentMasterList()
 '
 ' @author: Michael Syson
 ' @date created: 20190209
-' @date updated: 20190209
+' @date updated: 20190607
 '
 ' Master List: Treatment 2018
 ' Given:
@@ -35,15 +35,22 @@ Dim myOutput As Worksheet 'the same as myInput
 Dim row As Range
 Dim RowCount As Integer
 
-RowCount = 2 'do not include the table header
+RowCount = 2 'do not included the table header
 
-Set myInput = Sheets(ActiveSheet.Name)
-Set myOutput = Sheets(ActiveSheet.Name)
+Set myInput = Sheets(ActiveSheet.name)
+Set myOutput = Sheets(ActiveSheet.name)
 
 For Each row In myInput.Rows
        'if not an empty and not an HMO transaction
        If (IsEmpty(myInput.Range("I" & RowCount).Value) = 0) And (InStr(myInput.Range("I" & RowCount).Value, "HMO") = 0) Then
-            myOutput.Range("A" & RowCount) = "paid: " & Format(myInput.Range("B" & RowCount).Value, "mmm-dd-yy") & "; " & myInput.Range("A" & RowCount).Value
+            'edited by Mike, 20190607
+			'myOutput.Range("A" & RowCount) = "paid: " & Format(myInput.Range("B" & RowCount).Value, "mmm-dd-yy") & "; " & myInput.Range("A" & RowCount).Value
+            
+            output = "paid: " & Format(myInput.Range("B" & RowCount).Value, "mmm-dd-yy") & "; "
+            'if we haven't added the "paid:..."
+            If (InStr(myOutput.Range("A" & RowCount).Value, output) = 0) Then
+                myOutput.Range("A" & RowCount).Value = output & myInput.Range("A" & RowCount).Value
+            End If
        End If
        
        If IsEmpty(myInput.Range("D" & RowCount).Value) Then
@@ -54,7 +61,7 @@ For Each row In myInput.Rows
 Next row
 
 myOutput.Range("A" & 1, "A" & RowCount).Font.Size = 11
-myOutput.Range("A" & 1, "A" & RowCount).Font.Name = "Calibri"
+myOutput.Range("A" & 1, "A" & RowCount).Font.name = "Calibri"
 'myOutput.Range("A" & 1, "A" & RowCount).NumberFormat = "mmm-dd-yy"
 'myOutput.Range("A" & 1, "A" & RowCount).NumberFormat = "0.00"
 

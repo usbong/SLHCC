@@ -9,7 +9,7 @@ Sub autoComputeAmountPaidAndNetPFConsultationMasterListStaLuciaOfficialReceipt()
 '
 ' @author: Michael Syson
 ' @date created: 20190208
-' @date updated: 20190208
+' @date updated: 20190608
 '
 ' Consultation Master List (Sta. Lucia Official Receipt (OR))
 ' Given:
@@ -31,14 +31,17 @@ Dim RowCount As Integer
 
 RowCount = 1
 
-Set myInput = Sheets(ActiveSheet.Name)
-Set myOutput = Sheets(ActiveSheet.Name)
+Set myInput = Sheets(ActiveSheet.name)
+Set myOutput = Sheets(ActiveSheet.name)
 
 For Each row In myInput.Rows
        'auto-compute the Amount Paid based on Class and PF distribution
        If myInput.Range("J" & RowCount).Value = "SC" Or myInput.Range("J" & RowCount).Value = "PWD" Then
             myOutput.Range("K" & RowCount) = myInput.Range("I" & RowCount).Value * 0.714289
        ElseIf myInput.Range("J" & RowCount).Value = "WI" Then
+            myOutput.Range("K" & RowCount) = myInput.Range("I" & RowCount).Value
+       'added by Mike, 20190608
+       ElseIf myInput.Range("J" & RowCount).Value = "Medical Certificate" Then
             myOutput.Range("K" & RowCount) = myInput.Range("I" & RowCount).Value
        '+added: computation for SLR (Sta. Lucia Reality) patients
        ElseIf myInput.Range("J" & RowCount).Value = "SLR" Then
@@ -70,7 +73,7 @@ For Each row In myInput.Rows
 Next row
 
 myOutput.Range("K" & 1, "L" & RowCount).Font.Size = 11
-myOutput.Range("K" & 1, "L" & RowCount).Font.Name = "Calibri"
+myOutput.Range("K" & 1, "L" & RowCount).Font.name = "Calibri"
 myOutput.Range("K" & 1, "L" & RowCount).NumberFormat = "0.00"
 
 End Sub

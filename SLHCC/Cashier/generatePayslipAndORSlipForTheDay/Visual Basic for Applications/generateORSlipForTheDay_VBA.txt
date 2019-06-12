@@ -9,7 +9,7 @@ Sub generateORSlipForTheDay()
 '
 ' @author: Michael Syson
 ' @date created: 20190509
-' @date updated: 20190606
+' @date updated: 20190612
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -302,8 +302,15 @@ For Each row In myInput.Rows
         Else 'PT
             myOutput.Range("A" & 18).Value = "PT TREATMENT"
             
+            'edited by Mike, 20190612
             'We use the name of the patient as part of the worksheet name
-            myOutput.Name = "OR PT " & myInput.Range("C" & RowCount).Value
+            'myOutput.Name = "OR PT " & myInput.Range("C" & RowCount).Value
+            worksheetName = "OR PT " & myInput.Range("C" & RowCount).Value
+            If (Len(worksheetName) > 31) Then
+                worksheetName = Right(worksheetName, Len(worksheetName) - 6) & "..."
+            End If
+            
+            myOutput.Name = worksheetName
         End If
               
         RowCount = RowCount + 1

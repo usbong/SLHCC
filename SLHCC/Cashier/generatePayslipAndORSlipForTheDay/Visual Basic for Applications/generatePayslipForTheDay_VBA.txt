@@ -32,7 +32,6 @@ TableHeaderRow = 5 'output
 Set myInput = Sheets(ActiveSheet.Name)
 
 RowCount = TableHeaderRow + 2 'input
-OutputRowCountOffset = -1
 
 For Each row In myInput.Rows
         'Verify Particulars/Classification Column

@@ -9,7 +9,7 @@ Sub generateORSlipForTheDay()
 '
 ' @author: Michael Syson
 ' @date created: 20190509
-' @date updated: 20190612
+' @date updated: 20190618
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -38,6 +38,7 @@ Dim currentPatientNameValue As String 'added by Mike, 20190523
 Dim isSamePatientWithAnotherTransaction As Boolean 'added by Mike, 20190523
 Dim feeRowCountOffset As Integer 'added by Mike, 20190523
 Dim feeRowCount As Integer 'added by Mike, 20190523
+Dim isInputWorksheetEmpty As Boolean 'added by Mike, 20190618
 
 RowCount = 1
 TableHeaderRow = 5 'output
@@ -64,6 +65,29 @@ Application.ScreenUpdating = False
 
 'added by Mike, 20190513
 Application.DisplayAlerts = False
+
+'added by Mike, 20190618
+RowCount = TableHeaderRow + 2 'input
+
+For Each row In myInput.Rows
+        'Verify Particulars/Classification Column
+        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+            isInputWorksheetEmpty = True
+        End If
+        
+        RowCount = RowCount + 1
+                            
+        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+            Exit For
+'        Else
+'            RowCount = RowCount + 1
+        End If
+Next row
+
+If (isInputWorksheetEmpty) Then
+    Exit Sub
+End If
+
 Set fso = CreateObject("scripting.filesystemobject")
 
 'myTemplate.Copy ActiveWorkbook.Sheets(Sheets.Count)
@@ -307,7 +331,7 @@ For Each row In myInput.Rows
             'myOutput.Name = "OR PT " & myInput.Range("C" & RowCount).Value
             worksheetName = "OR PT " & myInput.Range("C" & RowCount).Value
             If (Len(worksheetName) > 31) Then
-                worksheetName = Right(worksheetName, Len(worksheetName) - 6) & "..."
+                worksheetName = Left(worksheetName, 31 - 4) & "..."
             End If
             
             myOutput.Name = worksheetName

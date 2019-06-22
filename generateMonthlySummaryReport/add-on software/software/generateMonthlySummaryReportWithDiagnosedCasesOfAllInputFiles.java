@@ -328,7 +328,12 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		//added by Mike, 20190503
 		PrintWriter procedureCountMonthlyStatisticsWriter = new PrintWriter("output/MonthlyStatisticsProcedure.html", "UTF-8");	
 		
-
+		//added by Mike, 20190622
+		PrintWriter treatmentCountListTempWriter = new PrintWriter("assets/transactions/treatmentCountListTemp.txt", "UTF-8");	
+		PrintWriter consultationCountListTempWriter = new PrintWriter("assets/transactions/consultationCountListTemp.txt", "UTF-8");	
+		PrintWriter procedureCountListTempWriter = new PrintWriter("assets/transactions/procedureCountListTemp.txt", "UTF-8");	
+		
+		
 /*		
 		//added by Mike, 20190413
 		PrintWriter diagnosedCasesWriter = new PrintWriter("output/MonthlySummaryReportOfDiagnosedCasesOutput.txt", "UTF-8");			
@@ -430,6 +435,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			processWriteOutputFileMonthlyStatistics(consultationCountMonthlyStatisticsWriter, CONSULTATION_FILE_TYPE);		
 			processWriteOutputFileMonthlyStatistics(procedureCountMonthlyStatisticsWriter, PROCEDURE_FILE_TYPE);		
 
+			//added by Mike, 20190622
+			processWriteOutputFileAssetsTransactionsCountList(treatmentCountListTempWriter, TREATMENT_FILE_TYPE);
+			processWriteOutputFileAssetsTransactionsCountList(consultationCountListTempWriter, CONSULTATION_FILE_TYPE);		
+			processWriteOutputFileAssetsTransactionsCountList(procedureCountListTempWriter, PROCEDURE_FILE_TYPE);			
 		}
 		else {
 			System.out.println("\nThere is no Tab-delimited .txt input file in the \"input\\treatment\" folder.\n");
@@ -2306,14 +2315,33 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 								switch (fileType) {
 									case TREATMENT_FILE_TYPE:
 										s = s.concat("\t\t\t\t<b><span>"+totalTreatmentCount+"</span></b>\n");
+										
+										//added by Mike, 20190621
+										transactionCount = totalTreatmentCount;									
+								
+										//added by Mike, 20190622
+										treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex] = transactionCount;										
 										break;
 									case CONSULTATION_FILE_TYPE:
 										s = s.concat("\t\t\t\t<b><span>"+totalConsultationCount+"</span></b>\n");
+
+										//added by Mike, 20190621
+										transactionCount = totalConsultationCount;
+										
+										//added by Mike, 20190622
+										consultationMonthlyStatisticsContainer.get(yearKey)[monthRowIndex] = transactionCount;										
 										break;
 									default:// PROCEDURE_FILE_TYPE:
 										s = s.concat("\t\t\t\t<b><span>"+totalProcedureCount+"</span></b>\n");
+
+										//added by Mike, 20190621
+										transactionCount = totalProcedureCount;
+
+										//added by Mike, 20190622
+										procedureMonthlyStatisticsContainer.get(yearKey)[monthRowIndex] = transactionCount;										
 										break;
 								}	
+								
 								hasWrittenAutoCalculatedValue = true;
 							}
 							else {
@@ -2327,6 +2355,11 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 						
 						//s = s.concat("\t\t\t\t<b><span>"+treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex]+"</span></b>\n");
 						s = s.concat("\t\t\t</td>\n");
+						
+						
+						//added by Mike, 20190621
+						//automatically update the transaction count file in the assets folder
+						
 					}
 					s = s.concat("\t\t  </tr>\n");
 
@@ -2342,6 +2375,51 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		
 		writer.close();
 	}
+	
+	//added by Mike, 20190622
+	private static void processWriteOutputFileAssetsTransactionsCountList(PrintWriter writer, int fileType) throws Exception {				
+		String s = "";		
+
+		for(int i=0; i<yearsContainerArrayList.size(); i++) {
+			int yearKey = yearsContainerArrayList.get(i);
+			s = s.concat(yearKey+"\t\t");
+		}		
+		s = s.concat("\n\n");
+
+		for (int monthRowIndex=0; monthRowIndex<12; monthRowIndex++) { //There are 12 months				
+			String monthString = convertMonthNumberToThreeLetterWord(monthRowIndex);
+				
+			for(int i=0; i<yearsContainerArrayList.size(); i++) {
+				int yearKey = yearsContainerArrayList.get(i);						
+																								
+//				String inputMonthString = dateValuesArray[0].split("-")[0].toUpperCase(); //MAR
+				s = s.concat(monthString+"\t"); 			
+
+				int transactionCount = -1;
+												
+				switch (fileType) {
+					case TREATMENT_FILE_TYPE:
+						transactionCount = treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex];
+						break;
+					case CONSULTATION_FILE_TYPE:
+						transactionCount = consultationMonthlyStatisticsContainer.get(yearKey)[monthRowIndex];	
+						break;
+					default:// PROCEDURE_FILE_TYPE:
+						transactionCount = procedureMonthlyStatisticsContainer.get(yearKey)[monthRowIndex];	
+						break;
+				}												
+	
+				s = s.concat(transactionCount+"\t"); 			
+			}
+			
+			s = s.concat("\n"); 			
+		}			
+
+		writer.print(s + "\n");		
+		
+		writer.close();
+	}
+	
 						
 	private static void processWriteOutputFileTreatment(PrintWriter writer) throws Exception {
 		File f = new File(inputOutputTemplateFilenameTreatment+".html");

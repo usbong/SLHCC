@@ -26,6 +26,8 @@ import java.text.DecimalFormat;
 import org.apache.commons.text.similarity.LevenshteinDistance;
 import java.util.Map.Entry; //added by Mike, 20190417
 import utils.IncidenceNumberComparator; //added by Mike, 20190418
+import utils.UsbongUtils; //added by Mike, 20190622
+
 /*
 ' Given:
 ' 1) Encoding for the Month Input Worksheet
@@ -311,6 +313,9 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 	private static double consultationCount;
 	private static double procedureCount;
 	private static double medicalCertificateCount;	
+	
+	//added by Mike, 20190622
+	private static UsbongUtils myUsbongUtils;
 			
 	public static void main ( String[] args ) throws Exception
 	{			
@@ -332,8 +337,11 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		PrintWriter treatmentCountListTempWriter = new PrintWriter("assets/transactions/treatmentCountListTemp.txt", "UTF-8");	
 		PrintWriter consultationCountListTempWriter = new PrintWriter("assets/transactions/consultationCountListTemp.txt", "UTF-8");	
 		PrintWriter procedureCountListTempWriter = new PrintWriter("assets/transactions/procedureCountListTemp.txt", "UTF-8");	
-		
-		
+/*		
+		PrintWriter treatmentCountListWriter = new PrintWriter("assets/transactions/treatmentCountList.txt", "UTF-8");	
+		PrintWriter consultationCountListWriter = new PrintWriter("assets/transactions/consultationCountList.txt", "UTF-8");	
+		PrintWriter procedureCountListWriter = new PrintWriter("assets/transactions/procedureCountList.txt", "UTF-8");	
+*/		
 /*		
 		//added by Mike, 20190413
 		PrintWriter diagnosedCasesWriter = new PrintWriter("output/MonthlySummaryReportOfDiagnosedCasesOutput.txt", "UTF-8");			
@@ -435,10 +443,21 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			processWriteOutputFileMonthlyStatistics(consultationCountMonthlyStatisticsWriter, CONSULTATION_FILE_TYPE);		
 			processWriteOutputFileMonthlyStatistics(procedureCountMonthlyStatisticsWriter, PROCEDURE_FILE_TYPE);		
 
+			
 			//added by Mike, 20190622
 			processWriteOutputFileAssetsTransactionsCountList(treatmentCountListTempWriter, TREATMENT_FILE_TYPE);
 			processWriteOutputFileAssetsTransactionsCountList(consultationCountListTempWriter, CONSULTATION_FILE_TYPE);		
-			processWriteOutputFileAssetsTransactionsCountList(procedureCountListTempWriter, PROCEDURE_FILE_TYPE);			
+			processWriteOutputFileAssetsTransactionsCountList(procedureCountListTempWriter, PROCEDURE_FILE_TYPE);	
+
+/*						
+			//added by Mike, 20190622
+			myUsbongUtils = new UsbongUtils();		
+			myUsbongUtils.copyContentsOfSourceFileToDestinationFile("assets\\transactions\\treatmentCountListTemp.txt", "assets\\transactions\\treatmentCountList.txt");
+
+			myUsbongUtils.copyContentsOfSourceFileToDestinationFile("assets\\transactions\\consultationCountListTemp.txt", "assets\\transactions\\consultationCountList.txt");
+
+			myUsbongUtils.copyContentsOfSourceFileToDestinationFile("assets\\transactions\\procedureCountListTemp.txt", "assets\\transactions\\procedureCountList.txt");			
+*/			
 		}
 		else {
 			System.out.println("\nThere is no Tab-delimited .txt input file in the \"input\\treatment\" folder.\n");
@@ -2417,7 +2436,7 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 
 		writer.print(s + "\n");		
 		
-		writer.close();
+		writer.close();		
 	}
 	
 						
@@ -3423,6 +3442,8 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		Scanner sc = new Scanner(new FileInputStream(inputDataFile), "UTF-8");				
 	
 		String s;		
+
+//System.out.println(">>>> fileType: " + fileType);
 		
 		s=sc.nextLine(); //process input file's YEAR row
 		String[] inputYearColumns = s.split("\t");					

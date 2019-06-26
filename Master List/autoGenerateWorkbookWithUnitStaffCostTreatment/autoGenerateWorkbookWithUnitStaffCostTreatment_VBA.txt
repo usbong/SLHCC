@@ -160,22 +160,26 @@ Set NewWorkbook = Workbooks.Add
 
 outputWorksheetName = "treatment"
 
+NewWorkbook.Sheets.Add.name = outputWorksheetName
+
 RowCount = 1
+OutputRowCount = 1
 
 For Each unitStaffCostColumnValuesContainer In unitStaffCostContainer
     'added by Mike, 20190327
     'medicalDoctorName = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN))
 
     'If a workheet with the outputWorksheetName, i.e. "treatment" name, exists
-    If Evaluate("ISREF('" & outputWorksheetName & "'!A1)") Then
+'    If Evaluate("ISREF('" & outputWorksheetName & "'!A1)") Then
         'write transactions later
         'do nothing for now
     'If a workheet with the outputWorksheetName, i.e. "treatment" name, does not exist
-    Else
-        NewWorkbook.Sheets.Add.name = outputWorksheetName 'edited by Mike, 20190328
+'    Else
+
+'        NewWorkbook.Sheets.Add.name = outputWorksheetName 'edited by Mike, 20190328
                                                
         'medicalDoctorWorksheetOutputRowCountContainer.Add TableHeaderRowUtilization + 1, medicalDoctorName
-        OutputRowCount = TableHeaderRowUtilization + 1
+'        OutputRowCount = TableHeaderRowUtilization + 1
             
         Set myOutput = Sheets(ActiveSheet.name)
     
@@ -188,7 +192,7 @@ For Each unitStaffCostColumnValuesContainer In unitStaffCostContainer
 '        For i = 1 To hmoUtilizationTableHeaderContainer.Count 'from 1 to the total items in the container
 '            myOutput.Cells(TableHeaderRowUtilization, i).Value = hmoUtilizationTableHeaderContainer(i)
 '        Next
-    End If
+'    End If
 Next unitStaffCostColumnValuesContainer
 
 'added by Mike, 20190328

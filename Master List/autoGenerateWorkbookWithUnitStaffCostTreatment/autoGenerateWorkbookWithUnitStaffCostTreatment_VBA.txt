@@ -9,7 +9,7 @@ Sub autoGenerateWorkbookWithUnitStaffCostTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190626
-' @date updated: 20190626
+' @date updated: 20190627
 '
 ' Given:
 ' 1) Workbook's worksheet with the transactions data for the Month
@@ -77,19 +77,27 @@ OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_TOTAL_COST_COLUMN = 11 + MS_EXCEL_
 OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_COUNT_COLUMN = 12 + MS_EXCEL_OFFSET
 OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_COST_COLUMN = 13 + MS_EXCEL_OFFSET
     
+Dim pTStaffName As String
+Dim transactionServiceCountKey As String
+
+Dim isPTStaffNameInUnitStaffContainer As Boolean
+    
 'added by Mike, 20190328
 'TableHeaderRowUtilization = 6
 
 'added by Mike, 20190330
 'TableHeaderRow = 5
 
-'added by Mike, 20190324
+Dim unitStaffContainer As Collection
+Set unitStaffContainer = New Collection
+
 Dim unitStaffCostContainer As Collection
 Set unitStaffCostContainer = New Collection
 
 Dim unitStaffCostColumnValuesContainer As Collection
 'Set hmoBillingColumnValuesContainer = New Collection
 
+unitStaffContainerCount = 1
 unitStaffCostContainerTransactionCount = 1
 RowCount = 1 '2 'do not include table header row
 RowCountOffset = 0 'This is to make the add-on software automatically adjust to rows with new line marks
@@ -115,25 +123,41 @@ Set myInput = Sheets(ActiveSheet.name)
 'unitStaffCostTableHeaderContainer.Add "MD'S SIGNATURE", CStr(5)
 'unitStaffCostTableHeaderContainer.Add "RECEIVED BY/DATE", CStr(6)
 
+'Set unitStaffCostColumnValuesContainer = New Collection
+
+'add an ID key number to each staff member
 For Each row In myInput.Rows
-        Set unitStaffCostColumnValuesContainer = New Collection
+        pTStaffName = CStr(UCase(Trim(myInput.Cells(RowCount, INPUT_PT_NAME_COLUMN))))
+  
+        isPTStaffNameInUnitStaffContainer = False
+    
+        For keyCount = 1 To unitStaffContainer.Count
+        
+'            MsgBox ("key" & unitStaffContainer(keyCount))
 
-'        MsgBox ("UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN))): " & UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN))))
-                
-        unitStaffCostColumnValuesContainer.Add CDate(UCase(Trim(myInput.Cells(RowCount, INPUT_DATE_COLUMN)))), CStr(OUTPUT_UNIT_STAFF_COST_DATE_COLUMN)
-        unitStaffCostColumnValuesContainer.Add UCase(Trim(myInput.Cells(RowCount, INPUT_PT_NAME_COLUMN))), CStr(OUTPUT_UNIT_STAFF_COST_PT_NAME_COLUMN)
+            If unitStaffContainer(keyCount) = pTStaffName Then
+               isPTStaffNameInUnitStaffContainer = True
+            End If
+        Next
+  
+        unitStaffContainerCount = unitStaffContainer.Count + 1
 
-        unitStaffCostContainer.Add unitStaffCostColumnValuesContainer, CStr(unitStaffCostContainerTransactionCount)
-        unitStaffCostContainerTransactionCount = unitStaffCostContainerTransactionCount + 1
-
+        If isPTStaffNameInUnitStaffContainer = False Then
+            unitStaffContainer.Add pTStaffName, CStr(unitStaffContainerCount)
+        End If
+        
         RowCount = RowCount + 1
                             
         If IsEmpty(myInput.Range("C" & RowCount).Value) Then
             Exit For
-'        Else
-'            RowCount = RowCount + 1
         End If
 Next row
+
+'For keyCount = 1 To unitStaffContainer.Count
+'    MsgBox ("key" & unitStaffContainer(keyCount))
+'Next
+
+
 
 'added by Mike, 20190329
 'startDateString = Format(unitStaffCostContainer(1)(CStr(OUTPUT_UNIT_STAFF_COST_DATE_COLUMN)), "yyyymmdd")

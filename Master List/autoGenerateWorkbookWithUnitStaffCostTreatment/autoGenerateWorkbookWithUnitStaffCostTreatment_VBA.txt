@@ -9,7 +9,7 @@ Sub autoGenerateWorkbookWithUnitStaffCostTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190626
-' @date updated: 20190627
+' @date updated: 20190628
 '
 ' Given:
 ' 1) Workbook's worksheet with the transactions data for the Month
@@ -70,12 +70,12 @@ OUTPUT_TOTAL_COLUMNS = 15 + MS_EXCEL_OFFSET
 OUTPUT_UNIT_STAFF_COST_DATE_COLUMN = 0 + MS_EXCEL_OFFSET
 OUTPUT_UNIT_STAFF_COST_PT_NAME_COLUMN = 1 + MS_EXCEL_OFFSET
 OUTPUT_UNIT_STAFF_COST_PT_NAME_NOTE_COLUMN = 2 + MS_EXCEL_OFFSET
-OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_COLUMN = 8 + MS_EXCEL_OFFSET
-OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COST_COLUMN = 9 + MS_EXCEL_OFFSET
-OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_TOTAL_COUNT_COLUMN = 10 + MS_EXCEL_OFFSET
-OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_TOTAL_COST_COLUMN = 11 + MS_EXCEL_OFFSET
-OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_COUNT_COLUMN = 12 + MS_EXCEL_OFFSET
-OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_COST_COLUMN = 13 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_COLUMN = 7 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COST_COLUMN = 8 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_TOTAL_COUNT_COLUMN = 9 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_TOTAL_COST_COLUMN = 10 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_COUNT_COLUMN = 11 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_COST_COLUMN = 12 + MS_EXCEL_OFFSET
     
 Dim pTStaffName As String
 Dim transactionServiceCountKey As String
@@ -95,7 +95,13 @@ Dim unitStaffCostContainer As Collection
 Set unitStaffCostContainer = New Collection
 
 Dim unitStaffCostColumnValuesContainer As Collection
-'Set hmoBillingColumnValuesContainer = New Collection
+Set unitStaffCostColumnValuesContainer = New Collection
+
+Dim unitStaffContainerID As String
+Dim unitStaffCostContainerTransactionCount As Integer
+
+
+unitStaffContainerID = 1
 
 unitStaffContainerCount = 1
 unitStaffCostContainerTransactionCount = 1
@@ -131,19 +137,19 @@ For Each row In myInput.Rows
   
         isPTStaffNameInUnitStaffContainer = False
     
-        For keyCount = 1 To unitStaffContainer.Count
+        For KeyCount = 1 To unitStaffContainer.Count
         
 '            MsgBox ("key" & unitStaffContainer(keyCount))
 
-            If unitStaffContainer(keyCount) = pTStaffName Then
+            If unitStaffContainer(KeyCount) = pTStaffName Then
                isPTStaffNameInUnitStaffContainer = True
             End If
         Next
   
-        unitStaffContainerCount = unitStaffContainer.Count + 1
-
         If isPTStaffNameInUnitStaffContainer = False Then
             unitStaffContainer.Add pTStaffName, CStr(unitStaffContainerCount)
+            
+            unitStaffContainerCount = unitStaffContainer.Count + 1
         End If
         
         RowCount = RowCount + 1
@@ -153,12 +159,45 @@ For Each row In myInput.Rows
         End If
 Next row
 
-'For keyCount = 1 To unitStaffContainer.Count
-'    MsgBox ("key" & unitStaffContainer(keyCount))
-'Next
+RowCount = 1
 
+For Each row In myInput.Rows
+        pTStaffName = CStr(UCase(Trim(myInput.Cells(RowCount, INPUT_PT_NAME_COLUMN))))
+        
+        For KeyCount = 1 To unitStaffContainer.Count
+            'MsgBox ("key" & KeyCount)
+            'MsgBox ("key" & unitStaffContainer(KeyCount))
 
+            'MsgBox ("pTStaffName" & pTStaffName)
 
+            If unitStaffContainer(KeyCount) = pTStaffName Then
+                unitStaffContainerID = KeyCount
+                    
+'            MsgBox (">> key" & KeyCount)
+'            MsgBox (">> key" & unitStaffContainer(KeyCount))
+'            MsgBox (">> unitStaffContainerID" & unitStaffContainerID)
+        
+                If Not HasKey(unitStaffCostColumnValuesContainer, unitStaffContainerID) Then
+                    unitStaffCostContainerTransactionCount = 1
+                    unitStaffCostColumnValuesContainer.Add unitStaffCostContainerTransactionCount, unitStaffContainerID
+                Else
+                    unitStaffCostContainerTransactionCount = unitStaffCostColumnValuesContainer(unitStaffContainerID) + 1
+                    
+                    unitStaffCostColumnValuesContainer.Remove unitStaffContainerID
+                    unitStaffCostColumnValuesContainer.Add unitStaffCostContainerTransactionCount, unitStaffContainerID
+                End If
+                                          
+                Exit For
+            End If
+        Next
+        
+        RowCount = RowCount + 1
+                            
+        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+            Exit For
+        End If
+Next row
+        
 'added by Mike, 20190329
 'startDateString = Format(unitStaffCostContainer(1)(CStr(OUTPUT_UNIT_STAFF_COST_DATE_COLUMN)), "yyyymmdd")
 'endDateString = Format(unitStaffCostContainer(hmoBillingContainerTransactionCount - 1)(CStr(OUTPUT_UNIT_STAFF_COST_DATE_COLUMN)), "yyyymmdd")
@@ -189,7 +228,7 @@ NewWorkbook.Sheets.Add.name = outputWorksheetName
 RowCount = 1
 OutputRowCount = 1
 
-For Each unitStaffCostColumnValuesContainer In unitStaffCostContainer
+For unitStaffContainerIDCount = 1 To unitStaffCostColumnValuesContainer.Count
     'added by Mike, 20190327
     'medicalDoctorName = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN))
 
@@ -208,7 +247,8 @@ For Each unitStaffCostColumnValuesContainer In unitStaffCostContainer
         Set myOutput = Sheets(ActiveSheet.name)
     
         'added by Mike, 20190327
-        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_NAME_COLUMN).Value = unitStaffCostColumnValuesContainer(CStr(OUTPUT_UNIT_STAFF_COST_PT_NAME_COLUMN))
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_NAME_COLUMN).Value = unitStaffContainer(unitStaffContainerIDCount)
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_COLUMN).Value = unitStaffCostColumnValuesContainer(unitStaffContainerIDCount)
         
         OutputRowCount = OutputRowCount + 1
         
@@ -217,7 +257,7 @@ For Each unitStaffCostColumnValuesContainer In unitStaffCostContainer
 '            myOutput.Cells(TableHeaderRowUtilization, i).Value = hmoUtilizationTableHeaderContainer(i)
 '        Next
 '    End If
-Next unitStaffCostColumnValuesContainer
+Next
 
 'added by Mike, 20190328
 'delete default worksheet automatically included when we created a new workbook

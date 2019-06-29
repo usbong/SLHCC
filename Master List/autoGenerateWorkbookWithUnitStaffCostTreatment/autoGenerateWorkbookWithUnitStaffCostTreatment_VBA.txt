@@ -110,6 +110,8 @@ OutputRowCount = 1 'added by Mike, 20190325
 'added by Mike, 20190328
 'Application.ScreenUpdating = False
 
+Application.DisplayAlerts = False 'do not display alert/warning message for delete confirmation
+
 Set myInput = Sheets(ActiveSheet.name)
 
 'add an ID key number to each staff member
@@ -190,7 +192,7 @@ End If
 'TO-DO: -delete: workbook with the same filename
 Set NewWorkbook = Workbooks.Add
     With NewWorkbook
-        .SaveAs Filename:=outputPath & "unitStaffCostTreatmentWorkbook" & ".xls" '& startDateString & "~" & endDateString & ".xls"
+        .SaveAs Filename:=outputPath & "unitStaffCostTreatmentWorkbook" & ".xlsx" '& startDateString & "~" & endDateString & ".xls"
     End With
 
 outputWorksheetName = "treatment"
@@ -213,14 +215,16 @@ For iUnitStaffMemberID = 1 To unitStaffContainer.Count
 Next
 
 'delete default worksheet automatically included when we created a new workbook
-Application.DisplayAlerts = False 'do not display alert/warning message for delete confirmation
+'Application.DisplayAlerts = False 'do not display alert/warning message for delete confirmation
 Worksheets("Sheet1").Delete
-Application.DisplayAlerts = True
+'Application.DisplayAlerts = True
 
 
-'NewWorkbook.Save
-NewWorkbook.Close
+NewWorkbook.Save
+'NewWorkbook.Close
 '--------------------------------------------------------------
+
+Application.DisplayAlerts = True
 
 'added by Mike, 20190328
 'Application.ScreenUpdating = True

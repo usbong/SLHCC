@@ -9,7 +9,7 @@ Sub autoGenerateWorkbookWithUnitStaffCostTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190626
-' @date updated: 20190628
+' @date updated: 20190629
 '
 ' Given:
 ' 1) Workbook's worksheet with the transactions data for the Month
@@ -97,12 +97,10 @@ Set unitStaffCostContainer = New Collection
 Dim unitStaffCostColumnValuesContainer As Collection
 Set unitStaffCostColumnValuesContainer = New Collection
 
-Dim unitStaffContainerID As String
+Dim unitStaffMemberID As String
 Dim unitStaffCostContainerTransactionCount As Integer
 
-
-unitStaffContainerID = 1
-
+unitStaffMemberID = 1
 unitStaffContainerCount = 1
 unitStaffCostContainerTransactionCount = 1
 RowCount = 1 '2 'do not include table header row
@@ -113,23 +111,6 @@ OutputRowCount = 1 'added by Mike, 20190325
 'Application.ScreenUpdating = False
 
 Set myInput = Sheets(ActiveSheet.name)
-
-'   ImportTextFilesAsWorksheetsInWorkbookUtilizationHMOMarch2019_20190301~20190308
-
-'Set myOutput = Sheets(ActiveSheet.name)
-
-
-'added by Mike, 20190328
-'Set unitStaffCostTableHeaderContainer = New Collection
-
-'unitStaffCostTableHeaderContainer.Add "DATE", CStr(1) 'convert 1 to a String to be accepted as key
-'unitStaffCostTableHeaderContainer.Add "PATIENT'S NAME", CStr(2)
-'unitStaffCostTableHeaderContainer.Add "HMO NAME", CStr(3)
-'unitStaffCostTableHeaderContainer.Add "DIAGNOSIS", CStr(4)
-'unitStaffCostTableHeaderContainer.Add "MD'S SIGNATURE", CStr(5)
-'unitStaffCostTableHeaderContainer.Add "RECEIVED BY/DATE", CStr(6)
-
-'Set unitStaffCostColumnValuesContainer = New Collection
 
 'add an ID key number to each staff member
 For Each row In myInput.Rows
@@ -149,7 +130,7 @@ For Each row In myInput.Rows
         If isPTStaffNameInUnitStaffContainer = False Then
             unitStaffContainer.Add pTStaffName, CStr(unitStaffContainerCount)
             
-            unitStaffContainerCount = unitStaffContainer.Count + 1
+            unitStaffContainerCount = unitStaffContainerCount + 1
         End If
         
         RowCount = RowCount + 1
@@ -165,28 +146,19 @@ For Each row In myInput.Rows
         pTStaffName = CStr(UCase(Trim(myInput.Cells(RowCount, INPUT_PT_NAME_COLUMN))))
         
         For KeyCount = 1 To unitStaffContainer.Count
-            'MsgBox ("key" & KeyCount)
-            'MsgBox ("key" & unitStaffContainer(KeyCount))
-
-            'MsgBox ("pTStaffName" & pTStaffName)
-
             If unitStaffContainer(KeyCount) = pTStaffName Then
-                unitStaffContainerID = KeyCount
-                    
-'            MsgBox (">> key" & KeyCount)
-'            MsgBox (">> key" & unitStaffContainer(KeyCount))
-'            MsgBox (">> unitStaffContainerID" & unitStaffContainerID)
-        
-                If Not HasKey(unitStaffCostColumnValuesContainer, unitStaffContainerID) Then
+                unitStaffMemberID = KeyCount
+                            
+                If Not HasKey(unitStaffCostColumnValuesContainer, unitStaffMemberID) Then
                     unitStaffCostContainerTransactionCount = 1
-                    unitStaffCostColumnValuesContainer.Add unitStaffCostContainerTransactionCount, unitStaffContainerID
+                    unitStaffCostColumnValuesContainer.Add unitStaffCostContainerTransactionCount, unitStaffMemberID
                 Else
-                    unitStaffCostContainerTransactionCount = unitStaffCostColumnValuesContainer(unitStaffContainerID) + 1
+                    unitStaffCostContainerTransactionCount = unitStaffCostColumnValuesContainer(unitStaffMemberID) + 1
                     
-                    unitStaffCostColumnValuesContainer.Remove unitStaffContainerID
-                    unitStaffCostColumnValuesContainer.Add unitStaffCostContainerTransactionCount, unitStaffContainerID
+                    unitStaffCostColumnValuesContainer.Remove unitStaffMemberID
+                    unitStaffCostColumnValuesContainer.Add unitStaffCostContainerTransactionCount, unitStaffMemberID
                 End If
-                                          
+                                                                                   
                 Exit For
             End If
         Next
@@ -228,38 +200,18 @@ NewWorkbook.Sheets.Add.name = outputWorksheetName
 RowCount = 1
 OutputRowCount = 1
 
-For unitStaffContainerIDCount = 1 To unitStaffCostColumnValuesContainer.Count
-    'added by Mike, 20190327
-    'medicalDoctorName = hmoBillingColumnValuesContainer(CStr(OUTPUT_HMO_BILLING_MEDICAL_DOCTOR_NAME_COLUMN))
-
-    'If a workheet with the outputWorksheetName, i.e. "treatment" name, exists
-'    If Evaluate("ISREF('" & outputWorksheetName & "'!A1)") Then
-        'write transactions later
-        'do nothing for now
-    'If a workheet with the outputWorksheetName, i.e. "treatment" name, does not exist
-'    Else
-
-'        NewWorkbook.Sheets.Add.name = outputWorksheetName 'edited by Mike, 20190328
-                                               
-        'medicalDoctorWorksheetOutputRowCountContainer.Add TableHeaderRowUtilization + 1, medicalDoctorName
-'        OutputRowCount = TableHeaderRowUtilization + 1
-            
+'Note I added "i" to mean "Integer" based on what I understand of the Hungarian Notation
+For iUnitStaffMemberID = 1 To unitStaffContainer.Count
         Set myOutput = Sheets(ActiveSheet.name)
-    
-        'added by Mike, 20190327
-        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_NAME_COLUMN).Value = unitStaffContainer(unitStaffContainerIDCount)
-        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_COLUMN).Value = unitStaffCostColumnValuesContainer(unitStaffContainerIDCount)
         
+        'Note that I used "CStr(...)" in "unitStaffContainer (CStr(iUnitStaffMemberID))"
+        'Otherwise, instead of the key, i.e. Unit Staff Member's ID, the computer software will use the item's count/index in the virtual container
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_NAME_COLUMN).Value = unitStaffContainer(CStr(iUnitStaffMemberID))
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_COLUMN).Value = unitStaffCostColumnValuesContainer(CStr(iUnitStaffMemberID))
+
         OutputRowCount = OutputRowCount + 1
-        
-'        'added by Mike, 20190328
-'        For i = 1 To hmoUtilizationTableHeaderContainer.Count 'from 1 to the total items in the container
-'            myOutput.Cells(TableHeaderRowUtilization, i).Value = hmoUtilizationTableHeaderContainer(i)
-'        Next
-'    End If
 Next
 
-'added by Mike, 20190328
 'delete default worksheet automatically included when we created a new workbook
 Application.DisplayAlerts = False 'do not display alert/warning message for delete confirmation
 Worksheets("Sheet1").Delete

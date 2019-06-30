@@ -9,7 +9,7 @@ Sub autoGenerateWorkbookWithUnitStaffCostTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190626
-' @date updated: 20190629
+' @date updated: 20190630
 '
 ' Given:
 ' 1) Workbook's worksheet with the transactions data for the Month
@@ -189,7 +189,15 @@ End If
 'Process HMO Billing Utilization
 '--------------------------------------------------------------
 
-'TO-DO: -delete: workbook with the same filename
+outputFileName = "unitStaffCostTreatmentWorkbook" & ".xlsx"
+
+'added by Mike, 20190630
+'close new workbook if it already exists
+If fso.fileexists(outputPath & outputFileName) Then
+    Set existingWorkbook = Application.Workbooks.Open(outputPath & outputFileName)
+    existingWorkbook.Close
+End If
+
 Set NewWorkbook = Workbooks.Add
     With NewWorkbook
         .SaveAs Filename:=outputPath & "unitStaffCostTreatmentWorkbook" & ".xlsx" '& startDateString & "~" & endDateString & ".xls"

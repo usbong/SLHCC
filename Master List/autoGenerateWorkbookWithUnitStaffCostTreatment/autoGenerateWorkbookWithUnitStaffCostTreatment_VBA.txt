@@ -9,7 +9,7 @@ Sub autoGenerateWorkbookWithUnitStaffCostTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190626
-' @date updated: 20190630
+' @date updated: 20190701
 '
 ' Given:
 ' 1) Workbook's worksheet with the transactions data for the Month
@@ -82,6 +82,15 @@ Dim transactionServiceCountKey As String
 
 Dim isPTStaffNameInUnitStaffContainer As Boolean
     
+'added by Mike, 20190701
+Dim currentDate As String
+Dim previousDate As String
+
+'added by Mike, 20190701
+Dim hasCountedUnitStaffMemberContainer As Collection
+Set hasCountedUnitStaffMemberContainer = New Collection
+
+    
 'added by Mike, 20190328
 'TableHeaderRowUtilization = 6
 
@@ -142,28 +151,45 @@ For Each row In myInput.Rows
         End If
 Next row
 
+'edited by Mike, 20190701
 RowCount = 1
+previousDate = "-1" 'CStr(myInput.Cells(1, INPUT_DATE_COLUMN))
 
 For Each row In myInput.Rows
         pTStaffName = CStr(UCase(Trim(myInput.Cells(RowCount, INPUT_PT_NAME_COLUMN))))
+        currentDate = CStr(myInput.Cells(RowCount, INPUT_DATE_COLUMN))
         
+        'MsgBox ("currentDate" & currentDate)
+                
         For KeyCount = 1 To unitStaffContainer.Count
             If unitStaffContainer(KeyCount) = pTStaffName Then
                 unitStaffMemberID = KeyCount
-                            
-                If Not HasKey(unitStaffCostColumnValuesContainer, unitStaffMemberID) Then
-                    unitStaffCostContainerTransactionCount = 1
-                    unitStaffCostColumnValuesContainer.Add unitStaffCostContainerTransactionCount, unitStaffMemberID
-                Else
-                    unitStaffCostContainerTransactionCount = unitStaffCostColumnValuesContainer(unitStaffMemberID) + 1
-                    
-                    unitStaffCostColumnValuesContainer.Remove unitStaffMemberID
-                    unitStaffCostColumnValuesContainer.Add unitStaffCostContainerTransactionCount, unitStaffMemberID
-                End If
-                                                                                   
                 Exit For
             End If
         Next
+        
+        'delete the contents of the container and make a new Collection
+        If (Not previousDate = "-1") And (Not previousDate = currentDate) Then
+            Set hasCountedUnitStaffMemberContainer = Nothing
+            Set hasCountedUnitStaffMemberContainer = New Collection
+        End If
+
+        
+        If Not HasKey(hasCountedUnitStaffMemberContainer, unitStaffMemberID) Then
+                hasCountedUnitStaffMemberContainer.Add True, unitStaffMemberID
+        
+            If Not HasKey(unitStaffCostColumnValuesContainer, unitStaffMemberID) Then
+                unitStaffCostContainerTransactionCount = 1
+                unitStaffCostColumnValuesContainer.Add unitStaffCostContainerTransactionCount, unitStaffMemberID
+            Else
+                unitStaffCostContainerTransactionCount = unitStaffCostColumnValuesContainer(unitStaffMemberID) + 1
+                
+                unitStaffCostColumnValuesContainer.Remove unitStaffMemberID
+                unitStaffCostColumnValuesContainer.Add unitStaffCostContainerTransactionCount, unitStaffMemberID
+            End If
+        End If
+                
+        previousDate = currentDate
         
         RowCount = RowCount + 1
                             

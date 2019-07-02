@@ -9,7 +9,7 @@ Sub autoGenerateWorkbookWithUnitStaffCostTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190626
-' @date updated: 20190701
+' @date updated: 20190702
 '
 ' Given:
 ' 1) Workbook's worksheet with the transactions data for the Month
@@ -30,6 +30,10 @@ Dim TableHeaderRow As Integer
 Dim LastPrintableRow As Integer
 Dim MaxPatientNameColumnWidth As Integer
 Dim patientNameFontSize As Integer
+
+'added by Mike, 20190702
+Dim totalIncentiveCost As Integer
+Dim totalTransactionsCount As Integer
 
 'added by Mike, 20190325
 Dim INPUT_NON_MASTER_LIST_OFFSET As Integer
@@ -60,13 +64,16 @@ Dim OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_TOTAL_COST_COLUMN As Integer
 Dim OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_COUNT_COLUMN As Integer
 Dim OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_COST_COLUMN As Integer
 
+'added by Mike, 20190702
+Dim OUTPUT_UNIT_STAFF_COST_TOTAL_INCENTIVE_COST_COLUMN As Integer
+
 'set the values of the defined terms, i.e. value-holders
 INPUT_NON_MASTER_LIST_OFFSET = 0
 MS_EXCEL_OFFSET = 1 'added by Mike, 20190325
 INPUT_DATE_COLUMN = 0 - INPUT_NON_MASTER_LIST_OFFSET + MS_EXCEL_OFFSET
 INPUT_PT_NAME_COLUMN = 16 - INPUT_NON_MASTER_LIST_OFFSET + MS_EXCEL_OFFSET
     
-OUTPUT_TOTAL_COLUMNS = 15 + MS_EXCEL_OFFSET
+OUTPUT_TOTAL_COLUMNS = 14 + MS_EXCEL_OFFSET
 OUTPUT_UNIT_STAFF_COST_DATE_COLUMN = 0 + MS_EXCEL_OFFSET
 OUTPUT_UNIT_STAFF_COST_PT_NAME_COLUMN = 1 + MS_EXCEL_OFFSET
 OUTPUT_UNIT_STAFF_COST_PT_NAME_NOTE_COLUMN = 2 + MS_EXCEL_OFFSET
@@ -76,6 +83,9 @@ OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_TOTAL_COUNT_COLUMN = 9 + MS_EXCEL_
 OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_TOTAL_COST_COLUMN = 10 + MS_EXCEL_OFFSET
 OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_COUNT_COLUMN = 11 + MS_EXCEL_OFFSET
 OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_COST_COLUMN = 12 + MS_EXCEL_OFFSET
+    
+'added by Mike, 20190702
+OUTPUT_UNIT_STAFF_COST_TOTAL_INCENTIVE_COST_COLUMN = 13 + MS_EXCEL_OFFSET
     
 Dim pTStaffName As String
 Dim transactionServiceCountKey As String
@@ -115,6 +125,10 @@ unitStaffCostContainerTransactionCount = 1
 RowCount = 1 '2 'do not include table header row
 RowCountOffset = 0 'This is to make the add-on software automatically adjust to rows with new line marks
 OutputRowCount = 1 'added by Mike, 20190325
+
+'added by Mike, 20190702
+totalIncentiveCost = 0
+totalTransactionsCount = 0
 
 'added by Mike, 20190328
 'Application.ScreenUpdating = False
@@ -197,7 +211,10 @@ For Each row In myInput.Rows
             Exit For
         End If
 Next row
-        
+
+'added by Mike, 20190702
+totalTransactionsCount = RowCount - 1
+                
 'added by Mike, 20190329
 'startDateString = Format(unitStaffCostContainer(1)(CStr(OUTPUT_UNIT_STAFF_COST_DATE_COLUMN)), "yyyymmdd")
 'endDateString = Format(unitStaffCostContainer(hmoBillingContainerTransactionCount - 1)(CStr(OUTPUT_UNIT_STAFF_COST_DATE_COLUMN)), "yyyymmdd")
@@ -247,6 +264,16 @@ For iUnitStaffMemberID = 1 To unitStaffContainer.Count
 
         OutputRowCount = OutputRowCount + 1
 Next
+
+If totalTransactionsCount >= 300 Then
+    totalIncentiveCost = totalTransactionsCount * 15
+ElseIf totalTransactionsCount >= 200 Then
+    totalIncentiveCost = totalTransactionsCount * 10
+End If
+
+myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_TOTAL_INCENTIVE_COST_COLUMN).Value = totalIncentiveCost
+
+
 
 'delete default worksheet automatically included when we created a new workbook
 'Application.DisplayAlerts = False 'do not display alert/warning message for delete confirmation

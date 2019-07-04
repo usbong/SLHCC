@@ -292,12 +292,20 @@ For iUnitStaffMemberID = 1 To unitStaffContainer.Count
         'Note that I used "CStr(...)" in "unitStaffContainer (CStr(iUnitStaffMemberID))"
         'Otherwise, instead of the key, i.e. Unit Staff Member's ID, the computer software will use the item's count/index in the virtual container
         myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_NAME_COLUMN).Value = unitStaffContainer(CStr(iUnitStaffMemberID))
+        
         'edited by Mike, 20190704
-        'myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_COLUMN).Value = unitStaffCostColumnValuesContainer(CStr(iUnitStaffMemberID))
-        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN).Value = unitStaffCostContainer(CStr(iUnitStaffMemberID))(CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN))
+        iServiceCountPerTransaction = unitStaffCostContainer(CStr(iUnitStaffMemberID))(CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN))
+        iServiceCountPerDay = unitStaffCostContainer(CStr(iUnitStaffMemberID))(CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN))
         
         'added by Mike, 20190704
-        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN).Value = unitStaffCostContainer(CStr(iUnitStaffMemberID))(CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN))
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN).Value = iServiceCountPerTransaction
+        
+        'edited by Mike, 20190704
+        'myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_COLUMN).Value = unitStaffCostColumnValuesContainer(CStr(iUnitStaffMemberID))
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN).Value = iServiceCountPerDay
+        
+        'added by Mike, 20190704
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_AVE_PER_DAY_COLUMN).Value = Round(iServiceCountPerTransaction / iServiceCountPerDay, 1)
         
         OutputRowCount = OutputRowCount + 1
 Next

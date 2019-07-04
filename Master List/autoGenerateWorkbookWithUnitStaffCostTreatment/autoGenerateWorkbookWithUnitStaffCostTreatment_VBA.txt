@@ -9,7 +9,7 @@ Sub autoGenerateWorkbookWithUnitStaffCostTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190626
-' @date updated: 20190702
+' @date updated: 20190704
 '
 ' Given:
 ' 1) Workbook's worksheet with the transactions data for the Month
@@ -77,15 +77,18 @@ OUTPUT_TOTAL_COLUMNS = 14 + MS_EXCEL_OFFSET
 OUTPUT_UNIT_STAFF_COST_DATE_COLUMN = 0 + MS_EXCEL_OFFSET
 OUTPUT_UNIT_STAFF_COST_PT_NAME_COLUMN = 1 + MS_EXCEL_OFFSET
 OUTPUT_UNIT_STAFF_COST_PT_NAME_NOTE_COLUMN = 2 + MS_EXCEL_OFFSET
-OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_COLUMN = 7 + MS_EXCEL_OFFSET
-OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COST_COLUMN = 8 + MS_EXCEL_OFFSET
-OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_TOTAL_COUNT_COLUMN = 9 + MS_EXCEL_OFFSET
-OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_TOTAL_COST_COLUMN = 10 + MS_EXCEL_OFFSET
-OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_COUNT_COLUMN = 11 + MS_EXCEL_OFFSET
-OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_COST_COLUMN = 12 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN = 7 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN = 8 + MS_EXCEL_OFFSET
+
+OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COST_PER_DAY_COLUMN = 9 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_AVE_PER_DAY_COLUMN = 10 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_INCENTIVE_COST_PER_TRANSACTION_COLUMN = 11 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_COUNT_PER_TRANSACTION_COLUMN = 12 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_INCENTIVE_COST_PER_TRANSACTION_COLUMN = 13 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_COST_COLUMN = 14 + MS_EXCEL_OFFSET
     
 'added by Mike, 20190702
-OUTPUT_UNIT_STAFF_COST_TOTAL_INCENTIVE_COST_COLUMN = 13 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_TOTAL_INCENTIVE_COST_COLUMN = 15 + MS_EXCEL_OFFSET
     
 Dim pTStaffName As String
 Dim transactionServiceCountKey As String
@@ -155,6 +158,15 @@ For Each row In myInput.Rows
         If isPTStaffNameInUnitStaffContainer = False Then
             unitStaffContainer.Add pTStaffName, CStr(unitStaffContainerCount)
             
+            'added by Mike, 20190704
+            Set unitStaffCostColumnValuesContainer = Nothing
+            Set unitStaffCostColumnValuesContainer = New Collection
+            
+            unitStaffCostColumnValuesContainer.Add 0, CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN)
+            unitStaffCostColumnValuesContainer.Add 0, CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN)
+
+            unitStaffCostContainer.Add unitStaffCostColumnValuesContainer, CStr(unitStaffContainerCount)
+            
             unitStaffContainerCount = unitStaffContainerCount + 1
         End If
         
@@ -187,21 +199,31 @@ For Each row In myInput.Rows
             Set hasCountedUnitStaffMemberContainer = Nothing
             Set hasCountedUnitStaffMemberContainer = New Collection
         End If
-
         
+        'edited by Mike, 20190704
         If Not HasKey(hasCountedUnitStaffMemberContainer, unitStaffMemberID) Then
                 hasCountedUnitStaffMemberContainer.Add True, unitStaffMemberID
-        
-            If Not HasKey(unitStaffCostColumnValuesContainer, unitStaffMemberID) Then
-                unitStaffCostContainerTransactionCount = 1
-                unitStaffCostColumnValuesContainer.Add unitStaffCostContainerTransactionCount, unitStaffMemberID
-            Else
-                unitStaffCostContainerTransactionCount = unitStaffCostColumnValuesContainer(unitStaffMemberID) + 1
                 
-                unitStaffCostColumnValuesContainer.Remove unitStaffMemberID
-                unitStaffCostColumnValuesContainer.Add unitStaffCostContainerTransactionCount, unitStaffMemberID
-            End If
+                unitStaffCostContainerTransactionCount = unitStaffCostContainer(unitStaffMemberID)(CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN)) + 1
+                
+                unitStaffCostContainer(unitStaffMemberID).Remove CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN)
+                
+                unitStaffCostContainer(unitStaffMemberID).Add unitStaffCostContainerTransactionCount, CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN)
         End If
+
+'        If Not HasKey(hasCountedUnitStaffMemberContainer, unitStaffMemberID) Then
+'                hasCountedUnitStaffMemberContainer.Add True, unitStaffMemberID
+'
+'            If Not HasKey(unitStaffCostColumnValuesContainer, unitStaffMemberID) Then
+'                unitStaffCostContainerTransactionCount = 1
+'                unitStaffCostColumnValuesContainer.Add unitStaffCostContainerTransactionCount, unitStaffMemberID
+'            Else
+'                unitStaffCostContainerTransactionCount = unitStaffCostColumnValuesContainer(unitStaffMemberID) + 1
+'
+'                unitStaffCostColumnValuesContainer.Remove unitStaffMemberID
+'                unitStaffCostColumnValuesContainer.Add unitStaffCostContainerTransactionCount, unitStaffMemberID
+'            End If
+'        End If
                 
         previousDate = currentDate
         
@@ -260,8 +282,10 @@ For iUnitStaffMemberID = 1 To unitStaffContainer.Count
         'Note that I used "CStr(...)" in "unitStaffContainer (CStr(iUnitStaffMemberID))"
         'Otherwise, instead of the key, i.e. Unit Staff Member's ID, the computer software will use the item's count/index in the virtual container
         myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_NAME_COLUMN).Value = unitStaffContainer(CStr(iUnitStaffMemberID))
-        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_COLUMN).Value = unitStaffCostColumnValuesContainer(CStr(iUnitStaffMemberID))
-
+        'edited by Mike, 20190704
+        'myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_COLUMN).Value = unitStaffCostColumnValuesContainer(CStr(iUnitStaffMemberID))
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN).Value = unitStaffCostContainer(CStr(iUnitStaffMemberID))(CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN))
+        
         OutputRowCount = OutputRowCount + 1
 Next
 

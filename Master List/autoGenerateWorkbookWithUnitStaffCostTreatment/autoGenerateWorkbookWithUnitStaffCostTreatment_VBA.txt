@@ -211,6 +211,16 @@ For Each row In myInput.Rows
                 unitStaffCostContainer(unitStaffMemberID).Add unitStaffCostContainerTransactionCount, CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN)
         End If
 
+        'added by Mike, 20190704
+        unitStaffCostContainerTransactionCount = unitStaffCostContainer(unitStaffMemberID)(CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN)) + 1
+        
+        unitStaffCostContainer(unitStaffMemberID).Remove CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN)
+        
+        unitStaffCostContainer(unitStaffMemberID).Add unitStaffCostContainerTransactionCount, CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN)
+
+
+
+
 '        If Not HasKey(hasCountedUnitStaffMemberContainer, unitStaffMemberID) Then
 '                hasCountedUnitStaffMemberContainer.Add True, unitStaffMemberID
 '
@@ -285,6 +295,9 @@ For iUnitStaffMemberID = 1 To unitStaffContainer.Count
         'edited by Mike, 20190704
         'myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_COLUMN).Value = unitStaffCostColumnValuesContainer(CStr(iUnitStaffMemberID))
         myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN).Value = unitStaffCostContainer(CStr(iUnitStaffMemberID))(CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN))
+        
+        'added by Mike, 20190704
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN).Value = unitStaffCostContainer(CStr(iUnitStaffMemberID))(CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN))
         
         OutputRowCount = OutputRowCount + 1
 Next

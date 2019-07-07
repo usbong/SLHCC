@@ -9,7 +9,7 @@ Sub exportAllWorksheetsToTabDelimitedTxtFiles()
 '
 ' @author: Michael Syson
 ' @date created: 20181105
-' @date updated: 20190218
+' @date updated: 20190707
 '
 ' Input Workbook, e.g. Consultation Master List, PT Treatment Master List
 ' Given:
@@ -41,7 +41,10 @@ Sub exportAllWorksheetsToTabDelimitedTxtFiles()
 Dim ws As Worksheet
 Dim path As String
 
-path = ActiveWorkbook.path & "\" & Left(ActiveWorkbook.Name, InStr(ActiveWorkbook.Name, ".") - 1)
+'added by Mike, 20190707
+Application.DisplayAlerts = False
+
+path = ActiveWorkbook.path & "\" & Left(ActiveWorkbook.name, InStr(ActiveWorkbook.name, ".") - 1)
 
 'Save the workbook first before exporting the worksheet
 ActiveWorkbook.SaveAs Filename:=path
@@ -49,10 +52,13 @@ ActiveWorkbook.SaveAs Filename:=path
 For Each ws In Worksheets
     'Export the current/present active worksheet
     ws.Activate
-    ActiveWorkbook.SaveAs Filename:=path & "_" & ws.Name & ".txt", FileFormat:=xlText, CreateBackup:=False
+    ActiveWorkbook.SaveAs Filename:=path & "_" & ws.name & ".txt", FileFormat:=xlText, CreateBackup:=False
 Next
 
 'Close the workbook without the extra step of saving it again anymore
 ActiveWorkbook.Close SaveChanges:=False
+
+'added by Mike, 20190707
+Application.DisplayAlerts = True
 
 End Sub

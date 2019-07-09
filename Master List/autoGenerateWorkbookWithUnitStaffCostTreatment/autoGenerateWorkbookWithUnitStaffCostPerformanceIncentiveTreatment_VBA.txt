@@ -1,0 +1,352 @@
+Sub autoGenerateWorkbookWithUnitStaffCostPerformanceIncentiveTreatment()
+' Copyright 2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190626
+' @date updated: 20190709
+'
+' Given:
+' 1) Workbook's worksheet with the transactions data for the Month
+'
+'Output:
+' 1) Auto-generated new Workbook with the automatically computed Unit Staff Cost for the Performance Incentive
+'
+Dim myInput As Worksheet
+Dim myOutput As Worksheet 'the same as myInput
+Dim outputPath As String 'added by Mike, 20190329
+Dim startDateString As String 'added by Mike, 20190329
+Dim endDateString As String
+
+Dim row As Range
+Dim RowCount As Integer
+Dim TableHeaderRowUtilization As Integer
+Dim TableHeaderRow As Integer
+Dim LastPrintableRow As Integer
+Dim MaxPatientNameColumnWidth As Integer
+Dim patientNameFontSize As Integer
+
+'added by Mike, 20190702
+Dim totalIncentiveCost As Integer
+Dim totalTransactionsCount As Integer
+
+'added by Mike, 20190325
+Dim INPUT_NON_MASTER_LIST_OFFSET As Integer
+Dim MS_EXCEL_OFFSET As Integer
+
+Dim INPUT_REFERRING_DOCTOR_COLUMN As Integer
+Dim INPUT_NOTES_COLUMN As Integer
+Dim INPUT_DATE_COLUMN As Integer
+Dim INPUT_PATIENT_NAME_COLUMN As Integer
+Dim INPUT_CLASS_COLUMN As Integer
+Dim INPUT_NET_PF_COLUMN As Integer
+Dim INPUT_NEW_OLD_COLUMN As Integer
+Dim INPUT_NEW_OLD_PATIENT_COLUMN As Integer
+Dim INPUT_CHARGE_SLIP_NUMBER_COLUMN As Integer
+Dim INPUT_APPROVAL_CODE_COLUMN As Integer
+Dim INPUT_FEE_COLUMN As Integer
+Dim INPUT_DIAGNOSIS_COLUMN As Integer
+Dim INPUT_PT_NAME_COLUMN As Integer
+
+Dim OUTPUT_TOTAL_COLUMNS As Integer
+Dim OUTPUT_UNIT_STAFF_COST_DATE_COLUMN As Integer
+Dim OUTPUT_UNIT_STAFF_COST_PT_NAME_COLUMN As Integer
+Dim OUTPUT_UNIT_STAFF_COST_PT_NAME_NOTE_COLUMN As Integer
+
+Dim OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN_1 As Integer
+Dim OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN_2 As Integer
+Dim OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN_3 As Integer
+
+Dim OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN As Integer
+
+Dim OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_AVE_PER_DAY_COLUMN As Integer
+Dim OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_INCENTIVE_COST_COLUMN As Integer
+Dim OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_INCENTIVE_COST_PER_TRANSACTION_COLUMN As Integer
+    
+
+'added by Mike, 20190702
+Dim OUTPUT_UNIT_STAFF_COST_TOTAL_INCENTIVE_COST_COLUMN As Integer
+
+'set the values of the defined terms, i.e. value-holders
+INPUT_NON_MASTER_LIST_OFFSET = 0
+MS_EXCEL_OFFSET = 1 'added by Mike, 20190325
+INPUT_DATE_COLUMN = 0 - INPUT_NON_MASTER_LIST_OFFSET + MS_EXCEL_OFFSET
+INPUT_PT_NAME_COLUMN = 16 - INPUT_NON_MASTER_LIST_OFFSET + MS_EXCEL_OFFSET
+    
+'Performance Incentive MS EXCEL Workbook
+OUTPUT_TOTAL_COLUMNS = 18 + MS_EXCEL_OFFSET
+'OUTPUT_UNIT_STAFF_COST_DATE_COLUMN = 0 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_PT_NAME_COLUMN = 0 + MS_EXCEL_OFFSET '1 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_PT_NAME_NOTE_COLUMN = 2 + MS_EXCEL_OFFSET
+'OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN = 7 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN_1 = 1 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN_2 = 7 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN_3 = 13 + MS_EXCEL_OFFSET
+
+OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN = 14 + MS_EXCEL_OFFSET
+
+'OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COST_PER_DAY_COLUMN = 9 + MS_EXCEL_OFFSET
+'OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_AVE_PER_DAY_COLUMN = 10 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_AVE_PER_DAY_COLUMN = 15 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_INCENTIVE_COST_COLUMN = 16 + MS_EXCEL_OFFSET
+OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_INCENTIVE_COST_PER_TRANSACTION_COLUMN = 17 + MS_EXCEL_OFFSET
+    
+'added by Mike, 20190702
+OUTPUT_UNIT_STAFF_COST_TOTAL_INCENTIVE_COST_COLUMN = 17 + MS_EXCEL_OFFSET
+
+
+Dim pTStaffName As String
+Dim transactionServiceCountKey As String
+
+Dim isPTStaffNameInUnitStaffContainer As Boolean
+    
+'added by Mike, 20190701
+Dim currentDate As String
+Dim previousDate As String
+
+'added by Mike, 20190701
+Dim hasCountedUnitStaffMemberContainer As Collection
+Set hasCountedUnitStaffMemberContainer = New Collection
+
+    
+'added by Mike, 20190328
+'TableHeaderRowUtilization = 6
+
+'added by Mike, 20190330
+'TableHeaderRow = 5
+
+Dim unitStaffContainer As Collection
+Set unitStaffContainer = New Collection
+
+Dim unitStaffCostContainer As Collection
+Set unitStaffCostContainer = New Collection
+
+Dim unitStaffCostColumnValuesContainer As Collection
+Set unitStaffCostColumnValuesContainer = New Collection
+
+Dim unitStaffMemberID As String
+Dim unitStaffCostContainerTransactionCount As Integer
+
+unitStaffMemberID = 1
+unitStaffContainerCount = 1
+unitStaffCostContainerTransactionCount = 1
+RowCount = 1 '2 'do not include table header row
+RowCountOffset = 0 'This is to make the add-on software automatically adjust to rows with new line marks
+OutputRowCount = 1 'added by Mike, 20190325
+
+'added by Mike, 20190702
+totalIncentiveCost = 0
+totalTransactionsCount = 0
+
+'added by Mike, 20190328
+'Application.ScreenUpdating = False
+
+Application.DisplayAlerts = False 'do not display alert/warning message for delete confirmation
+
+Set myInput = Sheets(ActiveSheet.name)
+
+'add an ID key number to each staff member
+For Each row In myInput.Rows
+        pTStaffName = CStr(UCase(Trim(myInput.Cells(RowCount, INPUT_PT_NAME_COLUMN))))
+  
+        isPTStaffNameInUnitStaffContainer = False
+    
+        For KeyCount = 1 To unitStaffContainer.Count
+        
+'            MsgBox ("key" & unitStaffContainer(keyCount))
+
+            If unitStaffContainer(KeyCount) = pTStaffName Then
+               isPTStaffNameInUnitStaffContainer = True
+            End If
+        Next
+  
+        If isPTStaffNameInUnitStaffContainer = False Then
+            unitStaffContainer.Add pTStaffName, CStr(unitStaffContainerCount)
+            
+            'added by Mike, 20190704
+            Set unitStaffCostColumnValuesContainer = Nothing
+            Set unitStaffCostColumnValuesContainer = New Collection
+            
+            unitStaffCostColumnValuesContainer.Add 0, CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN)
+            unitStaffCostColumnValuesContainer.Add 0, CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN)
+
+            unitStaffCostContainer.Add unitStaffCostColumnValuesContainer, CStr(unitStaffContainerCount)
+            
+            unitStaffContainerCount = unitStaffContainerCount + 1
+        End If
+        
+        RowCount = RowCount + 1
+                            
+        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+            Exit For
+        End If
+Next row
+
+'edited by Mike, 20190701
+RowCount = 1
+previousDate = "-1" 'CStr(myInput.Cells(1, INPUT_DATE_COLUMN))
+
+For Each row In myInput.Rows
+        pTStaffName = CStr(UCase(Trim(myInput.Cells(RowCount, INPUT_PT_NAME_COLUMN))))
+        currentDate = CStr(myInput.Cells(RowCount, INPUT_DATE_COLUMN))
+        
+        'MsgBox ("currentDate" & currentDate)
+                
+        For KeyCount = 1 To unitStaffContainer.Count
+            If unitStaffContainer(KeyCount) = pTStaffName Then
+                unitStaffMemberID = KeyCount
+                Exit For
+            End If
+        Next
+        
+        'delete the contents of the container and make a new Collection
+        If (Not previousDate = "-1") And (Not previousDate = currentDate) Then
+            Set hasCountedUnitStaffMemberContainer = Nothing
+            Set hasCountedUnitStaffMemberContainer = New Collection
+        End If
+        
+        'edited by Mike, 20190704
+        If Not HasKey(hasCountedUnitStaffMemberContainer, unitStaffMemberID) Then
+                hasCountedUnitStaffMemberContainer.Add True, unitStaffMemberID
+                
+                unitStaffCostContainerTransactionCount = unitStaffCostContainer(unitStaffMemberID)(CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN)) + 1
+                
+                unitStaffCostContainer(unitStaffMemberID).Remove CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN)
+                
+                unitStaffCostContainer(unitStaffMemberID).Add unitStaffCostContainerTransactionCount, CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN)
+        End If
+
+        'added by Mike, 20190704
+        unitStaffCostContainerTransactionCount = unitStaffCostContainer(unitStaffMemberID)(CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN)) + 1
+        
+        unitStaffCostContainer(unitStaffMemberID).Remove CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN)
+        
+        unitStaffCostContainer(unitStaffMemberID).Add unitStaffCostContainerTransactionCount, CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN)
+
+
+
+
+'        If Not HasKey(hasCountedUnitStaffMemberContainer, unitStaffMemberID) Then
+'                hasCountedUnitStaffMemberContainer.Add True, unitStaffMemberID
+'
+'            If Not HasKey(unitStaffCostColumnValuesContainer, unitStaffMemberID) Then
+'                unitStaffCostContainerTransactionCount = 1
+'                unitStaffCostColumnValuesContainer.Add unitStaffCostContainerTransactionCount, unitStaffMemberID
+'            Else
+'                unitStaffCostContainerTransactionCount = unitStaffCostColumnValuesContainer(unitStaffMemberID) + 1
+'
+'                unitStaffCostColumnValuesContainer.Remove unitStaffMemberID
+'                unitStaffCostColumnValuesContainer.Add unitStaffCostContainerTransactionCount, unitStaffMemberID
+'            End If
+'        End If
+                
+        previousDate = currentDate
+        
+        RowCount = RowCount + 1
+                            
+        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+            Exit For
+        End If
+Next row
+
+'added by Mike, 20190702
+totalTransactionsCount = RowCount - 1
+                
+'added by Mike, 20190329
+'startDateString = Format(unitStaffCostContainer(1)(CStr(OUTPUT_UNIT_STAFF_COST_DATE_COLUMN)), "yyyymmdd")
+'endDateString = Format(unitStaffCostContainer(hmoBillingContainerTransactionCount - 1)(CStr(OUTPUT_UNIT_STAFF_COST_DATE_COLUMN)), "yyyymmdd")
+
+'--------------------------------------------------------------
+'Process Output Folders and Files
+'--------------------------------------------------------------
+outputPath = Application.ActiveWorkbook.path & "\output\"
+Set fso = CreateObject("scripting.filesystemobject")
+If Not fso.folderexists(outputPath) Then
+    fso.createfolder (outputPath)
+End If
+
+'--------------------------------------------------------------
+'Process HMO Billing Utilization
+'--------------------------------------------------------------
+
+'outputFileName = "unitStaffCostTreatmentWorkbook" & ".xlsx"
+outputFileName = "unitStaffCostPerformanceIncentiveTreatmentWorkbook" & ".xlsx"
+
+'added by Mike, 20190630
+'close new workbook if it already exists
+If fso.fileexists(outputPath & outputFileName) Then
+    Set existingWorkbook = Application.Workbooks.Open(outputPath & outputFileName)
+    existingWorkbook.Close
+End If
+
+Set NewWorkbook = Workbooks.Add
+    With NewWorkbook
+        .SaveAs Filename:=outputPath & outputFileName '"unitStaffCostTreatmentWorkbook" & ".xlsx" '& startDateString & "~" & endDateString & ".xls"
+    End With
+
+outputWorksheetName = "treatment"
+
+NewWorkbook.Sheets.Add.name = outputWorksheetName
+
+RowCount = 1
+OutputRowCount = 1
+
+'Note I added "i" to mean "Integer" based on what I understand of the Hungarian Notation
+For iUnitStaffMemberID = 1 To unitStaffContainer.Count
+        Set myOutput = Sheets(ActiveSheet.name)
+        
+        'Note that I used "CStr(...)" in "unitStaffContainer (CStr(iUnitStaffMemberID))"
+        'Otherwise, instead of the key, i.e. Unit Staff Member's ID, the computer software will use the item's count/index in the virtual container
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_NAME_COLUMN).Value = unitStaffContainer(CStr(iUnitStaffMemberID))
+        
+        'edited by Mike, 20190704
+        iServiceCountPerTransaction = unitStaffCostContainer(CStr(iUnitStaffMemberID))(CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN))
+        iServiceCountPerDay = unitStaffCostContainer(CStr(iUnitStaffMemberID))(CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN))
+        
+        'added by Mike, 20190704; edited by Mike, 20190709
+'        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN).Value = iServiceCountPerTransaction
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN_1).Value = iServiceCountPerTransaction
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN_2).Value = iServiceCountPerTransaction
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN_3).Value = iServiceCountPerTransaction
+        
+        'edited by Mike, 20190704
+        'myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_COLUMN).Value = unitStaffCostColumnValuesContainer(CStr(iUnitStaffMemberID))
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN).Value = iServiceCountPerDay
+        
+        'added by Mike, 20190704
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_AVE_PER_DAY_COLUMN).Value = Round(iServiceCountPerTransaction / iServiceCountPerDay, 1)
+        
+        OutputRowCount = OutputRowCount + 1
+Next
+
+If totalTransactionsCount >= 300 Then
+    totalIncentiveCost = totalTransactionsCount * 15
+ElseIf totalTransactionsCount >= 200 Then
+    totalIncentiveCost = totalTransactionsCount * 10
+End If
+
+myOutput.Cells(OutputRowCount + 1, OUTPUT_UNIT_STAFF_COST_TOTAL_INCENTIVE_COST_COLUMN).Value = totalIncentiveCost
+
+
+
+'delete default worksheet automatically included when we created a new workbook
+'Application.DisplayAlerts = False 'do not display alert/warning message for delete confirmation
+Worksheets("Sheet1").Delete
+'Application.DisplayAlerts = True
+
+
+NewWorkbook.Save
+'NewWorkbook.Close
+'--------------------------------------------------------------
+
+Application.DisplayAlerts = True
+
+'added by Mike, 20190328
+'Application.ScreenUpdating = True
+
+End Sub

@@ -35,6 +35,8 @@ Dim patientNameFontSize As Integer
 Dim totalIncentiveCost As Integer
 Dim totalTransactionsCount As Integer
 
+Dim incentiveCost As Integer 'added by Mike, 20190709
+
 'added by Mike, 20190325
 Dim INPUT_NON_MASTER_LIST_OFFSET As Integer
 Dim MS_EXCEL_OFFSET As Integer
@@ -142,6 +144,8 @@ OutputRowCount = 1 'added by Mike, 20190325
 'added by Mike, 20190702
 totalIncentiveCost = 0
 totalTransactionsCount = 0
+
+incentiveCost = 0 'added by Mike, 20190709
 
 'added by Mike, 20190328
 'Application.ScreenUpdating = False
@@ -293,6 +297,14 @@ outputWorksheetName = "treatment"
 
 NewWorkbook.Sheets.Add.name = outputWorksheetName
 
+If totalTransactionsCount >= 300 Then
+    incentiveCost = 15
+    totalIncentiveCost = totalTransactionsCount * 15
+ElseIf totalTransactionsCount >= 200 Then
+    incentiveCost = 10
+    totalIncentiveCost = totalTransactionsCount * 10
+End If
+
 RowCount = 1
 OutputRowCount = 1
 
@@ -321,14 +333,15 @@ For iUnitStaffMemberID = 1 To unitStaffContainer.Count
         'added by Mike, 20190704
         myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_AVE_PER_DAY_COLUMN).Value = Round(iServiceCountPerTransaction / iServiceCountPerDay, 1)
         
+        'added by Mike, 20190709
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_INCENTIVE_COST_COLUMN).Value = iServiceCountPerTransaction * incentiveCost
+        
+        'added by Mike, 20190709
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_INCENTIVE_COST_PER_TRANSACTION_COLUMN).Value = "@" & incentiveCost
+        
         OutputRowCount = OutputRowCount + 1
 Next
 
-If totalTransactionsCount >= 300 Then
-    totalIncentiveCost = totalTransactionsCount * 15
-ElseIf totalTransactionsCount >= 200 Then
-    totalIncentiveCost = totalTransactionsCount * 10
-End If
 
 myOutput.Cells(OutputRowCount + 1, OUTPUT_UNIT_STAFF_COST_TOTAL_INCENTIVE_COST_COLUMN).Value = totalIncentiveCost
 

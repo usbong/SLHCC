@@ -342,10 +342,12 @@ For iUnitStaffMemberID = 1 To unitStaffContainer.Count
         OutputRowCount = OutputRowCount + 1
 Next
 
+'added by Mike, 20190709
+myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN_1).Value = totalTransactionsCount
+myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN_2).Value = totalTransactionsCount
+myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN_3).Value = totalTransactionsCount
 
 myOutput.Cells(OutputRowCount + 1, OUTPUT_UNIT_STAFF_COST_TOTAL_INCENTIVE_COST_COLUMN).Value = totalIncentiveCost
-
-
 
 'delete default worksheet automatically included when we created a new workbook
 'Application.DisplayAlerts = False 'do not display alert/warning message for delete confirmation

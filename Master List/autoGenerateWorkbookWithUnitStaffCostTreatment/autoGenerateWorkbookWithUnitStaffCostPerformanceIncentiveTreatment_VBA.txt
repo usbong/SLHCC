@@ -9,7 +9,7 @@ Sub autoGenerateWorkbookWithUnitStaffCostPerformanceIncentiveTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190626
-' @date updated: 20190709
+' @date updated: 20190710
 '
 ' Given:
 ' 1) Workbook's worksheet with the transactions data for the Month
@@ -320,9 +320,16 @@ Set myOutput = Sheets(ActiveSheet.name)
 myOutput.Cells(1, OUTPUT_UNIT_STAFF_COST_PT_TITLE_COLUMN).Value = "2019 STAFF PERFORMANCE INCENTIVE for SLHCC"
 myOutput.Cells(2, OUTPUT_UNIT_STAFF_COST_PT_GUIDE_COLUMN).Value = "SLHCC total Px treated per Month; If 200 Px, +10pesos incentive; If 300, +15pesos incentive"
 
+'added by Mike, 20190709
+myOutput.Cells(3, OUTPUT_UNIT_STAFF_COST_DATE_COLUMN).Value = UCase(Format(currentDate, "mmmm yyyy"))
+
+'added by Mike, 20190710
+myOutput.Cells(3, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN_3).Value = "TOTAL Px"
+myOutput.Cells(3, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN).Value = "DAYS"
+myOutput.Cells(3, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_AVE_PER_DAY_COLUMN).Value = "AVG/DAY"
 
 'RowCount = 1
-OutputRowCount = 3
+OutputRowCount = 4
 
 'Note I added "i" to mean "Integer" based on what I understand of the Hungarian Notation
 For iUnitStaffMemberID = 1 To unitStaffContainer.Count

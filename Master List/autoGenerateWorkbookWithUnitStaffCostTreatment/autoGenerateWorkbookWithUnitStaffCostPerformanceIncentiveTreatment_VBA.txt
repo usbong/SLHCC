@@ -116,9 +116,9 @@ Dim transactionServiceCountKey As String
 
 Dim isPTStaffNameInUnitStaffContainer As Boolean
     
-'added by Mike, 20190701
-Dim currentDate As String
-Dim previousDate As String
+'added by Mike, 20190701; edited by Mike, 20190711
+Dim currentDate As Date 'String
+Dim previousDate As Date 'String
 
 'added by Mike, 20190701
 Dim hasCountedUnitStaffMemberContainer As Collection
@@ -206,7 +206,8 @@ previousDate = "-1" 'CStr(myInput.Cells(1, INPUT_DATE_COLUMN))
 
 For Each row In myInput.Rows
         pTStaffName = CStr(UCase(Trim(myInput.Cells(RowCount, INPUT_PT_NAME_COLUMN))))
-        currentDate = CStr(myInput.Cells(RowCount, INPUT_DATE_COLUMN))
+'        currentDate = CStr(myInput.Cells(RowCount, INPUT_DATE_COLUMN))
+        currentDate = myInput.Cells(RowCount, INPUT_DATE_COLUMN) 'edited by Mike, 20190711
         
         'MsgBox ("currentDate" & currentDate)
                 
@@ -218,7 +219,7 @@ For Each row In myInput.Rows
         Next
         
         'delete the contents of the container and make a new Collection
-        If (Not previousDate = "-1") And (Not previousDate = currentDate) Then
+        If (Not CStr(previousDate) = "-1") And (Not CStr(previousDate) = CStr(currentDate)) Then
             Set hasCountedUnitStaffMemberContainer = Nothing
             Set hasCountedUnitStaffMemberContainer = New Collection
         End If
@@ -320,8 +321,11 @@ Set myOutput = Sheets(ActiveSheet.name)
 myOutput.Cells(1, OUTPUT_UNIT_STAFF_COST_PT_TITLE_COLUMN).Value = "2019 STAFF PERFORMANCE INCENTIVE for SLHCC"
 myOutput.Cells(2, OUTPUT_UNIT_STAFF_COST_PT_GUIDE_COLUMN).Value = "SLHCC total Px treated per Month; If 200 Px, +10pesos incentive; If 300, +15pesos incentive"
 
-'added by Mike, 20190709
-myOutput.Cells(3, OUTPUT_UNIT_STAFF_COST_DATE_COLUMN).Value = UCase(Format(currentDate, "mmmm yyyy"))
+'added by Mike, 20190709; edited by Mike, 20190711
+'myOutput.Cells(3, OUTPUT_UNIT_STAFF_COST_DATE_COLUMN).Value = Format(currentDate, "mmmm yyyy")
+myOutput.Cells(3, OUTPUT_UNIT_STAFF_COST_DATE_COLUMN).Value = currentDate
+myOutput.Cells(3, OUTPUT_UNIT_STAFF_COST_DATE_COLUMN).NumberFormat = "mmmm yyyy"
+'myOutput.Cells(3, OUTPUT_UNIT_STAFF_COST_DATE_COLUMN).Value = UCase(CStr(myOutput.Cells(3, OUTPUT_UNIT_STAFF_COST_DATE_COLUMN).Value))
 
 'added by Mike, 20190710
 myOutput.Cells(3, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN_3).Value = "TOTAL Px"

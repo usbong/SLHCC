@@ -9,9 +9,9 @@ Sub autoComputeAmountPaidAndNetPFTreatmentMasterList()
 '
 ' @author: Michael Syson
 ' @date created: 20180412
-' @date updated: 20190403
+' @date updated: 20190711
 '
-' Master List: Treatment 2018
+' Master List: Treatment 2018 until the present
 ' Given:
 ' 1) Standard Fee (Column H)
 ' 2) Class, i.e. PWD, SC, WI, SLC, SLR (Column I)
@@ -22,12 +22,12 @@ Sub autoComputeAmountPaidAndNetPFTreatmentMasterList()
 
 'Notes:
 ' 1) The Master List is the consolidated Excel logbook based on:
-' a) printed payslips from Sta. Lucia
+' a) Printed payslips from Sta. Lucia
 ' b) Excel payslip reports from Sta. Lucia
 ' c) Rehab/Clinic logbook (pen and paper)
 ' d) Rehab/Clinic Excel logbook
 '
-' 2) This auto-computation applies to all the months of 2018, except March.
+' 2) This auto-computation applies to all the months of 2018, except March, until the present
 ' --> In March, 0.9 was updated to 0.92 due to a change in the EWT (Expanded Withholding Tax)
 
 
@@ -54,6 +54,10 @@ For Each row In myInput.Rows
             myOutput.Range("J" & RowCount) = myInput.Range("H" & RowCount).Value
        ElseIf myInput.Range("I" & RowCount).Value = "SLC" Then
             myOutput.Range("J" & RowCount) = myInput.Range("H" & RowCount).Value * 0.9
+       'added by Mike, 20190711
+       '+added: computation for SLR (Sta. Lucia Reality) patients
+       ElseIf myInput.Range("I" & RowCount).Value = "SLR" Then
+            myOutput.Range("J" & RowCount) = myInput.Range("H" & RowCount).Value
        End If
 
        'auto-compute the Net PF (Professional Fee) based on Class and PF distribution
@@ -151,4 +155,3 @@ myOutput.Range("J" & 1, "K" & RowCount).Font.name = "Calibri"
 myOutput.Range("J" & 1, "K" & RowCount).NumberFormat = "0.00"
 
 End Sub
-

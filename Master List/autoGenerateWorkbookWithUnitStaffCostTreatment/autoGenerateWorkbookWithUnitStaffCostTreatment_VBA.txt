@@ -9,7 +9,7 @@ Sub autoGenerateWorkbookWithUnitStaffCostTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190626
-' @date updated: 20190704
+' @date updated: 20190711
 '
 ' Given:
 ' 1) Workbook's worksheet with the transactions data for the Month
@@ -79,7 +79,6 @@ OUTPUT_UNIT_STAFF_COST_PT_NAME_COLUMN = 1 + MS_EXCEL_OFFSET
 OUTPUT_UNIT_STAFF_COST_PT_NAME_NOTE_COLUMN = 2 + MS_EXCEL_OFFSET
 OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN = 7 + MS_EXCEL_OFFSET
 OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN = 8 + MS_EXCEL_OFFSET
-
 OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COST_PER_DAY_COLUMN = 9 + MS_EXCEL_OFFSET
 OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_AVE_PER_DAY_COLUMN = 10 + MS_EXCEL_OFFSET
 OUTPUT_UNIT_STAFF_COST_TOTAL_PT_TRANSACTION_SERVICE_TOTAL_INCENTIVE_COST_PER_TRANSACTION_COLUMN = 11 + MS_EXCEL_OFFSET
@@ -95,9 +94,9 @@ Dim transactionServiceCountKey As String
 
 Dim isPTStaffNameInUnitStaffContainer As Boolean
     
-'added by Mike, 20190701
-Dim currentDate As String
-Dim previousDate As String
+'added by Mike, 20190701; edited by Mike, 20190711
+Dim currentDate As Date 'String
+Dim previousDate As Date 'String
 
 'added by Mike, 20190701
 Dim hasCountedUnitStaffMemberContainer As Collection
@@ -183,7 +182,8 @@ previousDate = "-1" 'CStr(myInput.Cells(1, INPUT_DATE_COLUMN))
 
 For Each row In myInput.Rows
         pTStaffName = CStr(UCase(Trim(myInput.Cells(RowCount, INPUT_PT_NAME_COLUMN))))
-        currentDate = CStr(myInput.Cells(RowCount, INPUT_DATE_COLUMN))
+'        currentDate = CStr(myInput.Cells(RowCount, INPUT_DATE_COLUMN))
+        currentDate = myInput.Cells(RowCount, INPUT_DATE_COLUMN) 'edited by Mike, 20190711
         
         'MsgBox ("currentDate" & currentDate)
                 
@@ -195,7 +195,8 @@ For Each row In myInput.Rows
         Next
         
         'delete the contents of the container and make a new Collection
-        If (Not previousDate = "-1") And (Not previousDate = currentDate) Then
+        'edited by Mike, 20190711
+        If (Not CStr(previousDate) = "-1") And (Not CStr(previousDate) = CStr(currentDate)) Then
             Set hasCountedUnitStaffMemberContainer = Nothing
             Set hasCountedUnitStaffMemberContainer = New Collection
         End If
@@ -282,12 +283,21 @@ outputWorksheetName = "treatment"
 
 NewWorkbook.Sheets.Add.name = outputWorksheetName
 
-RowCount = 1
+'added by Mike, 20190709
+Set myOutput = Sheets(ActiveSheet.name)
+
+'added by Mike, 20190709; edited by Mike, 20190711
+'myOutput.Cells(3, OUTPUT_UNIT_STAFF_COST_DATE_COLUMN).Value = Format(currentDate, "mmmm yyyy")
+myOutput.Cells(1, OUTPUT_UNIT_STAFF_COST_DATE_COLUMN).Value = currentDate
+myOutput.Cells(1, OUTPUT_UNIT_STAFF_COST_DATE_COLUMN).NumberFormat = "mmmm yyyy"
+'myOutput.Cells(3, OUTPUT_UNIT_STAFF_COST_DATE_COLUMN).Value = UCase(CStr(myOutput.Cells(3, OUTPUT_UNIT_STAFF_COST_DATE_COLUMN).Value))
+
+'RowCount = 1
 OutputRowCount = 1
 
 'Note I added "i" to mean "Integer" based on what I understand of the Hungarian Notation
 For iUnitStaffMemberID = 1 To unitStaffContainer.Count
-        Set myOutput = Sheets(ActiveSheet.name)
+'        Set myOutput = Sheets(ActiveSheet.name) 'edited by Mike, 20190711
         
         'Note that I used "CStr(...)" in "unitStaffContainer (CStr(iUnitStaffMemberID))"
         'Otherwise, instead of the key, i.e. Unit Staff Member's ID, the computer software will use the item's count/index in the virtual container

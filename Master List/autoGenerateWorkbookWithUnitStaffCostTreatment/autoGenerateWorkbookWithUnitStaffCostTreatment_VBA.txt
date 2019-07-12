@@ -9,7 +9,7 @@ Sub autoGenerateWorkbookWithUnitStaffCostTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190626
-' @date updated: 20190711
+' @date updated: 20190712
 '
 ' Given:
 ' 1) Workbook's worksheet with the transactions data for the Month
@@ -19,6 +19,7 @@ Sub autoGenerateWorkbookWithUnitStaffCostTreatment()
 '
 Dim myInput As Worksheet
 Dim myOutput As Worksheet 'the same as myInput
+Dim unitStaffRateInput As Worksheet 'added by Mike, 20190712
 Dim outputPath As String 'added by Mike, 20190329
 Dim startDateString As String 'added by Mike, 20190329
 Dim endDateString As String
@@ -53,6 +54,10 @@ Dim INPUT_FEE_COLUMN As Integer
 Dim INPUT_DIAGNOSIS_COLUMN As Integer
 Dim INPUT_PT_NAME_COLUMN As Integer
 
+'added by Mike, 20190712
+Dim UNIT_STAFF_RATE_PT_NAME_COLUMN As Integer
+Dim UNIT_STAFF_RATE_COST_COLUMN As Integer
+
 Dim OUTPUT_TOTAL_COLUMNS As Integer
 Dim OUTPUT_UNIT_STAFF_COST_DATE_COLUMN As Integer
 Dim OUTPUT_UNIT_STAFF_COST_PT_NAME_COLUMN As Integer
@@ -72,6 +77,10 @@ INPUT_NON_MASTER_LIST_OFFSET = 0
 MS_EXCEL_OFFSET = 1 'added by Mike, 20190325
 INPUT_DATE_COLUMN = 0 - INPUT_NON_MASTER_LIST_OFFSET + MS_EXCEL_OFFSET
 INPUT_PT_NAME_COLUMN = 16 - INPUT_NON_MASTER_LIST_OFFSET + MS_EXCEL_OFFSET
+    
+'added by Mike, 20190712
+UNIT_STAFF_RATE_PT_NAME_COLUMN = 0 + MS_EXCEL_OFFSET
+UNIT_STAFF_RATE_COST_COLUMN = 1 + MS_EXCEL_OFFSET
     
 OUTPUT_TOTAL_COLUMNS = 14 + MS_EXCEL_OFFSET
 OUTPUT_UNIT_STAFF_COST_DATE_COLUMN = 0 + MS_EXCEL_OFFSET
@@ -96,6 +105,7 @@ Dim pTStaffName As String
 Dim transactionServiceCountKey As String
 
 Dim isPTStaffNameInUnitStaffContainer As Boolean
+Dim unitStaffRateInputRowCount As Integer
     
 'added by Mike, 20190701; edited by Mike, 20190711
 Dim currentDate As Date 'String
@@ -124,12 +134,16 @@ Set unitStaffCostColumnValuesContainer = New Collection
 Dim unitStaffMemberID As String
 Dim unitStaffCostContainerTransactionCount As Integer
 
+'added by Mike, 20190712
+Dim pTStaffNameInUnitStaffRateInput As String
+
 unitStaffMemberID = 1
 unitStaffContainerCount = 1
 unitStaffCostContainerTransactionCount = 1
 RowCount = 1 '2 'do not include table header row
 RowCountOffset = 0 'This is to make the add-on software automatically adjust to rows with new line marks
 OutputRowCount = 1 'added by Mike, 20190325
+unitStaffRateInputRowCount = 1 'added by Mike, 20190712
 
 'added by Mike, 20190702
 totalIncentiveCost = 0
@@ -141,6 +155,9 @@ totalTransactionsCount = 0
 Application.DisplayAlerts = False 'do not display alert/warning message for delete confirmation
 
 Set myInput = Sheets(ActiveSheet.name)
+
+'added by Mike, 20190712
+Set unitStaffRateInput = Sheets("unit_staff_rate")
 
 'add an ID key number to each staff member
 For Each row In myInput.Rows
@@ -159,13 +176,32 @@ For Each row In myInput.Rows
   
         If isPTStaffNameInUnitStaffContainer = False Then
             unitStaffContainer.Add pTStaffName, CStr(unitStaffContainerCount)
-            
+                    
             'added by Mike, 20190704
             Set unitStaffCostColumnValuesContainer = Nothing
             Set unitStaffCostColumnValuesContainer = New Collection
             
             unitStaffCostColumnValuesContainer.Add 0, CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN)
             unitStaffCostColumnValuesContainer.Add 0, CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN)
+
+
+            'added by Mike, 20190712
+            unitStaffRateInputRowCount = 1
+            For Each unitStaffRateInputRow In unitStaffRateInput.Rows
+                pTStaffNameInUnitStaffRateInput = CStr(UCase(Trim(unitStaffRateInput.Cells(unitStaffRateInputRowCount, UNIT_STAFF_RATE_PT_NAME_COLUMN))))
+                
+                If pTStaffNameInUnitStaffRateInput = pTStaffName Then
+                    unitStaffCostColumnValuesContainer.Add CStr(UCase(Trim(unitStaffRateInput.Cells(unitStaffRateInputRowCount, UNIT_STAFF_RATE_COST_COLUMN)))), CStr(UNIT_STAFF_RATE_COST_COLUMN)
+                    Exit For
+                End If
+                
+                unitStaffRateInputRowCount = unitStaffRateInputRowCount + 1
+
+                If IsEmpty(unitStaffRateInput.Range("A" & unitStaffRateInputRowCount).Value) Then
+                    MsgBox ("Alert! Unit Staff Member Name does not exist in the 'unit_staff_rate' worksheet")
+                    Exit For
+                End If
+            Next unitStaffRateInputRow
 
             unitStaffCostContainer.Add unitStaffCostColumnValuesContainer, CStr(unitStaffContainerCount)
             
@@ -309,6 +345,7 @@ For iUnitStaffMemberID = 1 To unitStaffContainer.Count
         'edited by Mike, 20190704
         iServiceCountPerTransaction = unitStaffCostContainer(CStr(iUnitStaffMemberID))(CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN))
         iServiceCountPerDay = unitStaffCostContainer(CStr(iUnitStaffMemberID))(CStr(OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN))
+        iServiceRateCostPerDay = unitStaffCostContainer(CStr(iUnitStaffMemberID))(CStr(UNIT_STAFF_RATE_COST_COLUMN))
         
         'added by Mike, 20190704
         'myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_TRANSACTION_COLUMN).Value = iServiceCountPerTransaction
@@ -317,11 +354,17 @@ For iUnitStaffMemberID = 1 To unitStaffContainer.Count
         'myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_COLUMN).Value = unitStaffCostColumnValuesContainer(CStr(iUnitStaffMemberID))
         myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_PER_DAY_COLUMN).Value = iServiceCountPerDay
         
+        'added by Mike, 20190712
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COST_PER_DAY_COLUMN).Value = "@" & iServiceRateCostPerDay
+        
         'added by Mike, 20190711
         myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_TOTAL_COUNT_PER_DAY_COLUMN).Value = iServiceCountPerDay
         
         'added by Mike, 20190704
         'myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_COUNT_AVE_PER_DAY_COLUMN).Value = Round(iServiceCountPerTransaction / iServiceCountPerDay, 1)
+        
+        'added by Mike, 20190712
+        myOutput.Cells(OutputRowCount, OUTPUT_UNIT_STAFF_COST_PT_TRANSACTION_SERVICE_TOTAL_COST_PER_DAY_COLUMN).Value = "@" & iServiceRateCostPerDay
         
         OutputRowCount = OutputRowCount + 1
 Next

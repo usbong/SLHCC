@@ -11,6 +11,7 @@ STL UE	Muscle strain shoulder
 STL UE	Muscle elbow
 STL UE	finger stiffness
 STL UE	Muscle wrist
+STL UE	Radial Collateral Sprain
 STL UE	TFCC
 STL LE	Plantar Fascitis
 STL LE	Meniscal Tear
@@ -47,6 +48,8 @@ Cervical Disorder	C3
 Cervical Disorder	C4
 Cervical Disorder	C5
 Cervical Disorder	C6
+Cervical Disorder	Upper back Strain
+Cervical Disorder	Strain
 Cervical Disorder	C7
 Lumbar disorder	DDD
 Lumbar disorder	Thoracic
@@ -78,12 +81,14 @@ Lumbar disorder	S3
 Lumbar disorder	S4
 Lumbar disorder	compression fx
 Lumbar disorder	FX Lumbar
+Lumbar disorder	LS radiculopathy
 Lumbar disorder	HNP
 OA/RA/Gouty arthritis	OA
 OA/RA/Gouty arthritis	RA
 OA/RA/Gouty arthritis	Gouty arthritis
 OA/RA/Gouty arthritis	hip OA
 OA/RA/Gouty arthritis	knee OA
+OA/RA/Gouty arthritis	Post traumatic
 OA/RA/Gouty arthritis	ankle OA
 Fx/S/p ORIF/Plating/Screws; Dislocation	BKA
 Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p ORIF
@@ -128,6 +133,7 @@ Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	impingement
 Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Frozen Shoulder
 CVA	CVD
 CVA	Cerebellar Stroke
+CVA	Stroke
 CVA	CVA
 CP/Cerebral Palsy	CP
 CP/Cerebral Palsy	Cerebral Palsy

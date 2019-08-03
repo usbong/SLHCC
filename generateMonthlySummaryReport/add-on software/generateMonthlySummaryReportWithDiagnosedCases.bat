@@ -1,4 +1,6 @@
 set mainDirectory=%CD%
+cd assets/transactions/
+copy *List.txt *ListTemp.txt
 cd /d %mainDirectory%
 java -cp .\software;.\software\org.apache.commons.text.jar generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles input/treatment/*.txt input/consultation/*.txt assets/*.txt
 cd assets/transactions/

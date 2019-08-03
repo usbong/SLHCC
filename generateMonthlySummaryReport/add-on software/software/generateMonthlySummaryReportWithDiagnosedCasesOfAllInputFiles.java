@@ -332,11 +332,14 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		PrintWriter consultationCountMonthlyStatisticsWriter = new PrintWriter("output/MonthlyStatisticsConsultation.html", "UTF-8");	
 		//added by Mike, 20190503
 		PrintWriter procedureCountMonthlyStatisticsWriter = new PrintWriter("output/MonthlyStatisticsProcedure.html", "UTF-8");	
-		
+
+/*		//removed by Mike, 20190803		
 		//added by Mike, 20190622
 		PrintWriter treatmentCountListTempWriter = new PrintWriter("assets/transactions/treatmentCountListTemp.txt", "UTF-8");	
 		PrintWriter consultationCountListTempWriter = new PrintWriter("assets/transactions/consultationCountListTemp.txt", "UTF-8");	
 		PrintWriter procedureCountListTempWriter = new PrintWriter("assets/transactions/procedureCountListTemp.txt", "UTF-8");	
+*/
+		
 /*		
 		PrintWriter treatmentCountListWriter = new PrintWriter("assets/transactions/treatmentCountList.txt", "UTF-8");	
 		PrintWriter consultationCountListWriter = new PrintWriter("assets/transactions/consultationCountList.txt", "UTF-8");	
@@ -443,6 +446,12 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			processWriteOutputFileMonthlyStatistics(consultationCountMonthlyStatisticsWriter, CONSULTATION_FILE_TYPE);		
 			processWriteOutputFileMonthlyStatistics(procedureCountMonthlyStatisticsWriter, PROCEDURE_FILE_TYPE);		
 
+			
+			//added by Mike, 20190803
+			//note that I moved these instructions here, so that if there is an error in the processing that the computer executes before these, the lists will not be blank
+			PrintWriter treatmentCountListTempWriter = new PrintWriter("assets/transactions/treatmentCountListTemp.txt", "UTF-8");	
+			PrintWriter consultationCountListTempWriter = new PrintWriter("assets/transactions/consultationCountListTemp.txt", "UTF-8");	
+			PrintWriter procedureCountListTempWriter = new PrintWriter("assets/transactions/procedureCountListTemp.txt", "UTF-8");	
 			
 			//added by Mike, 20190622
 			processWriteOutputFileAssetsTransactionsCountList(treatmentCountListTempWriter, TREATMENT_FILE_TYPE);

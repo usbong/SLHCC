@@ -17,15 +17,26 @@
   Output:
   1) Automatically connect to the database (DB) and send the details of the transactions to the computer server to store them in the DB
   
-  Note:
+  Notes:
   1) The details of the transactions to be sent are in the JSON (JavaScript Object Notation) format.
+    
+  2) To compile on Windows' Command Prompt the add-on software with the JSON .jar file, i.e. json, use the following command:
+   javac -cp .;org.json.jar UsbongHTTPConnect.java
+
+  3) To execute on Windows' Command Prompt the add-on software with the JSON .jar file, i.e. json, use the following command:
+   java -cp .;org.json.jar UsbongHTTPConnect
+
+  4) The JSON .jar file can be downloaded here:
+   https://github.com/stleary/JSON-java; last accessed: 20190808
   
-  Reference:
+  References:
   1) Introducing JSON. https://www.json.org/; last accessed: 20190807
   --> ECMA-404 The JSON Data Interchange Standard  
   2) https://stackoverflow.com/questions/7181534/http-post-using-json-in-java; last accessed: 20190807
   --> answer by: Cigano Morrison Mendez on 20131111; edited on 20140819
 */
+
+import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;

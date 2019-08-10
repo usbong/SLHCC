@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20190807
+  @date updated: 20190810
 
   Given:
   1) List with the details of the transactions for the day
@@ -20,23 +20,42 @@
   Notes:
   1) The details of the transactions to be sent are in the JSON (JavaScript Object Notation) format.
     
-  2) To compile on Windows' Command Prompt the add-on software with the JSON .jar file, i.e. json, use the following command:
-   javac -cp .;org.json.jar UsbongHTTPConnect.java
+  2) To compile on Windows' Command Prompt the add-on software with the libraries, e.g. JSON .jar file, use the following command:
+   javac -cp .;org.json.jar;org.apache.httpclient.jar;org.apache.httpcore.jar UsbongHTTPConnect.java
 
   3) To execute on Windows' Command Prompt the add-on software with the JSON .jar file, i.e. json, use the following command:
-   java -cp .;org.json.jar UsbongHTTPConnect
+   java -cp .;org.json.jar;org.apache.httpclient.jar;org.apache.httpcore.jar UsbongHTTPConnect
 
   4) The JSON .jar file can be downloaded here:
    https://github.com/stleary/JSON-java; last accessed: 20190808
-  
+   
+  5) The two (2) Apache HttpComponents, i.e. 1) HttpClient and 2) HttpCore, .jar files (not beta) can be downloaded here:
+   http://hc.apache.org/downloads.cgi; last accessed: 20190810
+      
   References:
   1) Introducing JSON. https://www.json.org/; last accessed: 20190807
-  --> ECMA-404 The JSON Data Interchange Standard  
+  --> ECMA-404 The JSON Data Interchange Standard
+  
   2) https://stackoverflow.com/questions/7181534/http-post-using-json-in-java; last accessed: 20190807
   --> answer by: Cigano Morrison Mendez on 20131111; edited on 20140819
+  
+  3) The Apache Software Foundation. (2019). The Official Apache HttpComponents Homepage. https://hc.apache.org/index.html; last accessed: 20190810
 */
 
 import org.json.JSONObject;
+
+import org.apache.http.HttpEntity;
+import org.apache.http.NameValuePair;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.message.BasicNameValuePair;
+import org.apache.http.util.EntityUtils;
+import org.apache.http.entity.StringEntity;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -45,6 +64,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
+
 
 public class UsbongHTTPConnect {
 
@@ -57,7 +77,7 @@ public class UsbongHTTPConnect {
 	private URL url;
 	private HttpURLConnection conn;
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws IOException {
 		JSONObject json = new JSONObject();
 		json.put("myKey", "myValue");    
 

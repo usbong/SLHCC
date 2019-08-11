@@ -21,17 +21,19 @@
   1) The details of the transactions to be sent are in the JSON (JavaScript Object Notation) format.
     
   2) To compile on Windows' Command Prompt the add-on software with the libraries, e.g. JSON .jar file, use the following command:
-   javac -cp .;org.json.jar;org.apache.httpclient.jar;org.apache.httpcore.jar UsbongHTTPConnect.java
+   javac -cp .;org.json.jar;org.apache.httpclient.jar;org.apache.httpcore.jar;org.apache.commons-logging.jar UsbongHTTPConnect.java
 
   3) To execute on Windows' Command Prompt the add-on software with the JSON .jar file, i.e. json, use the following command:
-   java -cp .;org.json.jar;org.apache.httpclient.jar;org.apache.httpcore.jar UsbongHTTPConnect
+   java -cp .;org.json.jar;org.apache.httpclient.jar;org.apache.httpcore.jar;org.apache.commons-logging.jar UsbongHTTPConnect
 
   4) The JSON .jar file can be downloaded here:
    https://github.com/stleary/JSON-java; last accessed: 20190808
    
-  5) The two (2) Apache HttpComponents, i.e. 1) HttpClient and 2) HttpCore, .jar files (not beta) can be downloaded here:
+  5) The two (2) Apache HttpComponents, i.e. 1) HttpClient and 2) HttpCore .jar files (not beta) can be downloaded here:
    http://hc.apache.org/downloads.cgi; last accessed: 20190810
-      
+
+  6) The Apache commons-logging .jar is also necessary to execute the add-on software. The .jar file is present in the set of .jar files inside the "lib", i.e. library, folder of the zipped httpcomponents-client-<version>-bin folder. It is in this same library folder that you can find the Apache HttpComponent, HttpClient, .jar file.
+     
   References:
   1) Introducing JSON. https://www.json.org/; last accessed: 20190807
   --> ECMA-404 The JSON Data Interchange Standard

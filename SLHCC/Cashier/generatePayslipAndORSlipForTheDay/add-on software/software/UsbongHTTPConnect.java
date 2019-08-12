@@ -178,6 +178,9 @@ public class UsbongHTTPConnect {
 			}				
 		}
 		
+		//added by Mike, 20190812
+		json.put("totalTransactionCount", ""+transactionCount);    				
+								
 //		System.out.println("json: "+json.toString());
 		
 		return json;

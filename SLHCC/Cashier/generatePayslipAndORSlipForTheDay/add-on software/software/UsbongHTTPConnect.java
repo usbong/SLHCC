@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20190810
+  @date updated: 20190812
 
   Given:
   1) List with the details of the transactions for the day
@@ -59,6 +59,10 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.apache.http.entity.StringEntity;
 
+import java.util.Scanner;
+
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -67,10 +71,23 @@ import java.net.URL;
 
 import javax.net.ssl.HttpsURLConnection;
 
-
 public class UsbongHTTPConnect {
+	//added by Mike, 20190811
+	private static boolean isInDebugMode = true;
 
-	private static String TAG = "usbong.HTTPConnect.storeTransactionsListForTheDay";
+	//added by Mike, 20190812
+	private static String inputFilename;
+	private static int rowCount;
+
+	//added by Mike, 20190811
+	private static final int INPUT_OR_NUMBER_COLUMN = 0; //Official Receipt Number
+	private static final int INPUT_PATIENT_NAME_COLUMN = 1;
+	private static final int INPUT_CLASSIFICATION_COLUMN = 2;
+	private static final int INPUT_AMOUNT_PAID_COLUMN = 3;
+	private static final int INPUT_NET_PF_COLUMN = 4;
+	
+	private static String TAG = "usbong.HTTPConnect.storeTransactionsListForTheDay";	
+
 /*
 	private String filePath = "";
 	private String columnName = "";
@@ -79,9 +96,13 @@ public class UsbongHTTPConnect {
 	private URL url;
 	private HttpURLConnection conn;
 
-	public static void main(String[] args) throws IOException {
-		JSONObject json = new JSONObject();
-		json.put("myKey", "myValue");    
+	public static void main(String[] args) throws Exception {
+//		JSONObject json = new JSONObject();
+//		json.put("myKey", "myValue");    
+
+		JSONObject json = processPayslipInput(args);	
+				
+//		System.out.println("json: "+json.toString());
 
 		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 
@@ -97,4 +118,68 @@ public class UsbongHTTPConnect {
 			httpClient.close();
 		}
 	}
+	
+	//added by Mike, 20190811; edited by Mike, 20190812
+	//Note: Consultation and PT Treatment payslip inputs are processed separately
+	private static JSONObject processPayslipInput(String[] args) throws Exception {
+		JSONObject json = new JSONObject();
+//		json.put("myKey", "myValue");    
+
+		//added by Mike, 20190812
+		int transactionCount = 0; //start from zero
+
+		for (int i=0; i<args.length; i++) {									
+			inputFilename = args[i].replaceAll(".txt","");			
+			File f = new File(inputFilename+".txt");
+			
+			Scanner sc = new Scanner(new FileInputStream(f));				
+		
+			String s;		
+			
+			s=sc.nextLine(); 			
+			json.put("dateTimeStamp", s);    
+
+			s=sc.nextLine(); 
+			json.put("cashierPerson", s);    
+	
+			if (isInDebugMode) {
+				rowCount=0;
+			}
+						
+			//count/compute the number-based values of inputColumns 
+			while (sc.hasNextLine()) {
+				s=sc.nextLine();
+				
+				//if the row is blank
+				if (s.trim().equals("")) {
+					continue;
+				}
+				
+				String[] inputColumns = s.split("\t");					
+
+				//System.out.println(s);
+				//json.put("myKey", "myValue");    
+
+				//added by Mike, 20190812
+				JSONObject transactionInJSONFormat = new JSONObject();
+				transactionInJSONFormat.put("INPUT_OR_NUMBER_COLUMN", inputColumns[INPUT_OR_NUMBER_COLUMN]);
+				transactionInJSONFormat.put("INPUT_PATIENT_NAME_COLUMN", inputColumns[INPUT_PATIENT_NAME_COLUMN]);
+				transactionInJSONFormat.put("INPUT_CLASSIFICATION_COLUMN", inputColumns[INPUT_CLASSIFICATION_COLUMN]);
+				transactionInJSONFormat.put("INPUT_AMOUNT_PAID_COLUMN", inputColumns[INPUT_AMOUNT_PAID_COLUMN]);
+				transactionInJSONFormat.put("INPUT_NET_PF_COLUMN", inputColumns[INPUT_NET_PF_COLUMN]);
+
+				json.put(""+transactionCount, transactionInJSONFormat.toString());    				
+				transactionCount++;
+
+				if (isInDebugMode) {
+					rowCount++;
+					System.out.println("rowCount: "+rowCount);
+				}
+			}				
+		}
+		
+//		System.out.println("json: "+json.toString());
+		
+		return json;
+	}	
 }

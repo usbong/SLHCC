@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20190812
+  @date updated: 20190813
 
   Given:
   1) List with the details of the transactions for the day
@@ -160,15 +160,16 @@ public class UsbongHTTPConnect {
 				//System.out.println(s);
 				//json.put("myKey", "myValue");    
 
-				//added by Mike, 20190812
+				//added by Mike, 20190812; edited by Mike, 20190813
 				JSONObject transactionInJSONFormat = new JSONObject();
-				transactionInJSONFormat.put("INPUT_OR_NUMBER_COLUMN", inputColumns[INPUT_OR_NUMBER_COLUMN]);
-				transactionInJSONFormat.put("INPUT_PATIENT_NAME_COLUMN", inputColumns[INPUT_PATIENT_NAME_COLUMN]);
-				transactionInJSONFormat.put("INPUT_CLASSIFICATION_COLUMN", inputColumns[INPUT_CLASSIFICATION_COLUMN]);
-				transactionInJSONFormat.put("INPUT_AMOUNT_PAID_COLUMN", inputColumns[INPUT_AMOUNT_PAID_COLUMN]);
-				transactionInJSONFormat.put("INPUT_NET_PF_COLUMN", inputColumns[INPUT_NET_PF_COLUMN]);
+				transactionInJSONFormat.put(""+INPUT_OR_NUMBER_COLUMN, inputColumns[INPUT_OR_NUMBER_COLUMN]);
+				transactionInJSONFormat.put(""+INPUT_PATIENT_NAME_COLUMN, inputColumns[INPUT_PATIENT_NAME_COLUMN]);
+				transactionInJSONFormat.put(""+INPUT_CLASSIFICATION_COLUMN, inputColumns[INPUT_CLASSIFICATION_COLUMN]);
+				transactionInJSONFormat.put(""+INPUT_AMOUNT_PAID_COLUMN, inputColumns[INPUT_AMOUNT_PAID_COLUMN]);
+				transactionInJSONFormat.put(""+INPUT_NET_PF_COLUMN, inputColumns[INPUT_NET_PF_COLUMN]);
 
-				json.put(""+transactionCount, transactionInJSONFormat.toString());    				
+				//edited by Mike, 20190813
+				json.put("i"+transactionCount, transactionInJSONFormat.toString());    				
 				transactionCount++;
 
 				if (isInDebugMode) {
@@ -178,8 +179,8 @@ public class UsbongHTTPConnect {
 			}				
 		}
 		
-		//added by Mike, 20190812
-		json.put("totalTransactionCount", ""+transactionCount);    				
+		//added by Mike, 20190812; edited by Mike, 20190813
+		json.put("iTotalTransactionCount", ""+transactionCount);    				
 								
 //		System.out.println("json: "+json.toString());
 		

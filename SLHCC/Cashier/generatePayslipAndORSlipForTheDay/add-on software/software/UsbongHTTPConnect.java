@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20190814
+  @date updated: 20190815
 
   Given:
   1) List with the details of the transactions for the day
@@ -47,7 +47,10 @@
 import org.json.JSONObject;
 
 import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.ResponseHandler;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -76,7 +79,7 @@ public class UsbongHTTPConnect {
 	private static boolean isInDebugMode = true;
 
 	//added by Mike, 20190814
-	private static boolean isForUpload = true;
+	private static boolean isForUpload = false;
 
 	private static final String STORE_TRANSACTIONS_LIST_FOR_THE_DAY_UPLOAD = "http://localhost/usbong_kms/server/storetransactionslistfortheday.php";
 	
@@ -109,11 +112,18 @@ public class UsbongHTTPConnect {
 	public static void main(String[] args) throws Exception {
 //		JSONObject json = new JSONObject();
 //		json.put("myKey", "myValue");    
+
+		UsbongHTTPConnect main = new UsbongHTTPConnect();
 		
-		processUpload(args);
+		if (isForUpload) {
+			main.processUpload(args);
+		}
+		else {
+			main.processDownload(args);
+		}
 	}
 	
-	private static void processUpload(String[] args) throws Exception {
+	private void processUpload(String[] args) throws Exception {
 		JSONObject json = processPayslipInputForUpload(args);	
 				
 //		System.out.println("json: "+json.toString());
@@ -121,7 +131,7 @@ public class UsbongHTTPConnect {
 		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 
 		try {
-			HttpPost request = new HttpPost("http://localhost/usbong_kms/server/storetransactionslistfortheday.php");
+			HttpPost request = new HttpPost(STORE_TRANSACTIONS_LIST_FOR_THE_DAY_UPLOAD);
 			StringEntity params = new StringEntity(json.toString());
 			request.addHeader("content-type", "application/json");
 			request.setEntity(params);
@@ -133,9 +143,30 @@ public class UsbongHTTPConnect {
 		}
 	}
 	
+	//added by Mike, 20190814; edited by Mike, 20190815
+	//Reference: https://hc.apache.org/httpcomponents-client-4.5.x/httpclient/examples/org/apache/http/examples/client/ClientWithResponseHandler.java; last accessed: 20190814
+	private void processDownload(String[] args) throws Exception {
+		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+
+		 try {
+            HttpGet httpget = new HttpGet(GET_TRANSACTIONS_LIST_FOR_THE_DAY_DOWNLOAD);
+
+            System.out.println("Executing request " + httpget.getRequestLine());
+
+            //Create a custom response handler
+            ResponseHandler<String> responseHandler = new MyResponseHandler();
+			
+            String responseBody = httpClient.execute(httpget, responseHandler);
+            System.out.println("----------------------------------------");
+            System.out.println(responseBody); 
+        } finally {
+            httpClient.close();
+        }
+	}
+		
 	//added by Mike, 20190811; edited by Mike, 20190812
 	//Note: Consultation and PT Treatment payslip inputs are processed separately
-	private static JSONObject processPayslipInputForUpload(String[] args) throws Exception {
+	private JSONObject processPayslipInputForUpload(String[] args) throws Exception {
 		JSONObject json = new JSONObject();
 //		json.put("myKey", "myValue");    
 
@@ -200,4 +231,21 @@ public class UsbongHTTPConnect {
 		
 		return json;
 	}	
+}
+
+//added by Mike, 20190814; edited by Mike, 20190815
+//Create a custom response handler
+//Reference: https://hc.apache.org/httpcomponents-client-4.5.x/httpclient/examples/org/apache/http/examples/client/ClientWithResponseHandler.java; last accessed: 20190814
+class MyResponseHandler implements ResponseHandler<String> {
+	@Override
+	public String handleResponse(
+			final HttpResponse response) throws ClientProtocolException, IOException {
+		int status = response.getStatusLine().getStatusCode();
+		if (status >= 200 && status < 300) {
+			HttpEntity entity = response.getEntity();
+			return entity != null ? EntityUtils.toString(entity) : null;
+		} else {
+			throw new ClientProtocolException("Unexpected response status: " + status);
+		}
+	}		
 }

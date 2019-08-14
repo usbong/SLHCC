@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20190813
+  @date updated: 20190814
 
   Given:
   1) List with the details of the transactions for the day
@@ -75,6 +75,13 @@ public class UsbongHTTPConnect {
 	//added by Mike, 20190811
 	private static boolean isInDebugMode = true;
 
+	//added by Mike, 20190814
+	private static boolean isForUpload = true;
+
+	private static final String STORE_TRANSACTIONS_LIST_FOR_THE_DAY_UPLOAD = "http://localhost/usbong_kms/server/storetransactionslistfortheday.php";
+	
+	private static final String GET_TRANSACTIONS_LIST_FOR_THE_DAY_DOWNLOAD = "http://localhost/usbong_kms/server/gettransactionslistfortheday.php";
+
 	//added by Mike, 20190812
 	private static String inputFilename;
 	private static int rowCount;
@@ -86,7 +93,10 @@ public class UsbongHTTPConnect {
 	private static final int INPUT_AMOUNT_PAID_COLUMN = 3;
 	private static final int INPUT_NET_PF_COLUMN = 4;
 	
+/*	
 	private static String TAG = "usbong.HTTPConnect.storeTransactionsListForTheDay";	
+	private static String TAG = "usbong.HTTPConnect.getTransactionsListForTheDay";	
+*/
 
 /*
 	private String filePath = "";
@@ -99,8 +109,12 @@ public class UsbongHTTPConnect {
 	public static void main(String[] args) throws Exception {
 //		JSONObject json = new JSONObject();
 //		json.put("myKey", "myValue");    
-
-		JSONObject json = processPayslipInput(args);	
+		
+		processUpload(args);
+	}
+	
+	private static void processUpload(String[] args) throws Exception {
+		JSONObject json = processPayslipInputForUpload(args);	
 				
 //		System.out.println("json: "+json.toString());
 
@@ -121,7 +135,7 @@ public class UsbongHTTPConnect {
 	
 	//added by Mike, 20190811; edited by Mike, 20190812
 	//Note: Consultation and PT Treatment payslip inputs are processed separately
-	private static JSONObject processPayslipInput(String[] args) throws Exception {
+	private static JSONObject processPayslipInputForUpload(String[] args) throws Exception {
 		JSONObject json = new JSONObject();
 //		json.put("myKey", "myValue");    
 

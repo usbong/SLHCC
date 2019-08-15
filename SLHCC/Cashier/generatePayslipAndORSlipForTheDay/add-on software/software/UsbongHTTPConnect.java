@@ -45,6 +45,7 @@
 */
 
 import org.json.JSONObject;
+import org.json.JSONArray;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -159,6 +160,9 @@ public class UsbongHTTPConnect {
             String responseBody = httpClient.execute(httpget, responseHandler);
             System.out.println("----------------------------------------");
             System.out.println(responseBody); 
+			
+            System.out.println("JSON Array----------------------------------------");			
+			processPayslipInputAfterDownload(responseBody);
         } finally {
             httpClient.close();
         }
@@ -224,12 +228,26 @@ public class UsbongHTTPConnect {
 			}				
 		}
 		
-		//added by Mike, 20190812; edited by Mike, 20190813
-		json.put("iTotalTransactionCount", ""+transactionCount);    				
+		//added by Mike, 20190812; edited by Mike, 20190815
+		json.put("iTotal", ""+transactionCount);    				
 								
 //		System.out.println("json: "+json.toString());
 		
 		return json;
+	}	
+	
+	//added by Mike, 20190812
+	//Note: Consultation and PT Treatment payslip inputs are processed separately
+	private void processPayslipInputAfterDownload(String s) throws Exception {		
+		JSONArray nestedJsonArray = new JSONArray(s);
+		
+		if (nestedJsonArray != null) {
+		   for(int j=0;j<nestedJsonArray.length();j++) {
+				JSONObject jo_inside = nestedJsonArray.getJSONObject(j);
+
+				System.out.println(""+jo_inside.getString("payslip_description"));				
+		   }
+		}
 	}	
 }
 

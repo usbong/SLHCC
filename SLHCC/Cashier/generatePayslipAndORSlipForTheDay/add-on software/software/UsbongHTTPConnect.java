@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20190815
+  @date updated: 20190816
 
   Given:
   1) List with the details of the transactions for the day
@@ -80,7 +80,7 @@ public class UsbongHTTPConnect {
 	private static boolean isInDebugMode = true;
 
 	//added by Mike, 20190814
-	private static boolean isForUpload = false;
+	private static boolean isForUpload = true;
 
 	private static final String STORE_TRANSACTIONS_LIST_FOR_THE_DAY_UPLOAD = "http://localhost/usbong_kms/server/storetransactionslistfortheday.php";
 	
@@ -189,7 +189,7 @@ public class UsbongHTTPConnect {
 			json.put("dateTimeStamp", s);    
 
 			s=sc.nextLine(); 
-			json.put("cashierPerson", s);    
+			json.put("cashierPerson", s.replace("\"",""));    
 	
 			if (isInDebugMode) {
 				rowCount=0;
@@ -209,16 +209,16 @@ public class UsbongHTTPConnect {
 				//System.out.println(s);
 				//json.put("myKey", "myValue");    
 
-				//added by Mike, 20190812; edited by Mike, 20190813
+				//added by Mike, 20190812; edited by Mike, 20190816
 				JSONObject transactionInJSONFormat = new JSONObject();
-				transactionInJSONFormat.put(""+INPUT_OR_NUMBER_COLUMN, inputColumns[INPUT_OR_NUMBER_COLUMN]);
-				transactionInJSONFormat.put(""+INPUT_PATIENT_NAME_COLUMN, inputColumns[INPUT_PATIENT_NAME_COLUMN]);
+				transactionInJSONFormat.put(""+INPUT_OR_NUMBER_COLUMN, Integer.parseInt(inputColumns[INPUT_OR_NUMBER_COLUMN]));
+				transactionInJSONFormat.put(""+INPUT_PATIENT_NAME_COLUMN, inputColumns[INPUT_PATIENT_NAME_COLUMN].replace("\"",""));
 				transactionInJSONFormat.put(""+INPUT_CLASSIFICATION_COLUMN, inputColumns[INPUT_CLASSIFICATION_COLUMN]);
 				transactionInJSONFormat.put(""+INPUT_AMOUNT_PAID_COLUMN, inputColumns[INPUT_AMOUNT_PAID_COLUMN]);
 				transactionInJSONFormat.put(""+INPUT_NET_PF_COLUMN, inputColumns[INPUT_NET_PF_COLUMN]);
 
 				//edited by Mike, 20190813
-				json.put("i"+transactionCount, transactionInJSONFormat.toString());    				
+				json.put("i"+transactionCount, transactionInJSONFormat);    				
 				transactionCount++;
 
 				if (isInDebugMode) {
@@ -229,7 +229,7 @@ public class UsbongHTTPConnect {
 		}
 		
 		//added by Mike, 20190812; edited by Mike, 20190815
-		json.put("iTotal", ""+transactionCount);    				
+		json.put("iTotal", transactionCount);    				
 								
 //		System.out.println("json: "+json.toString());
 		

@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20190816
+  @date updated: 20190817
 
   Given:
   1) List with the details of the transactions for the day
@@ -80,7 +80,7 @@ public class UsbongHTTPConnect {
 	private static boolean isInDebugMode = true;
 
 	//added by Mike, 20190814
-	private static boolean isForUpload = true;
+	private static boolean isForUpload = false;
 
 	private static final String STORE_TRANSACTIONS_LIST_FOR_THE_DAY_UPLOAD = "http://localhost/usbong_kms/server/storetransactionslistfortheday.php";
 	
@@ -236,7 +236,7 @@ public class UsbongHTTPConnect {
 		return json;
 	}	
 	
-	//added by Mike, 20190812
+	//added by Mike, 20190812; edited by Mike, 20190817
 	//Note: Consultation and PT Treatment payslip inputs are processed separately
 	private void processPayslipInputAfterDownload(String s) throws Exception {		
 		JSONArray nestedJsonArray = new JSONArray(s);
@@ -246,6 +246,22 @@ public class UsbongHTTPConnect {
 				JSONObject jo_inside = nestedJsonArray.getJSONObject(j);
 
 				System.out.println(""+jo_inside.getString("payslip_description"));				
+				
+				JSONObject payslipInJSONFormat = new JSONObject(jo_inside.getString("payslip_description"));
+
+				int totalTransactionCount = payslipInJSONFormat.getInt("iTotal");
+				System.out.println("totalTransactionCount: "+totalTransactionCount);
+				
+				for (int i=0; i<totalTransactionCount; i++) {
+//					JSONObject transactionInJSONFormat = payslipInJSONFormat.getJSONObject("i"+i);
+					
+					JSONArray transactionInJSONArray = payslipInJSONFormat.getJSONArray("i"+i);
+					
+					System.out.println(""+transactionInJSONArray.getInt(0)); //Official Receipt Number
+					System.out.println(""+transactionInJSONArray.getString(1)); //Patient Name
+					
+				}
+
 		   }
 		}
 	}	

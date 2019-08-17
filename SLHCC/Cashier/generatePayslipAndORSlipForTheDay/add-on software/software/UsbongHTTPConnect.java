@@ -65,6 +65,7 @@ import org.apache.http.entity.StringEntity;
 
 import java.util.Scanner;
 
+import java.io.PrintWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.BufferedReader;
@@ -241,6 +242,9 @@ public class UsbongHTTPConnect {
 	private void processPayslipInputAfterDownload(String s) throws Exception {		
 		JSONArray nestedJsonArray = new JSONArray(s);
 		
+		//-add: for Consultation
+		PrintWriter writer = new PrintWriter("output/payslipPTFromCashier.txt", "UTF-8");	
+		
 		if (nestedJsonArray != null) {
 		   for(int j=0;j<nestedJsonArray.length();j++) {
 				JSONObject jo_inside = nestedJsonArray.getJSONObject(j);
@@ -253,16 +257,24 @@ public class UsbongHTTPConnect {
 				System.out.println("totalTransactionCount: "+totalTransactionCount);
 				
 				for (int i=0; i<totalTransactionCount; i++) {
-//					JSONObject transactionInJSONFormat = payslipInJSONFormat.getJSONObject("i"+i);
-					
 					JSONArray transactionInJSONArray = payslipInJSONFormat.getJSONArray("i"+i);
 					
-					System.out.println(""+transactionInJSONArray.getInt(0)); //Official Receipt Number
-					System.out.println(""+transactionInJSONArray.getString(1)); //Patient Name
-					
-				}
+//					System.out.println(""+transactionInJSONArray.getInt(0)); //Official Receipt Number
+//					System.out.println(""+transactionInJSONArray.getString(1)); //Patient Name
 
+					String outputString = transactionInJSONArray.getInt(INPUT_OR_NUMBER_COLUMN) + "\t" +
+							   transactionInJSONArray.getString(INPUT_PATIENT_NAME_COLUMN) + "\t" +
+							   transactionInJSONArray.getString(INPUT_CLASSIFICATION_COLUMN) + "\t" +
+							   transactionInJSONArray.getString(INPUT_AMOUNT_PAID_COLUMN) + "\t" +
+							   transactionInJSONArray.getString(INPUT_NET_PF_COLUMN) + "\n";
+							
+					//write in Tab-delimited .txt file
+					writer.write(outputString);
+				}
 		   }
+		   
+		   //added by Mike, 20190817
+		   writer.close();
 		}
 	}	
 }

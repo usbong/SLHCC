@@ -9,7 +9,7 @@ Sub importAllTxtFilesAsWorksheetsInWorkbook()
 '
 ' @author: Michael Syson
 ' @date created: 20190225
-' @date updated: 20190301
+' @date updated: 20190817
 '
 ' Workbook with Imported Worksheets
 ' Given:
@@ -54,21 +54,23 @@ Sub importAllTxtFilesAsWorksheetsInWorkbook()
         
         'WSNew.Activate
         
+        'edited by Mike, 20190817
         'Open, read, copy, and paste the contents of the (Tab-delimited) .txt file into the new worksheet
         'Paste the contents into each column using the Tab in the .txt file as the delimiter
         Open FileName For Input As #1
-            RowCount = 1
             Do Until EOF(1)
                 Line Input #1, textLine
                 'Text = Text & textLine
                 'MsgBox ("text: " & Text)
-                textLineArray = Split(textLine, vbTab)
-                
-                For ColumnCount = 1 To UBound(textLineArray)
-                    WSNew.Cells(RowCount, ColumnCount) = textLineArray(ColumnCount - 1)
+                textLineRowArray = Split(textLine, vbLf)
+
+                For RowCount = 1 To UBound(textLineRowArray)
+                    textLineArray = Split(textLineRowArray(RowCount - 1), vbTab)
+                                        
+                    For ColumnCount = 1 To UBound(textLineArray)
+                        WSNew.Cells(RowCount, ColumnCount) = textLineArray(ColumnCount - 1)
+                    Next
                 Next
-                                
-                RowCount = RowCount + 1
             Loop
         Close #1
             

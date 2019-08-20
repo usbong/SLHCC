@@ -266,7 +266,7 @@ public class UsbongHTTPConnect {
 //					System.out.println(""+transactionInJSONArray.getString(1)); //Patient Name
 
 					//edited by Mike, 20190820
-					String outputString = 	payslipInJSONFormat.getString("dateTimeStamp") + "\t" +
+					String outputString = 	this.getDate(payslipInJSONFormat.getString("dateTimeStamp")) + "\t" +
 							   transactionInJSONArray.getInt(INPUT_OR_NUMBER_COLUMN) + "\t" +
 							   transactionInJSONArray.getString(INPUT_PATIENT_NAME_COLUMN) + "\t" +
 							   transactionInJSONArray.getString(INPUT_CLASSIFICATION_COLUMN) + "\t" +
@@ -281,6 +281,17 @@ public class UsbongHTTPConnect {
 		   //added by Mike, 20190817
 		   writer.close();
 		}
+	}
+
+	//added by Mike, 20190820
+	//input: 2019-08-11T14:12:16
+	//output: 08/16/2019
+	//note: when the date is imported to MS EXCEL the format becomes the intended 16/08/2019
+	private String getDate(String dateTimeStamp) {
+		String[] dateStringPart1 = dateTimeStamp.split("T");		
+		String[] dateStringPart2 = dateStringPart1[0].split("-");		
+		
+		return dateStringPart2[1] + "/" + dateStringPart2[2] + "/" + dateStringPart2[0];
 	}	
 }
 

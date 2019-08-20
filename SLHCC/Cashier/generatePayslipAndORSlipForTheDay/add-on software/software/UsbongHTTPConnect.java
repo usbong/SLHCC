@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20190817
+  @date updated: 20190820
 
   Given:
   1) List with the details of the transactions for the day
@@ -81,7 +81,7 @@ public class UsbongHTTPConnect {
 	private static boolean isInDebugMode = true;
 
 	//added by Mike, 20190814
-	private static boolean isForUpload = false;
+	private static boolean isForUpload = true;
 
 	private static final String STORE_TRANSACTIONS_LIST_FOR_THE_DAY_UPLOAD = "http://localhost/usbong_kms/server/storetransactionslistfortheday.php";
 	
@@ -162,8 +162,11 @@ public class UsbongHTTPConnect {
             System.out.println("----------------------------------------");
             System.out.println(responseBody); 
 			
-            System.out.println("JSON Array----------------------------------------");			
-			processPayslipInputAfterDownload(responseBody);
+			//edited by Mike, 20190820
+			if (!responseBody.contains("No payslips")) {
+				System.out.println("JSON Array----------------------------------------");			
+				processPayslipInputAfterDownload(responseBody);
+			}			
         } finally {
             httpClient.close();
         }
@@ -262,7 +265,9 @@ public class UsbongHTTPConnect {
 //					System.out.println(""+transactionInJSONArray.getInt(0)); //Official Receipt Number
 //					System.out.println(""+transactionInJSONArray.getString(1)); //Patient Name
 
-					String outputString = transactionInJSONArray.getInt(INPUT_OR_NUMBER_COLUMN) + "\t" +
+					//edited by Mike, 20190820
+					String outputString = 	this.getDate(payslipInJSONFormat.getString("dateTimeStamp")) + "\t" +
+							   transactionInJSONArray.getInt(INPUT_OR_NUMBER_COLUMN) + "\t" +
 							   transactionInJSONArray.getString(INPUT_PATIENT_NAME_COLUMN) + "\t" +
 							   transactionInJSONArray.getString(INPUT_CLASSIFICATION_COLUMN) + "\t" +
 							   transactionInJSONArray.getString(INPUT_AMOUNT_PAID_COLUMN) + "\t" +
@@ -276,6 +281,17 @@ public class UsbongHTTPConnect {
 		   //added by Mike, 20190817
 		   writer.close();
 		}
+	}
+
+	//added by Mike, 20190820
+	//input: 2019-08-11T14:12:16
+	//output: 08/16/2019
+	//note: when the date is imported to MS EXCEL the format becomes the intended 16/08/2019
+	private String getDate(String dateTimeStamp) {
+		String[] dateStringPart1 = dateTimeStamp.split("T");		
+		String[] dateStringPart2 = dateStringPart1[0].split("-");		
+		
+		return dateStringPart2[1] + "/" + dateStringPart2[2] + "/" + dateStringPart2[0];
 	}	
 }
 

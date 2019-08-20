@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20190817
+  @date updated: 20190820
 
   Given:
   1) List with the details of the transactions for the day
@@ -162,8 +162,11 @@ public class UsbongHTTPConnect {
             System.out.println("----------------------------------------");
             System.out.println(responseBody); 
 			
-            System.out.println("JSON Array----------------------------------------");			
-			processPayslipInputAfterDownload(responseBody);
+			//edited by Mike, 20190820
+			if (!responseBody.contains("No payslips")) {
+				System.out.println("JSON Array----------------------------------------");			
+				processPayslipInputAfterDownload(responseBody);
+			}			
         } finally {
             httpClient.close();
         }
@@ -262,7 +265,9 @@ public class UsbongHTTPConnect {
 //					System.out.println(""+transactionInJSONArray.getInt(0)); //Official Receipt Number
 //					System.out.println(""+transactionInJSONArray.getString(1)); //Patient Name
 
-					String outputString = transactionInJSONArray.getInt(INPUT_OR_NUMBER_COLUMN) + "\t" +
+					//edited by Mike, 20190820
+					String outputString = 	payslipInJSONFormat.getString("dateTimeStamp") + "\t" +
+							   transactionInJSONArray.getInt(INPUT_OR_NUMBER_COLUMN) + "\t" +
 							   transactionInJSONArray.getString(INPUT_PATIENT_NAME_COLUMN) + "\t" +
 							   transactionInJSONArray.getString(INPUT_CLASSIFICATION_COLUMN) + "\t" +
 							   transactionInJSONArray.getString(INPUT_AMOUNT_PAID_COLUMN) + "\t" +

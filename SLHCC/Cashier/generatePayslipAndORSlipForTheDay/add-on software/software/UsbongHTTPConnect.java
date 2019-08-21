@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20190820
+  @date updated: 20190821
 
   Given:
   1) List with the details of the transactions for the day
@@ -259,14 +259,20 @@ public class UsbongHTTPConnect {
 				int totalTransactionCount = payslipInJSONFormat.getInt("iTotal");
 				System.out.println("totalTransactionCount: "+totalTransactionCount);
 				
+				//added by Mike, 20190821
+				int count;
+				
 				for (int i=0; i<totalTransactionCount; i++) {
 					JSONArray transactionInJSONArray = payslipInJSONFormat.getJSONArray("i"+i);
 					
 //					System.out.println(""+transactionInJSONArray.getInt(0)); //Official Receipt Number
 //					System.out.println(""+transactionInJSONArray.getString(1)); //Patient Name
 
-					//edited by Mike, 20190820
+					//edited by Mike, 20190821
+					count = i+1;
+					
 					String outputString = 	this.getDate(payslipInJSONFormat.getString("dateTimeStamp")) + "\t" +
+							   count + "\t" +
 							   transactionInJSONArray.getInt(INPUT_OR_NUMBER_COLUMN) + "\t" +
 							   transactionInJSONArray.getString(INPUT_PATIENT_NAME_COLUMN) + "\t" +
 							   transactionInJSONArray.getString(INPUT_CLASSIFICATION_COLUMN) + "\t" +

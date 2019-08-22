@@ -275,6 +275,7 @@ public class UsbongHTTPConnect {
 							   count + "\t" +
 							   transactionInJSONArray.getInt(INPUT_OR_NUMBER_COLUMN) + "\t" +
 							   transactionInJSONArray.getString(INPUT_PATIENT_NAME_COLUMN) + "\t" +
+							   "\t" + //FEE COLUMN
 							   transactionInJSONArray.getString(INPUT_CLASSIFICATION_COLUMN) + "\t" +
 							   transactionInJSONArray.getString(INPUT_AMOUNT_PAID_COLUMN) + "\t" +
 							   transactionInJSONArray.getString(INPUT_NET_PF_COLUMN) + "\n";

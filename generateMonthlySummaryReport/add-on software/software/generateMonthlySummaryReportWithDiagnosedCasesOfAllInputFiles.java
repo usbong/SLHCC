@@ -672,7 +672,6 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 /*		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION
 */
 //		System.out.println("dateValuesArrayInt[i]: "+dateValuesArrayInt[i]);
-
 			int i = dateValueInt; //added by Mike, 20190427
 	
 /*			//added by Mike, 20190207; edited by Mike, 20190427
@@ -680,8 +679,12 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				return false;
 			}
 */					
+
+//			System.out.println("dateValueInt: " + i);
 			treatmentCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN];
 
+//			System.out.println("treatmentCount: " + treatmentCount);
+			
 			//added by Mike, 20181218; edited by Mike, 20190427
 			consultationCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 
@@ -752,6 +755,8 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			double newPatientTreatmentCount = hmoContainer.get(key)[OUTPUT_HMO_NEW_PATIENT_COUNT_COLUMN]; //added by Mike, 20190102
 			double newPatientConsultationCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_NEW_PATIENT_COUNT_COLUMN]; //added by Mike, 20190102
 
+//			System.out.println("inside sortedHMOKeyset: " + treatmentCount);
+			
 			totalTreatmentHMOCount += treatmentCount;
 			totalConsultationHMOCount += consultationCount;
 			totalProcedureHMOCount += procedureCount;
@@ -787,13 +792,13 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		//				if (!referringDoctorContainer.containsKey(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])) {
 				if (!dateContainer.containsKey(dateValuesArrayInt[i])) {
 					columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
-
+					
 					//edited by Mike, 20181218
-					if (!isConsultation) {											
+					if (!isConsultation) {										
 						//edited by Mike, 20181206
 						if ((inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) ||
 							(inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
-
+							
 							columnValuesArray[OUTPUT_HMO_COUNT_COLUMN] = 1;
 /*							
 							columnValuesArray[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
@@ -887,9 +892,15 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				else {
 					//edited by Mike, 20181218
 					if (!isConsultation) {											
+					
+//										System.out.println("treatment: inputColumns[INPUT_CLASS_COLUMN]: " + inputColumns[INPUT_CLASS_COLUMN]);
+
 						//edited by Mike, 20181206
 						if ((inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) ||
-							(inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {								
+							(inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {		
+
+//							System.out.println("i in dateValuesArrayInt[i]" + i);
+							
 							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN]++;					
 /*							dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] 
 								+= Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
@@ -2064,8 +2075,17 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 					return;
 				}
 				else {
-					dateValue = dateValuesArray[i].trim();
-					dateValueInt = i; //added by Mike, 20190427
+					//edited by Mike, 20190901
+//					System.out.println("dateValuesArray[i].trim(): " + dateValuesArray[i].trim());
+//					System.out.println("dateValue: " + dateValue);
+
+					if ((dateValue==null) || !dateValue.equals(dateValuesArray[i].trim())) {
+						dateValue = dateValuesArray[i].trim();
+						dateValueInt = i; //added by Mike, 20190427
+					}
+					
+//					dateValue = dateValuesArray[i].trim();
+//					dateValueInt = i; //added by Mike, 20190427
 				}
 
 //				System.out.println(">>>>>>> i: "+ i + "; >>>dateValuesArray["+i+"]: "+dateValuesArray[i]);
@@ -2111,10 +2131,16 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 					continue;
 				}
 */
-				if (isPhaseOne) {
+				if (isPhaseOne) {					
+//					System.out.println("isConsultation: " + isConsultation);
 					//added by Mike, 20181216
 	//				processMonthlyCount(dateContainer, inputColumns, i, false);
-					processMonthlyCount(dateContainer, inputColumns, i, isConsultation); //isConsultation = false
+	
+					//edited by Mike, 20190901
+//					processMonthlyCount(dateContainer, inputColumns, i, isConsultation); //isConsultation = false
+					processMonthlyCount(dateContainer, inputColumns, dateValueInt, isConsultation);
+					
+					
 					
 					//added by Mike, 20181217
 					processHMOCount(hmoContainer, inputColumns, isConsultation); //edited by Mike, 20181219
@@ -2506,6 +2532,8 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 			//added by Mike, 20190417
 			s = s.replace("<?php echo $data['date'];?>", "" + dateValue.toUpperCase());
 			
+			//edited by Mike, 20190901
+//			totalTreatmentCount = (int) (totalTreatmentHMOCount + totalTreatmentNonHMOCount);
 			s = s.replace("<?php echo $data['total_treatment_count'];?>", "" + totalTreatmentCount);
 
 			//added by Mike, 20190416; edited by Mike, 20190429

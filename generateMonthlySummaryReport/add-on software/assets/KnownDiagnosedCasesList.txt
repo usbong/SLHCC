@@ -1,146 +1,148 @@
-Classification	Sub-classification
-STL UE	Trapezius Strain
-STL UE	subscapular strain
-STL UE	Supraspinatus Strain
-STL UE	Scapular Strain 
-STL UE	Bicipital Tendinitis
-STL UE	Lateral Epicondylitis
-STL UE	Shoulder Hand Syndrome
-STL UE	Shoulder Bursitis
-STL UE	Muscle strain shoulder
-STL UE	Muscle elbow
-STL UE	finger stiffness
-STL UE	Muscle wrist
-STL UE	Radial Collateral Sprain
-STL UE	TFCC
-STL LE	Plantar Fascitis
-STL LE	Meniscal Tear
-STL LE	Muscle Strain Thigh
-STL LE	ACL injury
-STL LE	MCL
-STL LE	LCL injury
-STL LE	Ankle Sprain
-STL LE	knee sprain
-STL LE	Meniscus
-STL LE	hamstring strain
-STL LE	gastrocnemius strain
-STL LE	Chondromalacia Patella
-STL LE	Patella Bursitis
-STL LE	PFPS
-STL LE	Achilles Tendinitis
-STL LE	Achilles Bursitis
-STL LE	Peripheral Neuropathy LE
-STL LE	Iliotibial Band Syndrome
-STL LE	Patello Femoral Pain Syndrome
-Cervical Disorder	Cervical Strain
-Cervical Disorder	Cervical OA
-Cervical Disorder	cervical Radiculopathy
-Cervical Disorder	Cervical spondylolysis
-Cervical Disorder	Cervical spondylosis
-Cervical Disorder	Cervical Stenosis
-Cervical Disorder	Cervical listhesis
-Cervical Disorder	Cervical spasm
-Cervical Disorder	cervical Disc bulge
-Cervical Disorder	cervical
-Cervical Disorder	C1
-Cervical Disorder	C2
-Cervical Disorder	C3
-Cervical Disorder	C4
-Cervical Disorder	C5
-Cervical Disorder	C6
-Cervical Disorder	Upper back Strain
-Cervical Disorder	Strain
-Cervical Disorder	C7
-Lumbar disorder	DDD
-Lumbar disorder	Thoracic
-Lumbar disorder	costochondritis
-Lumbar disorder	Lumbar strain
-Lumbar disorder	lumbar radiculopathy
-Lumbar disorder	lumbar disc bulge
-Lumbar disorder	Lumbar spondylosis
-Lumbar disorder	Lumbar spondylolysis
-Lumbar disorder	coccygodinia
-Lumbar disorder	Lumbar listhesis
-Lumbar disorder	Chronic LBP
-Lumbar disorder	ParaLS Strain
-Lumbar disorder	ParaTL strain
-Lumbar disorder	Mechanical LBP
-Lumbar disorder	Lumbar OA
-Lumbar disorder	Lumbar Stenosis
-Lumbar disorder	PPI
-Lumbar disorder	Lumbar
-Lumbar disorder	L1
-Lumbar disorder	L2
-Lumbar disorder	L3
-Lumbar disorder	L4
-Lumbar disorder	L5
-Lumbar disorder	sciatica
-Lumbar disorder	S1
-Lumbar disorder	S2
-Lumbar disorder	S3
-Lumbar disorder	S4
-Lumbar disorder	compression fx
-Lumbar disorder	FX Lumbar
-Lumbar disorder	LS radiculopathy
-Lumbar disorder	HNP
-OA/RA/Gouty arthritis	OA
-OA/RA/Gouty arthritis	RA
-OA/RA/Gouty arthritis	Gouty arthritis
-OA/RA/Gouty arthritis	hip OA
-OA/RA/Gouty arthritis	knee OA
-OA/RA/Gouty arthritis	Post traumatic
-OA/RA/Gouty arthritis	ankle OA
-Fx/S/p ORIF/Plating/Screws; Dislocation	BKA
-Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p ORIF
-Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Plating
-Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Screws
-Fx/S/p ORIF/Plating/Screws; Dislocation	S/P PHR
-Fx/S/p ORIF/Plating/Screws; Dislocation	S/P THR
-Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Dislocation
-Fx/S/p ORIF/Plating/Screws; Dislocation	UE
-Fx/S/p ORIF/Plating/Screws; Dislocation	Patellar Dislocation
-Fx/S/p ORIF/Plating/Screws; Dislocation	S/P Shoulder Dislocation
-Fx/S/p ORIF/Plating/Screws; Dislocation	clavicle
-Fx/S/p ORIF/Plating/Screws; Dislocation	humerus
-Fx/S/p ORIF/Plating/Screws; Dislocation	femoral neck
-Fx/S/p ORIF/Plating/Screws; Dislocation	femur
-Fx/S/p ORIF/Plating/Screws; Dislocation	fibular
-Fx/S/p ORIF/Plating/Screws; Dislocation	tibio-fibular
-Fx/S/p ORIF/Plating/Screws; Dislocation	tibial
-Fx/S/p ORIF/Plating/Screws; Dislocation	ulna
-Fx/S/p ORIF/Plating/Screws; Dislocation	radius
-Fx/S/p ORIF/Plating/Screws; Dislocation	radio ulnar
-Fx/S/p ORIF/Plating/Screws; Dislocation	FX
-Scoliosis	Dextoscoliosis
-Scoliosis	Levoscoliosis
-Scoliosis	Scoliosis
-MPS	MPS
-CTS	CTS
-DQT	DQT
-Trigger Finger/Stenosing tenosynovitis	Trigger Thumb
-Trigger Finger/Stenosing tenosynovitis	Trigger Finger
-Trigger Finger/Stenosing tenosynovitis	Stenosing tenosynovitis
-Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder impingement
-Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder rotator cuff tendinitis
-Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder adhesive capsulitis
-Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder
-Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	adhesive capsulitis
-Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	shoulder calcific tendinitis 
-Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Calcific Tendinitis
-Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Tendinitis
-Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	rotator cuff tear
-Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	impingement
-Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Frozen Shoulder
-CVA	CVD
-CVA	Cerebellar Stroke
-CVA	Stroke
-CVA	CVA
-CP/Cerebral Palsy	CP
-CP/Cerebral Palsy	Cerebral Palsy
-CP/Cerebral Palsy	Developmental Delay
-CP/Cerebral Palsy	GDD
-Bell's Palsy	Bell's Palsy
-Parkinson's Disease	Parkinson's Disease
-GBS	GBS
-TMJ	TMJ Dysfunction
-Deconditioning Syndrome	Deconditioning Syndrome
+Classification	Sub-classification	
+STL UE	Trapezius Strain	
+STL UE	subscapular strain	
+STL UE	Supraspinatus Strain	
+STL UE	Scapular Strain 	
+STL UE	Bicipital Tendinitis	
+STL UE	Lateral Epicondylitis	
+STL UE	Shoulder Hand Syndrome	
+STL UE	Shoulder Bursitis	
+STL UE	Muscle strain shoulder	
+STL UE	Muscle elbow	
+STL UE	finger stiffness	
+STL UE	Muscle wrist	
+STL UE	Radial Collateral Sprain	
+STL UE	TFCC	
+STL LE	Plantar Fascitis	
+STL LE	Meniscal Tear	
+STL LE	Muscle Strain Thigh	
+STL LE	ACL injury	
+STL LE	MCL	
+STL LE	LCL injury	
+STL LE	Ankle Sprain	
+STL LE	knee sprain	
+STL LE	Meniscus	
+STL LE	hamstring strain	
+STL LE	gastrocnemius strain	
+STL LE	Chondromalacia Patella	
+STL LE	Patella Bursitis	
+STL LE	PFPS	
+STL LE	Achilles Tendinitis	
+STL LE	Achilles Bursitis	
+STL LE	Peripheral Neuropathy LE	
+STL LE	Iliotibial Band Syndrome	
+STL LE	Patello Femoral Pain Syndrome	
+Cervical Disorder	Cervical Strain	
+Cervical Disorder	Cervical OA	
+Cervical Disorder	cervical Radiculopathy	
+Cervical Disorder	Cervical spondylolysis	
+Cervical Disorder	Cervical spondylosis	
+Cervical Disorder	Cervical Stenosis	
+Cervical Disorder	Cervical listhesis	
+Cervical Disorder	Cervical spasm	
+Cervical Disorder	cervical Disc bulge	
+Cervical Disorder	cervical	
+Cervical Disorder	C1	
+Cervical Disorder	C2	
+Cervical Disorder	C3	
+Cervical Disorder	C4	
+Cervical Disorder	C5	
+Cervical Disorder	C6	
+Cervical Disorder	Upper back Strain	
+Cervical Disorder	Strain	
+Cervical Disorder	C7	
+Lumbar disorder	DDD	
+Lumbar disorder	Thoracic	
+Lumbar disorder	costochondritis	
+Lumbar disorder	Lumbar strain	
+Lumbar disorder	lumbar radiculopathy	
+Lumbar disorder	lumbar disc bulge	
+Lumbar disorder	Lumbar spondylosis	
+Lumbar disorder	Lumbar spondylolysis	
+Lumbar disorder	coccygodinia	
+Lumbar disorder	Lumbar listhesis	
+Lumbar disorder	Chronic LBP	
+Lumbar disorder	ParaLS Strain	
+Lumbar disorder	ParaTL strain	
+Lumbar disorder	Mechanical LBP	
+Lumbar disorder	Lumbar OA	
+Lumbar disorder	Lumbar Stenosis	
+Lumbar disorder	PPI	
+Lumbar disorder	Lumbar	
+Lumbar disorder	L1	
+Lumbar disorder	L2	
+Lumbar disorder	L3	
+Lumbar disorder	L4	
+Lumbar disorder	L5	
+Lumbar disorder	sciatica	
+Lumbar disorder	S1	
+Lumbar disorder	S2	
+Lumbar disorder	S3	
+Lumbar disorder	S4	
+Lumbar disorder	compression fx	
+Lumbar disorder	FX Lumbar	
+Lumbar disorder	LS radiculopathy	
+Lumbar disorder	HNP	
+OA/RA/Gouty arthritis	OA	
+OA/RA/Gouty arthritis	RA	
+OA/RA/Gouty arthritis	Gouty arthritis	
+OA/RA/Gouty arthritis	hip OA	
+OA/RA/Gouty arthritis	knee OA	
+OA/RA/Gouty arthritis	Post traumatic	
+OA/RA/Gouty arthritis	ankle OA	
+Fx/S/p ORIF/Plating/Screws; Dislocation	BKA	
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p ORIF	
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Plating	
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Screws	
+Fx/S/p ORIF/Plating/Screws; Dislocation	S/P PHR	
+Fx/S/p ORIF/Plating/Screws; Dislocation	S/P THR	
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Dislocation	
+Fx/S/p ORIF/Plating/Screws; Dislocation	UE	
+Fx/S/p ORIF/Plating/Screws; Dislocation	Patellar Dislocation	
+Fx/S/p ORIF/Plating/Screws; Dislocation	S/P Shoulder Dislocation	
+Fx/S/p ORIF/Plating/Screws; Dislocation	clavicle	
+Fx/S/p ORIF/Plating/Screws; Dislocation	humerus	
+Fx/S/p ORIF/Plating/Screws; Dislocation	femoral neck	
+Fx/S/p ORIF/Plating/Screws; Dislocation	femur	
+Fx/S/p ORIF/Plating/Screws; Dislocation	fibular	
+Fx/S/p ORIF/Plating/Screws; Dislocation	tibio-fibular	
+Fx/S/p ORIF/Plating/Screws; Dislocation	tibial	
+Fx/S/p ORIF/Plating/Screws; Dislocation	ulna	
+Fx/S/p ORIF/Plating/Screws; Dislocation	radius	
+Fx/S/p ORIF/Plating/Screws; Dislocation	radio ulnar	
+Fx/S/p ORIF/Plating/Screws; Dislocation	FX	
+Fx/S/p ORIF/Plating/Screws; Dislocation	Chronic Dislocation	
+Fx/S/p ORIF/Plating/Screws; Dislocation	Rotational Lag	
+Scoliosis	Dextoscoliosis	
+Scoliosis	Levoscoliosis	
+Scoliosis	Scoliosis	
+MPS	MPS	
+CTS	CTS	
+DQT	DQT	
+Trigger Finger/Stenosing tenosynovitis	Trigger Thumb	
+Trigger Finger/Stenosing tenosynovitis	Trigger Finger	
+Trigger Finger/Stenosing tenosynovitis	Stenosing tenosynovitis	
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder impingement	
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder rotator cuff tendinitis	
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder adhesive capsulitis	
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder	
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	adhesive capsulitis	
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	shoulder calcific tendinitis 	
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Calcific Tendinitis	
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Tendinitis	
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	rotator cuff tear	
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	impingement	
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Frozen Shoulder	
+CVA	CVD	
+CVA	Cerebellar Stroke	
+CVA	Stroke	
+CVA	CVA	
+CP/Cerebral Palsy	CP	
+CP/Cerebral Palsy	Cerebral Palsy	
+CP/Cerebral Palsy	Developmental Delay	
+CP/Cerebral Palsy	GDD	
+Bell's Palsy	Bell's Palsy	
+Parkinson's Disease	Parkinson's Disease	
+GBS	GBS	
+TMJ	TMJ Dysfunction	
+Deconditioning Syndrome	Deconditioning Syndrome	

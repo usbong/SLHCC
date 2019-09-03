@@ -9,9 +9,9 @@ Sub autoWriteCashPaidDatePhraseInNotesColumnTreatmentMasterList()
 '
 ' @author: Michael Syson
 ' @date created: 20190209
-' @date updated: 20190607
+' @date updated: 20190903
 '
-' Master List: Treatment 2018
+' Master List: Treatment 2018~present
 ' Given:
 ' 1) Transaction Date (Column B)
 ' 2) Class/Classification, i.e. PWD, SC, WI, SLC, SLR (Column I)
@@ -41,10 +41,11 @@ Set myInput = Sheets(ActiveSheet.name)
 Set myOutput = Sheets(ActiveSheet.name)
 
 For Each row In myInput.Rows
-       'if not an empty and not an HMO transaction
-       If (IsEmpty(myInput.Range("I" & RowCount).Value) = 0) And (InStr(myInput.Range("I" & RowCount).Value, "HMO") = 0) Then
+       'edited by Mike, 20190903
+       'if not empty, an HMO, a No Charge, and a Sta. Lucia Reality (SLR) transaction
+       If (IsEmpty(myInput.Range("I" & RowCount).Value) = 0) And (InStr(UCase(myInput.Range("I" & RowCount).Value), "HMO") = 0) And (InStr(UCase(myInput.Range("I" & RowCount).Value), "NC") = 0) And (InStr(UCase(myInput.Range("I" & RowCount).Value), "NO CHARGE") = 0) And (InStr(UCase(myInput.Range("I" & RowCount).Value), "SLR") = 0) Then
             'edited by Mike, 20190607
-			'myOutput.Range("A" & RowCount) = "paid: " & Format(myInput.Range("B" & RowCount).Value, "mmm-dd-yy") & "; " & myInput.Range("A" & RowCount).Value
+            'myOutput.Range("A" & RowCount) = "paid: " & Format(myInput.Range("B" & RowCount).Value, "mmm-dd-yy") & "; " & myInput.Range("A" & RowCount).Value
             
             output = "paid: " & Format(myInput.Range("B" & RowCount).Value, "mmm-dd-yy") & "; "
             'if we haven't added the "paid:..."

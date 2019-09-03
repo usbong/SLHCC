@@ -9,9 +9,9 @@ Sub autoWriteCashPaidDatePhraseInNotesColumnConsultationMasterList()
 '
 ' @author: Michael Syson
 ' @date created: 20190209
-' @date updated: 20190607
+' @date updated: 20190903
 '
-' Master List: Consultation 2018
+' Master List: Consultation 2018~present
 ' Given:
 ' 1) Transaction Date (Column B)
 ' 2) Class/Classification, i.e. PWD, SC, WI, SLC, SLR (Column J)
@@ -49,8 +49,9 @@ Set myOutput = Sheets(ActiveSheet.name)
 For Each row In myInput.Rows
        'if the value for the Medical Doctor column includes the keywords
        If (InStr(myInput.Range("Q" & RowCount).Value, keyword) And InStr(myInput.Range("Q" & RowCount).Value, keywordTwo)) Then
-          'if not an empty and not an HMO transaction
-          If (IsEmpty(myInput.Range("J" & RowCount).Value) = 0) And (InStr(myInput.Range("J" & RowCount).Value, "HMO") = 0) And (InStr(myInput.Range("J" & RowCount).Value, "NC") = 0) And (LCase(InStr(myInput.Range("J" & RowCount).Value, "no charge") = 0)) Then            
+          'edited by Mike, 20190903
+          'if not empty, an HMO, a No Charge, and a Sta. Lucia Reality (SLR) transaction
+          If (IsEmpty(myInput.Range("J" & RowCount).Value) = 0) And (InStr(UCase(myInput.Range("J" & RowCount).Value), "HMO") = 0) And (InStr(UCase(myInput.Range("J" & RowCount).Value), "NC") = 0) And (InStr(UCase(myInput.Range("J" & RowCount).Value), "NO CHARGE") = 0) And (InStr(UCase(myInput.Range("J" & RowCount).Value), "SLR") = 0) Then
             'edited by Mike, 20190607
             'myOutput.Range("A" & RowCount) = "paid: " & Format(myInput.Range("B" & RowCount).Value, "mmm-dd-yy") & "; " & myInput.Range("A" & RowCount).Value
           

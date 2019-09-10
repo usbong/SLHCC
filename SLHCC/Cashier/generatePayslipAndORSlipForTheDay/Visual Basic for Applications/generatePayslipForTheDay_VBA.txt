@@ -1,3 +1,4 @@
+
 Sub generatePayslipForTheDay()
 ' Copyright 2019 Usbong Social Systems, Inc.
 '
@@ -733,7 +734,61 @@ myOutput.Range("G" & 16).HorizontalAlignment = xlRight
 Application.ScreenUpdating = True
 
 End Sub
+Sub exportToKMSPayslipForTheDayPTTreatment()
+' Copyright 2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190910
+' @date updated: 20190910
+'
+' Given:
+' 1) Worksheet with the payslip data
+'
+'Output:
+' 1) Exported Tab-delimited .txt file of the Payslip in the input folder
+' 2) Automatically executed batch file to store the Payslip details in the Knowledge Management System (KMS)
+'
+Dim myInput As Worksheet
+Dim myOutput As Worksheet 'not the same as myInput
+Dim row As Range
+Dim RowCount As Integer
+Dim TableHeaderRow As Integer
+Dim LastPrintableRow As Integer
+Dim MaxPatientNameColumnWidth As Integer
+Dim patientNameFontSize As Integer
+Dim particularsFontSize As Integer 'added by Mike, 20190323
+Dim defaultFontName As String 'added by Mike, 20190314
+Dim totalAmountReleasedValue As String 'added by Mike, 20190316
 
+RowCount = 1
+TableHeaderRow = 5 'output
+LastPrintableRow = 16 'including the TOTAL PF
+MaxPatientNameValueLength = 18 'characters in Pixels 'added by Mike, 20190323
+MaxPatientNameColumnWidthPixels = 216 '12pt font * 18 characters in Pixels
+patientNameFontSize = 12
+MaxParticularsValueLength = 8 'characters in Pixels 'added by Mike, 20190323
+MaxParticularsColumnWidthPixels = 96 '12pt font * 8 characters in Pixels 'added by Mike, 20190323
+particularsFontSize = 12 'added by Mike, 20190323
+defaultFontName = "Arial" 'added by Mike, 20190314
+totalAmountReleasedValue = 0 'added by Mike, 20190316
+
+Set myInput = Sheets(ActiveSheet.Name)
+
+Set myOutput = ActiveWorkbook.Sheets.Add
+myOutput.Name = myInput.Name & " Export"
+
+Application.ScreenUpdating = False
+
+
+Application.ScreenUpdating = True
+
+End Sub
 Sub generateORSlipForTheDay()
 ' Copyright 2019 Usbong Social Systems, Inc.
 '
@@ -745,7 +800,7 @@ Sub generateORSlipForTheDay()
 '
 ' @author: Michael Syson
 ' @date created: 20190509
-' @date updated: 20190612
+' @date updated: 20190618
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -774,6 +829,7 @@ Dim currentPatientNameValue As String 'added by Mike, 20190523
 Dim isSamePatientWithAnotherTransaction As Boolean 'added by Mike, 20190523
 Dim feeRowCountOffset As Integer 'added by Mike, 20190523
 Dim feeRowCount As Integer 'added by Mike, 20190523
+Dim isInputWorksheetEmpty As Boolean 'added by Mike, 20190618
 
 RowCount = 1
 TableHeaderRow = 5 'output
@@ -800,6 +856,29 @@ Application.ScreenUpdating = False
 
 'added by Mike, 20190513
 Application.DisplayAlerts = False
+
+'added by Mike, 20190618
+RowCount = TableHeaderRow + 2 'input
+
+For Each row In myInput.Rows
+        'Verify Particulars/Classification Column
+        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+            isInputWorksheetEmpty = True
+        End If
+        
+        RowCount = RowCount + 1
+                            
+        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+            Exit For
+'        Else
+'            RowCount = RowCount + 1
+        End If
+Next row
+
+If (isInputWorksheetEmpty) Then
+    Exit Sub
+End If
+
 Set fso = CreateObject("scripting.filesystemobject")
 
 'myTemplate.Copy ActiveWorkbook.Sheets(Sheets.Count)

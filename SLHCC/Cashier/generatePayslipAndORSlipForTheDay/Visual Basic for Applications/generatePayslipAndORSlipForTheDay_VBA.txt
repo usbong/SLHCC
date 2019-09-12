@@ -1,4 +1,3 @@
-
 Sub generatePayslipForTheDay()
 ' Copyright 2019 Usbong Social Systems, Inc.
 '
@@ -745,7 +744,7 @@ Sub exportToKMSPayslipForTheDayPTTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190910
-' @date updated: 20190910
+' @date updated: 20190912
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -766,6 +765,8 @@ Dim particularsFontSize As Integer 'added by Mike, 20190323
 Dim defaultFontName As String 'added by Mike, 20190314
 Dim totalAmountReleasedValue As String 'added by Mike, 20190316
 
+Dim myOutputWorksheetName As String 'added by Mike, 20190912
+
 RowCount = 1
 TableHeaderRow = 5 'output
 LastPrintableRow = 16 'including the TOTAL PF
@@ -780,13 +781,23 @@ totalAmountReleasedValue = 0 'added by Mike, 20190316
 
 Set myInput = Sheets(ActiveSheet.Name)
 
+'added by Mike, 20190912
+Application.DisplayAlerts = False
+Application.ScreenUpdating = False
+
+myOutputWorksheetName = myInput.Name & " Export"
+
+'If a workheet with the outputWorksheetName already exists
+If Evaluate("ISREF('" & myOutputWorksheetName & "'!A1)") Then
+    ActiveWorkbook.Sheets(myOutputWorksheetName).Delete
+End If
+
 Set myOutput = ActiveWorkbook.Sheets.Add
 myOutput.Name = myInput.Name & " Export"
 
-Application.ScreenUpdating = False
-
 
 Application.ScreenUpdating = True
+Application.DisplayAlerts = True
 
 End Sub
 Sub generateORSlipForTheDay()

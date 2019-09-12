@@ -1,3 +1,16 @@
+' Copyright 2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190912
+' @date updated: 20190912
+Public dateTimeStamp As String
+
 Sub generatePayslipForTheDay()
 ' Copyright 2019 Usbong Social Systems, Inc.
 '
@@ -9,7 +22,7 @@ Sub generatePayslipForTheDay()
 '
 ' @author: Michael Syson
 ' @date created: 20190618
-' @date updated: 20190618
+' @date updated: 20190912
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -51,6 +64,7 @@ Next row
 
 If isPTTreatmentWorksheet Then
     Call generatePayslipForTheDayPTTreatment
+    Call exportToKMSPayslipForTheDayPTTreatment
 Else
     Call generatePayslipForTheDayConsultation
 End If
@@ -66,7 +80,7 @@ Private Sub generatePayslipForTheDayConsultation()
 '
 ' @author: Michael Syson
 ' @date created: 20190314
-' @date updated: 20190618
+' @date updated: 20190912
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -102,12 +116,25 @@ totalAmountReleasedValue = 0 'added by Mike, 20190316
 Set myTemplate = Sheets("Consultation Template")
 Set myInput = Sheets(ActiveSheet.Name)
 
+'added by Mike, 20190912
+Application.DisplayAlerts = False
+
 'added by Mike, 20190314
 Application.ScreenUpdating = False
 
+'edited by Mike, 20190912
+myOutputWorksheetName = "Consultation " & myInput.Name
+
+'MsgBox ("myOutputWorksheetName: " & myOutputWorksheetName)
+
+'If a workheet with the outputWorksheetName already exists
+If Evaluate("ISREF('" & myOutputWorksheetName & "'!A1)") Then
+    ActiveWorkbook.Sheets(myOutputWorksheetName).Delete
+End If
+
 myTemplate.Copy ActiveWorkbook.Sheets(Sheets.Count)
 Set myOutput = Sheets(ActiveSheet.Name)
-myOutput.Name = Replace(myOutput.Name, "Template (2)", "") & myInput.Name
+myOutput.Name = myOutputWorksheetName 'Replace(myOutput.Name, "Template (2)", "") & myInput.Name
 
 'edited by Mike, 20190317
 'At present, this component/part is not used.
@@ -363,9 +390,10 @@ myOutput.Range("G" & 19).Value = "Date: " & UCase(Format(Now(), "dd mmm yyyy")) 
 myOutput.Range("G" & 19).Font.Name = defaultFontName
 myOutput.Range("G" & 19).Font.Size = 14
 
-'added by Mike, 20190315; edited by Mike, 20190321
+'added by Mike, 20190315; edited by Mike, 20190912
 'myOutput.Range("F" & 1).Value = "MANUFACTURED: " & Format(Now(), "yyyy-MM-ddTHH:mm:ss+08:00") 'Format(Now(), "dd/MM/yyyy hh:mm:ss")
-myOutput.Range("F" & 1).Value = Format(Now(), "yyyy-MM-ddTHH:mm:ss") 'Format(Now(), "dd/MM/yyyy hh:mm:ss")
+dateTimeStamp = Format(Now(), "yyyy-MM-ddTHH:mm:ss")
+myOutput.Range("F" & 1).Value = dateTimeStamp 'Format(Now(), "yyyy-MM-ddTHH:mm:ss") 'Format(Now(), "dd/MM/yyyy hh:mm:ss")
 myOutput.Range("F" & 1).Font.Name = defaultFontName
 myOutput.Range("F" & 1).Font.Size = 10
 myOutput.Range("F" & 1).Font.FontStyle = "Bold"
@@ -404,7 +432,7 @@ Private Sub generatePayslipForTheDayPTTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190307
-' @date updated: 20190618
+' @date updated: 20190912
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -427,6 +455,8 @@ Dim particularsFontSize As Integer 'added by Mike, 20190323
 Dim defaultFontName As String 'added by Mike, 20190314
 Dim totalAmountReleasedValue As String 'added by Mike, 20190316
 
+Dim myOutputWorksheetName As String 'added by Mike, 20190912
+
 RowCount = 1
 TableHeaderRow = 5 'output
 LastPrintableRow = 16 'including the TOTAL PF
@@ -442,12 +472,25 @@ totalAmountReleasedValue = 0 'added by Mike, 20190316
 Set myTemplate = Sheets("PT Treatment Template")
 Set myInput = Sheets(ActiveSheet.Name)
 
+'added by Mike, 20190912
+Application.DisplayAlerts = False
+
 'added by Mike, 20190314
 Application.ScreenUpdating = False
 
+'edited by Mike, 20190912
+myOutputWorksheetName = "PT Treatment " & myInput.Name
+
+'MsgBox ("myOutputWorksheetName: " & myOutputWorksheetName)
+
+'If a workheet with the outputWorksheetName already exists
+If Evaluate("ISREF('" & myOutputWorksheetName & "'!A1)") Then
+    ActiveWorkbook.Sheets(myOutputWorksheetName).Delete
+End If
+
 myTemplate.Copy ActiveWorkbook.Sheets(Sheets.Count)
 Set myOutput = Sheets(ActiveSheet.Name)
-myOutput.Name = Replace(myOutput.Name, "Template (2)", "") & myInput.Name
+myOutput.Name = myOutputWorksheetName 'Replace(myOutput.Name, "Template (2)", "") & myInput.Name
 
 'edited by Mike, 20190317
 'At present, this component/part is not used.
@@ -704,9 +747,10 @@ myOutput.Range("G" & 19).Value = "Date: " & UCase(Format(Now(), "dd mmm yyyy"))
 myOutput.Range("G" & 19).Font.Name = defaultFontName
 myOutput.Range("G" & 19).Font.Size = 14
 
-'added by Mike, 20190315; edited by Mike, 20190321
+'added by Mike, 20190315; edited by Mike, 20190912
 'myOutput.Range("F" & 1).Value = "MANUFACTURED: " & Format(Now(), "yyyy-MM-ddTHH:mm:ss+08:00") 'Format(Now(), "dd/MM/yyyy hh:mm:ss")
-myOutput.Range("F" & 1).Value = Format(Now(), "yyyy-MM-ddTHH:mm:ss") 'Format(Now(), "dd/MM/yyyy hh:mm:ss")
+dateTimeStamp = Format(Now(), "yyyy-MM-ddTHH:mm:ss")
+myOutput.Range("F" & 1).Value = dateTimeStamp 'Format(Now(), "yyyy-MM-ddTHH:mm:ss") 'Format(Now(), "dd/MM/yyyy hh:mm:ss")
 myOutput.Range("F" & 1).Font.Name = defaultFontName
 myOutput.Range("F" & 1).Font.Size = 10
 myOutput.Range("F" & 1).Font.FontStyle = "Bold"
@@ -728,6 +772,9 @@ myOutput.Range("G" & 16).NumberFormat = "0.00"
 myOutput.Range("G" & 16).HorizontalAlignment = xlRight
 'myOutput.Range("G" & 16).HorizontalAlignment = xlCenter
 'myOutput.Range("G" & 16).Font.FontStyle = "Bold"
+
+'added by Mike, 20190912
+Application.DisplayAlerts = False
 
 'added by Mike, 20190314
 Application.ScreenUpdating = True
@@ -785,7 +832,8 @@ Set myInput = Sheets(ActiveSheet.Name)
 Application.DisplayAlerts = False
 Application.ScreenUpdating = False
 
-myOutputWorksheetName = myInput.Name & " Export"
+'edited by Mike, 20190912
+myOutputWorksheetName = Replace(myInput.Name, "PT Treatment", "") & " Export"
 
 'If a workheet with the outputWorksheetName already exists
 If Evaluate("ISREF('" & myOutputWorksheetName & "'!A1)") Then
@@ -793,7 +841,13 @@ If Evaluate("ISREF('" & myOutputWorksheetName & "'!A1)") Then
 End If
 
 Set myOutput = ActiveWorkbook.Sheets.Add
-myOutput.Name = myInput.Name & " Export"
+myOutput.Name = myOutputWorksheetName 'myInput.Name & " Export"
+
+'added by Mike, 20190912
+myOutput.Range("A" & 1).Value = dateTimeStamp 'Format(Now(), "yyyy-MM-ddTHH:mm:ss")
+myOutput.Range("A" & 1).Font.Name = defaultFontName
+myOutput.Range("A" & 1).Font.Size = 10
+'myOutput.Range("A" & 1).Font.FontStyle = "Bold"
 
 
 Application.ScreenUpdating = True

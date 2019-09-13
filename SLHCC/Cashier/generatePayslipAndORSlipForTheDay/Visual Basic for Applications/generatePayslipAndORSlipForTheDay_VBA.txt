@@ -8,8 +8,9 @@
 '
 ' @author: Michael Syson
 ' @date created: 20190912
-' @date updated: 20190912
+' @date updated: 20190913
 Public dateTimeStamp As String
+Public myInput As Worksheet 'added by Mike, 20190913
 
 Sub generatePayslipForTheDay()
 ' Copyright 2019 Usbong Social Systems, Inc.
@@ -432,7 +433,7 @@ Private Sub generatePayslipForTheDayPTTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190307
-' @date updated: 20190912
+' @date updated: 20190913
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -443,7 +444,7 @@ Private Sub generatePayslipForTheDayPTTreatment()
 ' 3) New workbook with auto-updated Worksheets for each transaction based on the OR template for PT Treatment
 ' 4) Automatically verified and corrected if necessary the computation in each of the worksheets with the transaction data in the new Workbook
 '
-Dim myInput As Worksheet
+'Dim myInput As Worksheet 'removed by Mike, 20190913
 Dim myOutput As Worksheet 'not the same as myInput
 Dim row As Range
 Dim RowCount As Integer
@@ -791,7 +792,7 @@ Sub exportToKMSPayslipForTheDayPTTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190910
-' @date updated: 20190912
+' @date updated: 20190913
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -800,7 +801,7 @@ Sub exportToKMSPayslipForTheDayPTTreatment()
 ' 1) Exported Tab-delimited .txt file of the Payslip in the input folder
 ' 2) Automatically executed batch file to store the Payslip details in the Knowledge Management System (KMS)
 '
-Dim myInput As Worksheet
+'Dim myInput As Worksheet 'removed by Mike, 20190913
 Dim myOutput As Worksheet 'not the same as myInput
 Dim row As Range
 Dim RowCount As Integer
@@ -826,7 +827,7 @@ particularsFontSize = 12 'added by Mike, 20190323
 defaultFontName = "Arial" 'added by Mike, 20190314
 totalAmountReleasedValue = 0 'added by Mike, 20190316
 
-Set myInput = Sheets(ActiveSheet.Name)
+'Set myInput = Sheets(ActiveSheet.Name) 'removed by Mike, 20190913
 
 'added by Mike, 20190912
 Application.DisplayAlerts = False
@@ -848,6 +849,9 @@ myOutput.Range("A" & 1).Value = dateTimeStamp 'Format(Now(), "yyyy-MM-ddTHH:mm:s
 myOutput.Range("A" & 1).Font.Name = defaultFontName
 myOutput.Range("A" & 1).Font.Size = 10
 'myOutput.Range("A" & 1).Font.FontStyle = "Bold"
+
+'added by Mike, 20190913
+myOutput.Range("A" & 2).Value = myInput.Range("A" & 4).Text 'Cashier person name
 
 
 Application.ScreenUpdating = True

@@ -792,7 +792,7 @@ Sub exportToKMSPayslipForTheDayPTTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190910
-' @date updated: 20190913
+' @date updated: 20190914
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -853,6 +853,37 @@ myOutput.Range("A" & 1).Font.Size = 10
 'added by Mike, 20190913
 myOutput.Range("A" & 2).Value = myInput.Range("A" & 4).Text 'Cashier person name
 
+'added by Mike, 20190914
+'---------------------------------------------------------
+'Auto-copy contents component/part
+'---------------------------------------------------------
+RowCount = TableHeaderRow + 2 'input
+RowCountOutput = 3
+For Each row In myInput.Rows
+        myInput.Range("B" & RowCount, "D" & RowCount).Columns.Copy
+        myInput.Select
+        myOutput.Range("A" & RowCountOutput, "C" & RowCountOutput).PasteSpecial (xlPasteValues)
+      
+        'Amount Paid
+        myInput.Range("F" & RowCount).Columns.Copy
+        myInput.Select
+        myOutput.Range("D" & RowCountOutput).PasteSpecial (xlPasteValues)
+      
+        'ORTHO & PT Unit Share
+        myInput.Range("H" & RowCount).Columns.Copy
+        myInput.Select
+        myOutput.Range("E" & RowCountOutput).PasteSpecial (xlPasteValues)
+            
+        RowCount = RowCount + 1
+        RowCountOutput = RowCountOutput + 1
+                            
+        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+            Exit For
+        End If
+Next row
+
+'added by Mike, 20190914
+Application.CutCopyMode = False
 
 Application.ScreenUpdating = True
 Application.DisplayAlerts = True

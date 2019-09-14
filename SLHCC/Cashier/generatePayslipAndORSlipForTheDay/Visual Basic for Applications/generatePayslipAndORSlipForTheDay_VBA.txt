@@ -834,6 +834,11 @@ totalAmountReleasedValue = 0 'added by Mike, 20190316
 Application.DisplayAlerts = False
 Application.ScreenUpdating = False
 
+'added by Mike, 20190914
+inputWorkbookPath = ActiveWorkbook.path 'inputWorkbook.path
+inputWorkbookPathDrive = Split(CStr(inputWorkbookPath), ":")(0) & ":"
+'MsgBox ("inputWorkbookPath: " & inputWorkbookPath)
+
 'edited by Mike, 20190912
 myOutputWorksheetName = Replace(myInput.Name, "PT Treatment", "") & " Export"
 
@@ -894,6 +899,10 @@ myOutput.Activate
 
 'Export the current/present active worksheet
 ActiveWorkbook.SaveAs Filename:=path & ".txt", FileFormat:=xlText, CreateBackup:=False
+
+'added by Mike, 20190914
+ChDir inputWorkbookPath & "\add-on software\"
+Shell inputWorkbookPath & "\add-on software\generatePayslipForTheDay.bat " & inputWorkbookPathDrive, vbNormalFocus
 
 'Close the workbook without the extra step of saving it again anymore
 ActiveWorkbook.Close SaveChanges:=False

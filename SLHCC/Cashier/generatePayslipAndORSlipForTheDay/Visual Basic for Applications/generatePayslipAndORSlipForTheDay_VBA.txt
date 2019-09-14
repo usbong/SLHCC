@@ -814,6 +814,7 @@ Dim defaultFontName As String 'added by Mike, 20190314
 Dim totalAmountReleasedValue As String 'added by Mike, 20190316
 
 Dim myOutputWorksheetName As String 'added by Mike, 20190912
+Dim path As String 'added by Mike, 20190914
 
 RowCount = 1
 TableHeaderRow = 5 'output
@@ -835,6 +836,12 @@ Application.ScreenUpdating = False
 
 'edited by Mike, 20190912
 myOutputWorksheetName = Replace(myInput.Name, "PT Treatment", "") & " Export"
+
+'added by Mike, 20190914
+path = ActiveWorkbook.path & "\add-on software\input\" & myOutputWorksheetName '& Left(ActiveWorkbook.Name, InStr(ActiveWorkbook.Name, ".") - 1)
+
+'Save the workbook first before exporting the worksheet
+ActiveWorkbook.Save '.SaveAs Filename:=path
 
 'If a workheet with the outputWorksheetName already exists
 If Evaluate("ISREF('" & myOutputWorksheetName & "'!A1)") Then
@@ -881,6 +888,15 @@ For Each row In myInput.Rows
             Exit For
         End If
 Next row
+
+'added by Mike, 20190914
+myOutput.Activate
+
+'Export the current/present active worksheet
+ActiveWorkbook.SaveAs Filename:=path & ".txt", FileFormat:=xlText, CreateBackup:=False
+
+'Close the workbook without the extra step of saving it again anymore
+ActiveWorkbook.Close SaveChanges:=False
 
 'added by Mike, 20190914
 Application.CutCopyMode = False
@@ -985,7 +1001,7 @@ Set fso = CreateObject("scripting.filesystemobject")
 'Set myOutput = Sheets(ActiveSheet.Name)
 'myOutput.Name = Replace(myOutput.Name, "Template (2)", "") & myInput.Name
 
-outputPath = Application.ThisWorkbook.Path & "\"
+outputPath = Application.ThisWorkbook.path & "\"
 newWorkbookFileName = outputPath & "OR Workbook " & myInput.Name & ".xlsx"
 
 'added by Mike, 20190513

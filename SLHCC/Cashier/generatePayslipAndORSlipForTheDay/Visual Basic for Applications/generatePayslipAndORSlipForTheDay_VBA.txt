@@ -803,6 +803,7 @@ Sub exportToKMSPayslipForTheDayPTTreatment()
 '
 'Dim myInput As Worksheet 'removed by Mike, 20190913
 Dim myOutput As Worksheet 'not the same as myInput
+Dim myInputWorkbookName As String 'added by Mike, 20190914
 Dim row As Range
 Dim RowCount As Integer
 Dim TableHeaderRow As Integer
@@ -837,7 +838,10 @@ Application.ScreenUpdating = False
 'added by Mike, 20190914
 inputWorkbookPath = ActiveWorkbook.path 'inputWorkbook.path
 inputWorkbookPathDrive = Split(CStr(inputWorkbookPath), ":")(0) & ":"
+
 'MsgBox ("inputWorkbookPath: " & inputWorkbookPath)
+'MsgBox ("ActiveWorkbook.Name: " & ActiveWorkbook.Name)
+myInputWorkbookName = ActiveWorkbook.Name
 
 'edited by Mike, 20190912
 myOutputWorksheetName = Replace(myInput.Name, "PT Treatment", "") & " Export"
@@ -902,7 +906,7 @@ ActiveWorkbook.SaveAs Filename:=path & ".txt", FileFormat:=xlText, CreateBackup:
 
 'added by Mike, 20190914
 ChDir inputWorkbookPath & "\add-on software\"
-Shell inputWorkbookPath & "\add-on software\generatePayslipForTheDay.bat " & inputWorkbookPathDrive, vbNormalFocus
+Shell inputWorkbookPath & "\add-on software\generatePayslipForTheDay.bat " & inputWorkbookPathDrive & " " & myInputWorkbookName, vbNormalFocus
 
 'Close the workbook without the extra step of saving it again anymore
 ActiveWorkbook.Close SaveChanges:=False

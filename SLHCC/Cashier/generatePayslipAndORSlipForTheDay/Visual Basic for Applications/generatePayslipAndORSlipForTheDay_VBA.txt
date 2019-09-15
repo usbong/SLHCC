@@ -925,7 +925,14 @@ myOutput.Activate
 ChDir inputWorkbookPath & "\add-on software\"
 
 'added by Mike, 20190915
-Shell inputWorkbookPath & "\add-on software\deleteFilesInInputFolder.bat"
+'Shell inputWorkbookPath & "\add-on software\deleteFilesInInputFolder.bat"
+
+'edited by Mike, 20190915
+Set fso = CreateObject("scripting.filesystemobject")
+If Dir(inputWorkbookPath & "\add-on software\input\" & "*.txt") <> "" Then
+    'delete any .txt file
+    fso.DeleteFile inputWorkbookPath & "\add-on software\input\" & "*.txt"
+End If
 
 'Export the current/present active worksheet
 ActiveWorkbook.SaveAs Filename:=path & ".txt", FileFormat:=xlText, CreateBackup:=False

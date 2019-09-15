@@ -8,9 +8,10 @@
 '
 ' @author: Michael Syson
 ' @date created: 20190912
-' @date updated: 20190913
+' @date updated: 20190915
 Public dateTimeStamp As String
 Public myInput As Worksheet 'added by Mike, 20190913
+Public myInputWorkbook As Worksheet 'added by Mike, 20190915
 
 Sub generatePayslipForTheDay()
 ' Copyright 2019 Usbong Social Systems, Inc.
@@ -23,7 +24,7 @@ Sub generatePayslipForTheDay()
 '
 ' @author: Michael Syson
 ' @date created: 20190618
-' @date updated: 20190912
+' @date updated: 20190915
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -65,10 +66,12 @@ Next row
 
 If isPTTreatmentWorksheet Then
     Call generatePayslipForTheDayPTTreatment
-    Call exportToKMSPayslipForTheDayPTTreatment
 Else
     Call generatePayslipForTheDayConsultation
 End If
+
+'edited by Mike, 20190915
+Call exportToKMSPayslipForTheDay(isPTTreatmentWorksheet)
 
 End Sub
 Private Sub generatePayslipForTheDayConsultation()
@@ -81,7 +84,7 @@ Private Sub generatePayslipForTheDayConsultation()
 '
 ' @author: Michael Syson
 ' @date created: 20190314
-' @date updated: 20190912
+' @date updated: 20190915
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -90,7 +93,7 @@ Private Sub generatePayslipForTheDayConsultation()
 ' 1) New auto-updated Worksheet with the payslip data based on the payslip template for PT Treatment
 ' 2) Automatically verified and corrected if necessary the computation in the worksheet with the payslip data
 '
-Dim myInput As Worksheet
+'Dim myInput As Worksheet 'removed by Mike, 20190915
 Dim myOutput As Worksheet 'not the same as myInput
 Dim row As Range
 Dim RowCount As Integer
@@ -101,6 +104,8 @@ Dim patientNameFontSize As Integer
 Dim particularsFontSize As Integer 'added by Mike, 20190323
 Dim defaultFontName As String 'added by Mike, 20190314
 Dim totalAmountReleasedValue As String 'added by Mike, 20190316
+
+Dim myOutputWorksheetName As String 'added by Mike, 20190912
 
 RowCount = 1
 TableHeaderRow = 5 'output
@@ -781,7 +786,7 @@ Application.DisplayAlerts = False
 Application.ScreenUpdating = True
 
 End Sub
-Sub exportToKMSPayslipForTheDayPTTreatment()
+Private Sub exportToKMSPayslipForTheDay(isPTTreatmentWorksheet As Boolean)
 ' Copyright 2019 Usbong Social Systems, Inc.
 '
 ' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
@@ -792,7 +797,7 @@ Sub exportToKMSPayslipForTheDayPTTreatment()
 '
 ' @author: Michael Syson
 ' @date created: 20190910
-' @date updated: 20190914
+' @date updated: 20190915
 '
 ' Given:
 ' 1) Worksheet with the payslip data
@@ -816,6 +821,7 @@ Dim totalAmountReleasedValue As String 'added by Mike, 20190316
 
 Dim myOutputWorksheetName As String 'added by Mike, 20190912
 Dim path As String 'added by Mike, 20190914
+Dim worksheetNameKeyword As String 'added by Mike, 20190915
 
 RowCount = 1
 TableHeaderRow = 5 'output
@@ -835,6 +841,9 @@ totalAmountReleasedValue = 0 'added by Mike, 20190316
 Application.DisplayAlerts = False
 Application.ScreenUpdating = False
 
+'added by Mike, 20190915
+'myInputWorkbook = ActiveWorkbook
+
 'added by Mike, 20190914
 inputWorkbookPath = ActiveWorkbook.path 'inputWorkbook.path
 inputWorkbookPathDrive = Split(CStr(inputWorkbookPath), ":")(0) & ":"
@@ -843,8 +852,15 @@ inputWorkbookPathDrive = Split(CStr(inputWorkbookPath), ":")(0) & ":"
 'MsgBox ("ActiveWorkbook.Name: " & ActiveWorkbook.Name)
 myInputWorkbookName = ActiveWorkbook.Name
 
-'edited by Mike, 20190912
-myOutputWorksheetName = Replace(myInput.Name, "PT Treatment", "") & " Export"
+'edited by Mike, 20190915
+worksheetNameKeyword = "Consultation"
+If isPTTreatmentWorksheet Then
+    worksheetNameKeyword = "PT Treatment"
+End If
+
+MsgBox ("worksheetNameKeyword: " & worksheetNameKeyword)
+
+myOutputWorksheetName = Replace(myInput.Name, worksheetNameKeyword, "") & " Export"
 
 'added by Mike, 20190914
 path = ActiveWorkbook.path & "\add-on software\input\" & myOutputWorksheetName '& Left(ActiveWorkbook.Name, InStr(ActiveWorkbook.Name, ".") - 1)
@@ -901,15 +917,27 @@ Next row
 'added by Mike, 20190914
 myOutput.Activate
 
+'removed by Mike, 20190915
 'Export the current/present active worksheet
-ActiveWorkbook.SaveAs Filename:=path & ".txt", FileFormat:=xlText, CreateBackup:=False
+'ActiveWorkbook.SaveAs Filename:=path & ".txt", FileFormat:=xlText, CreateBackup:=False
 
 'added by Mike, 20190914
 ChDir inputWorkbookPath & "\add-on software\"
+
+'added by Mike, 20190915
+Shell inputWorkbookPath & "\add-on software\deleteFilesInInputFolder.bat"
+
+'Export the current/present active worksheet
+ActiveWorkbook.SaveAs Filename:=path & ".txt", FileFormat:=xlText, CreateBackup:=False
+
+'edited by Mike, 20190915
 Shell inputWorkbookPath & "\add-on software\generatePayslipForTheDay.bat " & inputWorkbookPathDrive & " " & myInputWorkbookName, vbNormalFocus
 
 'Close the workbook without the extra step of saving it again anymore
 ActiveWorkbook.Close SaveChanges:=False
+
+'added by Mike, 20190915
+'myInputWorkbook.Sheets(myOutputWorksheetName).Delete
 
 'added by Mike, 20190914
 Application.CutCopyMode = False

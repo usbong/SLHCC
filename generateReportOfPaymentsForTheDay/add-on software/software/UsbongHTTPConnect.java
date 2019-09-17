@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20190917
+  @date updated: 20190918
 
   Given:
   1) List with the details of the transactions for the day
@@ -80,12 +80,14 @@ public class UsbongHTTPConnect {
 	//added by Mike, 20190811
 	private static boolean isInDebugMode = true;
 
-	//added by Mike, 20190814; edited by Mike, 20190917
+	//added by Mike, 20190814; edited by Mike, 20190918
 	private static boolean isForUpload = false;
 
-	private static final String STORE_TRANSACTIONS_LIST_FOR_THE_DAY_UPLOAD = "http://localhost/usbong_kms/server/storetransactionslistfortheday.php";
+	//edited by Mike, 20190918
+	private static String serverIpAddress = "";//"http://localhost/";
+	private static final String STORE_TRANSACTIONS_LIST_FOR_THE_DAY_UPLOAD = "usbong_kms/server/storetransactionslistfortheday.php";
 	
-	private static final String GET_TRANSACTIONS_LIST_FOR_THE_DAY_DOWNLOAD = "http://localhost/usbong_kms/server/gettransactionslistfortheday.php";
+	private static final String GET_TRANSACTIONS_LIST_FOR_THE_DAY_DOWNLOAD = "usbong_kms/server/gettransactionslistfortheday.php";
 
 	//added by Mike, 20190812
 	private static String inputFilename;
@@ -116,12 +118,16 @@ public class UsbongHTTPConnect {
 //		json.put("myKey", "myValue");    
 
 		UsbongHTTPConnect main = new UsbongHTTPConnect();
-		
+
+		//added by Mike, 20190918
+		serverIpAddress = args[0];
+
+		//edited by Mike, 20190918		
 		if (isForUpload) {
-			main.processUpload(args);
+			main.processUpload(new String[]{args[1]});
 		}
 		else {
-			main.processDownload(args);
+			main.processDownload(new String[]{args[1]});
 		}
 	}
 	
@@ -133,7 +139,7 @@ public class UsbongHTTPConnect {
 		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 
 		try {
-			HttpPost request = new HttpPost(STORE_TRANSACTIONS_LIST_FOR_THE_DAY_UPLOAD);
+			HttpPost request = new HttpPost(serverIpAddress+STORE_TRANSACTIONS_LIST_FOR_THE_DAY_UPLOAD);
 			StringEntity params = new StringEntity(json.toString());
 			request.addHeader("content-type", "application/json");
 			request.setEntity(params);
@@ -151,7 +157,7 @@ public class UsbongHTTPConnect {
 		CloseableHttpClient httpClient = HttpClientBuilder.create().build();
 
 		 try {
-            HttpGet httpget = new HttpGet(GET_TRANSACTIONS_LIST_FOR_THE_DAY_DOWNLOAD);
+            HttpGet httpget = new HttpGet(serverIpAddress+GET_TRANSACTIONS_LIST_FOR_THE_DAY_DOWNLOAD);
 
             System.out.println("Executing request " + httpget.getRequestLine());
 

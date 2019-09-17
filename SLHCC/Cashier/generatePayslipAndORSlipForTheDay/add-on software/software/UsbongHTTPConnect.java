@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20190821
+  @date updated: 20190917
 
   Given:
   1) List with the details of the transactions for the day
@@ -80,7 +80,7 @@ public class UsbongHTTPConnect {
 	//added by Mike, 20190811
 	private static boolean isInDebugMode = true;
 
-	//added by Mike, 20190814
+	//added by Mike, 20190814; edited by Mike, 20190917
 	private static boolean isForUpload = true;
 
 	private static final String STORE_TRANSACTIONS_LIST_FOR_THE_DAY_UPLOAD = "http://localhost/usbong_kms/server/storetransactionslistfortheday.php";
@@ -184,16 +184,27 @@ public class UsbongHTTPConnect {
 		for (int i=0; i<args.length; i++) {									
 			inputFilename = args[i].replaceAll(".txt","");			
 			File f = new File(inputFilename+".txt");
+
+			//added by Mike, 20190917
+			//note that the default payslip_type_id is 2, i.e. "PT Treatment"
+			if (inputFilename.contains("CONSULT")) {
+				json.put("payslip_type_id", 1);    				
+			}			
+			else {
+				json.put("payslip_type_id", 2);    				
+			}
 			
 			Scanner sc = new Scanner(new FileInputStream(f));				
 		
 			String s;		
 			
 			s=sc.nextLine(); 			
-			json.put("dateTimeStamp", s);    
+			//edited by Mike, 20190917
+			json.put("dateTimeStamp", s.trim());    
 
 			s=sc.nextLine(); 
-			json.put("cashierPerson", s.replace("\"",""));    
+			//edited by Mike, 20190917
+			json.put("cashierPerson", s.trim().replace("\"",""));    
 	
 			if (isInDebugMode) {
 				rowCount=0;
@@ -245,13 +256,22 @@ public class UsbongHTTPConnect {
 	private void processPayslipInputAfterDownload(String s) throws Exception {		
 		JSONArray nestedJsonArray = new JSONArray(s);
 		
-		//-add: for Consultation
+		//edited by Mike, 20190917
 		PrintWriter writer = new PrintWriter("output/payslipPTFromCashier.txt", "UTF-8");	
+		//PrintWriter writer = new PrintWriter("");
 		
 		if (nestedJsonArray != null) {
 		   for(int j=0;j<nestedJsonArray.length();j++) {
 				JSONObject jo_inside = nestedJsonArray.getJSONObject(j);
 
+				//added by Mike, 20190917
+				if (jo_inside.getInt("payslip_type_id") == 1) {
+					writer = new PrintWriter("output/payslipConsultationFromCashier.txt", "UTF-8");	
+				}
+/*				else {
+					writer = new PrintWriter("output/payslipPTFromCashier.txt", "UTF-8");	
+				}
+*/				
 				System.out.println(""+jo_inside.getString("payslip_description"));				
 				
 				JSONObject payslipInJSONFormat = new JSONObject(jo_inside.getString("payslip_description"));
@@ -275,6 +295,7 @@ public class UsbongHTTPConnect {
 							   count + "\t" +
 							   transactionInJSONArray.getInt(INPUT_OR_NUMBER_COLUMN) + "\t" +
 							   transactionInJSONArray.getString(INPUT_PATIENT_NAME_COLUMN) + "\t" +
+							   "\t" + //FEE COLUMN
 							   transactionInJSONArray.getString(INPUT_CLASSIFICATION_COLUMN) + "\t" +
 							   transactionInJSONArray.getString(INPUT_AMOUNT_PAID_COLUMN) + "\t" +
 							   transactionInJSONArray.getString(INPUT_NET_PF_COLUMN) + "\n";

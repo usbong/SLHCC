@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20190918
+  @date updated: 20191010
 
   Given:
   1) List with the details of the transactions for the day
@@ -257,7 +257,7 @@ public class UsbongHTTPConnect {
 		return json;
 	}	
 	
-	//added by Mike, 20190812; edited by Mike, 20190817
+	//added by Mike, 20190812; edited by Mike, 20191010
 	//Note: Consultation and PT Treatment payslip inputs are processed separately
 	private void processPayslipInputAfterDownload(String s) throws Exception {		
 		JSONArray nestedJsonArray = new JSONArray(s);
@@ -304,8 +304,13 @@ public class UsbongHTTPConnect {
 							   "\t" + //FEE COLUMN
 							   transactionInJSONArray.getString(INPUT_CLASSIFICATION_COLUMN) + "\t" +
 							   transactionInJSONArray.getString(INPUT_AMOUNT_PAID_COLUMN) + "\t" +
-							   transactionInJSONArray.getString(INPUT_NET_PF_COLUMN) + "\n";
-							
+							   //edited by Mike, 20191010
+							   transactionInJSONArray.getString(INPUT_NET_PF_COLUMN) + "\t"; //"\n";
+
+					//added by Mike, 20191010
+					outputString = outputString + jo_inside.getString("added_datetime_stamp") + "\t" +
+												  payslipInJSONFormat.getString("cashierPerson") + "\n";
+			
 					//write in Tab-delimited .txt file
 					writer.write(outputString);
 				}

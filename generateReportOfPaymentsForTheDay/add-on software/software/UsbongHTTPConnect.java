@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20191010
+  @date updated: 20191012
 
   Given:
   1) List with the details of the transactions for the day
@@ -64,6 +64,7 @@ import org.apache.http.util.EntityUtils;
 import org.apache.http.entity.StringEntity;
 
 import java.util.Scanner;
+import java.nio.charset.StandardCharsets;
 
 import java.io.PrintWriter;
 import java.io.File;
@@ -80,8 +81,8 @@ public class UsbongHTTPConnect {
 	//added by Mike, 20190811
 	private static boolean isInDebugMode = true;
 
-	//added by Mike, 20190814; edited by Mike, 20190918
-	private static boolean isForUpload = false;
+	//added by Mike, 20190814; edited by Mike, 20190917
+	private static boolean isForUpload = true;
 
 	//edited by Mike, 20190918
 	private static String serverIpAddress = "";//"http://localhost/";
@@ -140,8 +141,8 @@ public class UsbongHTTPConnect {
 
 		try {
 			HttpPost request = new HttpPost(serverIpAddress+STORE_TRANSACTIONS_LIST_FOR_THE_DAY_UPLOAD);
-			StringEntity params = new StringEntity(json.toString());
-			request.addHeader("content-type", "application/json");
+			StringEntity params = new StringEntity(json.toString(), "UTF-8"); //edited by Mike, 20191012
+			request.addHeader("content-type", "application/json; charset=utf-8'"); //edited by Mike, 20191012
 			request.setEntity(params);
 			httpClient.execute(request);
 		} catch (Exception ex) {
@@ -204,11 +205,17 @@ public class UsbongHTTPConnect {
 		
 			String s;		
 			
-			s=sc.nextLine(); 			
-			//edited by Mike, 20190917
-			json.put("dateTimeStamp", s.trim());    
+			//edited by Mike, 20191012
+			//s=sc.nextLine(); 			
+			s = new String(sc.nextLine().getBytes(), StandardCharsets.UTF_8);
 
-			s=sc.nextLine(); 
+			//edited by Mike, 20190917
+			json.put("dateTimeStamp", s.trim());
+
+			//edited by Mike, 20191012
+			//s=sc.nextLine(); 			
+			s = new String(sc.nextLine().getBytes(), StandardCharsets.UTF_8);
+			
 			//edited by Mike, 20190917
 			json.put("cashierPerson", s.trim().replace("\"",""));    
 	
@@ -217,9 +224,11 @@ public class UsbongHTTPConnect {
 			}
 						
 			//count/compute the number-based values of inputColumns 
-			while (sc.hasNextLine()) {
-				s=sc.nextLine();
-				
+			while (sc.hasNextLine()) {				
+			    //edited by Mike, 20191012
+				//s=sc.nextLine();
+				s = new String(sc.nextLine().getBytes(), StandardCharsets.UTF_8);
+
 				//if the row is blank
 				if (s.trim().equals("")) {
 					continue;
@@ -252,7 +261,7 @@ public class UsbongHTTPConnect {
 		//added by Mike, 20190812; edited by Mike, 20190815
 		json.put("iTotal", transactionCount);    				
 								
-//		System.out.println("json: "+json.toString());
+		System.out.println("json: "+json.toString());
 		
 		return json;
 	}	
@@ -311,6 +320,9 @@ public class UsbongHTTPConnect {
 					outputString = outputString + jo_inside.getString("added_datetime_stamp") + "\t" +
 												  payslipInJSONFormat.getString("cashierPerson") + "\n";
 			
+					//added by Mike, 20191012
+//					outputString = outputString.replace("u00d1", "Ñ");
+
 					//write in Tab-delimited .txt file
 					writer.write(outputString);
 				}

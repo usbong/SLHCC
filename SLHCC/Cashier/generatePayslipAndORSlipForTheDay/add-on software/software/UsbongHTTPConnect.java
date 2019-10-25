@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20191010
+  @date updated: 20191026
 
   Given:
   1) List with the details of the transactions for the day
@@ -266,8 +266,8 @@ public class UsbongHTTPConnect {
 		return json;
 	}	
 	
-	//added by Mike, 20190812; edited by Mike, 20191010
-	//Note: Consultation and PT Treatment payslip inputs are processed separately
+	//added by Mike, 20190812; edited by Mike, 20191026
+	//Note: Consultation and PT Treatment payslip inputs are automatically identified
 	private void processPayslipInputAfterDownload(String s) throws Exception {		
 		JSONArray nestedJsonArray = new JSONArray(s);
 		
@@ -275,14 +275,19 @@ public class UsbongHTTPConnect {
 		PrintWriter writer = new PrintWriter("output/payslipPTFromCashier.txt", "UTF-8");	
 		//PrintWriter writer = new PrintWriter("");
 		
+		//added by Mike, 20191026
+		PrintWriter consultationWriter = new PrintWriter("output/payslipConsultationFromCashier.txt", "UTF-8");	
+		
 		if (nestedJsonArray != null) {
 		   for(int j=0;j<nestedJsonArray.length();j++) {
 				JSONObject jo_inside = nestedJsonArray.getJSONObject(j);
 
+/*				//removed by Mike, 20191026				
 				//added by Mike, 20190917
 				if (jo_inside.getInt("payslip_type_id") == 1) {
 					writer = new PrintWriter("output/payslipConsultationFromCashier.txt", "UTF-8");	
 				}
+*/				
 /*				else {
 					writer = new PrintWriter("output/payslipPTFromCashier.txt", "UTF-8");	
 				}
@@ -323,16 +328,25 @@ public class UsbongHTTPConnect {
 					//added by Mike, 20191012
 //					outputString = outputString.replace("u00d1", "Ñ");
 
+					//edited by Mike, 20191026
 					//write in Tab-delimited .txt file
-					writer.write(outputString);
+/*					writer.write(outputString);
+*/
+					if (jo_inside.getInt("payslip_type_id") == 1) {
+						consultationWriter.write(outputString);
+					}
+					else {
+						writer.write(outputString);
+					}
 				}
 		   }
 		   
-		   //added by Mike, 20190817
+		   //added by Mike, 20190817; edited by Mike, 20191026
 		   writer.close();
+		   consultationWriter.close();
 		}
 	}
-
+	
 	//added by Mike, 20190820
 	//input: 2019-08-11T14:12:16
 	//output: 08/16/2019

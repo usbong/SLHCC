@@ -5,7 +5,7 @@ cd assets/transactions/
 mkdir tempListBeforeProcessing
 copy *List.txt "tempListBeforeProcessing/"
 
-xcopy "tempListBeforeProcessing\*List.txt" "." /s
+xcopy "tempListBeforeProcessing\*List.txt" "." /s /y
 
 cd %mainDirectory%
 		

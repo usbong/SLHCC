@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Usbong Social Systems, Inc.
+ * Copyright 2018~2019 Usbong Social Systems, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -297,7 +297,7 @@ public class generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputF
 				"\t" + df.format(totalNetTreatmentFeeForAllReferringDoctors) +
 				"\t" + df.format(totalPaidNetTreatmentFeeForAllReferringDoctors) +
 				"\t" + df.format(totalUnpaidNetTreatmentFeeForAllReferringDoctors) +
-				"\t" + df.format(totalFivePercentShareOfNetPaidForAllReferringDoctors)
+				"\t" + df.format(totalFivePercentShareOfNetPaidForAllReferringDoctors*0.05) //edited by Mike, 20191210
 				); 				   							
 
 		
@@ -344,7 +344,7 @@ public class generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputF
 		"\t" + df.format(totalNetTreatmentFeeForAllReferringDoctors) +
 		"\t" + df.format(totalPaidNetTreatmentFeeForAllReferringDoctors) +
 		"\t" + df.format(totalUnpaidNetTreatmentFeeForAllReferringDoctors) +
-		"\t" + df.format(totalFivePercentShareOfNetPaidForAllReferringDoctors)
+		"\t" + df.format(totalFivePercentShareOfNetPaidForAllReferringDoctors*0.05) //edited by Mike, 20191210
 		); 				   							
 
 		//----------------------------------------------------------------------------------------------------------------------------

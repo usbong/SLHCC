@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Usbong Social Systems, Inc.
+ * Copyright 2018~2019 Usbong Social Systems, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -70,7 +70,7 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 */ 
 
 public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {	
-	private static boolean inDebugMode = true;
+	private static boolean isInDebugMode = true;
 	private static String inputFilename = "input201801"; //without extension; default input file
 	
 	private static String startDate = null;
@@ -106,10 +106,19 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		
 /*	private static HashMap<String, double[]> referringDoctorContainer;	
 */
+
+	//added by Mike, 20191230
+	private static final int INPUT_HMO_LIST_CLASSIFICATION_COLUMN = 0;
+	private static final int INPUT_HMO_LIST_SUB_CLASSIFICATION_COLUMN = 1;
+
 	private static HashMap<Integer, double[]> dateContainer;	//added by Mike, 201801205
-	private static HashMap<String, double[]> hmoContainer;	//added by Mike, 201801217
+//	private static HashMap<String, double[]> hmoContainer;	//added by Mike, 201801217
+	private static HashMap<String, double[]> hmoContainer;	//edited by Mike, 201901230
 	private static HashMap<String, double[]> nonHmoContainer;	//added by Mike, 201801217
 	private static HashMap<String, double[]> referringDoctorContainer; //added by Mike, 20181218
+
+	private static ArrayList<String[]> hmoContainerArrayList; //edited by Mike, 20191230
+	private static HashMap<String, Integer> classifiedHmoContainer; //added by Mike, 20191230
 
 	private static double[] columnValuesArray;
 	private static String[] dateValuesArray; //added by Mike, 20180412
@@ -176,6 +185,8 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		referringDoctorContainer = new HashMap<String, double[]>();
 //		medicalDoctorContainer = new HashMap<String, double[]>();
 		classificationContainerPerMedicalDoctor = new HashMap<String, HashMap<String, double[]>>();				
+		hmoContainerArrayList = new ArrayList<String[]>(); //edited by Mike, 20191230
+		classifiedHmoContainer = new HashMap<String, Integer>(); //added by Mike, 20191230
 				
 		//added by Mike, 20181116
 		startDate = null; //properly set the month and year in the output file of each input file
@@ -183,10 +194,14 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		dateValuesArrayInt = new int[args.length]; //added by Mike, 20180412
 		//dateValuesArrayInt = new ArrayList<int>(); //edited by Mike, 20181221
 
+		//added by Mike, 20191230
 		//PART/COMPONENT/MODULE/PHASE 1
+		processHMOInputFile(args);
+
+		//PART/COMPONENT/MODULE/PHASE 2
 		processInputFiles(args, true);
 
-		//PART/COMPONENT/MODULE/PHASE 2		
+		//PART/COMPONENT/MODULE/PHASE 3		
 		setClassificationContainerPerMedicalDoctor(classificationContainerPerMedicalDoctor);
 		processInputFiles(args, false);
 				
@@ -904,7 +919,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				String classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
 				System.out.println("classificationName: "+classificationName); 
 				
-				if (inDebugMode) {
+				if (isInDebugMode) {
 					if (classificationName.trim().equals("")) {
 						System.out.println(">>> "+inputColumns[INPUT_DATE_COLUMN]+"; Name: "+inputColumns[INPUT_NAME_COLUMN]);
 					}
@@ -1334,7 +1349,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 			String s;		
 			s=sc.nextLine(); //skip the first row, which is the input file's table headers
 	
-			if (inDebugMode) {
+			if (isInDebugMode) {
 				rowCount=0;
 			}
 						
@@ -1376,7 +1391,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 					}
 				}
 
-				if (inDebugMode) {
+				if (isInDebugMode) {
 					rowCount++;
 					System.out.println("rowCount: "+rowCount);
 				}
@@ -1639,5 +1654,225 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 //		referringDoctorContainer = new HashMap<String, double[]>();
 ////		medicalDoctorContainer = new HashMap<String, double[]>();
 //		classificationContainerPerMedicalDoctor = new HashMap<String, HashMap<String, double[]>>();								
+	}
+	
+	//added by Mike, 20191230
+	private static void processHMOInputFile(String[] args) throws Exception {
+		for (int i=0; i<args.length; i++) {						
+			inputFilename = args[i].replaceAll(".txt","");			
+			File f = new File(inputFilename+".txt");
+
+			System.out.println("inputFilename: " + inputFilename);
+			
+			//added by Mike, 20190207
+			if (inputFilename.contains("*")) {
+				continue;
+			}
+			
+			if (!inputFilename.toLowerCase().contains("assets")) {
+				continue;
+			}					
+									
+			Scanner sc = new Scanner(new FileInputStream(f));				
+		
+			String s;		
+//			s=sc.nextLine(); //skip the first row, which is the input file's table headers
+	
+			if (isInDebugMode) {
+				rowCount=0;
+			}
+						
+			//count/compute the number-based values of inputColumns 
+			while (sc.hasNextLine()) {
+				s=sc.nextLine();
+				
+				//if the row is blank
+				if (s.trim().equals("")) {
+					continue;
+				}
+				
+				String[] inputColumns = s.split("\t");					
+
+//				System.out.println(s);
+
+				//edited by Mike, 20190430
+				String[] hmoContainerArrayListValue = {inputColumns[INPUT_HMO_LIST_SUB_CLASSIFICATION_COLUMN].toUpperCase(),
+				inputColumns[INPUT_HMO_LIST_CLASSIFICATION_COLUMN].toUpperCase()};
+				hmoContainerArrayList.add(hmoContainerArrayListValue);
+
+				if (isInDebugMode) {
+					rowCount++;
+					System.out.println("rowCount: "+rowCount);
+				}
+			}		
+		}		
+
+	}
+	
+	//added by Mike, 20191230
+	private static void processHMOClassification() {
+		SortedSet<String> sortedKeyset = new TreeSet<String>(hmoContainer.keySet());
+		
+		//edited by Mike, 20190430
+/*		SortedSet<String> sortedKnownDiagnosedCasesKeyset = new TreeSet<String>(knownhmoContainer.keySet());
+*/		
+				
+		String classificationKey = "";
+		String subClassification = ""; 
+		String classification = "";
+		
+		boolean hasHMOKeywords=false;
+		
+		for (String inputString : sortedKeyset) {			
+			//added by Mike, 20190224
+			String[] inputStringArray = inputString.replace("-"," ").split(" ");				
+//			System.out.println(">>>>>>> inputString: "+inputString);
+
+			//edited by Mike, 20190430
+//			for (String knownDiagnosedCasesKey : sortedKnownDiagnosedCasesKeyset) {	 //the key is the sub-classification
+			for (int h=0; h<hmoContainerArrayList.size(); h++) {	 //the key is the sub-classification
+			
+//				System.out.println("knownDiagnosedCasesKey: "+knownDiagnosedCasesKey);
+//				System.out.println("knownDiagnosedCasesKey: "+hmoContainerArrayList.get(h)[0]);
+			
+				hasHMOKeywords=false;
+//				subClassification = knownDiagnosedCasesKey; 
+				subClassification = hmoContainerArrayList.get(h)[0]; 
+//				classification = knownhmoContainer.get(knownDiagnosedCasesKey);
+				classification = hmoContainerArrayList.get(h)[1];
+/*				
+				if (inputString.toLowerCase().contains("trigger")) {					
+					System.out.println(">>>>>>> inputString: "+inputString);
+				}
+				
+				if (subClassification.toLowerCase().contains("trigger")) {
+				System.out.println(">>> subClassification: "+subClassification);
+				System.out.println(">>> classification: "+classification);
+				}
+*/
+
+				String[] s = subClassification.split(" ");
+				
+//				System.out.println(">>> subClassification: "+subClassification);
+				
+				for(int i=0; i<s.length; i++) {			
+//					System.out.println(">>>> : "+s[i]);
+
+					int k;
+					//edited by Mike, 20190430
+					for(k=0; k<inputStringArray.length; k++) {		
+//					for(k=inputStringArray.length-1; k>=0; k--) {		
+//						System.out.println(">> "+inputStringArray[k]);
+						
+						if (inputStringArray[k].trim().toUpperCase().equals(s[i].trim().toUpperCase())) {
+							hasHMOKeywords=true;
+							break;
+						}
+//						else {
+//							System.out.println(">> true: "+inputString +" : "+s[i]);
+//						}						
+					}
+
+					if (k==inputStringArray.length) {
+						hasHMOKeywords=false;
+						break;
+					}
+				}			
+				if (hasHMOKeywords) {
+					break;
+				}
+/*				
+				for(int i=0; i<s.length; i++) {					
+					if (!inputString.contains(s[i])) {
+						hasKnownDiagnosedCaseKeywords=false;
+						break;
+					}
+					else {
+												System.out.println(">> true: "+inputString +" : "+s[i]);
+
+					}
+					hasKnownDiagnosedCaseKeywords=true;
+				}
+*/
+/*
+				classificationKey = inputString;
+				if (hasKnownDiagnosedCaseKeywords) {
+					classificationKey = classification;
+					
+					if (inputString.toLowerCase().contains("trigger")) {					
+						System.out.println(">>> inputString: "+inputString);
+						System.out.println(">>> classificationKey: "+classificationKey);
+					}
+
+					break;
+				}
+*/				
+//				System.out.println(knownDiagnosedCasesKey + " : " + knownhmoContainer.get(key));
+			}
+			
+			classificationKey = inputString;
+			if (hasHMOKeywords) {
+				classificationKey = classification;
+/*				
+				if (inputString.toLowerCase().contains("fx")) {					
+					System.out.println(">>> inputString: "+inputString);
+					System.out.println(">>> classificationKey: "+classificationKey);
+				}
+*/
+//				break;
+			}
+			
+			if (!classifiedHmoContainer.containsKey(classificationKey)) {
+/*				
+				System.out.println(">>> !classifiedhmoContainer. (classificationKey)");				
+				System.out.println(">>> inputString: "+inputString);
+				System.out.println(">>> classificationKey: "+classificationKey);
+*/				
+				//edited by Mike, 20190429
+//				classifiedhmoContainer.put(classificationKey,1);
+				classifiedHmoContainer.put(classificationKey, (int) hmoContainer.get(inputString)[OUTPUT_HMO_COUNT_COLUMN]);
+			}
+			else {
+/*				System.out.println(">>> ELSE");								
+				System.out.println(">>> inputString: "+inputString);
+				System.out.println(">>> classificationKey: "+classificationKey);
+*/
+				//edited by Mike, 20190429
+//				int currentCount = classifiedhmoContainer.get(classificationKey)+1;
+				int currentCount = classifiedHmoContainer.get(classificationKey) + (int) hmoContainer.get(inputString)[OUTPUT_HMO_COUNT_COLUMN];
+/*
+				if (inputString.equals("HNP")) {
+					System.out.println(">>> ELSE");								
+					System.out.println(">>> inputString: "+inputString);
+					System.out.println(">>> classificationKey: "+classificationKey);
+					System.out.println(">>> hmoContainer.get(inputString): "+hmoContainer.get(inputString));
+
+					System.out.println(">>> currentCount: "+currentCount);
+				}
+*/
+				classifiedHmoContainer.put(classificationKey,currentCount);//+1);
+			}	
+			
+/*			
+			double diagnosedCaseCount = hmoContainer.get(key);
+			
+			writer.println(
+							key + "\t" + 
+							diagnosedCaseCount+"\n"							
+						); 				   						
+*/						
+		}
+
+//		SortedSet<String> sortedClassifiedDiagnosedCasesKeyset = new TreeSet<String>(classifiedhmoContainer.keySet());	
+		
+//		for (String key : sortedClassifiedDiagnosedCasesKeyset) {			
+//			int diagnosedCaseCount = classifiedhmoContainer.get(key);
+//			
+//			System.out.print(
+//							key + "\t" + 
+//							diagnosedCaseCount+"\n"							
+//						); 				   						
+//		}
+
 	}
 }

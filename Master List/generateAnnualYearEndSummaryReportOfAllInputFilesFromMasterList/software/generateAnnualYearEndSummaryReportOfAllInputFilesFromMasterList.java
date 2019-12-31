@@ -196,6 +196,8 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		dateValuesArrayInt = new int[args.length]; //added by Mike, 20180412
 		//dateValuesArrayInt = new ArrayList<int>(); //edited by Mike, 20181221
 
+		myLevenshteinDistance = new LevenshteinDistance(); //added by Mike, 20191231
+
 		//added by Mike, 20191230
 		//PART/COMPONENT/MODULE/PHASE 1
 		processHMOInputFile(args);
@@ -1288,7 +1290,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				else {
 					
 					//added by Mike, 20191231
-					classificationName = processHmoNameWithHmoClassification(classificationName); //added by Mike, 20191230
+					classificationName = processHmoNameWithHmoClassification(classificationName); 
 				
 //				System.out.println(">>>>>"+inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]+" "+classificationName);
 /*
@@ -1789,7 +1791,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 
 
 	private static void processContainers() {
-		myLevenshteinDistance = new LevenshteinDistance();
+		//removed by Mike, 20191231
+		//myLevenshteinDistance = new LevenshteinDistance();
+
 		consolidateKeysAndTheirValuesInContainer(hmoContainer, HMO_CONTAINER_TYPE);
 		
 		//This method below is at present not useful given that there are NON-HMO names whose length is only 2 characters.
@@ -1894,6 +1898,8 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	
 		System.out.println(">>>>>>> hmoNameInputString: "+inputStringArray[0]);
 
+		int threshold = 3;
+
 //		for (String inputString : sortedKeyset) {					
 			//edited by Mike, 20191230
 //			String[] inputStringArray = inputString.replace(" ","").split(" "); //delete space
@@ -1940,8 +1946,18 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 					for(k=0; k<inputStringArray.length; k++) {		
 //					for(k=inputStringArray.length-1; k>=0; k--) {		
 //						System.out.println(">> "+inputStringArray[k]);
+
+						String key = inputStringArray[k].trim().toUpperCase();
+						String keyTwo = s[i].trim().toUpperCase();
 						
-						if (inputStringArray[k].trim().toUpperCase().equals(s[i].trim().toUpperCase())) {
+						//edited by Mike 20191231
+//						if (inputStringArray[k].trim().toUpperCase().equals(s[i].trim().toUpperCase())) {
+	
+						if (key.equals(keyTwo)) {
+							hasHMOKeywords=true;
+							break;
+						}
+						else if (myLevenshteinDistance.apply(key, keyTwo)<threshold) {					
 							hasHMOKeywords=true;
 							break;
 						}

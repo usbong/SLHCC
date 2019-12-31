@@ -1898,7 +1898,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	
 		System.out.println(">>>>>>> hmoNameInputString: "+inputStringArray[0]);
 
-		int threshold = 3;
+		int threshold = 2; //3;
 
 //		for (String inputString : sortedKeyset) {					
 			//edited by Mike, 20191230

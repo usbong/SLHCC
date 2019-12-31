@@ -222,8 +222,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		//PART/COMPONENT/MODULE/PHASE 1
 //		processHMOInputFile(args);
 		processAssetsInputFile(args, "hmo", hmoContainerArrayList);
-		//processMedicalDoctorInputFile(args);
-
+		processAssetsInputFile(args, "medical", medicalDoctorContainerArrayList);
 
 		//PART/COMPONENT/MODULE/PHASE 2
 		processInputFiles(args, true);
@@ -235,6 +234,10 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		//PART/COMPONENT/MODULE/PHASE 4
 		//added by Mike, 20190125
 		processContainers();
+
+
+//		processMedicalDoctorInputFile(args, ");
+//processMedicalDoctorNameWithMedicalDoctorClassification(String inputString, ArrayList<String[]> containerArrayList) {
 
 		//PART/COMPONENT/MODULE/PHASE 5		
 		//added by Mike, 20191230
@@ -963,11 +966,11 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				(!inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
 
 				String classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
-				System.out.println("classificationName: "+classificationName); 
+//				System.out.println("classificationName: "+classificationName); 
 				
 				if (isInDebugMode) {
 					if (classificationName.trim().equals("")) {
-						System.out.println(">>> "+inputColumns[INPUT_DATE_COLUMN]+"; Name: "+inputColumns[INPUT_NAME_COLUMN]);
+//						System.out.println(">>> "+inputColumns[INPUT_DATE_COLUMN]+"; Name: "+inputColumns[INPUT_NAME_COLUMN]);
 					}
 				}
 /*								
@@ -1036,10 +1039,13 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		}
 	}	
 	
-	//added by Mike, 20181218
+	//added by Mike, 20181218; edited by Mike, 20191231
 	private static void processReferringDoctorTransactionCount(HashMap<String, double[]> referringDoctorContainer, String[] inputColumns, Boolean isConsultation) {		
 		//added by Mike, 20190125
 		String inputReferringMedicalDoctor = inputColumns[INPUT_REFERRING_DOCTOR_COLUMN].trim().toUpperCase();
+		
+		//added by Mike, 20191231
+		inputReferringMedicalDoctor = processMedicalDoctorNameWithMedicalDoctorClassification(inputReferringMedicalDoctor, medicalDoctorContainerArrayList);
 	
 		//edited by Mike, 20181219
 		if (!isConsultation) {	
@@ -1121,6 +1127,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		else {
 			//added by Mike, 20190125
 			inputReferringMedicalDoctor = inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
+						
+			//added by Mike, 20191231
+			inputReferringMedicalDoctor = processMedicalDoctorNameWithMedicalDoctorClassification(inputReferringMedicalDoctor, medicalDoctorContainerArrayList);
 			
 			if (!referringDoctorContainer.containsKey(inputReferringMedicalDoctor)) {
 				columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
@@ -1277,6 +1286,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	private static void processMedicalDoctorTransactionPerClassificationCount(HashMap<String, HashMap<String, double[]>> classificationContainerPerMedicalDoctor, String[] inputColumns, Boolean isConsultation) {				
 
 		String medicalDoctorKey = inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
+
+		//added by Mike, 20191231
+		medicalDoctorKey = processMedicalDoctorNameWithMedicalDoctorClassification(medicalDoctorKey, medicalDoctorContainerArrayList);
 	
 		if (isConsultation) {			
 			String classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase(); //added by Mike, 20181220
@@ -1518,7 +1530,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 					continue;
 				}
 
-				threshold = 3; //Similar with the for Referring Medical Doctors, the numerical value should be less than 3.
+				threshold = 3; //Similar with for Referring Medical Doctors, the numerical value should be less than 3.
 								
 				if (myLevenshteinDistance.apply(key, keyTwo)<threshold) {					
 					SortedSet<String> sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset = new TreeSet<String>(container.get(key).keySet());
@@ -1977,7 +1989,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	
 		String[] inputStringArray = hmoNameInputString.replace(" ", "").split(" ");
 	
-		System.out.println(">>>>>>> hmoNameInputString: "+inputStringArray[0]);
+//		System.out.println(">>>>>>> hmoNameInputString: "+inputStringArray[0]);
 
 		int threshold = 2; //3;
 
@@ -2072,14 +2084,13 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 //				break;
 			}
 			
-			System.out.println("classificationKey: " + classificationKey);
+//			System.out.println("classificationKey: " + classificationKey);
 
 			return classificationKey;
 			
 //		}
 	}	
-	
-	
+		
 	//added by Mike, 20191231
 	private static String processMedicalDoctorNameWithMedicalDoctorClassification(String inputString, ArrayList<String[]> containerArrayList) {
 /*
@@ -2094,16 +2105,35 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		
 		boolean hasKeywords=false;
 	
-		String[] inputStringArray = inputString.replace(" ", "").split(" ");
-	
-		System.out.println(">>>>>>> inputString: "+inputStringArray[0]);
+		//edited by Mike, 20191231
+		//String[] inputStringArray = inputString.replace(" ", "").split(" ");
 
-		int threshold = 2; //3;
+/*
+		if (inputString.contains(",")) {
+			System.out.println("> inputString: "+inputString);
+		}
+*/	
+		//automatically correct input Medical Doctor name
+//		String[] inputStringArray = inputString.replace("\"", "").replace(",", ".").replace(".", ". ").split(" ");
+		inputString = inputString.replace("\"", "");
+		inputString = inputString.replace(",", ".");
+//		inputString = inputString.replace(".", ". ");
+		
+		String[] inputStringArray  = inputString.split(" ");
+
+/*		if (inputString.contains(",")) {
+			System.out.println(">>> inputString: "+inputString);
+		}
+*/
+					
+//		System.out.println(">>>>>>> inputString: "+inputStringArray[0]);
+
+		int threshold = 3; //3, instead of 2 for Medical Doctors
 
 		for (int h=0; h<containerArrayList.size(); h++) {
 			hasKeywords=false;
-			subClassification = hmoContainerArrayList.get(h)[0]; 
-			classification = hmoContainerArrayList.get(h)[1];
+			subClassification = containerArrayList.get(h)[0]; 
+			classification = containerArrayList.get(h)[1];
 
 			String[] s = subClassification.split(" ");
 			
@@ -2135,13 +2165,25 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		}
 		
 		//classificationKey = inputString;
-		classificationKey = inputStringArray[0];
+		//edited by Mike, 20191231
+//		classificationKey = inputStringArray[0];
+		StringBuffer inputStringBuffer = new StringBuffer();
+		for(int k=0; k<inputStringArray.length; k++) {		
+			inputStringBuffer.append(inputStringArray[k]+" ");
+		}
+		
+//		if (inputStringBuffer.toString().contains(",")) {
+//			System.out.println("inputStringBuffer.toString(): " + inputStringBuffer.toString());
+//		}
+		
+		classificationKey = inputStringBuffer.toString().trim();
 		
 		if (hasKeywords) {
+//		System.out.println("classification: " + classification);			
 			classificationKey = classification;
 		}
 		
-		System.out.println("classificationKey: " + classificationKey);
+//		System.out.println("classificationKey: " + classificationKey);
 
 		return classificationKey;			
 	}	

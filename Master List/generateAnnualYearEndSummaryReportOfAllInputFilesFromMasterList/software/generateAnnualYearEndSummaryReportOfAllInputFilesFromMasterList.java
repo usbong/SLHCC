@@ -515,6 +515,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				); 				   							
 */
 		//--------------------------------------------------------------------
+		//edited by Mike, 20200101
 		//init table header names
 		writer.print("\nCONSULTATION COUNT under each CLASSIFICATION\n");
 
@@ -538,17 +539,38 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		boolean hasInitTableHeader=false;		
 		SortedSet<String> sortedclassificationKeyset = null;
 		
-		for (String key : sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset) {				
+		double hmoClassificationKeyCount;// = 0; //added by Mike, 20200101
+				
+		for (String key : sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset) {		 
+				
 			sortedclassificationKeyset = new TreeSet<String>(classificationContainerPerMedicalDoctor.get(key).keySet());
+
+			hmoClassificationKeyCount = 0; //added by Mike, 20200101
 
 			if (!hasInitTableHeader) {
 				writer.print("\t");
 				for (String classificationKey : sortedclassificationKeyset) {	
-					writer.print(classificationKey+"\t");
+					//edited by Mike, 20200101
+					//writer.print(classificationKey+"\t");			
+					if (!classificationKey.contains("HMO")) {
+						writer.print(classificationKey+"\t");
+					}
+					else {
+						classificationKey = "HMO";
+/*						
+						if (!totalCountForEachClassification.containsKey(classificationKey)) {
+							writer.print("HMO"+"\t");				
+						}
+*/						
+					}						
 					
 					//added by Mike, 20190102
 					totalCountForEachClassification.put(classificationKey, 0);
 				}				
+
+				//added by Mike, 20200101
+				writer.print("HMO"+"\t");				
+
 				writer.print("\n");
 				hasInitTableHeader=true;
 			}
@@ -559,12 +581,25 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				double[] value = classificationContainerPerMedicalDoctor.get(key).get(classificationKey);
 				double classificationCount = value[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + value[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 				
+				//added by Mike, 20200101
+				if (!classificationKey.contains("HMO")) {
+					writer.print(classificationCount+"\t");
+				}					
+				else {
+					classificationKey = "HMO";					
+					hmoClassificationKeyCount+=classificationCount;
+				}
+				
 				//added by Mike, 20190102
 				totalCountForEachClassification.put(classificationKey, totalCountForEachClassification.get(classificationKey)+(int)classificationCount);
 //				System.out.println(">>" +" "+classificationKey+" "+totalCountForEachClassification.get(classificationKey));
 
-				writer.print(classificationCount+"\t");
+				//removed by Mike, 20200101
+				//writer.print(classificationCount+"\t");
 			}			
+
+			//added by Mike, 20200101
+			writer.print(hmoClassificationKeyCount+"\t");			
 			
 			writer.print("\n");
 		}
@@ -572,10 +607,19 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		//TOTAL
 		writer.print("TOTAL:\t");
 				
-		//added by Mike, 20190102				
+		//added by Mike, 20190102; edited by Mike, 20200101
 		for (String classificationKey : sortedclassificationKeyset) {
-			writer.print(totalCountForEachClassification.get(classificationKey)+"\t");
+			//writer.print(totalCountForEachClassification.get(classificationKey)+"\t");
+			
+			//added by Mike, 20200101
+			if (!classificationKey.contains("HMO")) {
+				writer.print(totalCountForEachClassification.get(classificationKey)+"\t");
+			}					
 		}			
+				
+		//added by Mike, 20200101
+		writer.print(totalCountForEachClassification.get("HMO")+"\t");
+
 		writer.print("\n");		
 		writer.close();
 	}

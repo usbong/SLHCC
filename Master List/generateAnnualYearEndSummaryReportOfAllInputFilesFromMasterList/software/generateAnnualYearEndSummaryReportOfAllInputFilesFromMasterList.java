@@ -1,5 +1,5 @@
 /*
- * Copyright 2018~2019 Usbong Social Systems, Inc.
+ * Copyright 2018~2020 Usbong Social Systems, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -922,7 +922,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 			}
 	}	
 	
-	//added by Mike, 20181217
+	//added by Mike, 20181217; edited by Mike, 20200101
 	private static void processNONHMOCount(HashMap<String, double[]> nonHmoContainer, String[] inputColumns, boolean isConsultation) {
 		//edited by Mike, 20181219
 		if (!isConsultation) {											
@@ -932,6 +932,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 
 				String classificationName = inputColumns[INPUT_CLASS_COLUMN].trim().toUpperCase();
 				
+				//added by Mike, 20200101
+				classificationName = autoCorrectClassification(classificationName);
+
 				if (!nonHmoContainer.containsKey(classificationName)) {
 					columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
 				
@@ -967,6 +970,10 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 
 				String classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
 //				System.out.println("classificationName: "+classificationName); 
+
+				//added by Mike, 20200101
+				classificationName = autoCorrectClassification(classificationName);
+
 				
 				if (isInDebugMode) {
 					if (classificationName.trim().equals("")) {
@@ -1292,8 +1299,10 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	
 		if (isConsultation) {			
 			String classificationName = inputColumns[INPUT_CLASS_COLUMN+INPUT_CONSULTATION_OFFSET].trim().toUpperCase(); //added by Mike, 20181220
-//			System.out.println(">"+" "+classificationName);
-//			System.out.println(">>> "+inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]);
+
+			//added by Mike, 20200101
+			classificationName = autoCorrectClassification(classificationName);
+
 
 				if (!classificationName.contains("HMO")) {					
 //			System.out.println(">>>"+inputColumns[INPUT_REFERRING_DOCTOR_COLUMN+INPUT_CONSULTATION_OFFSET]+" "+classificationName);
@@ -2187,4 +2196,45 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 
 		return classificationKey;			
 	}	
+	
+	//added by Mike, 20200101
+	private static String autoCorrectClassification(String inputString) {
+		inputString = inputString.trim().toUpperCase();
+		
+		if (inputString.equals("NC")) {
+			inputString = "NO CHARGE";
+		}
+		else if (inputString.equals("SENIOR CITIZEN")) {
+			inputString = "SC";
+		}
+
+		if (inputString.contains("WI")) {
+			//inputString = inputString.replace(" ","");
+
+			inputString = inputString.replace("WI(", "WI (");
+			
+			if (inputString.contains("(")) {
+				if (!inputString.contains("C/O")) {
+					inputString = inputString.replace("(", "(C/O ");					
+				}
+				else {
+					inputString = inputString.replace("C/O", "");									
+					inputString = inputString.replace("(", "(C/O ");									
+				}
+			}
+			
+			String[] inputStringArray  = inputString.split(" ");
+			
+			StringBuffer inputStringBuffer = new StringBuffer();
+			for(int k=0; k<inputStringArray.length; k++) {		
+				if (!inputStringArray[k].equals("")) { //blank is included after using split(...)
+					inputStringBuffer.append(inputStringArray[k]+" ");
+				}			
+			}
+			
+			inputString = inputStringBuffer.toString().trim();			
+		}
+		
+		return inputString;
+	}
 }

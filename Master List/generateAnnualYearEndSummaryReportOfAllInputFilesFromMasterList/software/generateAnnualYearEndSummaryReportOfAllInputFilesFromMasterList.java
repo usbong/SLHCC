@@ -102,7 +102,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	private static final int INPUT_CONSULTATION_NEW_OLD_COLUMN = 17;
 */	
 	private static final int INPUT_CONSULTATION_OFFSET = 1;		
-	private static final int INPUT_NOT_MASTER_LIST_OFFSET = 0;//1; //added by Mike, 20200101
+	
+	//note: set this to 1 if input files do not adhere to the Master List format
+	private static int INPUT_NOT_MASTER_LIST_OFFSET = 0;//1; //added by Mike, 20200101
 		
 /*	private static HashMap<String, double[]> referringDoctorContainer;	
 */
@@ -1497,6 +1499,13 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				isConsultation=false;
 			}
 
+			if ((inputFilename.toLowerCase().contains("master")) && (inputFilename.toLowerCase().contains("list"))){			
+				INPUT_NOT_MASTER_LIST_OFFSET = 0;
+			}
+			else {
+				INPUT_NOT_MASTER_LIST_OFFSET = 1;
+			}
+			
 			//added by Mike, 20191230
 			if (inputFilename.toLowerCase().contains("assets")) {
 				continue;

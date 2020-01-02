@@ -278,9 +278,13 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		double totalConsultationCount = 0; //added by Mike, 20181218
 		double totalProcedureCount = 0; //added by Mike, 20190105		
 		double totalMedicalCertificateCount = 0; //added by Mike, 20190107
+
+		//added by Mike 20200102
+		dateValuesArrayInt = autoVerifyDateValuesArrayInt(dateValuesArrayInt);
 		
 		//Note that there should be an even number of input files and at least two (2) input files, one for PT Treatment and another for Consultation
-		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION
+		for(int i=0; i<dateValuesArrayInt.length; i++) { //divide by 2 because we have the same 
+//		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION
 			writer.print(convertDateToMonthYearInWords(dateValuesArrayInt[i])+"\t");
 			
 			double treatmentCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN];
@@ -666,6 +670,39 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		StringBuffer sb = new StringBuffer(date);				
 		return sb.substring(0,3).concat("-").concat(sb.substring(sb.length()-2,sb.length()));
 	}
+
+	//added by Mike, 20200102
+	private static int[] autoVerifyDateValuesArrayInt(int[] dateValuesArrayInt) {
+		int[] output = new int[12]; //12 months
+		
+		int iYear = dateValuesArrayInt[0]/100;
+		int iMonth = 0;
+		
+		for (int i=0; i<12; i++) {
+			//from Month 1 until 12 
+			iMonth = i+1;
+			output[i] = iYear*100 + iMonth;
+		}
+		
+		boolean hasYearMonth = false;
+
+		for(int k=0; k<dateValuesArrayInt.length/2; k++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION			
+
+			hasYearMonth = false;
+			for (int i=0; i<12; i++) {
+				if (dateValuesArrayInt[k]==output[i]) {
+					hasYearMonth = true;
+					break;
+				}
+			}
+			
+			if (!hasYearMonth) {
+				System.out.println("Wala ang taon at buwan na ito: " + dateValuesArrayInt[k]);
+			}
+		}	
+
+		return output;
+	}	
 	
 	//added by Mike ,20200102
 	//1) input:

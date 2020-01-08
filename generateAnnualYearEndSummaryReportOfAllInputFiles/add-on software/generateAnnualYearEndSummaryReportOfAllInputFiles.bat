@@ -10,6 +10,6 @@ copy "C:\Usbong\unit\workbooks\Treatment*.txt" "add-on software\input\treatment"
 
 cd "add-on software"
 
-java -cp .\software;.\software\org.apache.commons.text.jar generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList input/consultation/*%2*.txt input/treatment/*%2*.txt assets/*.txt
+java -cp .\software;.\software\org.apache.commons.text.jar generateAnnualYearEndSummaryReportOfAllInputFiles input/consultation/*%2*.txt input/treatment/*%2*.txt assets/*.txt
 
 PAUSE

@@ -12,4 +12,10 @@ cd "add-on software"
 
 java -cp .\software;.\software\org.apache.commons.text.jar generateAnnualYearEndSummaryReportOfAllInputFiles input/consultation/*%2*.txt input/treatment/*%2*.txt assets/*.txt
 
+cd /d %mainDirectory%
+
+cd..
+
+generateAnnualReportWithMacro.xlsm
+
 PAUSE

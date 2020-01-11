@@ -16,6 +16,6 @@ cd /d %mainDirectory%
 
 cd..
 
-generateAnnualReportWithMacro.xlsm
+start "xl" excel.exe /e "generateAnnualReportWithMacro.xlsm" /p "myInputParam"
 
 PAUSE

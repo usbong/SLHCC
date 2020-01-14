@@ -38,12 +38,12 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 '
 ' Notes:
 ' 1) To execute the add-on software/application simply use the following command:
-'   java generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList input_201801.txt
+'   java generateAnnualYearEndSummaryReportOfAllInputFiles input_201801.txt
 ' 
 ' where: "input_201801.txt" is the name of the file.
 ' 
 ' 2) To execute a set of input files, e.g. input201801.txt, input201802.txt, you can use the following command: 
-'   java generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList input*
+'   java generateAnnualYearEndSummaryReportOfAllInputFiles input*
 ' 
 ' where: "input*" means any file in the directory that starts with "input".
 '
@@ -52,15 +52,15 @@ import org.apache.commons.text.similarity.LevenshteinDistance;
 ' --> Example: inputConsultation201801.txt
 '
 ' 4) If you use space in your file name, e.g. "input Consultation 201801.txt", you will have to execute the input files as follows.
-'   java generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList *"2018"*.txt
+'   java generateAnnualYearEndSummaryReportOfAllInputFiles *"2018"*.txt
 '
 ' where: * means any set of characters
 '
 ' 5) To compile on Windows' Command Prompt the add-on software with the Apache Commons Text .jar file, i.e. org.apache.commons.text, use the following command:
-'   javac -cp .;org.apache.commons.text.jar generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList.java
+'   javac -cp .;org.apache.commons.text.jar generateAnnualYearEndSummaryReportOfAllInputFiles.java
 '
 ' 6) To execute on Windows' Command Prompt the add-on software with the Apache Commons Text .jar file, i.e. org.apache.commons.text, use the following command:
-'   java -cp .;org.apache.commons.text.jar generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList *.txt
+'   java -cp .;org.apache.commons.text.jar generateAnnualYearEndSummaryReportOfAllInputFiles *.txt
 '
 ' 7) The Apache Commons Text binaries with the .jar file can be downloaded here:
 '   http://commons.apache.org/proper/commons-text/download_text.cgi; last accessed: 20190123
@@ -442,10 +442,26 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 						); 				   							
 		}
 
+		//added by Mike, 20200113
+		writer.print(
+				"HMO:\t"+totalTreatmentHMOCount+"\t"+totalConsultationHMOCount+"\t"+totalProcedureHMOCount+"\t"+totalMedicalCertificateHMOCount+"\n"
+				);					
+
+		double totalTreatmentCountPartTwo = totalTreatmentHMOCount + totalTreatmentNONHMOCount;
+		double totalConsultationCountPartTwo = totalConsultationHMOCount + totalConsultationNONHMOCount;
+		double totalProcedureCountPartTwo = totalProcedureHMOCount + totalProcedureNONHMOCount;
+		double totalMedicalCertificateCountPartTwo = totalMedicalCertificateHMOCount + totalMedicalCertificateNONHMOCount;
+
 		//TOTAL
 		writer.print(
+				"TOTAL:\t"+totalTreatmentCountPartTwo+"\t"+totalConsultationCountPartTwo+"\t"+totalProcedureCountPartTwo+"\t"+totalMedicalCertificateCountPartTwo+"\n"
+				);					
+		
+		//TOTAL
+/*		writer.print(
 				"TOTAL:\t"+totalTreatmentNONHMOCount+"\t"+totalConsultationNONHMOCount+"\t"+totalProcedureNONHMOCount+"\t"+totalMedicalCertificateNONHMOCount+"\n"
 				);					
+*/
 
 		//--------------------------------------------------------------------
 		//init table header names
@@ -1061,9 +1077,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 						if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("mc")) {
 							columnValuesArray[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] = 1;						
 						}
-						else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("p")) {
+						else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("p")) {
 							//edited by Mike, 20190108
-							if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("/")) {
+							if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("/")) {
 								//do not include in count; only for NON-HMO/Cash payments
 /*								columnValuesArray[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN] = 1;						
 								columnValuesArray[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] = 1;						
@@ -1086,9 +1102,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 						if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("mc")) {
 							hmoContainer.get(hmoName)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]++;						
 						}
-						else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("p")) {
+						else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("p")) {
 							//edited by Mike, 20190108
-							if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("/")) {
+							if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("/")) {
 								//do not include in count; only for NON-HMO/Cash payments
 /*								columnValuesArray[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]++;						
 								columnValuesArray[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN]++;						
@@ -1192,9 +1208,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 						if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("mc")) {
 							columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN] = 1;						
 						}
-						else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("p")) {
+						else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("p")) {
 							//edited by Mike, 20190108
-							if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("/")) {
+							if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("/")) {
 								//include in count; only for NON-HMO/Cash payments
 								columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN] = 1;						
 								columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN] = 1;														
@@ -1218,9 +1234,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 */
 							nonHmoContainer.get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]++;							
 						}
-						else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("p")) {
+						else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("p")) {
 							//edited by Mike, 20190108
-							if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("/")) {
+							if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("/")) {
 								//include in count; only for NON-HMO/Cash payments
 								nonHmoContainer.get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]++;						
 								nonHmoContainer.get(classificationName)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;									

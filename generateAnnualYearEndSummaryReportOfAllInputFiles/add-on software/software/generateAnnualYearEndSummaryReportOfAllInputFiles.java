@@ -432,7 +432,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 			totalConsultationNONHMOCount += consultationNONHMOCount;
 			totalProcedureNONHMOCount += procedureNONHMOCount;
 			totalMedicalCertificateNONHMOCount += medicalCertificateNONHMOCount;
-			
+
 			writer.print(
 							key + "\t" + 
 							treatmentNONHMOCount+"\t"+							
@@ -1021,9 +1021,13 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 					(inputColumns[INPUT_CLASS_COLUMN-INPUT_MASTER_LIST_OFFSET].contains("SLR"))) {
 
 					String hmoName = inputColumns[INPUT_CLASS_COLUMN-INPUT_MASTER_LIST_OFFSET].trim().toUpperCase();		
+					
+					//added by Mike, 20200115
+					hmoName = hmoName.replace("\"","");
+					
 					hmoName = processHmoNameWithHmoClassification(hmoName); //added by Mike, 20191230
 
-					System.out.println(">>>PT Treatment hmoName: " + hmoName);
+					//System.out.println(">>>PT Treatment hmoName: " + hmoName);
 					
 					if (!hmoContainer.containsKey(hmoName)) {
 						columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
@@ -1066,9 +1070,13 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 					(inputColumns[INPUT_CLASS_COLUMN-INPUT_MASTER_LIST_OFFSET+INPUT_CONSULTATION_OFFSET].contains("SLR"))) {
 
 					String hmoName = inputColumns[INPUT_CLASS_COLUMN-INPUT_MASTER_LIST_OFFSET+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
+					
+					//added by Mike, 20200115
+					hmoName = hmoName.replace("\"","");
+
 					hmoName = processHmoNameWithHmoClassification(hmoName); //added by Mike, 20191230
 					
-					System.out.println(">>>Consultation hmoName: " + hmoName);
+//					System.out.println(">>>Consultation hmoName: " + hmoName);
 
 					if (!hmoContainer.containsKey(hmoName)) {
 						columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];					
@@ -2237,7 +2245,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 		String classification = "";
 		
 		boolean hasHMOKeywords=false;
-	
+		
 		String[] inputStringArray = hmoNameInputString.replace(" ", "").split(" ");
 	
 //		System.out.println(">>>>>>> hmoNameInputString: "+inputStringArray[0]);
@@ -2439,9 +2447,12 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 		return classificationKey;			
 	}	
 	
-	//added by Mike, 20200101
+	//added by Mike, 20200101; edited by Mike, 20200114
 	private static String autoCorrectClassification(String inputString) {
 		inputString = inputString.trim().toUpperCase();
+		
+		//added by Mike, 20200114
+		inputString = inputString.replace("\"","");
 		
 		if (inputString.equals("NC")) {
 			inputString = "NO CHARGE";

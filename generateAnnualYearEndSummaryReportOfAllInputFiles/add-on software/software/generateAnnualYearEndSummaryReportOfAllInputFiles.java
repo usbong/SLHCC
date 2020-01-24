@@ -493,7 +493,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 			totalNewPatientReferralTransactionCount += newPatientReferralTransactionCount;
 			totalConsultationPerDoctorCount += consultationCount;
 			totalProcedurePerDoctorCount += procedureCount;
-			totalMedicalCertificatePerDoctorCount += procedureCount;
+			totalMedicalCertificatePerDoctorCount += medicalCertificateCount; //procedureCount; //edited by Mike, 20200124
 			
 			writer.print(
 							key + "\t" + 
@@ -573,12 +573,16 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 		SortedSet<String> sortedclassificationKeyset = null;
 		
 		double hmoClassificationKeyCount;// = 0; //added by Mike, 20200101
-				
+		double slrClassificationKeyCount;// = 0; //added by Mike, 20200117				
+		double wiClassificationKeyCount;// = 0; //added by Mike, 20200117
+		
 		for (String key : sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset) {		 
 				
 			sortedclassificationKeyset = new TreeSet<String>(classificationContainerPerMedicalDoctor.get(key).keySet());
 
 			hmoClassificationKeyCount = 0; //added by Mike, 20200101
+			slrClassificationKeyCount = 0; //added by Mike, 20200117
+			wiClassificationKeyCount = 0; //added by Mike, 20200117
 
 			if (!hasInitTableHeader) {
 				writer.print("\t");
@@ -586,7 +590,18 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 					//edited by Mike, 20200101
 					//writer.print(classificationKey+"\t");			
 					if (!classificationKey.contains("HMO")) {
-						writer.print(classificationKey+"\t");
+						//added by Mike, 20200117
+						if (classificationKey.contains("SLR")) {
+							classificationKey = "SLR";
+						}
+						else if (classificationKey.contains("WI")) {
+							classificationKey = "WI";
+						}
+						else {
+							writer.print(classificationKey+"\t");
+						}
+						
+						//writer.print(classificationKey+"\t");
 					}
 					else {
 						classificationKey = "HMO";
@@ -601,6 +616,12 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 					totalCountForEachClassification.put(classificationKey, 0);
 				}				
 
+				//added by Mike, 20200117
+				writer.print("WI"+"\t");				
+
+				//added by Mike, 20200117
+				writer.print("SLR"+"\t");				
+
 				//added by Mike, 20200101
 				writer.print("HMO"+"\t");				
 
@@ -614,9 +635,22 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 				double[] value = classificationContainerPerMedicalDoctor.get(key).get(classificationKey);
 				double classificationCount = value[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN] + value[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN];
 				
-				//added by Mike, 20200101
+				//added by Mike, 20200101; edited by Mike, 20200117
 				if (!classificationKey.contains("HMO")) {
-					writer.print(classificationCount+"\t");
+					//added by Mike, 20200117
+					if (classificationKey.contains("SLR")) {
+						classificationKey = "SLR";
+						slrClassificationKeyCount+=classificationCount;
+					}
+					else if (classificationKey.contains("WI")) {
+						classificationKey = "WI";
+						wiClassificationKeyCount+=classificationCount;
+					}
+					else {
+						writer.print(classificationCount+"\t");
+					}
+
+					//writer.print(classificationCount+"\t");
 				}					
 				else {
 					classificationKey = "HMO";					
@@ -631,6 +665,12 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 				//writer.print(classificationCount+"\t");
 			}			
 
+			//added by Mike, 20200117
+			writer.print(wiClassificationKeyCount+"\t");			
+
+			//added by Mike, 20200117
+			writer.print(slrClassificationKeyCount+"\t");			
+
 			//added by Mike, 20200101
 			writer.print(hmoClassificationKeyCount+"\t");			
 			
@@ -644,12 +684,19 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 		for (String classificationKey : sortedclassificationKeyset) {
 			//writer.print(totalCountForEachClassification.get(classificationKey)+"\t");
 			
-			//added by Mike, 20200101
-			if (!classificationKey.contains("HMO")) {
+			//added by Mike, 20200101; edited by Mike, 20200117
+			//if (!classificationKey.contains("HMO")) {
+			if ((!classificationKey.contains("HMO")) && (!classificationKey.contains("SLR")) && (!classificationKey.contains("WI"))){
 				writer.print(totalCountForEachClassification.get(classificationKey)+"\t");
 			}					
 		}			
-				
+
+		//added by Mike, 20200117
+		writer.print(totalCountForEachClassification.get("WI")+"\t");
+	
+		//added by Mike, 20200117
+		writer.print(totalCountForEachClassification.get("SLR")+"\t");
+	
 		//added by Mike, 20200101
 		writer.print(totalCountForEachClassification.get("HMO")+"\t");
 
@@ -1441,9 +1488,10 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 */
 						referringDoctorContainer.get(inputReferringMedicalDoctor)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]++;				
 					}
-					else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("p")) {
+//					else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("p")) {
+					else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("p")) {
 						//edited by Mike, 20190108
-						if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("/")) {
+						if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("/")) {
 /*							//include in count; only for NON-HMO/Cash payments
 							columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]++;						
 							columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;									
@@ -1481,9 +1529,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 */
 						referringDoctorContainer.get(inputReferringMedicalDoctor)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]++;				
 					}
-					else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("p")) {
+					else if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("p")) {
 						//edited by Mike, 20190108
-						if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("/")) {
+						if (inputColumns[INPUT_CONSULTATION_PROCEDURE_COLUMN-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("/")) {
 /*							//include in count; only for NON-HMO/Cash payments
 							columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]++;						
 							columnValuesArray[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]++;									

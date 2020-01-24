@@ -358,6 +358,12 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 		double totalProcedureHMOCount = 0; //added by Mike, 20190105		
 		double totalMedicalCertificateHMOCount = 0; //added by Mike, 20190107
 	
+		//added by Mike, 20200124
+		double totalSLRTreatmentCount=0;
+		double totalSLRConsultationCount=0;
+		double totalSLRProcedureCount=0;
+		double totalSLRMedicalCertificateCount=0;
+
 		//edited by Mike, 20191230
 		SortedSet<String> sortedKeyset = new TreeSet<String>(hmoContainer.keySet());
 		//SortedSet<String> sortedKeyset = new TreeSet<String>(classifiedHmoContainer.keySet());
@@ -368,10 +374,19 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 			double procedureCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]; //added by Mike, 20190105		
 			double medicalCertificateCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; //added by Mike, 20190107
 
-			totalTreatmentHMOCount += treatmentCount;
-			totalConsultationHMOCount += consultationCount;
-			totalProcedureHMOCount += procedureCount;
-			totalMedicalCertificateHMOCount += medicalCertificateCount;
+			//added by Mike, 20200124
+			if(key.contains("SLR")) {
+				totalSLRTreatmentCount+=treatmentCount;
+				totalSLRConsultationCount+=consultationCount;
+				totalSLRProcedureCount+=procedureCount;
+				totalSLRMedicalCertificateCount+=medicalCertificateCount;
+			}
+			else{
+				totalTreatmentHMOCount += treatmentCount;
+				totalConsultationHMOCount += consultationCount;
+				totalProcedureHMOCount += procedureCount;
+				totalMedicalCertificateHMOCount += medicalCertificateCount;
+			}			
 			
 			writer.print(
 							key + "\t" + 
@@ -380,8 +395,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 							procedureCount+"\t"+							
 							medicalCertificateCount+"\n"							
 						); 				   							
+			
 		}
-
+			
 		//TOTAL
 		writer.print(
 				"TOTAL:\t"+totalTreatmentHMOCount+"\t"+totalConsultationHMOCount+"\t"+totalProcedureHMOCount+"\t"+totalMedicalCertificateHMOCount+"\n"
@@ -428,11 +444,31 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 			double procedureNONHMOCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]; //added by Mike, 20190105		
 			double medicalCertificateNONHMOCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; //added by Mike, 20190107
 
-			totalTreatmentNONHMOCount += treatmentNONHMOCount;
-			totalConsultationNONHMOCount += consultationNONHMOCount;
-			totalProcedureNONHMOCount += procedureNONHMOCount;
-			totalMedicalCertificateNONHMOCount += medicalCertificateNONHMOCount;
 
+			//added by Mike, 20200124
+			if(key.contains("WI") && key.contains("ROBLES")) {
+				totalSLRTreatmentCount+=treatmentNONHMOCount;
+				totalSLRConsultationCount+=consultationNONHMOCount;
+				totalSLRProcedureCount+=procedureNONHMOCount;
+				totalSLRMedicalCertificateCount+=medicalCertificateNONHMOCount;
+			}
+			else {
+				writer.print(
+							key + "\t" + 
+							treatmentNONHMOCount+"\t"+							
+							consultationNONHMOCount+"\t"+							
+							procedureNONHMOCount+"\t"+							
+							medicalCertificateNONHMOCount+"\n"							
+						); 				   							
+
+				totalTreatmentNONHMOCount += treatmentNONHMOCount;
+				totalConsultationNONHMOCount += consultationNONHMOCount;
+				totalProcedureNONHMOCount += procedureNONHMOCount;
+				totalMedicalCertificateNONHMOCount += medicalCertificateNONHMOCount;
+			}
+			
+
+/*
 			writer.print(
 							key + "\t" + 
 							treatmentNONHMOCount+"\t"+							
@@ -440,12 +476,58 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 							procedureNONHMOCount+"\t"+							
 							medicalCertificateNONHMOCount+"\n"							
 						); 				   							
+*/						
 		}
+		
+		totalTreatmentNONHMOCount += totalSLRTreatmentCount;
+		totalConsultationNONHMOCount += totalSLRConsultationCount;
+		totalProcedureNONHMOCount += totalSLRProcedureCount;
+		totalMedicalCertificateNONHMOCount += totalSLRMedicalCertificateCount;
+
 
 		//added by Mike, 20200113
 		writer.print(
 				"HMO:\t"+totalTreatmentHMOCount+"\t"+totalConsultationHMOCount+"\t"+totalProcedureHMOCount+"\t"+totalMedicalCertificateHMOCount+"\n"
 				);					
+/*
+		//added by Mike, 202000124
+		SortedSet<String> sortedReferringMedicalDoctorTransactionCountKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
+
+		double totalSLRTreatmentCount=0;
+		double totalSLRConsultationCount=0;
+		double totalSLRProcedureCount=0;
+		double totalSLRMedicalCertificateCount=0;
+
+		for (String key : sortedReferringMedicalDoctorTransactionCountKeyset) {	
+			if (key.contains("SLR")) {			  
+				double slrTreatmentCount = referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN]+referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
+				
+				double slrConsultationCount = referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_COUNT_COLUMN]+referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_COUNT_COLUMN];
+				
+				double slrProcedureCount = referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]+referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN];
+				
+				double slrMedicalCertificateCount = referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]+referringDoctorContainer.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN];
+				
+				totalSLRTreatmentCount+=slrTreatmentCount;
+				totalSLRConsultationCount+=slrConsultationCount;
+				totalSLRProcedureCount+=slrProcedureCount;
+				totalSLRMedicalCertificateCount+=slrMedicalCertificateCount;				
+			}
+		}
+		
+		writer.print(
+				"SLR:\t"+totalSLRTreatmentCount+"\t"+totalSLRConsultationCount+"\t"+totalSLRProcedureCount+"\t"+totalSLRMedicalCertificateCount+"\n"
+				);					
+*/
+
+		//SLR
+		writer.print(
+					"SLR" + "\t" + 
+					totalSLRTreatmentCount+"\t"+							
+					totalSLRConsultationCount+"\t"+							
+					totalSLRProcedureCount+"\t"+							
+					totalSLRMedicalCertificateCount+"\n"							
+				); 				   							
 
 		double totalTreatmentCountPartTwo = totalTreatmentHMOCount + totalTreatmentNONHMOCount;
 		double totalConsultationCountPartTwo = totalConsultationHMOCount + totalConsultationNONHMOCount;
@@ -473,6 +555,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 		double totalProcedurePerDoctorCount = 0;
 		double totalMedicalCertificatePerDoctorCount = 0;
 		
+		//removed by Mike, 20200124
 		SortedSet<String> sortedReferringMedicalDoctorTransactionCountKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
 
 		for (String key : sortedReferringMedicalDoctorTransactionCountKeyset) {	

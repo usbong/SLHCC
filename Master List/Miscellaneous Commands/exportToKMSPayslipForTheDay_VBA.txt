@@ -1,0 +1,167 @@
+Private Sub exportToKMSPayslipForTheDay(isPTTreatmentWorksheet As Boolean)
+' Copyright 2019 Usbong Social Systems, Inc.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @author: Michael Syson
+' @date created: 20190910
+' @date updated: 20190915
+'
+' Given:
+' 1) Worksheet with the payslip data
+'
+'Output:
+' 1) Exported Tab-delimited .txt file of the Payslip in the input folder
+' 2) Automatically executed batch file to store the Payslip details in the Knowledge Management System (KMS)
+'
+'Dim myInput As Worksheet 'removed by Mike, 20190913
+Dim myOutput As Worksheet 'not the same as myInput
+Dim myInputWorkbookName As String 'added by Mike, 20190914
+Dim row As Range
+Dim RowCount As Integer
+Dim TableHeaderRow As Integer
+Dim LastPrintableRow As Integer
+Dim MaxPatientNameColumnWidth As Integer
+Dim patientNameFontSize As Integer
+Dim particularsFontSize As Integer 'added by Mike, 20190323
+Dim defaultFontName As String 'added by Mike, 20190314
+Dim totalAmountReleasedValue As String 'added by Mike, 20190316
+
+Dim myOutputWorksheetName As String 'added by Mike, 20190912
+Dim path As String 'added by Mike, 20190914
+Dim worksheetNameKeyword As String 'added by Mike, 20190915
+
+RowCount = 1
+TableHeaderRow = 5 'output
+LastPrintableRow = 16 'including the TOTAL PF
+MaxPatientNameValueLength = 18 'characters in Pixels 'added by Mike, 20190323
+MaxPatientNameColumnWidthPixels = 216 '12pt font * 18 characters in Pixels
+patientNameFontSize = 12
+MaxParticularsValueLength = 8 'characters in Pixels 'added by Mike, 20190323
+MaxParticularsColumnWidthPixels = 96 '12pt font * 8 characters in Pixels 'added by Mike, 20190323
+particularsFontSize = 12 'added by Mike, 20190323
+defaultFontName = "Arial" 'added by Mike, 20190314
+totalAmountReleasedValue = 0 'added by Mike, 20190316
+
+'Set myInput = Sheets(ActiveSheet.Name) 'removed by Mike, 20190913
+
+'added by Mike, 20190912
+Application.DisplayAlerts = False
+Application.ScreenUpdating = False
+
+'added by Mike, 20190915
+'myInputWorkbook = ActiveWorkbook
+
+'added by Mike, 20190914
+inputWorkbookPath = ActiveWorkbook.path 'inputWorkbook.path
+inputWorkbookPathDrive = Split(CStr(inputWorkbookPath), ":")(0) & ":"
+
+'MsgBox ("inputWorkbookPath: " & inputWorkbookPath)
+'MsgBox ("ActiveWorkbook.Name: " & ActiveWorkbook.Name)
+myInputWorkbookName = ActiveWorkbook.Name
+
+'edited by Mike, 20190915
+worksheetNameKeyword = "Consultation"
+If isPTTreatmentWorksheet Then
+    worksheetNameKeyword = "PT Treatment"
+End If
+
+'MsgBox ("worksheetNameKeyword: " & worksheetNameKeyword)
+
+myOutputWorksheetName = Replace(myInput.Name, worksheetNameKeyword, "") & " Export"
+
+'added by Mike, 20190914
+path = ActiveWorkbook.path & "\add-on software\input\" & myOutputWorksheetName '& Left(ActiveWorkbook.Name, InStr(ActiveWorkbook.Name, ".") - 1)
+
+'Save the workbook first before exporting the worksheet
+ActiveWorkbook.Save '.SaveAs Filename:=path
+
+'If a workheet with the outputWorksheetName already exists
+If Evaluate("ISREF('" & myOutputWorksheetName & "'!A1)") Then
+    ActiveWorkbook.Sheets(myOutputWorksheetName).Delete
+End If
+
+Set myOutput = ActiveWorkbook.Sheets.Add
+myOutput.Name = myOutputWorksheetName 'myInput.Name & " Export"
+
+'added by Mike, 20190912
+myOutput.Range("A" & 1).Value = dateTimeStamp 'Format(Now(), "yyyy-MM-ddTHH:mm:ss")
+myOutput.Range("A" & 1).Font.Name = defaultFontName
+myOutput.Range("A" & 1).Font.Size = 10
+'myOutput.Range("A" & 1).Font.FontStyle = "Bold"
+
+'added by Mike, 20190913
+myOutput.Range("A" & 2).Value = myInput.Range("A" & 4).Text 'Cashier person name
+
+'added by Mike, 20190914
+'---------------------------------------------------------
+'Auto-copy contents component/part
+'---------------------------------------------------------
+RowCount = TableHeaderRow + 2 'input
+RowCountOutput = 3
+For Each row In myInput.Rows
+        myInput.Range("B" & RowCount, "D" & RowCount).Columns.Copy
+        myInput.Select
+        myOutput.Range("A" & RowCountOutput, "C" & RowCountOutput).PasteSpecial (xlPasteValues)
+      
+        'Amount Paid
+        myInput.Range("F" & RowCount).Columns.Copy
+        myInput.Select
+        myOutput.Range("D" & RowCountOutput).PasteSpecial (xlPasteValues)
+      
+        'ORTHO & PT Unit Share
+        myInput.Range("H" & RowCount).Columns.Copy
+        myInput.Select
+        myOutput.Range("E" & RowCountOutput).PasteSpecial (xlPasteValues)
+            
+        RowCount = RowCount + 1
+        RowCountOutput = RowCountOutput + 1
+                            
+        If IsEmpty(myInput.Range("C" & RowCount).Value) Then
+            Exit For
+        End If
+Next row
+
+'added by Mike, 20190914
+myOutput.Activate
+
+'removed by Mike, 20190915
+'Export the current/present active worksheet
+'ActiveWorkbook.SaveAs Filename:=path & ".txt", FileFormat:=xlText, CreateBackup:=False
+
+'added by Mike, 20190914
+ChDir inputWorkbookPath & "\add-on software\"
+
+'added by Mike, 20190915
+'Shell inputWorkbookPath & "\add-on software\deleteFilesInInputFolder.bat"
+
+'edited by Mike, 20190915
+Set fso = CreateObject("scripting.filesystemobject")
+If Dir(inputWorkbookPath & "\add-on software\input\" & "*.txt") <> "" Then
+    'delete any .txt file
+    fso.DeleteFile inputWorkbookPath & "\add-on software\input\" & "*.txt"
+End If
+
+'Export the current/present active worksheet
+ActiveWorkbook.SaveAs Filename:=path & ".txt", FileFormat:=xlText, CreateBackup:=False
+
+'edited by Mike, 20190915
+Shell inputWorkbookPath & "\add-on software\generatePayslipForTheDay.bat " & inputWorkbookPathDrive & " " & myInputWorkbookName, vbNormalFocus
+
+'Close the workbook without the extra step of saving it again anymore
+ActiveWorkbook.Close SaveChanges:=False
+
+'added by Mike, 20190915
+'myInputWorkbook.Sheets(myOutputWorksheetName).Delete
+
+'added by Mike, 20190914
+Application.CutCopyMode = False
+
+Application.ScreenUpdating = True
+Application.DisplayAlerts = True
+
+End Sub

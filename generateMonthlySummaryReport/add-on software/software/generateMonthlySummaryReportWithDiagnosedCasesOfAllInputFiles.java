@@ -1,5 +1,5 @@
 /*
- * Copyright 2018~2019 Usbong Social Systems, Inc.
+ * Copyright 2018~2020 Usbong Social Systems, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -2352,8 +2352,11 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 						String inputMonthString = dateValuesArray[0].split("-")[0].toUpperCase(); //MAR
 						//TO-DO: -update: this to not need to add 20; note that the input file does not use 2019, but 19, as its date format
 						int inputYear = Integer.parseInt("20"+dateValuesArray[0].split("-")[1]); //e.g. 2019
-	
-						if (transactionCount < 0) { //the value is still blank/empty, e.g. -1
+
+						//removed by Mike, 20200213
+						//overwrite previous value
+/*						if (transactionCount < 0) { //the value is still blank/empty, e.g. -1
+*/
 //							System.out.println("dateValuesArray: "+dateValuesArray[0]);
 												
 							//TO-DO: -update this to store the auto-calculated transaction count value
@@ -2398,15 +2401,23 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 								
 								hasWrittenAutoCalculatedValue = true;
 							}
+							//added by Mike, 20200213
+							else {
+								s = s.concat("\t\t\t\t<b><span>"+transactionCount+"</span></b>\n");
+							}
+
+						//removed by Mike, 20200213
+						//overwrite previous value							
+/*
 							else {
 								s = s.concat("\t\t\t\t<b><span><!-- No value for this month yet --></span></b>\n");
 							}						
 //							s = s.concat("\t\t\t\t<b><span><!-- No value for this month yet --></span></b>\n");
-						}
+						}						
 						else {
 							s = s.concat("\t\t\t\t<b><span>"+transactionCount+"</span></b>\n");
 						}
-						
+*/						
 						//s = s.concat("\t\t\t\t<b><span>"+treatmentMonthlyStatisticsContainer.get(yearKey)[monthRowIndex]+"</span></b>\n");
 						s = s.concat("\t\t\t</td>\n");
 						

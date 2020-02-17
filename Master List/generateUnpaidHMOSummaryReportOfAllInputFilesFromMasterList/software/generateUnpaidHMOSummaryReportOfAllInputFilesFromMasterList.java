@@ -61,6 +61,8 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 	private static String medicalDoctorInput = ""; //added by Mike, 20200216
 	private static PrintWriter consultationWriter; //added by Mike, 20200217
 	
+	private static boolean hasProcessedPTTreatment = false; //added by Mike, 20200217
+	
 	private static String startDate = null;
 	private static String endDate = null;
 	
@@ -196,7 +198,7 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 		Scanner sc = new Scanner(new FileInputStream(medicalDoctorInputFile));				
 	
 		//medicalDoctorInput=sc.nextLine(); //skip the first row, which is the input file's table headers
-					
+				
 		//count/compute the number-based values of inputColumns 
 		while (sc.hasNextLine()) {
 			medicalDoctorInput=sc.nextLine();
@@ -236,7 +238,35 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 				}
 			}
 			consultationWriter.print("TOTAL:\t\t"+totalUnpaidHMOFeeConsultation+"\n"); 					
-			consultationWriter.close();				
+			consultationWriter.close();		
+
+			//added by Mike, 20200217
+			if (medicalDoctorInput.equals("PEDRO")) {
+				double totalUnpaidHMOFeeTreatment = 0;
+
+				treatmentWriter.print("Unpaid HMO Summary Report (PT TREATMENT)\n");
+
+		//		treatmentWriter.print("\nPT TREATMENT\n");
+				treatmentWriter.print("DATE:\tPATIENT NAME:\tFEE:\tCLASSIFICATION:\tAPPROVAL CODE:\tUNPAID REASON:\n"); 		
+				for(int i=0; i<transactionDateContainer.size(); i++) {
+					if (transactionDateContainer.get(i)[OUTPUT_HMO_FILE_TYPE_COLUMN].toLowerCase().trim().equals("treatment")){
+						treatmentWriter.print(
+										transactionDateContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+"\t"+
+										transactionDateContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]+"\t"+
+										transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN]+"\t"+
+										transactionDateContainer.get(i)[OUTPUT_HMO_CLASS_COLUMN]+"\t"+
+										transactionDateContainer.get(i)[OUTPUT_HMO_APPROVAL_CODE_COLUMN]+"\n"
+									); 				   											
+									
+						//added by Mike, 20190122
+						totalUnpaidHMOFeeTreatment += Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN].replace("\"","").replace(",",""));
+					}
+				}
+				treatmentWriter.print("TOTAL:\t\t"+totalUnpaidHMOFeeTreatment+"\n"); 		
+				
+		//		consultationWriter.close();		//removed by Mike, 20200217
+				treatmentWriter.close();
+			}
 		}
 /*
 		//PART/COMPONENT/MODULE/PHASE 1
@@ -281,6 +311,7 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 		}
 		consultationWriter.print("TOTAL:\t\t"+totalUnpaidHMOFeeConsultation+"\n"); 		
 */
+/*
 		double totalUnpaidHMOFeeTreatment = 0;
 
 		treatmentWriter.print("Unpaid HMO Summary Report (PT TREATMENT)\n");
@@ -305,6 +336,7 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 		
 //		consultationWriter.close();		//removed by Mike, 20200217
 		treatmentWriter.close();
+*/		
 	}
 	
 	private static String convertDateToMonthYearInWords(int date) {
@@ -414,7 +446,15 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 				isConsultation=true;
 			}
 			else {
-				isConsultation=false;
+				isConsultation=false;				
+
+				//added by Mike, 20200217
+				if (!medicalDoctorInput.equals("PEDRO")) {					
+					continue;
+				}
+				else {
+					System.out.println(">>> " + medicalDoctorInput);
+				}
 			}
 			
 			Scanner sc = new Scanner(new FileInputStream(f));				

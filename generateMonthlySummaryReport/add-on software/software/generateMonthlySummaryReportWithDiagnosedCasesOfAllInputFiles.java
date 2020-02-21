@@ -2434,7 +2434,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 //				s = s.concat("\n");				
 			
 			}
-							
+
+			//added by Mike, 20200220
+			s = s.replace("-1", "");
+			
 			writer.print(s + "\n");		
 		}
 		

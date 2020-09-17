@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20200916
+  @date updated: 20200917
 
   Given:
   1) List with the details of the transactions for the day
@@ -161,7 +161,14 @@ public class UsbongSMSReportMain {
 	private void processSendSMS(String[] args) throws Exception {
 			JSONObject json = processPayslipInputForSendSMS(args);	
 			
-			//TO-DO: -add: write output file
+			//added by Mike, 20200917
+			//write output file
+		  PrintWriter writer = new PrintWriter("output/smsReport"+getDateTodayISOFormat()+".txt", "UTF-8");
+		  //PrintWriter writer = new PrintWriter("");
+			
+		  writer.print(json.toString());			
+		  
+		  writer.close();
 	}	
 	
 	private void processUpload(String[] args) throws Exception {
@@ -221,6 +228,18 @@ public class UsbongSMSReportMain {
       
       return dateFormat.format(date);
 	}	
+
+	//added by Mike, 20200917
+	private String getDateTodayISOFormat() {
+      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+ //     DateFormat dateFormat = new SimpleDateFormat("M/d/yyyy");
+
+      Date date = new Date();
+ //     System.out.println(dateFormat.format(date));	
+      
+      return dateFormat.format(date);
+	}	
+
 	
 	//added by Mike, 20200916	
 	//Note: Consultation and PT Treatment payslip inputs are processed separately

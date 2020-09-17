@@ -162,6 +162,11 @@ public class UsbongSMSReportMain {
 			JSONObject json = processPayslipInputForSendSMS(args);	
 			
 			//added by Mike, 20200917
+			if (json==null) {
+			  return;
+			}
+			
+			//added by Mike, 20200917
 			//write output file
 		  PrintWriter writer = new PrintWriter("output/smsReport"+getDateTodayISOFormat()+".txt", "UTF-8");
 		  //PrintWriter writer = new PrintWriter("");
@@ -224,7 +229,9 @@ public class UsbongSMSReportMain {
       DateFormat dateFormat = new SimpleDateFormat("M/d/yyyy");
 
       Date date = new Date();
-      System.out.println(dateFormat.format(date));	
+  
+  		//removed by Mike, 20200917    
+//      System.out.println(dateFormat.format(date));	
       
       return dateFormat.format(date);
 	}	
@@ -261,6 +268,12 @@ public class UsbongSMSReportMain {
 		for (int i=0; i<args.length; i++) {									
 			inputFilename = args[i].replaceAll(".txt","");			
 			File f = new File(inputFilename+".txt");
+
+			//added by Mike, 20200917
+			if(!f.exists()) { 
+    			System.out.println("File does not exist: "+f.toString());
+    			return null;
+			}			
 
 			//added by Mike, 20190917
 			//note that the default payslip_type_id is 2, ijavac -cp .:org.json.jar:org.apache.httpclient.jar:org.apache.httpcore.jar:org.apache.commons-logging.jar UsbongReportMain.java.e. "PT Treatment"

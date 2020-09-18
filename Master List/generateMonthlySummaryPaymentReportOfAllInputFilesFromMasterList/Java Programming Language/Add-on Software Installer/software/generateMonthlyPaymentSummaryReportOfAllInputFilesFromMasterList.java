@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Usbong Social Systems, Inc.
+ * Copyright 2018~2020 Usbong Social Systems, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,6 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+
+//added by Mike, 20200918
+//TO-DO: -delete: excess notes and instructions 
+ 
 import java.util.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -131,7 +135,9 @@ public class generateMonthlyPaymentSummaryReportOfAllInputFilesFromMasterList {
 	//added by Mike, 20190531
 	//Note that I have to use double backslash, i.e. "\\", to use "\" in the filename
 	//without extension; default input file 
-	private static String inputOutputTemplateFilenameMonthlyPaymentSummary = "assets\\templates\\generateMonthlyPaymentSummaryReportOutputTemplate";
+//	private static String inputOutputTemplateFilenameMonthlyPaymentSummary = "assets\\templates\\generateMonthlyPaymentSummaryReportOutputTemplate";
+  //Linux Machine
+	private static String inputOutputTemplateFilenameMonthlyPaymentSummary = "./assets/templates/generateMonthlyPaymentSummaryReportOutputTemplate";
 
 	//added by Mike, 20190504
 	private static final int TREATMENT_FILE_TYPE = 0;
@@ -195,7 +201,20 @@ public class generateMonthlyPaymentSummaryReportOfAllInputFilesFromMasterList {
 			
 			Scanner sc = new Scanner(new FileInputStream(f));				
 		
-			String s;		
+			String s;
+			
+			//added by Mike, 20200916
+			if (!sc.hasNext()) {
+				columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];			
+			
+				//added by Mike, 20200918
+				//blank file
+				System.out.println(">>>"+dateValuesArrayInt[i]);
+				dateContainer.put(dateValuesArrayInt[i], columnValuesArray);
+			
+				continue;
+			}
+					
 			s=sc.nextLine(); //skip the first row, which is the input file's table headers
 	
 			if (isInDebugMode) {
@@ -316,6 +335,9 @@ public class generateMonthlyPaymentSummaryReportOfAllInputFilesFromMasterList {
 		Scanner sc = new Scanner(new FileInputStream(f), "UTF-8");				
 	
 		String s;		
+
+		//added by Mike, 20200918
+		//note: 1st row already skipped
 //			s=sc.nextLine(); //skip the first row, which is the input file's table headers
 
 		if (isInDebugMode) {
@@ -327,7 +349,6 @@ public class generateMonthlyPaymentSummaryReportOfAllInputFilesFromMasterList {
 		
 		//added by Mike, 20190603
 		int offset = 0;
-
 
 		//count/compute the number-based values of inputColumns 
 		while (sc.hasNextLine()) {
@@ -376,10 +397,10 @@ public class generateMonthlyPaymentSummaryReportOfAllInputFilesFromMasterList {
 				s = s.concat("\t\t\t\t<div class=\"date\"><b><span class=\"transaction_type_column_header\">DATE:</span></b></div>\n");
 				s = s.concat("\t\t\t</td>\n");
 				
-				//edited by Mike, 20190603
-//				for(int i=0; i<dateValuesArrayInt.length; i++) {
+				//edited by Mike, 20190603; edited again by Mike, 20200916
+				for(int i=0; i<dateValuesArrayInt.length; i++) {
 				//TO-DO: -update: this
-				for(int i=0; i<dateValuesArrayInt.length/2; i++) {
+//				for(int i=0; i<dateValuesArrayInt.length/2; i++) {
 					int dateKey = dateValuesArrayInt[i];
 					s = s.concat("\n");
 					s = s.concat("\t\t\t<!-- DATE "+dateKey+": Column 1 -->\n");
@@ -831,7 +852,17 @@ public class generateMonthlyPaymentSummaryReportOfAllInputFilesFromMasterList {
 	private static void processTreatmentTransaction(String[] inputColumns, int i) {
 //				if (!referringDoctorContainer.containsKey(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN])) {
 		if (!dateContainer.containsKey(dateValuesArrayInt[i])) {
-			columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
+			columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];			
+			
+			//added by Mike, 20200918
+			//blank file
+			//TO-DO: -reverify this
+			System.out.println(">>"+inputColumns[INPUT_DATE_COLUMN]+">>>");
+			if ((inputColumns[INPUT_DATE_COLUMN]).equals("")) {			
+			System.out.println("dito:");
+				dateContainer.put(dateValuesArrayInt[i], columnValuesArray);
+				return;
+			}
 			
 			//edited by Mike, 20181206
 			if ((inputColumns[INPUT_CLASS_COLUMN].contains("HMO")) ||
@@ -911,6 +942,12 @@ public class generateMonthlyPaymentSummaryReportOfAllInputFilesFromMasterList {
 				}
 
 			}
+
+/*			
+			//added by Mike, 20200918
+			System.out.println(i);
+			System.out.println(dateContainer.get(dateValuesArrayInt[i]).toString());
+*/
 		}
 	}	
 	

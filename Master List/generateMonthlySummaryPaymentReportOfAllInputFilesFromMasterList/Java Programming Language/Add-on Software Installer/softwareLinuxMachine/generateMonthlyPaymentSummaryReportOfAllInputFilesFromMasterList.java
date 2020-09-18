@@ -335,7 +335,9 @@ public class generateMonthlyPaymentSummaryReportOfAllInputFilesFromMasterList {
 		Scanner sc = new Scanner(new FileInputStream(f), "UTF-8");				
 	
 		String s;		
-		//removed by Mike, 20200918
+
+		//added by Mike, 20200918
+		//note: 1st row already skipped
 //			s=sc.nextLine(); //skip the first row, which is the input file's table headers
 
 		if (isInDebugMode) {
@@ -347,7 +349,6 @@ public class generateMonthlyPaymentSummaryReportOfAllInputFilesFromMasterList {
 		
 		//added by Mike, 20190603
 		int offset = 0;
-
 
 		//count/compute the number-based values of inputColumns 
 		while (sc.hasNextLine()) {

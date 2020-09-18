@@ -15,7 +15,7 @@ b) If you are using Windows OS 32-bit (x86) on your computer, please download th
 c) The pre-compiled Java class is executable on OS's, e.g. Windows and Linux.<br/>
 --> Windows Machine (Batch Command Prompt): Please use "generateMonthlySummaryReportOfPayments.bat"<br/>
 --> Linux Machine (Bash Shell): Please use "generateMonthlySummaryReportOfPayments.sh"<br/>
---> This is to be able to execute it on, for example, Linux.<br/>
-d) If there is no blank row after the last transaction row in each of your input files, please add it.<br/>
+--> This is to be able to execute it on, for example, Linux.<br/><br/>
+d) If there is no blank row after the last transaction row in each of your input files, please add it.<br/><br/>
 e) The input files are Tab-delimited .txt files.<br/>
 --> [Libre Office Calc: Save As Tab Delimited File Filter Settings](https://github.com/usbong/KMS/blob/master/Notes/libreOfficeCalcFileSaveAsTabDelimitedFileFilterSettings.jpg)

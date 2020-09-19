@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20200917
+  @date updated: 20200919
 
   Given:
   1) List with the details of the transactions for the day
@@ -276,7 +276,7 @@ public class UsbongSMSReportMain {
 			}			
 
 			//added by Mike, 20190917
-			//note that the default payslip_type_id is 2, ijavac -cp .:org.json.jar:org.apache.httpclient.jar:org.apache.httpcore.jar:org.apache.commons-logging.jar UsbongReportMain.java.e. "PT Treatment"
+			//note that the default payslip_type_id is 2, i.e. "PT Treatment"
 			if (inputFilename.contains("CONSULT")) {
 				json.put("payslip_type_id", 1);    				
 			}			
@@ -288,9 +288,9 @@ public class UsbongSMSReportMain {
 		
 			String s;		
 			
-			//edited by Mike, 20191012
+			//edited by Mike, 20191012; removed by Mike, 20200919
 			//s=sc.nextLine(); 			
-			s = new String(sc.nextLine().getBytes(), StandardCharsets.UTF_8);
+			//s = new String(sc.nextLine().getBytes(), StandardCharsets.UTF_8);
 
 			//removed by Mike, 20200916
 			//edited by Mike, 20190917
@@ -298,7 +298,8 @@ public class UsbongSMSReportMain {
 
 			//edited by Mike, 20191012
 			//s=sc.nextLine();
-			s = new String(sc.nextLine().getBytes(), StandardCharsets.UTF_8);
+			//removed by Mike, 20200919
+			//s = new String(sc.nextLine().getBytes(), StandardCharsets.UTF_8);
 
 /*		//removed by Mike, 20200916			
 			//edited by Mike, 20190917
@@ -313,9 +314,12 @@ public class UsbongSMSReportMain {
 			while (sc.hasNextLine()) {				
 			  //edited by Mike, 20191012
 				//s=sc.nextLine();
+				
+				//noted by Mike, 20200919
+				//note: skip table header row				
 				s = new String(sc.nextLine().getBytes(), StandardCharsets.UTF_8);
 
-//			  System.out.println(s);
+			  System.out.println(s);
 
 				//if the row is blank
 				if (s.trim().equals("")) {

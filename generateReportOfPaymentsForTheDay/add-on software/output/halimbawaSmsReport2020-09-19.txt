@@ -1,1 +1,1 @@
-{"dHMOTotalFee":550,"dCashTotalFee":0,"dCashTotalNetFee":0,"iTotal":1,"payslip_type_id":2,"dHMOTotalNetFee":303.1875}
+{"dHMOTotalFee":550,"dCashTotalFee":714.289,"dCashTotalNetFee":450.00207,"iTotal":3,"payslip_type_id":2,"dHMOTotalNetFee":303.1875}

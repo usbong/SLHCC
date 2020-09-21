@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20200919
+  @date updated: 20200921
 
   Given:
   1) List with the details of the transactions for the day
@@ -24,6 +24,9 @@
    javac -cp .:org.json.jar:org.apache.httpclient.jar:org.apache.httpcore.jar:org.apache.commons-logging.jar UsbongSMSReportMain.java
    
    NOTE: We use ":" in Linux Terminal, and ";" in Windows Command Prompt.
+
+   javac -cp .;org.json.jar;org.apache.httpclient.jar;org.apache.httpcore.jar;org.apache.commons-logging.jar UsbongSMSReportMain.java
+   
 
   3) To execute on Linux Terminal the add-on software with the JSON .jar file, i.e. json, use the following command:
    java -cp .:org.json.jar:org.apache.httpclient.jar:org.apache.httpcore.jar:org.apache.commons-logging.jar UsbongSMSReportMain
@@ -159,21 +162,22 @@ public class UsbongSMSReportMain {
 
 	//added by Mike, 20200916
 	private void processSendSMS(String[] args) throws Exception {
-			JSONObject json = processPayslipInputForSendSMS(args);	
+		JSONObject json = processPayslipInputForSendSMS(args);	
 			
-			//added by Mike, 20200917
-			if (json==null) {
-			  return;
-			}
+		//added by Mike, 20200917
+		if (json==null) {
+			 return;
+		}
 			
-			//added by Mike, 20200917
-			//write output file
-		  PrintWriter writer = new PrintWriter("output/smsReport"+getDateTodayISOFormat()+".txt", "UTF-8");
-		  //PrintWriter writer = new PrintWriter("");
 			
-		  writer.print(json.toString());			
+		 //added by Mike, 20200917
+		 //write output file
+		 PrintWriter writer = new PrintWriter("output/smsReport"+getDateTodayISOFormat()+".txt", "UTF-8");
+		 //PrintWriter writer = new PrintWriter("");
+			
+		 writer.print(json.toString());			
 		  
-		  writer.close();
+		 writer.close();
 	}	
 	
 	private void processUpload(String[] args) throws Exception {
@@ -256,6 +260,8 @@ public class UsbongSMSReportMain {
 
 		String sDateToday = getDateToday();
 
+//		System.out.println("sDateToday: " + sDateToday);
+
 		//added by Mike, 20190812
 		int transactionCount = 0; //start from zero
 
@@ -265,9 +271,15 @@ public class UsbongSMSReportMain {
 		double dCashTotalFee = 0.0;
 		double dCashTotalNetFee = 0.0;
 
+		//added by Mike, 20200921
+		System.out.println("args.length: "+args.length);
+
 		for (int i=0; i<args.length; i++) {									
 			inputFilename = args[i].replaceAll(".txt","");			
 			File f = new File(inputFilename+".txt");
+
+			//added by Mike, 20200921
+			System.out.println("inputFilename: " + inputFilename);
 
 			//added by Mike, 20200917
 			if(!f.exists()) { 

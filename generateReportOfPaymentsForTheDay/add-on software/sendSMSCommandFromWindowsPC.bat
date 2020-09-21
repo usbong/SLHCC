@@ -66,11 +66,14 @@ for /f "delims=" %%i in ('type "D:\Usbong\SLHCC\Reports\add-on software\output\s
 
 echo %output%
 
-REM TO-DO: -reverify: this
-adb shell am start -a android.intent.action.SENDTO -d sms:639299527263 --es sms_body %output% --ez exit_on_sent true
+set updatedOutput='%output:"=\"%'
+REM echo %updatedOutput%
+
+REM +verified: this command to correctly receive as input JSON string
+adb shell am start -a android.intent.action.SENDTO -d sms:639299527263 --es sms_body %updatedOutput% --ez exit_on_sent true
 
 adb shell input keyevent 22 REM directional pad right key
-adb shell input keyevent 66 REM enter key
+rem adb shell input keyevent 66 REM enter key
 
 cd .. REM change directory to the location of the batch file
 

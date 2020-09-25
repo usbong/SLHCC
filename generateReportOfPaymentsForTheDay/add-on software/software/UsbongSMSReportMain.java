@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20200921
+  @date updated: 20200926
 
   Given:
   1) List with the details of the transactions for the day
@@ -88,6 +88,7 @@ import javax.net.ssl.HttpsURLConnection;
 import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.text.DecimalFormat; //added by Mike, 20200926
 
 public class UsbongSMSReportMain {
 	//added by Mike, 20190811
@@ -175,8 +176,25 @@ public class UsbongSMSReportMain {
 		 PrintWriter writer = new PrintWriter("output/smsReport"+getDateTodayISOFormat()+".txt", "UTF-8");
 		 //PrintWriter writer = new PrintWriter("");
 			
-		 writer.print(json.toString());			
-		  
+		 //edited by Mike, 20200926
+		 //writer.print(json.toString());			
+		 //TO-DO: -reverify: rounding method
+		 DecimalFormat df = new DecimalFormat("#.##");
+		
+		 if (json.getInt("payslip_type_id") == 1) {
+			writer.print("[Consultation,");		
+		 }
+		 else {
+			writer.print("[PT Treatment,");
+		 }
+
+		 writer.print("Total:"+json.getInt("iTotal")+",");		
+		 writer.print("CashTotalFee:"+df.format(json.getDouble("dCashTotalFee"))+",");		
+		 writer.print("CashTotalNetFee:"+df.format(json.getDouble("dCashTotalNetFee"))+",");		
+				
+		 writer.print("HMOTotalFee:"+df.format(json.getDouble("dHMOTotalFee"))+",");
+		 writer.print("HMOTotalNetFee:"+df.format(json.getDouble("dHMOTotalNetFee"))+"]");
+					
 		 writer.close();
 	}	
 	

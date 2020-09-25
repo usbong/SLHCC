@@ -16,7 +16,12 @@
 
   Output:
   1) Automatically process the transactions and send the details to a mobile telephone at the headquarters using Short Messaging Service (SMS)
+  --> Example SMS Output (auto-generated from JSON format): 
+  [PT Treatment,Total:1,CashTotalFee:0,CashTotalNetFee:0,HMOTotalFee:1100,HMOTotalNetFee:606.38]
   
+  --> JSON format: 
+{"dHMOTotalFee":1100,"dCashTotalFee":0,"dCashTotalNetFee":0,"iTotal":1,"payslip_type_id":2,"dHMOTotalNetFee":606.375}
+
   Notes:
   1) The details of the transactions to be sent are in the JSON (JavaScript Object Notation) format.
     

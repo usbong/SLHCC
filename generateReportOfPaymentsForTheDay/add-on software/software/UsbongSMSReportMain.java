@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20200929
+  @date updated: 20200930
 
   Given:
   1) List with the details of the transactions for the day

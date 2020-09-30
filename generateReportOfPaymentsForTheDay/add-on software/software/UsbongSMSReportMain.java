@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20200926
+  @date updated: 20200929
 
   Given:
   1) List with the details of the transactions for the day
@@ -17,7 +17,7 @@
   Output:
   1) Automatically process the transactions and send the details to a mobile telephone at the headquarters using Short Messaging Service (SMS)
   --> Example SMS Output (auto-generated from JSON format): 
-  [PT Treatment,Total:1,CashTotalFee:0,CashTotalNetFee:0,HMOTotalFee:1100,HMOTotalNetFee:606.38]
+  SLHCC,PT,Total:1,CashTotalFee:0,CashTotalNetFee:0,HMOTotalFee:1100,HMOTotalNetFee:606.38
   
   --> JSON format: 
 {"dHMOTotalFee":1100,"dCashTotalFee":0,"dCashTotalNetFee":0,"iTotal":1,"payslip_type_id":2,"dHMOTotalNetFee":606.375}
@@ -32,7 +32,6 @@
 
    javac -cp .;org.json.jar;org.apache.httpclient.jar;org.apache.httpcore.jar;org.apache.commons-logging.jar UsbongSMSReportMain.java
    
-
   3) To execute on Linux Terminal the add-on software with the JSON .jar file, i.e. json, use the following command:
    java -cp .:org.json.jar:org.apache.httpclient.jar:org.apache.httpcore.jar:org.apache.commons-logging.jar UsbongSMSReportMain
 
@@ -182,15 +181,23 @@ public class UsbongSMSReportMain {
 		 //PrintWriter writer = new PrintWriter("");
 			
 		 //edited by Mike, 20200926
-		 //writer.print(json.toString());			
+//		 writer.print(json.toString());			
+		
+		 //edited by Mike, 20200929
 		 //TO-DO: -reverify: rounding method
 		 DecimalFormat df = new DecimalFormat("#.##");
-		
+
+		 writer.print("SLHCC,");		
+		 
+		 //note: for HTC Wildfire (year 2012) Android, SMS body value does not accept as input the length of select string of characters, e.g. "PT Treatment"
+		 //in its stead, we use "PT"
 		 if (json.getInt("payslip_type_id") == 1) {
-			writer.print("[Consultation,");		
+			//writer.print("Consultation,");		
+			writer.print("CON,");	
 		 }
 		 else {
-			writer.print("[PT Treatment,");
+			//writer.print("PT Treatment,");
+			writer.print("PT,");
 		 }
 
 		 writer.print("Total:"+json.getInt("iTotal")+",");		
@@ -198,7 +205,7 @@ public class UsbongSMSReportMain {
 		 writer.print("CashTotalNetFee:"+df.format(json.getDouble("dCashTotalNetFee"))+",");		
 				
 		 writer.print("HMOTotalFee:"+df.format(json.getDouble("dHMOTotalFee"))+",");
-		 writer.print("HMOTotalNetFee:"+df.format(json.getDouble("dHMOTotalNetFee"))+"]");
+		 writer.print("HMOTotalNetFee:"+df.format(json.getDouble("dHMOTotalNetFee"))+"");
 					
 		 writer.close();
 	}	
@@ -284,6 +291,9 @@ public class UsbongSMSReportMain {
 		String sDateToday = getDateToday();
 
 //		System.out.println("sDateToday: " + sDateToday);
+
+		//added by Mike, 20200930
+		DecimalFormat df = new DecimalFormat("#.##");
 
 		//added by Mike, 20190812
 		int transactionCount = 0; //start from zero
@@ -396,12 +406,20 @@ public class UsbongSMSReportMain {
 
 				
 				if (inputColumns[INPUT_WORKBOOK_CLASSIFICATION_COLUMN].contains("HMO")) {
-			  	dHMOTotalFee = dHMOTotalFee + Double.parseDouble(inputColumns[INPUT_WORKBOOK_AMOUNT_PAID_COLUMN]);
-			  	dHMOTotalNetFee = dHMOTotalNetFee + Double.parseDouble(inputColumns[INPUT_WORKBOOK_NET_PF_COLUMN]);	
+					//edited by Mike, 20200930
+/*					dHMOTotalFee = dHMOTotalFee + Double.parseDouble(inputColumns[INPUT_WORKBOOK_AMOUNT_PAID_COLUMN]);
+					dHMOTotalNetFee = dHMOTotalNetFee + Double.parseDouble(inputColumns[INPUT_WORKBOOK_NET_PF_COLUMN]);	
+*/
+					dHMOTotalFee = dHMOTotalFee + UsbongUtilsRound(Double.parseDouble(inputColumns[INPUT_WORKBOOK_AMOUNT_PAID_COLUMN]),2);
+					dHMOTotalNetFee = dHMOTotalNetFee + UsbongUtilsRound(Double.parseDouble(inputColumns[INPUT_WORKBOOK_NET_PF_COLUMN]),2);	
 				}
 				else {
-			  	dCashTotalFee = dCashTotalFee + Double.parseDouble(inputColumns[INPUT_WORKBOOK_AMOUNT_PAID_COLUMN]);
-			  	dCashTotalNetFee = dCashTotalNetFee + Double.parseDouble(inputColumns[INPUT_WORKBOOK_NET_PF_COLUMN]);
+					//edited by Mike, 20200930
+/*					dCashTotalFee = dCashTotalFee + Double.parseDouble(inputColumns[INPUT_WORKBOOK_AMOUNT_PAID_COLUMN]);
+					dCashTotalNetFee = dCashTotalNetFee + Double.parseDouble(inputColumns[INPUT_WORKBOOK_NET_PF_COLUMN]);
+*/
+					dCashTotalFee = dCashTotalFee + UsbongUtilsRound(Double.parseDouble(inputColumns[INPUT_WORKBOOK_AMOUNT_PAID_COLUMN]),2);
+					dCashTotalNetFee = dCashTotalNetFee + UsbongUtilsRound(Double.parseDouble(inputColumns[INPUT_WORKBOOK_NET_PF_COLUMN]),2);
 				}
 	
 				transactionCount++;
@@ -604,6 +622,25 @@ public class UsbongSMSReportMain {
 		String[] dateStringPart2 = dateStringPart1[0].split("-");		
 		
 		return dateStringPart2[1] + "/" + dateStringPart2[2] + "/" + dateStringPart2[0];
+	}	
+
+	//added by Mike, 20200930
+	//Reference: https://stackoverflow.com/questions/2808535/round-a-double-to-2-decimal-places;
+	//last accessed: 20200930
+	//answer by luke, 20101111T0643
+	//edited by confile, 20160208T1448
+	private double UsbongUtilsRound(double inputValue, int numOfDecimalPlacesAfterDot) {
+		int iNum=10;
+		for(int iCount=0; iCount<numOfDecimalPlacesAfterDot; iCount++) {
+			iNum=iNum*10;
+		}
+		
+//		inputValue = inputValue*100;
+		inputValue = inputValue*iNum;
+		inputValue = (double) Math.round(inputValue);
+		inputValue = inputValue/iNum;
+		
+		return inputValue;
 	}	
 }
 

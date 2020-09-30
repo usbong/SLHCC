@@ -1,16 +1,18 @@
-# SLHCC (Sta. Lucia Health Care Centre)
+# SLHCC (Sta. Lucia Health Care Center)
 ### ACCOUNTING/BILLING DEPARTMENT
-### ORTHOPEDIC & PHYSICAL THERAPY DEPARTMENT
+### ORTHOPEDIC & PHYSICAL THERAPY UNIT
 <b>Author:</b> Michael B. Syson</br>
 <b>Date Created:</b> 20171121</br>
-<b>Date Updated:</b> 20190402</br>
+<b>Date Updated:</b> 20200930</br>
 <b>Description:</b></br>
-This is a set of add-on software to automate computing tasks and the generation of reports using data from Microsoft EXCEL workbooks.</br>
+This is a set of add-on software to automate computing tasks and the generation of reports using data from Microsoft EXCEL and LibreOffice CALC workbooks.</br>
 
 # Add-on Software
 We've written the add-on software using among others:</br>
 a) Visual Basic for Applications (VBA) that we execute as instructions/Macros on Microsoft EXCEL</br>
-b) Java programming language
+b) Basic that we execute as instructions/Macros on LibreOffice CALC</br>
+c) Java computer programming language</br>
+d) PHP (PHP Hypertext Preprocessor) computer programming language
 
 # Usbong's Add-on Software Development Service
 http://www.usbong.ph/excel
@@ -30,7 +32,7 @@ To encrypt our Summary Reports in PDF (Portable Document Format), we have to do 
 Done!
 
 # Open Source Software License
-Copyright 2017~2019 Usbong Social Systems, Inc.
+Copyright 2017~2020 Usbong Social Systems, Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 

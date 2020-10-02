@@ -1,13 +1,31 @@
 @echo off
+REM mainDirectory=$(pwd)
 set mainDirectory=%~dp0
-cd /d %mainDirectory%
-cd output/
-del *.txt
-cd ..
 
-rem added by Mike, 20200921
-rem set myDate=%date:~10,4%%date:~4,2%%date:~7,2%
-rem set myTime=%time:~0,2%%time:~3,2%
+REM echo $mainDirectory
+REM cd "$mainDirectory"
+cd /d %mainDirectory%
+
+REM cd "software"
+
+REM ls -l
+
+REM java -cp .\software:.\software\org.json.jar:.\software\org.apache.httpclient.jar:.\software\org.apache.httpcore.jar:.\software\org.apache.commons-logging.jar UsbongReportMain http://localhost/ input/*.txt
+
+REM Java command using Windows Machine
+REM java -cp .\software:.\software\org.json.jar:.\software\org.apache.httpclient.jar:.\software\org.apache.httpcore.jar:.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ halimbawa
+
+REM example output: 2020-09-17
+REM echo $(date +%F)
+
+REM example output: September 2020
+REM echo $(date +%B) $(date +%Y)
+REM sMonthYear=$(date +%B)" "$(date +%Y)
+
+REM edited by Mike, 20200926
+REM $sMonthYear=$(date +%B)" "$(date +%Y) REM Command using Linux Machine
+REM set sMonthYear="September" rem "2020"
+REM echo $sMonthYear
 
 set myYear=%date:~10,4%
 
@@ -29,7 +47,41 @@ for /F "tokens=1 delims=/"  %%m in ("%date:~4,2%") do (
 )
 echo %monthName%
 
-java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient.jar;.\software\org.apache.httpcore.jar;.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ input/""Treatment*%monthName%" "%myYear%.txt""
+set sMonthYear=%monthName%"*"%myYear%
+echo %sMonthYear%
 
-PAUSE
-rem exit
+REM Java command using Linux Machine
+REM java -cp ./software:./software/org.json.jar:./software/org.apache.httpclient.jar:./software/org.apache.httpcore.jar:./software/org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ ./input/*"$sMonthYear".txt
+
+REM Java command using Windows Machine
+REM update input file location
+REM C:\Usbong\unit\workbooks
+set sInputFileLocation="C:\Usbong\unit\workbooks"
+
+echo %sInputFileLocation%
+
+rem java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient.jar;.\software\org.apache.httpcore.jar;.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ "%sInputFileLocation%\"Treatment"*%sMonthYear%"2020.txt"
+REM edited by Mike, 20200926
+REM java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient.jar;.\software\org.apache.httpcore.jar;.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ "%sInputFileLocation%"\Treatment"*"September*2020.txt"
+java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient.jar;.\software\org.apache.httpcore.jar;.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ "%sInputFileLocation%"\Treatment"*%sMonthYear%.txt"
+
+rem removed by Mike, 20200924
+rem cd ..
+
+REM %2
+rem PAUSE
+REM exit
+
+rem removed by Mike, 20200924
+rem added by Mike, 20200919
+rem update: this
+rem cd "D:\2020\add-on software\sendReportViaSMS\platform-tools_r30.0.4-windows\platform-tools"
+rem cd "D:\2020\add-on software\generatePayslipForTheDay\lib\platform-tools_r30.0.4-windows\platform-tools"
+
+rem adb shell am start -a android.intent.action.SENDTO -d sms:639299527263 --es sms_body "Kumusta!" --ez exit_on_sent true
+rem adb shell am start -a android.intent.action.SENDTO -d sms:639299527263 --es sms_body "output/smsReport"*".txt" --ez exit_on_sent true
+
+rem adb shell input keyevent 22
+rem adb shell input keyevent 66
+
+rem pause

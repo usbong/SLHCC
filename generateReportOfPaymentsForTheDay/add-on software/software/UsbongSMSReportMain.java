@@ -9,7 +9,7 @@
 
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20201003
+  @date updated: 20201006
 
   Given:
   1) List with the details of the transactions for the day
@@ -183,12 +183,12 @@ public class UsbongSMSReportMain {
 		 //edited by Mike, 20200926
 //		 writer.print(json.toString());			
 		
-		 //edited by Mike, 20201003
-		 //note: reverified: rounding method
+		 //edited by Mike, 20200929
+		 //TO-DO: -reverify: rounding method
 		 DecimalFormat df = new DecimalFormat("#.##");
-		 
-		 //edited by Mike, 20201003
-		 //writer.print("SLHCC,");		
+
+		//edited by Mike, 20201006
+//		 writer.print("SLHCC,");		
 		 writer.print("SLHCC("+getDateTodayISOFormat()+"),");		
 		 
 		 //note: for HTC Wildfire (year 2012) Android, SMS body value does not accept as input the length of select string of characters, e.g. "PT Treatment"

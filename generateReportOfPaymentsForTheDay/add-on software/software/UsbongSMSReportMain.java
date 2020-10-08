@@ -1,23 +1,21 @@
 /*
   Copyright 2019~2020 Usbong Social Systems, Inc.
-
+  
   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
-
   http://www.apache.org/licenses/LICENSE-2.0
-
+  
   Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
-
+  
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20201006
-
+  @date updated: 20201008
+  
   Given:
   1) List with the details of the transactions for the day
-
   Output:
   1) Automatically process the transactions and send the details to a mobile telephone at the headquarters using Short Messaging Service (SMS)
   --> Example SMS Output (auto-generated from JSON format): 
-  SLHCC,PT,Total:1,CashTotalFee:0,CashTotalNetFee:0,HMOTotalFee:1100,HMOTotalNetFee:606.38
+  SLHCC,2020-10-8,PT,Total:1,CashTotalFee:0,CashTotalNetFee:0,HMOTotalFee:1100,HMOTotalNetFee:606.38
   
   --> JSON format: 
 {"dHMOTotalFee":1100,"dCashTotalFee":0,"dCashTotalNetFee":0,"iTotal":1,"payslip_type_id":2,"dHMOTotalNetFee":606.375}
@@ -29,20 +27,16 @@
    javac -cp .:org.json.jar:org.apache.httpclient.jar:org.apache.httpcore.jar:org.apache.commons-logging.jar UsbongSMSReportMain.java
    
    NOTE: We use ":" in Linux Terminal, and ";" in Windows Command Prompt.
-
    javac -cp .;org.json.jar;org.apache.httpclient.jar;org.apache.httpcore.jar;org.apache.commons-logging.jar UsbongSMSReportMain.java
    
   3) To execute on Linux Terminal the add-on software with the JSON .jar file, i.e. json, use the following command:
    java -cp .:org.json.jar:org.apache.httpclient.jar:org.apache.httpcore.jar:org.apache.commons-logging.jar UsbongSMSReportMain
-
    NOTE: We use ":" in Linux Terminal, and ";" in Windows Command Prompt.  
-
   4) The JSON .jar file can be downloaded here:
    https://github.com/stleary/JSON-java; last accessed: 20190808
    
   5) The two (2) Apache HttpComponents, i.e. 1) HttpClient and 2) HttpCore .jar files (not beta) can be downloaded here:
    http://hc.apache.org/downloads.cgi; last accessed: 20190810
-
   6) The Apache commons-logging .jar is also necessary to execute the add-on software. The .jar file is present in the set of .jar files inside the "lib", i.e. library, folder of the zipped httpcomponents-client-<version>-bin folder. It is in this same library folder that you can find the Apache HttpComponent, HttpClient, .jar file.
      
   References:
@@ -187,9 +181,9 @@ public class UsbongSMSReportMain {
 		 //TO-DO: -reverify: rounding method
 		 DecimalFormat df = new DecimalFormat("#.##");
 
-		//edited by Mike, 20201006
+		//edited by Mike, 20201008
 //		 writer.print("SLHCC,");		
-		 writer.print("SLHCC("+getDateTodayISOFormat()+"),");		
+		 writer.print("SLHCC,"+getDateTodayISOFormat()+",");		
 		 
 		 //note: for HTC Wildfire (year 2012) Android, SMS body value does not accept as input the length of select string of characters, e.g. "PT Treatment"
 		 //in its stead, we use "PT"
@@ -393,7 +387,6 @@ public class UsbongSMSReportMain {
 				transactionInJSONFormat.put(""+INPUT_CLASSIFICATION_COLUMN, inputColumns[INPUT_CLASSIFICATION_COLUMN]);
 				transactionInJSONFormat.put(""+INPUT_AMOUNT_PAID_COLUMN, inputColumns[INPUT_AMOUNT_PAID_COLUMN]);
 				transactionInJSONFormat.put(""+INPUT_NET_PF_COLUMN, inputColumns[INPUT_NET_PF_COLUMN]);
-
 				//edited by Mike, 20190813
 				json.put("i"+transactionCount, transactionInJSONFormat);    				
 */
@@ -631,16 +624,98 @@ public class UsbongSMSReportMain {
 	//last accessed: 20200930
 	//answer by luke, 20101111T0643
 	//edited by confile, 20160208T1448
+	
+	//Use Banker's Rounding due to used by Macro at SLHCC's Cashier Unit 
+	//SLHCC ORTHO & PT Unit verifies payslip report from Cashier Unit 
+	//only until the second to the last digit;
+	//if equal, computer writes the value received from the Cashier Unit
+	//Banker's Rounding: if even and digitToVerify <= 5, round down, else round up
+	//Examples: 
+	//535.716 : 535.71; digitToVerify = 1
+	//714.286 : 714.29; digitToVerify = 8
+	//Reference: https://stackoverflow.com/questions/44310679/bankers-rounding-formula-in-excel;
+	//last accessed: 20201008
+	//answer by: Scott Craner, 20170601T15:06
 	private double UsbongUtilsRound(double inputValue, int numOfDecimalPlacesAfterDot) {
-		int iNum=10;
+		//edited by Mike, 20201007
+/*		
+		int iNum=1; //10
+		//edited by Mike, 20201007
 		for(int iCount=0; iCount<numOfDecimalPlacesAfterDot; iCount++) {
+		//for(int iCount=1; iCount<numOfDecimalPlacesAfterDot; iCount++) {
 			iNum=iNum*10;
 		}
 		
 //		inputValue = inputValue*100;
 		inputValue = inputValue*iNum;
-		inputValue = (double) Math.round(inputValue);
+		inputValue = (double) Math.round(inputValue);				
 		inputValue = inputValue/iNum;
+*/
+
+		//truncate, last digit: third number right of the dot, i.e. decimal point
+		//Example: 535.71675 -> 535.716
+		int iNum=10;
+		for(int iCount=0; iCount<numOfDecimalPlacesAfterDot; iCount++) {
+		//for(int iCount=1; iCount<numOfDecimalPlacesAfterDot; iCount++) {
+			iNum=iNum*10;
+		}
+		inputValue = inputValue*iNum;
+		inputValue = (int) inputValue;				
+		inputValue = inputValue/(iNum);		
+		
+		System.out.println("inputValue: " +inputValue);
+		
+		//added by Mike, 20201008
+		//banker's rounding: if even and <= 0.5, round down, else round up
+		//Examples: 
+		//535.716 : 535.71
+		//714.286 : 714.29
+
+		//get number of digits
+		int numOfDigits = (""+inputValue).length()-1;//do not include dot
+		
+//		System.out.println("numOfDigits: " + numOfDigits);
+
+//		int tempInputValue = Integer.parseInt((""+inputValue).substring(numOfDigits-1)); //get the second to the last digit, start at 0, dot not included
+		
+		int tempInputValue = 0;
+		//get the second to the last digit, start at 0, dot not included
+		String sLastDigit = (""+inputValue).substring(numOfDigits-1,numOfDigits);
+		
+		if (sLastDigit.equals(".")) {			
+		}
+		else {
+			tempInputValue = Integer.parseInt(sLastDigit);
+		}
+		
+//		System.out.println("tempInputValue: " + tempInputValue);
+
+		//note: 
+		//numOfDecimalPlacesAfterDot : 2 ; iUpdatedNum : 100
+		int iUpdatedNum = iNum/10;
+		
+		if ((tempInputValue%2) == 0) { //even
+			if (tempInputValue <= 5) { //0.5) {
+				//round down
+				//truncate
+				inputValue = inputValue*iUpdatedNum;
+				inputValue = (int) inputValue;
+				inputValue = inputValue/(iUpdatedNum);
+			}
+			else {
+				//round up
+				inputValue = (double) Math.round(inputValue*iUpdatedNum)/iUpdatedNum;
+			}
+		}
+		else {
+				//round down
+				//truncate
+				inputValue = inputValue*iUpdatedNum; //100;
+				inputValue = (int) inputValue;				
+				inputValue = inputValue/(iUpdatedNum);//100);
+		}
+
+//		System.out.println("after inputValue: " +inputValue);
 		
 		return inputValue;
 	}	

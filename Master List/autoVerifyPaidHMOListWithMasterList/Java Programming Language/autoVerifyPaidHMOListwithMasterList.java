@@ -1,5 +1,5 @@
 /*
- * Copyright 2018 Usbong Social Systems, Inc.
+ * Copyright 2018~2020 Usbong Social Systems, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,7 +11,14 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
+ * @author: SYSON, MICHAEL B.
+ * @date created: 2018
+ * @last updated: 20201029
+ *
  */
+ 
 import java.util.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,7 +59,7 @@ import java.text.ParsePosition;
 */ 
 
 public class autoVerifyPaidHMOListwithMasterList {	
-	private static boolean isInDebugMode = false;
+	private static boolean isInDebugMode = true;//false;
 	private static String inputFilename = "input201801"; //without extension; default input file
 	private static String inputHmoListFilename = "paidHmoList201811"; //without extension; default input file
 	
@@ -67,13 +74,23 @@ public class autoVerifyPaidHMOListwithMasterList {
 	private static final int INPUT_FEE_COLUMN = 7;
 	private static final int INPUT_CLASS_COLUMN = 8; //HMO and NON-HMO
 	private static final int INPUT_NET_PF_COLUMN = 10;
-	
+
+	//TO-DO: -update: set of instructions
+	//note: There are variations in the structure/format of newly received paid HMO lists
+/*	//edited by Mike, 20201029	
 	private static final int INPUT_HMO_LIST_NOTES_COLUMN = 0;
 	private static final int INPUT_HMO_LIST_DATE_COLUMN = 1;
 	private static final int INPUT_HMO_LIST_CLASS_COLUMN = 2;
 	private static final int INPUT_HMO_LIST_NAME_COLUMN = 3;
 	private static final int INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN = 7;
 	private static final int INPUT_HMO_LIST_NET_PF_COLUMN = 20;
+*/
+	private static final int INPUT_HMO_LIST_NOTES_COLUMN = 0;
+	private static final int INPUT_HMO_LIST_DATE_COLUMN = 1;
+	private static final int INPUT_HMO_LIST_CLASS_COLUMN = 2;
+	private static final int INPUT_HMO_LIST_NAME_COLUMN = 3;
+	private static final int INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN = 5;
+	private static final int INPUT_HMO_LIST_NET_PF_COLUMN = 10;
 
 	private static final int INPUT_CONSULTATION_OFFSET = 1;
 		
@@ -150,7 +167,8 @@ public class autoVerifyPaidHMOListwithMasterList {
 		return sb.substring(0,3).concat("-").concat(sb.substring(sb.length()-2,sb.length()));
 	}
 
-	//added by Mike, 20181227
+	//added by Mike, 20181227; edited by Mike, 20201029
+	//output: 30-Nov-19
 	private static String formatDateToMatchWithHmoListDateFormat(String date) {
 		StringBuffer sb = new StringBuffer(date);				
 		return getDay(date).concat("-").concat(sb.substring(0,3)).concat("-").concat(sb.substring(sb.length()-2,sb.length()));
@@ -281,11 +299,11 @@ public class autoVerifyPaidHMOListwithMasterList {
 //					System.out.println("inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]: "+inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]);
 					
 					if (inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN].equals(formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]))) {
-/*
+
 						System.out.println(
 						"inputColumns[INPUT_NAME_COLUMN].toLowerCase(): "+inputColumns[INPUT_NAME_COLUMN].toLowerCase()+"\t"+
 						"inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase());
-*/					
+					
 						if (inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase().equals(inputColumns[INPUT_NAME_COLUMN].toLowerCase()))
 						{
 							if (!isNumeric(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN])) {

@@ -247,10 +247,26 @@ public class autoVerifyPaidHMOListwithMasterList {
 	
 	private static void processInputFiles(String[] args, boolean isPhaseOne) throws Exception {
 		File hmoListFile = null;
+		
+		//added by Mike, 20201030
+		String sFileExtension = ".txt";
+		
 		for (int i=0; i<args.length; i++) {							
 			if (args[i].toLowerCase().contains("hmo")) {
-				inputHmoListFilename = args[i].replaceAll(".txt","");
-				hmoListFile = new File(inputHmoListFilename+".txt");
+				//added by Mike, 20201030
+				if (args[i].contains(".txt")) {
+					inputHmoListFilename = args[i].replaceAll(".txt","");
+					hmoListFile = new File(inputHmoListFilename+".txt");
+				}
+				else if (args[i].contains(".csv")) {
+					inputHmoListFilename = args[i].replaceAll(".csv","");
+					hmoListFile = new File(inputHmoListFilename+".csv");					
+					sFileExtension = ".csv";
+				}
+				else {
+					System.out.println("Did not find input files in .csv or .txt file formats");
+					return;
+				}
 			}
 		}
 		
@@ -267,12 +283,20 @@ public class autoVerifyPaidHMOListwithMasterList {
 				continue;
 			}
 		
-			inputFilename = args[i].replaceAll(".txt","");			
+			//edited by Mike, 20201030
+/*			inputFilename = args[i].replaceAll(".txt","");			
 			File f = new File(inputFilename+".txt");
-						
+*/
+			inputFilename = args[i].replaceAll(sFileExtension,"");			
+			File f = new File(inputFilename+sFileExtension);
+			
 /*			writer = new PrintWriter("output/"+inputFilename+".txt", "UTF-8");			
 */
+
+/*			//edited by Mike, 20201030
 			hmoListWriter = new PrintWriter("output/"+inputHmoListFilename+".txt", "UTF-8");
+*/
+			hmoListWriter = new PrintWriter("output/"+inputHmoListFilename+sFileExtension, "UTF-8");
 						
 			System.out.println("inputFilename: " + inputFilename);
 			
@@ -319,8 +343,10 @@ public class autoVerifyPaidHMOListwithMasterList {
 					continue;
 				}
 
-				//added by Mike, 20181230
-				writer = new PrintWriter("output/"+inputFilename+".txt", "UTF-8");			
+				//added by Mike, 20181230; edited by Mike, 20201030
+				//writer = new PrintWriter("output/"+inputFilename+".txt", "UTF-8");			
+				writer = new PrintWriter("output/"+inputFilename+sFileExtension, "UTF-8");			
+				
 				hmoRowCount++;
 
 				Scanner sc = new Scanner(new FileInputStream(f));				

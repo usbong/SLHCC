@@ -315,7 +315,9 @@ public class autoVerifyPaidHMOListwithMasterList {
 			s=sc.nextLine(); //skip the first row, which is the input file's table headers
 */
 			String hmoListString;		
-			hmoListString=hmoListScanner.nextLine(); //skip the first row, which is the input file's table headers
+
+			//removed by Mike, 20201030
+			//hmoListString=hmoListScanner.nextLine(); //skip the first row, which is the input file's table headers
 
 			rowCount=0;
 			hmoRowCount=0;
@@ -326,6 +328,13 @@ public class autoVerifyPaidHMOListwithMasterList {
 			//count/compute the number-based values of inputColumns 
 			while (hmoListScanner.hasNextLine()) {
 				hmoListString=hmoListScanner.nextLine();
+
+				//added by Mike, 20201030
+				//identify if table header row
+				if (hmoListString.contains("DATE")){
+					//skip the first row, which is the input file's table headers
+					hmoListString=hmoListScanner.nextLine();
+				}
 
 //				System.out.println("hmoListString: "+hmoListString);
 				
@@ -352,11 +361,22 @@ public class autoVerifyPaidHMOListwithMasterList {
 				Scanner sc = new Scanner(new FileInputStream(f));				
 			
 				String s;		
-				s=sc.nextLine(); //skip the first row, which is the input file's table headers
-	
+				
+				//removed by Mike, 20201030
+//				s =sc.nextLine(); 
+				
 				while (sc.hasNextLine()) {
 					s=sc.nextLine();
-//					System.out.println("hmoListString: "+hmoListString);
+
+					//identify if table header row
+					//skip the first row, which is the input file's table headers
+					if (s.contains("DATE")){
+						System.out.println(">>"+s.toString());
+
+						s=sc.nextLine(); //skip the first row, which is the input file's table headers
+					}				
+					
+					//System.out.println("hmoListString: "+hmoListString);
 			
 					//if the row is blank
 					if (s.trim().equals("")) {
@@ -365,6 +385,8 @@ public class autoVerifyPaidHMOListwithMasterList {
 					
 					String[] inputColumns = s.split("\t");					
 
+//					System.out.println(">>>"+s);
+					
 					rowCount++;
 					
 					if (isInDebugMode) {
@@ -384,6 +406,21 @@ public class autoVerifyPaidHMOListwithMasterList {
 					System.out.println("inputColumns[INPUT_DATE_COLUMN]: "+formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]));
 					System.out.println("inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]: "+inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]);
 					
+					//added by Mike, 20201030
+					//NumberFormat format = NumberFormat.getInstance(Locale.US);
+					Number nInputHMOListBilledAmount = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]));
+					double dInputHMOListBilledAmount = nInputHMOListBilledAmount.doubleValue();
+
+					Number nInputMasterListBilledAmount = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_FEE_COLUMN]));
+					double dInputMasterListBilledAmount = nInputMasterListBilledAmount.doubleValue();
+
+					Number nInputHMOListNetPf = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN]));
+					double dInputHMOListNetPf = nInputHMOListNetPf.doubleValue();
+
+					Number nInputMasterListNetPf = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_NET_PF_COLUMN]));
+					double dInputMasterListNetPf = nInputMasterListNetPf.doubleValue();
+
+					
 					if (inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN].equals(formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]))) {
 
 						System.out.println(
@@ -391,13 +428,13 @@ public class autoVerifyPaidHMOListwithMasterList {
 						"inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase());
 					
 						if (inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase().equals(inputColumns[INPUT_NAME_COLUMN].toLowerCase()))
-						{
-							
-							if (!isNumeric(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN])) {
-								if (isInDebugMode) {
+						{							
+							//edited by Mike, 20201030
+//							if (!isNumeric(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN])) {
+							if (!isNumeric(""+dInputHMOListBilledAmount)) {
+							if (isInDebugMode) {
 									System.out.println("NOT NUMERIC");
-									System.out.println("inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]): "+inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]);
-
+									System.out.println("inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]): "+dInputHMOListBilledAmount);
 								}
 								continue;
 							}
@@ -406,27 +443,29 @@ public class autoVerifyPaidHMOListwithMasterList {
 									System.out.println(">>>>>>>> IS NUMERIC");
 								}
 							}													
-
+/*
 							System.out.println("inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase());						
-
 							System.out.println("inputColumns[INPUT_FEE_COLUMN]: "+inputColumns[INPUT_FEE_COLUMN]);						
+*/
+							System.out.println("inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase(): "+dInputHMOListBilledAmount);						
+							System.out.println("inputColumns[INPUT_FEE_COLUMN]: "+dInputMasterListBilledAmount);
 
-							//added by Mike, 20201030
-							//TO-DO: fix: unparseble number, e.g. "" 68.58 ""
-							
+/*							
+							//added by Mike, 20201030; removed by Mike, 20201030							
 							//NumberFormat format = NumberFormat.getInstance(Locale.US);
-							Number nInputHMOListBilledAmount = format.parse(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]);
+							Number nInputHMOListBilledAmount = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]));
 							double dInputHMOListBilledAmount = nInputHMOListBilledAmount.doubleValue();
 
-							Number nInputMasterListBilledAmount = format.parse(inputColumns[INPUT_FEE_COLUMN]);
+							Number nInputMasterListBilledAmount = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_FEE_COLUMN]));
 							double dInputMasterListBilledAmount = nInputMasterListBilledAmount.doubleValue();
 
-							Number nInputHMOListNetPf = format.parse(inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN]);
+							Number nInputHMOListNetPf = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN]));
 							double dInputHMOListNetPf = nInputHMOListNetPf.doubleValue();
 
-							Number nInputMasterListNetPf = format.parse(inputColumns[INPUT_FEE_COLUMN]);
+							Number nInputMasterListNetPf = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_FEE_COLUMN]));
 							double dInputMasterListNetPf = nInputMasterListNetPf.doubleValue();
-
+*/
+	
 /*							if (Double.parseDouble(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]) == Double.parseDouble(inputColumns[INPUT_FEE_COLUMN])) {
 */								
 							if (dInputHMOListBilledAmount == dInputMasterListBilledAmount) {
@@ -439,8 +478,9 @@ public class autoVerifyPaidHMOListwithMasterList {
 								if (dInputHMOListNetPf == dInputMasterListNetPf) {
 /*
 									System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN].toLowerCase());		
-									
+*/									
 
+									/* //TO-DO: -verify: these
 									System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase());						
 									System.out.println(">> inputColumns[INPUT_CLASS_COLUMN].toLowerCase(): "+inputColumns[INPUT_CLASS_COLUMN].toLowerCase());	*/					
 
@@ -485,5 +525,13 @@ public class autoVerifyPaidHMOListwithMasterList {
 	  ParsePosition pos = new ParsePosition(0);
 	  formatter.parse(str, pos);
 	  return str.length() == pos.getIndex();
+	}
+	
+	//added by Mike, 20201030
+	//fix: unparseable number, e.g. "" 68.58 ""
+	//input: "" 68.58 ""
+	//output (String type): 68.58
+	private static String UsbongUtilsStringConvertToParseableNumberString(String input) {
+		return input.replace("\"","").replace(" ","");
 	}
 }

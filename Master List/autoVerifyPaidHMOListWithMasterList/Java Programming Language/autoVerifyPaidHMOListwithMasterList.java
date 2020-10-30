@@ -15,7 +15,7 @@
  * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20201029
+ * @last updated: 20201030
  *
  */
  
@@ -59,7 +59,7 @@ import java.text.ParsePosition;
 */ 
 
 public class autoVerifyPaidHMOListwithMasterList {	
-	private static boolean isInDebugMode = true;//false;
+	private static boolean isInDebugMode = true;
 	private static String inputFilename = "input201801"; //without extension; default input file
 	private static String inputHmoListFilename = "paidHmoList201811"; //without extension; default input file
 	
@@ -89,8 +89,8 @@ public class autoVerifyPaidHMOListwithMasterList {
 	private static final int INPUT_HMO_LIST_DATE_COLUMN = 1;
 	private static final int INPUT_HMO_LIST_CLASS_COLUMN = 2;
 	private static final int INPUT_HMO_LIST_NAME_COLUMN = 3;
-	private static final int INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN = 5;
-	private static final int INPUT_HMO_LIST_NET_PF_COLUMN = 10;
+	private static final int INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN = 7;
+	private static final int INPUT_HMO_LIST_NET_PF_COLUMN = 20;
 
 	private static final int INPUT_CONSULTATION_OFFSET = 1;
 		
@@ -167,10 +167,64 @@ public class autoVerifyPaidHMOListwithMasterList {
 		return sb.substring(0,3).concat("-").concat(sb.substring(sb.length()-2,sb.length()));
 	}
 
+	//added by Mike, 20201030	
+	//input: 11/04/2019
+	//input: Nov-04-19
+	private static String convertDateToMonthWordDayYear(String date) {
+		StringBuffer sb = new StringBuffer(date);	
+		
+		String year = sb.substring(6,10); //index 10 is not included
+		String day = sb.substring(3,5); //index 5 is not included
+		int month = Integer.parseInt(sb.substring(0,2)); //index 2 is not included
+		
+		switch(month) {
+			case 1:
+				return "Jan" + "-" + day + "-" + year;
+			case 2:
+				return "Feb" + "-" + day + "-" + year;
+			case 3:
+				return "Mar" + "-" + day + "-" + year;
+			case 4:
+				return "Apr" + "-" + day + "-" + year;
+			case 5:
+				return "May" + "-" + day + "-" + year;
+			case 6:
+				return "Jun" + "-" + day + "-" + year;
+			case 7:
+				return "Jul" + "-" + day + "-" + year;
+			case 8:
+				return "Aug" + "-" + day + "-" + year;
+			case 9:
+				return "Sep" + "-" + day + "-" + year;
+			case 10:
+				return "Oct" + "-" + day + "-" + year;
+			case 11:
+				return "Nov" + "-" + day + "-" + year;
+			case 12:
+				return "Dec" + "-" + day + "-" + year;
+		}	
+
+		return null;//error
+	}
+
 	//added by Mike, 20181227; edited by Mike, 20201029
+	//input: Nov-04-19
 	//output: 30-Nov-19
 	private static String formatDateToMatchWithHmoListDateFormat(String date) {
 		StringBuffer sb = new StringBuffer(date);				
+
+		//added by Mike, 20201030
+		//identify if date format is MM/DD/YYYY
+		//example: 11/04/2019
+		//output: Nov-04-19
+		//TO-DO: -update: this
+		//verify if slash exists
+		if (date.contains("/")) {
+			date = convertDateToMonthWordDayYear(date);			
+			sb = new StringBuffer(date);
+		}
+
+//		StringBuffer sb = new StringBuffer(date);				
 		return getDay(date).concat("-").concat(sb.substring(0,3)).concat("-").concat(sb.substring(sb.length()-2,sb.length()));
 	}
 
@@ -241,6 +295,9 @@ public class autoVerifyPaidHMOListwithMasterList {
 
 			rowCount=0;
 			hmoRowCount=0;
+
+			//added by Mike, 20201030
+			NumberFormat format = NumberFormat.getInstance(Locale.US);
 			
 			//count/compute the number-based values of inputColumns 
 			while (hmoListScanner.hasNextLine()) {
@@ -295,8 +352,11 @@ public class autoVerifyPaidHMOListwithMasterList {
 						continue;
 					}
 					
-//					System.out.println("inputColumns[INPUT_DATE_COLUMN]: "+formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]));
-//					System.out.println("inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]: "+inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]);
+					//TO-DO: -verify: date format of input master list file
+					System.out.println("inputColumns[INPUT_DATE_COLUMN]: "+ inputColumns[INPUT_DATE_COLUMN]);
+					
+					System.out.println("inputColumns[INPUT_DATE_COLUMN]: "+formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]));
+					System.out.println("inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]: "+inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]);
 					
 					if (inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN].equals(formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]))) {
 
@@ -306,9 +366,12 @@ public class autoVerifyPaidHMOListwithMasterList {
 					
 						if (inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase().equals(inputColumns[INPUT_NAME_COLUMN].toLowerCase()))
 						{
+							
 							if (!isNumeric(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN])) {
 								if (isInDebugMode) {
 									System.out.println("NOT NUMERIC");
+									System.out.println("inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]): "+inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]);
+
 								}
 								continue;
 							}
@@ -322,19 +385,39 @@ public class autoVerifyPaidHMOListwithMasterList {
 
 							System.out.println("inputColumns[INPUT_FEE_COLUMN]: "+inputColumns[INPUT_FEE_COLUMN]);						
 
-							if (Double.parseDouble(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]) == Double.parseDouble(inputColumns[INPUT_FEE_COLUMN])) {
-/*								
+							//added by Mike, 20201030
+							//TO-DO: fix: unparseble number, e.g. "" 68.58 ""
+							
+							//NumberFormat format = NumberFormat.getInstance(Locale.US);
+							Number nInputHMOListBilledAmount = format.parse(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]);
+							double dInputHMOListBilledAmount = nInputHMOListBilledAmount.doubleValue();
+
+							Number nInputMasterListBilledAmount = format.parse(inputColumns[INPUT_FEE_COLUMN]);
+							double dInputMasterListBilledAmount = nInputMasterListBilledAmount.doubleValue();
+
+							Number nInputHMOListNetPf = format.parse(inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN]);
+							double dInputHMOListNetPf = nInputHMOListNetPf.doubleValue();
+
+							Number nInputMasterListNetPf = format.parse(inputColumns[INPUT_FEE_COLUMN]);
+							double dInputMasterListNetPf = nInputMasterListNetPf.doubleValue();
+
+/*							if (Double.parseDouble(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]) == Double.parseDouble(inputColumns[INPUT_FEE_COLUMN])) {
+*/								
+							if (dInputHMOListBilledAmount == dInputMasterListBilledAmount) {
+/*
 								System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase());						
 */
-								if (Double.parseDouble(inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN]) == Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN])) {								
-/*								
-									System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN].toLowerCase());		
-*/									
-
 /*
-									System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase());						
-									System.out.println(">> inputColumns[INPUT_CLASS_COLUMN].toLowerCase(): "+inputColumns[INPUT_CLASS_COLUMN].toLowerCase());						
+								if (Double.parseDouble(inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN]) == Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN])) {															
 */
+								if (dInputHMOListNetPf == dInputMasterListNetPf) {
+/*
+									System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN].toLowerCase());		
+									
+
+									System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase());						
+									System.out.println(">> inputColumns[INPUT_CLASS_COLUMN].toLowerCase(): "+inputColumns[INPUT_CLASS_COLUMN].toLowerCase());	*/					
+
 									if (inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase().trim().equals(inputColumns[INPUT_CLASS_COLUMN].toLowerCase().replace("hmo/","").trim())) {								
 										System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase());			
 

@@ -15,7 +15,7 @@
  * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20201030
+ * @last updated: 20201101
  *
  */
  
@@ -406,9 +406,16 @@ public class autoVerifyPaidHMOListwithMasterList {
 					System.out.println("inputColumns[INPUT_DATE_COLUMN]: "+formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]));
 					System.out.println("inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]: "+inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]);
 					
-					//added by Mike, 20201030
+					//added by Mike, 20201030; edited by Mike, 20201101
 					//NumberFormat format = NumberFormat.getInstance(Locale.US);
+					//This is due to select rows in the input file do not have values in all the specified column
+					//Example: row with value: "STA LUCIA HEALTH CARE CENTER, INCORPORATED" 
+					if (inputHmoListColumns.length<=INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN) {
+						continue;
+					}
+					
 					Number nInputHMOListBilledAmount = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]));
+					
 					double dInputHMOListBilledAmount = nInputHMOListBilledAmount.doubleValue();
 
 					Number nInputMasterListBilledAmount = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_FEE_COLUMN]));

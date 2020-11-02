@@ -278,6 +278,8 @@ public class autoVerifyPaidHMOListwithMasterList {
 		PrintWriter writer = null;			
 		PrintWriter hmoListWriter = null;
 
+		//verify all input files for each Month from Master List
+		//At present, we use only 1 input file classified with keyword,"hmo"
 		for (int i=0; i<args.length; i++) {						
 			if (args[i].toLowerCase().contains("hmo")) {
 				continue;
@@ -295,8 +297,11 @@ public class autoVerifyPaidHMOListwithMasterList {
 
 			//added by Mike, 20201102
 			//TO-DO: -update: instructions to auto-process multiple input files, e.g. paid HMO lists and Master List worksheets per month
-			writer = new PrintWriter("output/"+inputFilename+"With"+inputHmoListFilename+sFileExtension, "UTF-8");			
-
+			String outputFilenameWithExtension = "output/"+inputFilename+"With"+inputHmoListFilename+sFileExtension;
+	
+/*			//removed by Mike, 20201102
+			writer = new PrintWriter("output/"+outputFilename, "UTF-8");			
+*/
 /*			//edited by Mike, 20201030
 			hmoListWriter = new PrintWriter("output/"+inputHmoListFilename+".txt", "UTF-8");
 */
@@ -356,20 +361,45 @@ public class autoVerifyPaidHMOListwithMasterList {
 					continue;
 				}
 
-/*				//removed by Mike, 20201102
+/*				//edited by Mike, 20201102
 				//added by Mike, 20181230; edited by Mike, 20201030
 				//writer = new PrintWriter("output/"+inputFilename+".txt", "UTF-8");			
 				writer = new PrintWriter("output/"+inputFilename+sFileExtension, "UTF-8");
-*/
-				
+*/				
+
 				hmoRowCount++;
 
-				Scanner sc = new Scanner(new FileInputStream(f));				
-			
+				//edited by Mike, 20201102
+//				Scanner sc = new Scanner(new FileInputStream(f));
+				File outputFile = new File(outputFilenameWithExtension);
+
+				Scanner sc = new Scanner(new FileInputStream(f));
+//	
+				if(outputFile.exists() && !outputFile.isDirectory()) { 
+					sc = new Scanner(new FileInputStream(outputFile));			
+
+System.out.println(">>>EXISTS: " + outputFile);				
+
+					String s1=sc.nextLine();
+System.out.println(">>>EXISTS: s: " + s1);				
+				}
+/*				else {
+					sc = new Scanner(new FileInputStream(f));
+//					writer = new PrintWriter("output/"+outputFilename, "UTF-8");	
+
+System.out.println(">>>USBONG");				
+
+				}
+*/
+				writer = new PrintWriter(outputFilenameWithExtension, "UTF-8");	
+				
 				String s;		
 				
 				//removed by Mike, 20201030
 //				s =sc.nextLine(); 
+				
+				//added by Mike, 20201102
+				rowCount=0; //remove this to receive total count of rows verified and reverified by computer
 				
 				while (sc.hasNextLine()) {
 					s=sc.nextLine();
@@ -398,11 +428,33 @@ public class autoVerifyPaidHMOListwithMasterList {
 					if (isInDebugMode) {
 						System.out.println("rowCount: "+rowCount);
 					}
+
+					//added by Mike, 20201030; edited by Mike, 20201101
+					//NumberFormat format = NumberFormat.getInstance(Locale.US);
+					//This is due to select rows in the input file do not have values in all the specified column
+					//Example: row with value: "STA LUCIA HEALTH CARE CENTER, INCORPORATED" 
+					if (inputHmoListColumns.length<=INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN) {
+						//added by Mike, 20201102
+						writer.println(s);					
+
+						continue;
+					}
+
+					//added by Mike, 20201102
+					if (inputColumns.length<=INPUT_CLASS_COLUMN) {
+						//added by Mike, 20201102
+						writer.println(s);					
+
+						continue;
+					}
 					
 					//added by Mike, 20181121
 					//skip transactions that have "RehabSupplies" as its "CLASS" value
 					//In Excel logbook/workbook 2018 onwards, such transactions are not included in the Consultation and PT Treatment Excel logbooks/workbooks.
 					if (inputColumns[INPUT_CLASS_COLUMN].contains("RehabSupplies")) {
+						//added by Mike, 20201102
+						writer.println(s);					
+
 						continue;
 					}
 					
@@ -412,13 +464,6 @@ public class autoVerifyPaidHMOListwithMasterList {
 					System.out.println("inputColumns[INPUT_DATE_COLUMN]: "+formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]));
 					System.out.println("inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]: "+inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN]);
 					
-					//added by Mike, 20201030; edited by Mike, 20201101
-					//NumberFormat format = NumberFormat.getInstance(Locale.US);
-					//This is due to select rows in the input file do not have values in all the specified column
-					//Example: row with value: "STA LUCIA HEALTH CARE CENTER, INCORPORATED" 
-					if (inputHmoListColumns.length<=INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN) {
-						continue;
-					}
 					
 					Number nInputHMOListBilledAmount = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]));
 					
@@ -529,10 +574,15 @@ public class autoVerifyPaidHMOListwithMasterList {
 										
 										System.out.println(">>>>> s: "+s);			
 
+										System.out.println("DITO 1");			
+
 										//TO-DO: -fix: final output blank
 										//hmoListWriter = new PrintWriter("output/"+inputHmoListFilename
-										writer.println(s);					
-										break;
+//										writer.println(s);					
+
+										System.out.println("DITO 2");			
+										
+//										break;
 									}
 								}
 							}
@@ -541,9 +591,14 @@ public class autoVerifyPaidHMOListwithMasterList {
 						
 						System.out.println(">>"+formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]));
 					}
+
+					System.out.println("HALLO s: "+s);			
+
 //removed by Mike, 20201102
-//					writer.println(s);					
-				}				
+					writer.println(s);					
+				}		
+					System.out.println("WAKAS");			
+				
 				writer.close();									
 				
 				hmoListWriter.println(hmoListString);					

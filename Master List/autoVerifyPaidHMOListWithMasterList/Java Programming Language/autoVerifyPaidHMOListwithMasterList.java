@@ -15,7 +15,7 @@
  * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20201102
+ * @last updated: 20201103
  *
  */
  
@@ -301,9 +301,11 @@ public class autoVerifyPaidHMOListwithMasterList {
 			//TO-DO: -update: instructions to auto-process multiple input files, e.g. paid HMO lists and Master List worksheets per month
 			String outputFilenameWithExtension = "output/"+inputFilename+"With"+inputHmoListFilename+sFileExtension;
 
+/*			//removed by Mike, 20201103
 			//added by Mike, 20201102
 			writer = new PrintWriter(outputFilenameWithExtension, "UTF-8");	
-	
+*/	
+
 /*			//removed by Mike, 20201102
 			writer = new PrintWriter("output/"+outputFilename, "UTF-8");			
 */
@@ -372,6 +374,11 @@ public class autoVerifyPaidHMOListwithMasterList {
 				writer = new PrintWriter("output/"+inputFilename+sFileExtension, "UTF-8");
 */				
 
+				//added by Mike, 20201103
+				//create temporary file
+				//note: after writing the temp file, computer reads it and writes the output file 
+				writer = new PrintWriter(outputFilenameWithExtension+"temp", "UTF-8");	
+
 				hmoRowCount++;
 				
 				//TO-DO: -fix: read file using scanner is not the one inside the output folder
@@ -381,7 +388,12 @@ public class autoVerifyPaidHMOListwithMasterList {
 				File outputFile = new File(outputFilenameWithExtension);
 
 				Scanner sc = new Scanner(new FileInputStream(f));
-//	
+				
+				//TO-DO: -update: instructions due to output files blank
+				//both final and temporary files
+				//may be due to the last file read and written
+				//rowCount: 1062; instead of 268
+				
 				if(outputFile.exists() && !outputFile.isDirectory()) { 
 					sc = new Scanner(new FileInputStream(outputFile));			
 
@@ -451,17 +463,17 @@ System.out.println("HALLO>>>>>>>");
 					//This is due to select rows in the input file do not have values in all the specified column
 					//Example: row with value: "STA LUCIA HEALTH CARE CENTER, INCORPORATED" 
 					if (inputHmoListColumns.length<=INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN) {
-						//added by Mike, 20201102
-						writer.println(s);					
+						//added by Mike, 20201102; removed by Mike, 20201103
+//						writer.println(s);
 
 						continue;
 					}
 
 					//added by Mike, 20201102
 					if (inputColumns.length<=INPUT_CLASS_COLUMN) {
-						//added by Mike, 20201102
-						writer.println(s);					
-
+						//added by Mike, 20201102; removed by Mike, 20201103
+						//write only columns A to D
+//						writer.println(s);
 						continue;
 					}
 					
@@ -469,9 +481,9 @@ System.out.println("HALLO>>>>>>>");
 					//skip transactions that have "RehabSupplies" as its "CLASS" value
 					//In Excel logbook/workbook 2018 onwards, such transactions are not included in the Consultation and PT Treatment Excel logbooks/workbooks.
 					if (inputColumns[INPUT_CLASS_COLUMN].contains("RehabSupplies")) {
-						//added by Mike, 20201102
-						writer.println(s);					
-
+						//added by Mike, 20201102; removed by Mike, 20201103
+						//write only columns A to D
+//						writer.println(s);
 						continue;
 					}
 					
@@ -522,9 +534,12 @@ System.out.println("HALLO>>>>>>>");
 									System.out.println("inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]): "+dInputHMOListBilledAmount);
 								}
 								
-								//added by Mike, 20201102
-								writer.println(s);					
-
+								//edited by Mike, 20201102
+//								writer.println(s);
+								for (int iColumnCount=0; iColumnCount<4; iColumnCount++) {
+									writer.println(inputColumns[iColumnCount]+"\t");
+								}
+								
 								continue;
 							}
 							else {
@@ -591,7 +606,12 @@ System.out.println("HALLO>>>>>>>");
 
 										//System.out.println(""+inputHmoListFilename);
 										//StringBuffer hmoListStringBuffer = new StringBuffer(hmoListString);
-										s = inputHmoListFilename + "\t" + s;
+
+										//edited by Mike, 20201103
+										//container "s" already has "\t" at the start
+										//this is for the Notes column
+										//s = inputHmoListFilename + "\t" + s;
+										s = inputHmoListFilename + "; " + s;
 										
 										System.out.println(">>>>> s: "+s);			
 
@@ -600,7 +620,12 @@ System.out.println("HALLO>>>>>>>");
 										//TO-DO: -fix: final output blank
 										//hmoListWriter = new PrintWriter("output/"+inputHmoListFilename
 
-										writer.println(s);					
+										//edited by Mike, 20201103
+										//write only columns A to D
+				//						writer.println(s);
+										for (int iColumnCount=0; iColumnCount<4; iColumnCount++) {
+											writer.println(inputColumns[iColumnCount]+"\t");
+										}
 
 										System.out.println("DITO 2");			
 
@@ -620,8 +645,13 @@ System.out.println("HALLO>>>>>>>");
 
 					System.out.println("HALLO s: "+s);			
 
-//removed by Mike, 20201102
-					writer.println(s);					
+					//edited by Mike, 20201103
+					//write only columns A to D
+//						writer.println(s);
+					for (int iColumnCount=0; iColumnCount<4; iColumnCount++) {
+						writer.println(inputColumns[iColumnCount]+"\t");
+					}
+
 				}		
 					System.out.println("WAKAS");			
 				
@@ -629,6 +659,26 @@ System.out.println("HALLO>>>>>>>");
 				//may be due to read file in output folder not newest updated version
 				
 				writer.close();									
+
+				//added by Mike, 20201103				
+				File outputTempFile = new File(outputFilenameWithExtension+"temp");
+
+				if(outputTempFile.exists() && !outputTempFile.isDirectory()) { 
+					PrintWriter outputWriter = new PrintWriter(outputFilenameWithExtension, "UTF-8");	
+
+					sc = new Scanner(new FileInputStream(outputTempFile));			
+
+System.out.println(">>>TEMP FILE EXISTS: " + outputTempFile);				
+					String sOutput;
+
+					while (sc.hasNextLine()) {
+						sOutput=sc.nextLine();
+					
+						outputWriter.println(sOutput);
+					}
+					
+					outputWriter.close();
+				}
 				
 				hmoListWriter.println(hmoListString);					
 			}			

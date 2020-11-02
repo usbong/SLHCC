@@ -291,6 +291,8 @@ public class autoVerifyPaidHMOListwithMasterList {
 */
 			inputFilename = args[i].replaceAll(sFileExtension,"");			
 			File f = new File(inputFilename+sFileExtension);
+
+			System.out.println("inputFilename+sFileExtension: "+inputFilename+sFileExtension);
 			
 /*			writer = new PrintWriter("output/"+inputFilename+".txt", "UTF-8");			
 */
@@ -298,6 +300,9 @@ public class autoVerifyPaidHMOListwithMasterList {
 			//added by Mike, 20201102
 			//TO-DO: -update: instructions to auto-process multiple input files, e.g. paid HMO lists and Master List worksheets per month
 			String outputFilenameWithExtension = "output/"+inputFilename+"With"+inputHmoListFilename+sFileExtension;
+
+			//added by Mike, 20201102
+			writer = new PrintWriter(outputFilenameWithExtension, "UTF-8");	
 	
 /*			//removed by Mike, 20201102
 			writer = new PrintWriter("output/"+outputFilename, "UTF-8");			
@@ -368,6 +373,8 @@ public class autoVerifyPaidHMOListwithMasterList {
 */				
 
 				hmoRowCount++;
+				
+				//TO-DO: -fix: read file using scanner is not the one inside the output folder
 
 				//edited by Mike, 20201102
 //				Scanner sc = new Scanner(new FileInputStream(f));
@@ -379,20 +386,23 @@ public class autoVerifyPaidHMOListwithMasterList {
 					sc = new Scanner(new FileInputStream(outputFile));			
 
 System.out.println(">>>EXISTS: " + outputFile);				
+					
+					//verify if value inside file is blank
+					//note: when executing writer = new PrintWriter(...)
+					//computer creates a blank file
+					if (!sc.hasNextLine()) {
+						sc = new Scanner(new FileInputStream(f));
+					}
+					else {
+						
+System.out.println("HALLO>>>>>>>");						
 
-					String s1=sc.nextLine();
-System.out.println(">>>EXISTS: s: " + s1);				
+					}
 				}
-/*				else {
-					sc = new Scanner(new FileInputStream(f));
-//					writer = new PrintWriter("output/"+outputFilename, "UTF-8");	
 
-System.out.println(">>>USBONG");				
-
-				}
-*/
+/*				//removed by Mike, 20201102
 				writer = new PrintWriter(outputFilenameWithExtension, "UTF-8");	
-				
+*/				
 				String s;		
 				
 				//removed by Mike, 20201030
@@ -403,6 +413,13 @@ System.out.println(">>>USBONG");
 				
 				while (sc.hasNextLine()) {
 					s=sc.nextLine();
+
+//						System.out.println(">>DITO>>"+s.toString());
+
+					if (s.contains("BERGSTEIN")) {
+						System.out.println(">>DITO>>"+s.toString());
+	
+					}
 
 					//identify if table header row
 					//skip the first row, which is the input file's table headers
@@ -500,10 +517,14 @@ System.out.println(">>>USBONG");
 							//edited by Mike, 20201030
 //							if (!isNumeric(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN])) {
 							if (!isNumeric(""+dInputHMOListBilledAmount)) {
-							if (isInDebugMode) {
+								if (isInDebugMode) {
 									System.out.println("NOT NUMERIC");
 									System.out.println("inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]): "+dInputHMOListBilledAmount);
 								}
+								
+								//added by Mike, 20201102
+								writer.println(s);					
+
 								continue;
 							}
 							else {
@@ -578,11 +599,16 @@ System.out.println(">>>USBONG");
 
 										//TO-DO: -fix: final output blank
 										//hmoListWriter = new PrintWriter("output/"+inputHmoListFilename
-//										writer.println(s);					
+
+										writer.println(s);					
 
 										System.out.println("DITO 2");			
-										
-//										break;
+
+/*										//note: output file not updated	after write
+										writer.close();									
+										return;
+*/
+										break;
 									}
 								}
 							}
@@ -598,6 +624,9 @@ System.out.println(">>>USBONG");
 					writer.println(s);					
 				}		
 					System.out.println("WAKAS");			
+				
+				//TO-DO: -reverify: with less rows cause incorrect output
+				//may be due to read file in output folder not newest updated version
 				
 				writer.close();									
 				

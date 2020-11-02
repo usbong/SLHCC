@@ -15,7 +15,7 @@
  * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20201101
+ * @last updated: 20201102
  *
  */
  
@@ -293,6 +293,10 @@ public class autoVerifyPaidHMOListwithMasterList {
 /*			writer = new PrintWriter("output/"+inputFilename+".txt", "UTF-8");			
 */
 
+			//added by Mike, 20201102
+			//TO-DO: -update: instructions to auto-process multiple input files, e.g. paid HMO lists and Master List worksheets per month
+			writer = new PrintWriter("output/"+inputFilename+"With"+inputHmoListFilename+sFileExtension, "UTF-8");			
+
 /*			//edited by Mike, 20201030
 			hmoListWriter = new PrintWriter("output/"+inputHmoListFilename+".txt", "UTF-8");
 */
@@ -352,9 +356,11 @@ public class autoVerifyPaidHMOListwithMasterList {
 					continue;
 				}
 
+/*				//removed by Mike, 20201102
 				//added by Mike, 20181230; edited by Mike, 20201030
 				//writer = new PrintWriter("output/"+inputFilename+".txt", "UTF-8");			
-				writer = new PrintWriter("output/"+inputFilename+sFileExtension, "UTF-8");			
+				writer = new PrintWriter("output/"+inputFilename+sFileExtension, "UTF-8");
+*/
 				
 				hmoRowCount++;
 
@@ -427,6 +433,16 @@ public class autoVerifyPaidHMOListwithMasterList {
 					Number nInputMasterListNetPf = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_NET_PF_COLUMN]));
 					double dInputMasterListNetPf = nInputMasterListNetPf.doubleValue();
 
+					//added by Mike, 20201102
+					//Execute for HMO payments dated 202010 onwards
+					//previously, 0.90, instead of 0.95
+					//note: Format code: "#,##0.00" not Banker's Rounding
+					//Setting Format code updates what is displayed, but does not round the actual value
+					//Example: "535.716" is displayed as "535.72" 
+					//double dInputMasterListNetPfTaxUpdated = (dInputMasterListBilledAmount - dInputMasterListBilledAmount* 0.02) / 1.12 * 0.7 * 0.95;
+					double dInputMasterListNetPfTaxUpdatedNotRounded = (dInputMasterListBilledAmount - dInputMasterListBilledAmount* 0.02) / 1.12 * 0.7 * 0.95;
+					double dInputMasterListNetPfTaxUpdated = Math.round(dInputMasterListNetPfTaxUpdatedNotRounded * 100.0) / 100.0;
+
 					
 					if (inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN].equals(formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]))) {
 
@@ -485,9 +501,17 @@ public class autoVerifyPaidHMOListwithMasterList {
 								//TO-DO: -reverify: NET PF computation due to VAT, etc
 
 								System.out.println(">> dInputHMOListNetPf : "+dInputHMOListNetPf);		
-								System.out.println(">> dInputMasterListNetPf : "+dInputMasterListNetPf);		
+								System.out.println(">> dInputMasterListNetPf : "+dInputMasterListNetPf);	
 
-								if (dInputHMOListNetPf == dInputMasterListNetPf) {
+								//added by Mike, 20201102
+								System.out.println(">> dInputMasterListNetPfTaxUpdated : "+dInputMasterListNetPfTaxUpdated);	
+
+
+								//edited by Mike, 20201102
+								//if (dInputHMOListNetPf == dInputMasterListNetPf) {
+								//Execute for HMO payments dated 202010 onwards
+								if ((dInputHMOListNetPf == dInputMasterListNetPf) ||
+									(dInputHMOListNetPf == dInputMasterListNetPfTaxUpdated)) {
 /*
 									System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN].toLowerCase());		
 */									
@@ -505,6 +529,7 @@ public class autoVerifyPaidHMOListwithMasterList {
 										
 										System.out.println(">>>>> s: "+s);			
 
+										//TO-DO: -fix: final output blank
 										//hmoListWriter = new PrintWriter("output/"+inputHmoListFilename
 										writer.println(s);					
 										break;
@@ -516,8 +541,8 @@ public class autoVerifyPaidHMOListwithMasterList {
 						
 						System.out.println(">>"+formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]));
 					}
-					
-					writer.println(s);					
+//removed by Mike, 20201102
+//					writer.println(s);					
 				}				
 				writer.close();									
 				

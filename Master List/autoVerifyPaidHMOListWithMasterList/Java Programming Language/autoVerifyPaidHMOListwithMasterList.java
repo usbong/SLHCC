@@ -16,9 +16,17 @@
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
  * @last updated: 20201103
+ * 
+ * Note
+ * 1) Set when opening the output .csv file to use only the Tab as the delimeter;
+ * --> no need to include "," and ";" as delimiters 
  *
  */
- 
+
+//TO-DO: -reverify: set of instructions with Windows machine
+//--> output from test#1 OK in Linux machine
+//TO-DO: -reverify: with multiple input files
+
 import java.util.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -634,7 +642,10 @@ System.out.println("HALLO>>>>>>>");
 										//container "s" already has "\t" at the start
 										//this is for the Notes column
 										//s = inputHmoListFilename + "\t" + s;
-										s = inputHmoListFilename + "; " + s;
+										//s = inputHmoListFilename + "; " + s;
+										//note: set when opening the output .csv file to use only the Tab as the delimeter;
+										//no need to include "," and ";" as delimiters 
+										s = "paid: " + inputHmoListFilename + ";" + s; //s.replaceFirst("\t","");
 										
 										System.out.println(">>>>> s: "+s);			
 
@@ -645,7 +656,10 @@ System.out.println("HALLO>>>>>>>");
 
 										//edited by Mike, 20201103
 										//write only columns A to D
+/*										//removed by Mike, 20201103
 										writer.println(s);
+*/
+										
 /*
 										for (int iColumnCount=0; iColumnCount<4; iColumnCount++) {
 											writer.print(inputColumns[iColumnCount]+"\t");
@@ -658,7 +672,10 @@ System.out.println("HALLO>>>>>>>");
 										writer.close();									
 										return;
 */
+										
+/*										//removed by Mike, 20201103
 										break;
+*/
 									}
 								}
 							}

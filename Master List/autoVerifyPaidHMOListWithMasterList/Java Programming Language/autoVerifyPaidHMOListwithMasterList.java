@@ -74,6 +74,8 @@ public class autoVerifyPaidHMOListwithMasterList {
 	private static final int INPUT_FEE_COLUMN = 7;
 	private static final int INPUT_CLASS_COLUMN = 8; //HMO and NON-HMO
 	private static final int INPUT_NET_PF_COLUMN = 10;
+	
+	private static final int INPUT_DIAGNOSIS_COLUMN = 6; //added by Mike, 20201103
 
 	//TO-DO: -update: set of instructions
 	//note: There are variations in the structure/format of newly received paid HMO lists
@@ -422,9 +424,17 @@ System.out.println("HALLO>>>>>>>");
 				
 				//added by Mike, 20201102
 				rowCount=0; //remove this to receive total count of rows verified and reverified by computer
+
+				//TO-DO: -fix: >>>TEMP FILE EXISTS BUT BLANK: output\PT TREATMENT 
+				//TO-DO: -fix: temp file increases in size
+				
 				
 				while (sc.hasNextLine()) {
 					s=sc.nextLine();
+					
+					//added by Mike, 20201103
+					//note: remove value of diagnosis column in output file
+//					s = s.replace("®","");
 
 //						System.out.println(">>DITO>>"+s.toString());
 
@@ -458,6 +468,15 @@ System.out.println("HALLO>>>>>>>");
 						System.out.println("rowCount: "+rowCount);
 					}
 
+					
+					//added by Mike, 20201103
+					//remove errors in encoding after reading
+					//TO-DO: -add: auto-remove
+					//note: "â€¦" is read from LibreOffice Calc, albeit not when we use Java Computer Language
+					//s = s.replace("â€¦","");
+
+//					System.out.println(">>>"+s);
+
 					//added by Mike, 20201030; edited by Mike, 20201101
 					//NumberFormat format = NumberFormat.getInstance(Locale.US);
 					//This is due to select rows in the input file do not have values in all the specified column
@@ -465,7 +484,6 @@ System.out.println("HALLO>>>>>>>");
 					if (inputHmoListColumns.length<=INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN) {
 						//added by Mike, 20201102; removed by Mike, 20201103
 //						writer.println(s);
-
 						continue;
 					}
 
@@ -473,7 +491,7 @@ System.out.println("HALLO>>>>>>>");
 					if (inputColumns.length<=INPUT_CLASS_COLUMN) {
 						//added by Mike, 20201102; removed by Mike, 20201103
 						//write only columns A to D
-//						writer.println(s);
+						writer.println(s);
 						continue;
 					}
 					
@@ -483,9 +501,14 @@ System.out.println("HALLO>>>>>>>");
 					if (inputColumns[INPUT_CLASS_COLUMN].contains("RehabSupplies")) {
 						//added by Mike, 20201102; removed by Mike, 20201103
 						//write only columns A to D
-//						writer.println(s);
+						writer.println(s);
 						continue;
 					}
+					
+					//added by Mike, 20201103
+					//note: remove value of diagnosis column in output file
+					//"â€¦" is read from LibreOffice Calc, albeit not when we use Java Computer Language
+					s = s.replace(inputColumns[INPUT_DIAGNOSIS_COLUMN],"");
 					
 					//TO-DO: -verify: date format of input master list file
 					System.out.println("inputColumns[INPUT_DATE_COLUMN]: "+ inputColumns[INPUT_DATE_COLUMN]);
@@ -535,11 +558,11 @@ System.out.println("HALLO>>>>>>>");
 								}
 								
 								//edited by Mike, 20201102
-//								writer.println(s);
-								for (int iColumnCount=0; iColumnCount<4; iColumnCount++) {
-									writer.println(inputColumns[iColumnCount]+"\t");
+								writer.println(s);
+/*								for (int iColumnCount=0; iColumnCount<4; iColumnCount++) {
+									writer.print(inputColumns[iColumnCount]+"\t");
 								}
-								
+*/								
 								continue;
 							}
 							else {
@@ -622,11 +645,13 @@ System.out.println("HALLO>>>>>>>");
 
 										//edited by Mike, 20201103
 										//write only columns A to D
-				//						writer.println(s);
+										writer.println(s);
+/*
 										for (int iColumnCount=0; iColumnCount<4; iColumnCount++) {
-											writer.println(inputColumns[iColumnCount]+"\t");
+											writer.print(inputColumns[iColumnCount]+"\t");
 										}
-
+*/
+	
 										System.out.println("DITO 2");			
 
 /*										//note: output file not updated	after write
@@ -647,10 +672,12 @@ System.out.println("HALLO>>>>>>>");
 
 					//edited by Mike, 20201103
 					//write only columns A to D
-//						writer.println(s);
+						writer.println(s);
+/*
 					for (int iColumnCount=0; iColumnCount<4; iColumnCount++) {
-						writer.println(inputColumns[iColumnCount]+"\t");
+						writer.print(inputColumns[iColumnCount]+"\t");
 					}
+*/					
 
 				}		
 					System.out.println("WAKAS");			
@@ -664,9 +691,17 @@ System.out.println("HALLO>>>>>>>");
 				File outputTempFile = new File(outputFilenameWithExtension+"temp");
 
 				if(outputTempFile.exists() && !outputTempFile.isDirectory()) { 
-					PrintWriter outputWriter = new PrintWriter(outputFilenameWithExtension, "UTF-8");	
-
+					/*PrintWriter outputWriter = new PrintWriter(outputFilenameWithExtension, "UTF-8");	
+*/
 					sc = new Scanner(new FileInputStream(outputTempFile));			
+
+					if (!sc.hasNextLine()) {
+System.out.println(">>>TEMP FILE EXISTS BUT BLANK: " + outputTempFile);				
+
+						continue;
+					}
+
+					PrintWriter outputWriter = new PrintWriter(outputFilenameWithExtension, "UTF-8");	
 
 System.out.println(">>>TEMP FILE EXISTS: " + outputTempFile);				
 					String sOutput;
@@ -678,6 +713,8 @@ System.out.println(">>>TEMP FILE EXISTS: " + outputTempFile);
 					}
 					
 					outputWriter.close();
+				}
+				else {
 				}
 				
 				hmoListWriter.println(hmoListString);					

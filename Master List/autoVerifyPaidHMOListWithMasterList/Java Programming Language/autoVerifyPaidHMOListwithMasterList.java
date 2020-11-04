@@ -407,6 +407,7 @@ public class autoVerifyPaidHMOListwithMasterList {
 //				Scanner sc = new Scanner(new FileInputStream(f));
 				File outputFile = new File(outputFilenameWithExtension);
 
+				//f = input filename with extension
 				Scanner sc = new Scanner(new FileInputStream(f));
 
 				//TO-DO: -reverify: this
@@ -526,6 +527,11 @@ System.out.println("HALLO>>>>>>>");
 					//note: remove value of diagnosis column in output file
 					//"â€¦" is read from LibreOffice Calc, albeit not when we use Java Computer Language
 					s = s.replace(inputColumns[INPUT_DIAGNOSIS_COLUMN],"");
+
+					//added by Mike, 20201104; removed by Mike, 20201104
+					//in Windows machine, output file size still increases
+					//does not occur in Linux machine
+					//s = s.replace(inputColumns[INPUT_NOTES_COLUMN],"");
 					
 					//TO-DO: -verify: date format of input master list file
 					System.out.println("inputColumns[INPUT_DATE_COLUMN]: "+ inputColumns[INPUT_DATE_COLUMN]);
@@ -726,6 +732,10 @@ System.out.println("HALLO>>>>>>>");
 
 					if (!sc.hasNextLine()) {
 System.out.println(">>>TEMP FILE EXISTS BUT BLANK: " + outputTempFile);				
+
+						//added by Mike, 20201104
+						outputTempFile.delete();						
+						hmoListWriter.println(hmoListString);					
 
 						continue;
 					}

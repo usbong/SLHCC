@@ -15,7 +15,7 @@
  * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20201103
+ * @last updated: 20201104
  * 
  * Note
  * 1) Set when opening the output .csv file to use only the Tab as the delimeter;
@@ -728,6 +728,9 @@ System.out.println(">>>TEMP FILE EXISTS: " + outputTempFile);
 					
 						outputWriter.println(sOutput);
 					}
+					
+					//added by Mike, 20201104
+					outputTempFile.delete();
 					
 					outputWriter.close();
 				}

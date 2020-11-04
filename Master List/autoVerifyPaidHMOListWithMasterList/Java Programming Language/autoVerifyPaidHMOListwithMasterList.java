@@ -398,12 +398,8 @@ public class autoVerifyPaidHMOListwithMasterList {
 				File outputFile = new File(outputFilenameWithExtension);
 
 				Scanner sc = new Scanner(new FileInputStream(f));
-				
-				//TO-DO: -update: instructions due to output files blank
-				//both final and temporary files
-				//may be due to the last file read and written
-				//rowCount: 1062; instead of 268
-				
+
+				//TO-DO: -reverify: this
 				if(outputFile.exists() && !outputFile.isDirectory()) { 
 					sc = new Scanner(new FileInputStream(outputFile));			
 
@@ -414,6 +410,9 @@ System.out.println(">>>EXISTS: " + outputFile);
 					//computer creates a blank file
 					if (!sc.hasNextLine()) {
 						sc = new Scanner(new FileInputStream(f));
+						
+System.out.println("OUTPUT FILE EXISTS BUT BLANK>>>>>>>");						
+						
 					}
 					else {
 						
@@ -685,8 +684,9 @@ System.out.println("HALLO>>>>>>>");
 						System.out.println(">>"+formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]));
 					}
 
+/*	//removed by Mike, 20201104					
 					System.out.println("HALLO s: "+s);			
-
+*/
 					//edited by Mike, 20201103
 					//write only columns A to D
 						writer.println(s);

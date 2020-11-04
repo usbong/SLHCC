@@ -310,6 +310,9 @@ public class autoVerifyPaidHMOListwithMasterList {
 			//added by Mike, 20201102
 			//TO-DO: -update: instructions to auto-process multiple input files, e.g. paid HMO lists and Master List worksheets per month
 			String outputFilenameWithExtension = "output/"+inputFilename+"With"+inputHmoListFilename+sFileExtension;
+			//added by Mike, 20201104
+			String outputTempFilenameWithExtension = "output/"+ "temp" + inputFilename+"With"+inputHmoListFilename+sFileExtension;
+
 
 /*			//removed by Mike, 20201103
 			//added by Mike, 20201102
@@ -387,7 +390,14 @@ public class autoVerifyPaidHMOListwithMasterList {
 				//added by Mike, 20201103
 				//create temporary file
 				//note: after writing the temp file, computer reads it and writes the output file 
-				writer = new PrintWriter(outputFilenameWithExtension+"temp", "UTF-8");	
+				//edited by Mike, 20201104
+				//note: in Windows machine, output file size continuously increases;
+				//does not occur in Linux machine
+				//not due to name extension of temporary file is ".csvtemp", etc
+
+				//does not occur in Linux machine
+//				writer = new PrintWriter(outputFilenameWithExtension+"temp", "UTF-8");	
+				writer = new PrintWriter(outputTempFilenameWithExtension, "UTF-8");	
 
 				hmoRowCount++;
 				
@@ -589,13 +599,10 @@ System.out.println("HALLO>>>>>>>");
 							//NumberFormat format = NumberFormat.getInstance(Locale.US);
 							Number nInputHMOListBilledAmount = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]));
 							double dInputHMOListBilledAmount = nInputHMOListBilledAmount.doubleValue();
-
 							Number nInputMasterListBilledAmount = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_FEE_COLUMN]));
 							double dInputMasterListBilledAmount = nInputMasterListBilledAmount.doubleValue();
-
 							Number nInputHMOListNetPf = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN]));
 							double dInputHMOListNetPf = nInputHMOListNetPf.doubleValue();
-
 							Number nInputMasterListNetPf = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_FEE_COLUMN]));
 							double dInputMasterListNetPf = nInputMasterListNetPf.doubleValue();
 */
@@ -704,8 +711,13 @@ System.out.println("HALLO>>>>>>>");
 				
 				writer.close();									
 
-				//added by Mike, 20201103				
-				File outputTempFile = new File(outputFilenameWithExtension+"temp");
+				//added by Mike, 20201103; edited by Mike, 20201104
+				//note: in Windows machine, output file size continuously increases;
+				//does not occur in Linux machine
+				//not due to name extension of temporary file is ".csvtemp", etc
+//				File outputTempFile = new File(outputFilenameWithExtension+"temp");
+//				File outputTempFile = new File("temp"+outputFilenameWithExtension);
+				File outputTempFile = new File(outputTempFilenameWithExtension);
 
 				if(outputTempFile.exists() && !outputTempFile.isDirectory()) { 
 					/*PrintWriter outputWriter = new PrintWriter(outputFilenameWithExtension, "UTF-8");	
@@ -718,9 +730,20 @@ System.out.println(">>>TEMP FILE EXISTS BUT BLANK: " + outputTempFile);
 						continue;
 					}
 
+					//added by Mike, 20201104
+					//note: in Windows machine, output file size continuously increases;
+					//does not occur in Linux machine
+					//not due to name extension of temporary file is ".csvtemp", etc
+
+					//execute this before creating a new output file
+					outputFile.delete();
+					
+					//added by Mike, 20201104
+					//write value inside temp file to this output file
 					PrintWriter outputWriter = new PrintWriter(outputFilenameWithExtension, "UTF-8");	
 
 System.out.println(">>>TEMP FILE EXISTS: " + outputTempFile);				
+
 					String sOutput;
 
 					while (sc.hasNextLine()) {

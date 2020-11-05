@@ -15,7 +15,7 @@
  * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20201104
+ * @last updated: 20201105
  * 
  * Note
  * 1) Set when opening the output .csv file to use only the Tab as the delimeter;
@@ -691,6 +691,11 @@ System.out.println("HALLO>>>>>>>");
 									}
 								}
 							}
+							//added by Mike, 20201105
+							else {
+								s = "reverify: " + inputHmoListFilename + ":" +dInputHMOListBilledAmount + ";Master List:" + dInputMasterListBilledAmount + s;
+								System.out.println(">>reverify s: "+s);
+							}							
 						}
 //						Patient Name, Fee, Net PF, HMO
 						

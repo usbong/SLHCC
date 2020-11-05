@@ -18,8 +18,8 @@
  * @last updated: 20201105
  * 
  * Note
- * 1) Set when opening the output .csv file to use only the Tab as the delimeter;
- * --> no need to include "," and ";" as delimiters 
+ * 1) Set when opening the output .csv file using LibreOffice Calc to use only the Tab as the delimeter
+ * --> No need to include "," and ";" as delimiters 
  *
  */
 
@@ -41,13 +41,14 @@ import java.text.ParsePosition;
 
 /*
 ' Given:
-' 1) Encoding for the Month Input Worksheet from the Master List
-' --> Saved/Exported as "Tab delimited" .txt file from Excel
-' --> Example: input201808.txt (where the date format is YYYYMM; based on ISO 8601)
+' 1) The Month's Input Worksheet from the Master List
+' --> Saved/Exported as "Tab delimited" .csv file from Excel
+' --> Example: input201808.csv (where the date format is YYYYMM; based on ISO 8601)
 '
-' 2) Encoding of the list of paid HMO Worksheet
-' --> Saved/Exported as "Tab delimited" .txt file from Excel
-' --> Example: paidHMOList201811.txt (where the date format is YYYYMM; based on ISO 8601)
+' 2) List of paid HMO Worksheet
+' --> Use keyword, "hmo"
+' --> Saved/Exported as "Tab delimited" .csv file from Excel
+' --> Example: paidHMOList201811.csv (where the date format is YYYYMM; based on ISO 8601)
 '
 ' Output:
 ' 1) Auto-verified with notes of variation/deviation between the paid HMO list worksheet and the monthly input worksheet from the Master List 
@@ -56,13 +57,20 @@ import java.text.ParsePosition;
 ' --> The output files are stored inside an auto-created "output" folder in the directory where the add-on software/application is located.
 '
 ' Notes:
-' 1) To execute a set of input files, e.g. input201801.txt, input201802.txt, paidHMOList201811.txt, you can use the following command: 
-'   java generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList *.txt
+' 1) To execute a set of input files, e.g. input201801.csv, input201802.csv, paidHMOList201811.csv, you can use the following command: 
+'   java generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList *.csv
 ' 
-' where: * means any set of characters
+'   where: * means any set of characters
 '
-' 2) Make sure to include the paid HMO List whose file name contains "paidHMOList".
+' 2) You can use the following command: 
+'   java generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList *.csv > outputNotes.txt
+' 
+'   where: * means any set of characters
+'          outputNotes.txt is the output file for the System print-outs, i.e. written note output 
+'
+' 3) Make sure to include the paid HMO List whose file name contains keyword, "hmo".
 ' --> Otherwise, the add-on software/application would not have a paid HMO List to verify with the Master List's monthly input worksheets.
+' --> Computer automatically uses as input file with keyword, "hmo", in small letters.
 '
 */ 
 
@@ -85,16 +93,7 @@ public class autoVerifyPaidHMOListwithMasterList {
 	
 	private static final int INPUT_DIAGNOSIS_COLUMN = 6; //added by Mike, 20201103
 
-	//TO-DO: -update: set of instructions
-	//note: There are variations in the structure/format of newly received paid HMO lists
-/*	//edited by Mike, 20201029	
-	private static final int INPUT_HMO_LIST_NOTES_COLUMN = 0;
-	private static final int INPUT_HMO_LIST_DATE_COLUMN = 1;
-	private static final int INPUT_HMO_LIST_CLASS_COLUMN = 2;
-	private static final int INPUT_HMO_LIST_NAME_COLUMN = 3;
-	private static final int INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN = 7;
-	private static final int INPUT_HMO_LIST_NET_PF_COLUMN = 20;
-*/
+	//note: There are variations in the format of the values from the newly received paid HMO lists
 	private static final int INPUT_HMO_LIST_NOTES_COLUMN = 0;
 	private static final int INPUT_HMO_LIST_DATE_COLUMN = 1;
 	private static final int INPUT_HMO_LIST_CLASS_COLUMN = 2;
@@ -453,13 +452,6 @@ System.out.println("HALLO>>>>>>>");
 					//added by Mike, 20201103
 					//note: remove value of diagnosis column in output file
 //					s = s.replace("®","");
-
-//						System.out.println(">>DITO>>"+s.toString());
-
-					if (s.contains("BERGSTEIN")) {
-						System.out.println(">>DITO>>"+s.toString());
-	
-					}
 
 					//identify if table header row
 					//skip the first row, which is the input file's table headers

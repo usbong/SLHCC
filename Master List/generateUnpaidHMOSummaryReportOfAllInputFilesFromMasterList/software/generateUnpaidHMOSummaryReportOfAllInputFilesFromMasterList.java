@@ -11,6 +11,12 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
+ * @author: SYSON, MICHAEL B.
+ * @date created: 2018
+ * @last updated: 20201106
+ *
  */
 import java.util.*;
 import java.io.File;
@@ -434,12 +440,26 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 	}
 
 	private static void processInputFiles(String[] args, boolean isPhaseOne) throws Exception {
+		//added by Mike, 20201106
+		String sFileExtension = ".txt";
+
 		//edited by Mike, 20181030
 		for (int i=0; i<args.length; i++) {						
-			//added by Mike, 20181030
-			inputFilename = args[i].replaceAll(".txt","");			
+			//added by Mike, 20181030; edited by Mike, 20201106
+/*			inputFilename = args[i].replaceAll(".txt","");			
 			File f = new File(inputFilename+".txt");
-
+*/
+			//added by Mike, 20201106
+/*			if (args[i].contains(".txt")) {
+				inputFilename = args[i].replaceAll(".txt","");
+			}
+			else */if (args[i].contains(".csv")) {
+//				inputFilename = args[i].replaceAll(".csv","");
+				sFileExtension = ".csv";
+			}
+			inputFilename = args[i].replaceAll(sFileExtension,"");			
+			File f = new File(inputFilename+sFileExtension);
+			
 			System.out.println("inputFilename: " + inputFilename);
 			
 			if (inputFilename.toLowerCase().contains("consultation")) {
@@ -483,7 +503,9 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 				}
 
 				if (dateValuesArrayInt[i]==0) {
-					dateValuesArrayInt[i] = Integer.parseInt(args[i].substring(args[i].indexOf("_")+1,args[i].indexOf(".txt")));
+					//edited by Mike, 20201106
+//					dateValuesArrayInt[i] = Integer.parseInt(args[i].substring(args[i].indexOf("_")+1,args[i].indexOf(".txt")));
+					dateValuesArrayInt[i] = Integer.parseInt(args[i].substring(args[i].indexOf("_")+1,args[i].indexOf(sFileExtension)));
 				}
 /*
 				int dateValueInt = Integer.parseInt(args[i].substring(args[i].indexOf("_")+1,args[i].indexOf(".txt")));

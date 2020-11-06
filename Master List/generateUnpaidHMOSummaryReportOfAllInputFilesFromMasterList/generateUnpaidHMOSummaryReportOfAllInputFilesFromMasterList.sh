@@ -12,5 +12,5 @@
 # where: 201912 : YYYYMM
 # note: add underscore, i.e. "_" before year and month
 
-java -cp ./software: generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList input/treatment/*.txt 
+java -cp ./software: generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList input/treatment/*.csv
 

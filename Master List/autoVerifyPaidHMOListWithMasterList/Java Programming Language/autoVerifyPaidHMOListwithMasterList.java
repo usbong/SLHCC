@@ -15,7 +15,7 @@
  * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20201105
+ * @last updated: 20201106
  * 
  * Note
  * 1) Set when opening the output .csv file using LibreOffice Calc to use only the Tab as the delimeter
@@ -324,7 +324,9 @@ public class autoVerifyPaidHMOListwithMasterList {
 /*			//edited by Mike, 20201030
 			hmoListWriter = new PrintWriter("output/"+inputHmoListFilename+".txt", "UTF-8");
 */
-			hmoListWriter = new PrintWriter("output/"+inputHmoListFilename+sFileExtension, "UTF-8");
+			
+			//removed by Mike, 20201106						
+//			hmoListWriter = new PrintWriter("output/"+inputHmoListFilename+sFileExtension, "UTF-8");
 						
 			System.out.println("inputFilename: " + inputFilename);
 			
@@ -553,15 +555,27 @@ System.out.println("HALLO>>>>>>>");
 					//Example: "535.716" is displayed as "535.72" 
 					//double dInputMasterListNetPfTaxUpdated = (dInputMasterListBilledAmount - dInputMasterListBilledAmount* 0.02) / 1.12 * 0.7 * 0.95;
 					double dInputMasterListNetPfTaxUpdatedNotRounded = (dInputMasterListBilledAmount - dInputMasterListBilledAmount* 0.02) / 1.12 * 0.7 * 0.95;
+					//edited by Mike, 20201106
+					//note: TO-DO: -reverify: input .csv file format; eliminate variations via computer
 					double dInputMasterListNetPfTaxUpdated = Math.round(dInputMasterListNetPfTaxUpdatedNotRounded * 100.0) / 100.0;
-
 					
-					if (inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN].equals(formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]))) {
+					//added by Mike, 20201106
+					dInputHMOListNetPf = Math.round(dInputHMOListNetPf * 100.0) / 100.0;
+
+					//edited by Mike, 20201106					
+//					if (inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN].equals(formatDateToMatchWithHmoListDateFormat(inputColumns[INPUT_DATE_COLUMN]))) {
+					//example input value: 11/06/2020
+					//i.e. 2020-11-06
+					if (inputHmoListColumns[INPUT_HMO_LIST_DATE_COLUMN].equals(inputColumns[INPUT_DATE_COLUMN])) {
 
 						System.out.println(
 						"inputColumns[INPUT_NAME_COLUMN].toLowerCase(): "+inputColumns[INPUT_NAME_COLUMN].toLowerCase()+"\t"+
 						"inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase());
-					
+
+						//added by Mike, 20201106
+						inputColumns[INPUT_NAME_COLUMN] = inputColumns[INPUT_NAME_COLUMN].replace("\"","");
+						inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN] = inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].replace("\"","");
+													
 						if (inputHmoListColumns[INPUT_HMO_LIST_NAME_COLUMN].toLowerCase().equals(inputColumns[INPUT_NAME_COLUMN].toLowerCase()))
 						{							
 							//edited by Mike, 20201030
@@ -636,8 +650,10 @@ System.out.println("HALLO>>>>>>>");
 									System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase());						
 									System.out.println(">> inputColumns[INPUT_CLASS_COLUMN].toLowerCase(): "+inputColumns[INPUT_CLASS_COLUMN].toLowerCase());	
 
+									//TO-DO: -reverify: HMO name, e.g. valucare = correct; valuecare with "e" = incorrect
 									if (inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase().trim().equals(inputColumns[INPUT_CLASS_COLUMN].toLowerCase().replace("hmo/","").trim())) {								
-										System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase());			
+										//removed by Mike, 20201106
+										//System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase());			
 
 										//System.out.println(""+inputHmoListFilename);
 										//StringBuffer hmoListStringBuffer = new StringBuffer(hmoListString);
@@ -731,7 +747,9 @@ System.out.println("HALLO>>>>>>>");
 System.out.println(">>>TEMP FILE EXISTS BUT BLANK: " + outputTempFile);				
 
 						//added by Mike, 20201104
-						outputTempFile.delete();						
+						outputTempFile.delete();			
+						
+						//removed by Mike, 20201106						
 						hmoListWriter.println(hmoListString);					
 
 						continue;
@@ -766,12 +784,14 @@ System.out.println(">>>TEMP FILE EXISTS: " + outputTempFile);
 				}
 				else {
 				}
-				
-				hmoListWriter.println(hmoListString);					
+
+//removed by Mike, 20201106
+//				hmoListWriter.println(hmoListString);					
 			}			
 		}
-		
-		hmoListWriter.close();					
+
+		//removed by Mike, 20201106
+//		hmoListWriter.close();					
 	}	
 	
 	//Reference: https://stackoverflow.com/questions/1102891/how-to-check-if-a-string-is-numeric-in-java;

@@ -1,9 +1,10 @@
 #!/bin/bash
 
 # Auto-verify Paid HMO List with Master List
-# author: SYSON, MICHAEL B.
-# date created: 20201107
-# last updated: 20201107
+# @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
+# @author: SYSON, MICHAEL B.
+# @date created: 20201107
+# @ast updated: 20201107
 #
 # Note:
 # 1) Example output file in output folder: PT TREATMENT 2020verifiedMacroEnabledMasterListV61LibreOfficeCalc_201912

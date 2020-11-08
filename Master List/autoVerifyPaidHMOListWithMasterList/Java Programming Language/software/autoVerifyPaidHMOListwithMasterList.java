@@ -15,7 +15,7 @@
  * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20201107
+ * @last updated: 20201108
  * 
  * Note
  * 1) Set when opening the output .csv file using LibreOffice Calc to use only the Tab as the delimeter
@@ -259,26 +259,38 @@ public class autoVerifyPaidHMOListwithMasterList {
 		
 		//added by Mike, 20201030
 		String sFileExtension = ".txt";
+		String sHmoFileExtension = ".txt"; //added by Mike, 20201108
 		
 		for (int i=0; i<args.length; i++) {							
 			if (args[i].toLowerCase().contains("hmo")) {
 				//added by Mike, 20201107
-				inputHmoListFilename = args[i].replaceAll("/input","");
+				//Linux Machine
+				//inputHmoListFilename = args[i].replaceAll("input/","");
+				
+				inputHmoListFilename = args[i].replace("input","");
+				inputHmoListFilename = args[i].replace("\\",""); //Windows Machine
+				inputHmoListFilename = inputHmoListFilename.replace("/",""); //Linux Machine
 
-				//added by Mike, 20201030
+				System.out.println("inputHmoListFilename: " +inputHmoListFilename);
+
+
+				//added by Mike, 20201030; edited by Mike, 20201108
 				if (args[i].contains(".txt")) {
-					inputHmoListFilename = args[i].replaceAll(".txt","");
+					inputHmoListFilename = args[i].replace(".txt","");
 					hmoListFile = new File(inputHmoListFilename+".txt");
 				}
 				else if (args[i].contains(".csv")) {
-					inputHmoListFilename = args[i].replaceAll(".csv","");
+					inputHmoListFilename = args[i].replace(".csv","");
 					hmoListFile = new File(inputHmoListFilename+".csv");					
-					sFileExtension = ".csv";
+
+					//edited by Mike, 20201108
+					//sFileExtension = ".csv";
+					sHmoFileExtension = ".csv";
 				}
 				else {
 					System.out.println("Did not find input files in .csv or .txt file formats");
 					return;
-				}
+				}				
 			}
 		}
 		
@@ -286,6 +298,8 @@ public class autoVerifyPaidHMOListwithMasterList {
 			System.out.println("Error: unable to locate the paid HMO List file whose file name should have the keyword \"hmo\".");
 			return;
 		}
+		
+		System.out.println("hmoListFile: " +hmoListFile);
 		
 		PrintWriter writer = null;			
 		PrintWriter hmoListWriter = null;
@@ -304,8 +318,23 @@ public class autoVerifyPaidHMOListwithMasterList {
 */
 			//edited by Mike, 20201107
 			//inputFilename = args[i].replaceAll(sFileExtension,"");			
-			inputFilename = args[i].replaceAll("input/","").replaceAll(sFileExtension,"");
+			//edited by Mike, 20201108
+			//inputFilename = args[i].replaceAll("input/","").replaceAll(sFileExtension,"");			
 			
+			inputFilename = args[i].replace("input","");
+			inputFilename = inputFilename.replace("\\","");
+			inputFilename = inputFilename.replace("/","");
+			//inputFilename = inputFilename.replace(sFileExtension,"");
+
+			//added by Mike, 20201108
+			if (inputFilename.contains(".txt")) {
+				inputFilename = inputFilename.replace(".txt","");
+			}
+			else if (inputFilename.contains(".csv")) {
+				inputFilename = inputFilename.replace(".csv","");
+				sFileExtension = ".csv";
+			}
+
 			//edited by Mike, 20201107
 			//File f = new File(inputFilename+sFileExtension);
 			File f = new File("input/"+inputFilename+sFileExtension);

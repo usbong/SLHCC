@@ -27,6 +27,8 @@
 //--> output from test#1 OK in Linux machine
 //TO-DO: -reverify: with multiple input files
 
+//TO-DO: -fix: output temp file not deleted by computer in Windows machine
+
 import java.util.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,6 +38,10 @@ import java.util.regex.Matcher;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
+
+//added by Mike, 20201108; removed by Mike, 20201108
+//import java.nio.charset.StandardCharsets;
+//import java.nio.charset.Charset;
 
 //import java.lang.Integer;
 
@@ -379,8 +385,12 @@ public class autoVerifyPaidHMOListwithMasterList {
 			}
 			
 /*			Scanner sc = new Scanner(new FileInputStream(f));				
-*/
-			Scanner hmoListScanner = new Scanner(new FileInputStream(hmoListFile));				
+*/			
+			//edited by Mike, 20201108
+			//Scanner hmoListScanner = new Scanner(new FileInputStream(hmoListFile));
+			Scanner hmoListScanner = new Scanner(new FileInputStream(hmoListFile), "UTF-8");
+			
+			
 /*		
 			String s;		
 			s=sc.nextLine(); //skip the first row, which is the input file's table headers
@@ -450,11 +460,15 @@ public class autoVerifyPaidHMOListwithMasterList {
 				File outputFile = new File(outputFilenameWithExtension);
 
 				//f = input filename with extension
-				Scanner sc = new Scanner(new FileInputStream(f));
+				//edited by Mike, 20201108
+				//Scanner sc = new Scanner(new FileInputStream(f));
+				Scanner sc = new Scanner(new FileInputStream(f), "UTF-8");
 
 				//TO-DO: -reverify: this
 				if(outputFile.exists() && !outputFile.isDirectory()) { 
-					sc = new Scanner(new FileInputStream(outputFile));			
+					//edited by Mike, 20201108
+					//sc = new Scanner(new FileInputStream(outputFile));			
+					sc = new Scanner(new FileInputStream(outputFile), "UTF-8");
 
 System.out.println(">>>EXISTS: " + outputFile);				
 					
@@ -462,8 +476,10 @@ System.out.println(">>>EXISTS: " + outputFile);
 					//note: when executing writer = new PrintWriter(...)
 					//computer creates a blank file
 					if (!sc.hasNextLine()) {
-						sc = new Scanner(new FileInputStream(f));
-						
+						//edited by Mike, 20201108
+						//sc = new Scanner(new FileInputStream(f));
+						sc = new Scanner(new FileInputStream(f), "UTF-8");
+												
 System.out.println("OUTPUT FILE EXISTS BUT BLANK>>>>>>>");						
 						
 					}
@@ -566,7 +582,13 @@ System.out.println("HALLO>>>>>>>");
 					//added by Mike, 20201104; removed by Mike, 20201104
 					//in Windows machine, output file size still increases
 					//does not occur in Linux machine
-					//s = s.replace(inputColumns[INPUT_NOTES_COLUMN],"");
+					//executing this action reduces the file size ;
+					//likely due to character encoding problem
+					s = s.replace(inputColumns[INPUT_NOTES_COLUMN],"");
+					
+					//identified cause of increasing file size
+					//due to select charactes, e.g. n with tilde
+					
 					
 					//TO-DO: -verify: date format of input master list file
 					System.out.println("inputColumns[INPUT_DATE_COLUMN]: "+ inputColumns[INPUT_DATE_COLUMN]);
@@ -776,13 +798,18 @@ System.out.println("HALLO>>>>>>>");
 				//does not occur in Linux machine
 				//not due to name extension of temporary file is ".csvtemp", etc
 //				File outputTempFile = new File(outputFilenameWithExtension+"temp");
-//				File outputTempFile = new File("temp"+outputFilenameWithExtension);
+//				File outputTempFile = new File("temp"+outputdFilenameWithExtension);
 				File outputTempFile = new File(outputTempFilenameWithExtension);
+				
+				//added by Mike, 20201108; removed by Mike, 20201108
+//				Charset myCharset = StandardCharsets.UTF_8;
 
 				if(outputTempFile.exists() && !outputTempFile.isDirectory()) { 
 					/*PrintWriter outputWriter = new PrintWriter(outputFilenameWithExtension, "UTF-8");	
 */
-					sc = new Scanner(new FileInputStream(outputTempFile));			
+					//edited by Mike, 20201108
+//					sc = new Scanner(new FileInputStream(outputTempFile));			
+					sc = new Scanner(new FileInputStream(outputTempFile), "UTF-8");
 
 					if (!sc.hasNextLine()) {
 System.out.println(">>>TEMP FILE EXISTS BUT BLANK: " + outputTempFile);				

@@ -3,7 +3,7 @@
 # Auto-generate Unpaid HMO Summary Report of all input files from Master List using Linux Personal Computer (PC)
 # author: SYSON, MICHAEL B.
 # date created: 20201106
-# last updated: 20201106
+# last updated: 20201109
 #
 # Notes:
 # HMO = Health Maintenance Organization
@@ -12,5 +12,5 @@
 # where: 201912 : YYYYMM
 # note: add underscore, i.e. "_" before year and month
 
-java -cp ./software: generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList input/treatment/*.csv
+java -cp ./software: generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList input/treatment/*.csv input/consultation/*.csv
 

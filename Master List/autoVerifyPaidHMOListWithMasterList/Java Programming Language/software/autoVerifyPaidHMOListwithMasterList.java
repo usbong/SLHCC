@@ -15,7 +15,7 @@
  * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20201108
+ * @last updated: 20201109
  * 
  * Note
  * 1) Set when opening the output .csv file using LibreOffice Calc to use only the Tab as the delimeter
@@ -98,6 +98,9 @@ public class autoVerifyPaidHMOListwithMasterList {
 	private static final int INPUT_NET_PF_COLUMN = 10;
 	
 	private static final int INPUT_DIAGNOSIS_COLUMN = 6; //added by Mike, 20201103
+	
+	//added by Mike, 20201109
+	private static int inputColumnConsultationOffset = 0;
 
 	//note: There are variations in the format of the values from the newly received paid HMO lists
 	private static final int INPUT_HMO_LIST_NOTES_COLUMN = 0;
@@ -379,9 +382,11 @@ public class autoVerifyPaidHMOListwithMasterList {
 			
 			if (inputFilename.toLowerCase().contains("consultation")) {
 				isConsultation=true;
+				inputColumnConsultationOffset=1; //added by Mike, 20201109
 			}
 			else {
 				isConsultation=false;
+				inputColumnConsultationOffset=0; //added by Mike, 20201109
 			}
 			
 /*			Scanner sc = new Scanner(new FileInputStream(f));				
@@ -557,7 +562,7 @@ System.out.println("HALLO>>>>>>>");
 					}
 
 					//added by Mike, 20201102
-					if (inputColumns.length<=INPUT_CLASS_COLUMN) {
+					if (inputColumns.length<=INPUT_CLASS_COLUMN+inputColumnConsultationOffset) {
 						//added by Mike, 20201102; removed by Mike, 20201103
 						//write only columns A to D
 						writer.println(s);
@@ -567,7 +572,7 @@ System.out.println("HALLO>>>>>>>");
 					//added by Mike, 20181121
 					//skip transactions that have "RehabSupplies" as its "CLASS" value
 					//In Excel logbook/workbook 2018 onwards, such transactions are not included in the Consultation and PT Treatment Excel logbooks/workbooks.
-					if (inputColumns[INPUT_CLASS_COLUMN].contains("RehabSupplies")) {
+					if (inputColumns[INPUT_CLASS_COLUMN+inputColumnConsultationOffset].contains("RehabSupplies")) {
 						//added by Mike, 20201102; removed by Mike, 20201103
 						//write only columns A to D
 						writer.println(s);
@@ -601,13 +606,14 @@ System.out.println("HALLO>>>>>>>");
 					
 					double dInputHMOListBilledAmount = nInputHMOListBilledAmount.doubleValue();
 
-					Number nInputMasterListBilledAmount = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_FEE_COLUMN]));
+					Number nInputMasterListBilledAmount = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_FEE_COLUMN+inputColumnConsultationOffset]));
 					double dInputMasterListBilledAmount = nInputMasterListBilledAmount.doubleValue();
 
 					Number nInputHMOListNetPf = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN]));
 					double dInputHMOListNetPf = nInputHMOListNetPf.doubleValue();
 
-					Number nInputMasterListNetPf = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_NET_PF_COLUMN]));
+					//TO-DO: -fix: unparseable number: ""
+					Number nInputMasterListNetPf = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_NET_PF_COLUMN+inputColumnConsultationOffset]));
 					double dInputMasterListNetPf = nInputMasterListNetPf.doubleValue();
 
 					//added by Mike, 20201102
@@ -664,32 +670,32 @@ System.out.println("HALLO>>>>>>>");
 							}													
 /*
 							System.out.println("inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase());						
-							System.out.println("inputColumns[INPUT_FEE_COLUMN]: "+inputColumns[INPUT_FEE_COLUMN]);						
+							System.out.println("inputColumns[INPUT_FEE_COLUMN+inputColumnConsultationOffset]: "+inputColumns[INPUT_FEE_COLUMN+inputColumnConsultationOffset]);						
 */
 							System.out.println("inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase(): "+dInputHMOListBilledAmount);						
-							System.out.println("inputColumns[INPUT_FEE_COLUMN]: "+dInputMasterListBilledAmount);
+							System.out.println("inputColumns[INPUT_FEE_COLUMN+inputColumnConsultationOffset]: "+dInputMasterListBilledAmount);
 
 /*							
 							//added by Mike, 20201030; removed by Mike, 20201030							
 							//NumberFormat format = NumberFormat.getInstance(Locale.US);
 							Number nInputHMOListBilledAmount = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]));
 							double dInputHMOListBilledAmount = nInputHMOListBilledAmount.doubleValue();
-							Number nInputMasterListBilledAmount = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_FEE_COLUMN]));
+							Number nInputMasterListBilledAmount = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_FEE_COLUMN+inputColumnConsultationOffset]));
 							double dInputMasterListBilledAmount = nInputMasterListBilledAmount.doubleValue();
 							Number nInputHMOListNetPf = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN]));
 							double dInputHMOListNetPf = nInputHMOListNetPf.doubleValue();
-							Number nInputMasterListNetPf = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_FEE_COLUMN]));
+							Number nInputMasterListNetPf = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_FEE_COLUMN+inputColumnConsultationOffset]));
 							double dInputMasterListNetPf = nInputMasterListNetPf.doubleValue();
 */
 	
-/*							if (Double.parseDouble(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]) == Double.parseDouble(inputColumns[INPUT_FEE_COLUMN])) {
+/*							if (Double.parseDouble(inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN]) == Double.parseDouble(inputColumns[INPUT_FEE_COLUMN+inputColumnConsultationOffset])) {
 */								
 							if (dInputHMOListBilledAmount == dInputMasterListBilledAmount) {
 /*
 								System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_BILLED_AMOUNT_COLUMN].toLowerCase());						
 */
 /*
-								if (Double.parseDouble(inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN]) == Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN])) {															
+								if (Double.parseDouble(inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN]) == Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN+inputColumnConsultationOffset])) {															
 */
 								//TO-DO: -reverify: NET PF computation due to VAT, etc
 
@@ -711,10 +717,10 @@ System.out.println("HALLO>>>>>>>");
 
 									//TO-DO: -verify: these
 									System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase());						
-									System.out.println(">> inputColumns[INPUT_CLASS_COLUMN].toLowerCase(): "+inputColumns[INPUT_CLASS_COLUMN].toLowerCase());	
+									System.out.println(">> inputColumns[INPUT_CLASS_COLUMN+inputColumnConsultationOffset].toLowerCase(): "+inputColumns[INPUT_CLASS_COLUMN+inputColumnConsultationOffset].toLowerCase());	
 
 									//TO-DO: -reverify: HMO name, e.g. valucare = correct; valuecare with "e" = incorrect
-									if (inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase().trim().equals(inputColumns[INPUT_CLASS_COLUMN].toLowerCase().replace("hmo/","").trim())) {								
+									if (inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase().trim().equals(inputColumns[INPUT_CLASS_COLUMN+inputColumnConsultationOffset].toLowerCase().replace("hmo/","").trim())) {								
 										//removed by Mike, 20201106
 										//System.out.println(">> inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase(): "+inputHmoListColumns[INPUT_HMO_LIST_CLASS_COLUMN].toLowerCase());			
 
@@ -881,6 +887,16 @@ System.out.println(">>>TEMP FILE EXISTS: " + outputTempFile);
 	//input: "" 68.58 ""
 	//output (String type): 68.58
 	private static String UsbongUtilsStringConvertToParseableNumberString(String input) {
-		return input.replace("\"","").replace(" ","");
+		//edited by Mike, 20201109
+		//return input.replace("\"","").replace(" ","");
+		String output = input.replace("\"","").replace(" ","");
+		
+		if (isNumeric(output)) {
+			return output;
+		}
+		else {
+			System.out.println("NOT NUMERIC; UsbongUtilsStringConvertToParseableNumberString: "+input);
+			return "0.00";
+		}
 	}
 }

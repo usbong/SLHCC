@@ -15,7 +15,7 @@
  * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20201109
+ * @last updated: 20201119
  * 
  * Note
  * 1) Set when opening the output .csv file using LibreOffice Calc to use only the Tab as the delimeter
@@ -408,6 +408,9 @@ public class autoVerifyPaidHMOListwithMasterList {
 			rowCount=0;
 			hmoRowCount=0;
 
+			//added by Mike, 20201119
+			String sStringToParse = "";
+	
 			//added by Mike, 20201030
 			NumberFormat format = NumberFormat.getInstance(Locale.US);
 			
@@ -606,14 +609,34 @@ System.out.println("HALLO>>>>>>>");
 					
 					double dInputHMOListBilledAmount = nInputHMOListBilledAmount.doubleValue();
 
-					Number nInputMasterListBilledAmount = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_FEE_COLUMN+inputColumnConsultationOffset]));
+					//edited by Mike, 20201119
+//					Number nInputMasterListBilledAmount = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_FEE_COLUMN+inputColumnConsultationOffset]));
+					Number nInputMasterListBilledAmount = 0;
+					sStringToParse = UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_FEE_COLUMN+inputColumnConsultationOffset]);
+					if (sStringToParse.equals("")) {
+					}
+					else {
+						nInputMasterListBilledAmount =format.parse(sStringToParse);
+					}
+					
+
 					double dInputMasterListBilledAmount = nInputMasterListBilledAmount.doubleValue();
 
 					Number nInputHMOListNetPf = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputHmoListColumns[INPUT_HMO_LIST_NET_PF_COLUMN]));
 					double dInputHMOListNetPf = nInputHMOListNetPf.doubleValue();
 
-					//TO-DO: -fix: unparseable number: ""
-					Number nInputMasterListNetPf = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_NET_PF_COLUMN+inputColumnConsultationOffset]));
+					//edited by Mike, 20201119
+//					Number nInputMasterListNetPf = format.parse(UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_NET_PF_COLUMN+inputColumnConsultationOffset]));
+					Number nInputMasterListNetPf = 0;
+//					String sStringToParse = UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_NET_PF_COLUMN+inputColumnConsultationOffset]);
+					sStringToParse = UsbongUtilsStringConvertToParseableNumberString(inputColumns[INPUT_NET_PF_COLUMN+inputColumnConsultationOffset]);
+
+					if (sStringToParse.equals("")) {
+					}
+					else {
+						nInputMasterListNetPf =format.parse(sStringToParse);
+					}
+					
 					double dInputMasterListNetPf = nInputMasterListNetPf.doubleValue();
 
 					//added by Mike, 20201102
@@ -772,6 +795,11 @@ System.out.println("HALLO>>>>>>>");
 							else {
 								s = "reverify: " + inputHmoListFilename + ":" +dInputHMOListBilledAmount + ";Master List:" + dInputMasterListBilledAmount + s;
 								System.out.println(">>reverify s: "+s);
+
+								//added by Mike, 20201119
+								//TO-DO: -add: write notes as output in HMO input file
+								//note: "inputHmoListFilename" container includes "input/"
+								//example: input/2020FEB_DRSYSONWithNotesTreatmentHmo
 							}							
 						}
 //						Patient Name, Fee, Net PF, HMO

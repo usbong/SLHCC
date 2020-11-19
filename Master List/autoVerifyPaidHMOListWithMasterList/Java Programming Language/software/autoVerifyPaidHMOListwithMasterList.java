@@ -279,7 +279,7 @@ public class autoVerifyPaidHMOListwithMasterList {
 				inputHmoListFilename = args[i].replace("input","");
 				inputHmoListFilename = args[i].replace("\\",""); //Windows Machine
 				inputHmoListFilename = inputHmoListFilename.replace("/",""); //Linux Machine
-
+				
 				System.out.println("inputHmoListFilename: " +inputHmoListFilename);
 
 
@@ -373,10 +373,9 @@ public class autoVerifyPaidHMOListwithMasterList {
 */
 /*			//edited by Mike, 20201030
 			hmoListWriter = new PrintWriter("output/"+inputHmoListFilename+".txt", "UTF-8");
-*/
-			
-			//removed by Mike, 20201106						
-//			hmoListWriter = new PrintWriter("output/"+inputHmoListFilename+sFileExtension, "UTF-8");
+*/			
+			//added by Mike, 20201119
+			hmoListWriter = new PrintWriter("output/"+inputHmoListFilename.replace("input/","")+sFileExtension, "UTF-8");
 						
 			System.out.println("inputFilename: " + inputFilename);
 			
@@ -793,13 +792,22 @@ System.out.println("HALLO>>>>>>>");
 							}
 							//added by Mike, 20201105
 							else {
-								s = "reverify: " + inputHmoListFilename + ":" +dInputHMOListBilledAmount + ";Master List:" + dInputMasterListBilledAmount + s;
+								//edited by Mike, 20201119
+								String sNotes = "reverify: " + inputHmoListFilename + ":" +dInputHMOListBilledAmount + ";Master List:" + dInputMasterListBilledAmount;
+								//edited by Mike, 20201119								
+//								s = "reverify: " + inputHmoListFilename + ":" +dInputHMOListBilledAmount + ";Master List:" + dInputMasterListBilledAmount + s;
+								s = sNotes + s;
+
 								System.out.println(">>reverify s: "+s);
 
+								//TO-DO: -add: in hmoListString notes if transaction does not exist in input file
+								//TO-DO: -add: auto-verify if consultation or pt treatment input hmo file
+								
 								//added by Mike, 20201119
-								//TO-DO: -add: write notes as output in HMO input file
+								//+added: write notes as output in HMO input file
 								//note: "inputHmoListFilename" container includes "input/"
 								//example: input/2020FEB_DRSYSONWithNotesTreatmentHmo
+								hmoListString = sNotes + hmoListString;
 							}							
 						}
 //						Patient Name, Fee, Net PF, HMO
@@ -890,13 +898,13 @@ System.out.println(">>>TEMP FILE EXISTS: " + outputTempFile);
 				//added by Mike, 20201107
 				System.out.println("inputHmoListFilename: "+inputHmoListFilename);
 				
-//removed by Mike, 20201106
-//				hmoListWriter.println(hmoListString);					
+//added by Mike, 20201119
+				hmoListWriter.println(hmoListString);					
 			}			
 		}
 
-		//removed by Mike, 20201106
-//		hmoListWriter.close();					
+		//added by Mike, 20201119
+		hmoListWriter.close();					
 	}	
 	
 	//Reference: https://stackoverflow.com/questions/1102891/how-to-check-if-a-string-is-numeric-in-java;

@@ -1,5 +1,5 @@
 /*
- * Copyright 2018~2019 Usbong Social Systems, Inc.
+ * Copyright 2018~2020 Usbong Social Systems, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -11,7 +11,13 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
+ * @author: SYSON, MICHAEL B.
+ * @date created: 2018
+ * @last updated: 20201218
  */
+
 import java.util.*;
 import java.io.File;
 import java.io.FileInputStream;
@@ -94,10 +100,24 @@ public class generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputF
 
 		//edited by Mike, 20181030
 		for (int i=0; i<args.length; i++) {
-			//added by Mike, 20181030
-			inputFilename = args[i].replaceAll(".txt","");			
+			//added by Mike, 20181030; edited by Mike, 20201218
+/*			inputFilename = args[i].replaceAll(".txt","");			
 			File f = new File(inputFilename+".txt");
+*/
+			File f;
+			//identify if file extension uses .txt
+			if (args[i].contains(".txt")) {
+				inputFilename = args[i].replaceAll(".txt","");			
+				f = new File(inputFilename+".txt");
+			}
+			//.csv
+			else {
+				inputFilename = args[i].replaceAll(".csv","");			
+				f = new File(inputFilename+".csv");				
+			}			
 
+			System.out.println("inputFilename:"+inputFilename);
+			
 			Scanner sc = new Scanner(new FileInputStream(f));				
 		
 			String s;		

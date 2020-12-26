@@ -1,0 +1,3 @@
+java generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputFilesFromMasterList input/*.csv
+
+pause

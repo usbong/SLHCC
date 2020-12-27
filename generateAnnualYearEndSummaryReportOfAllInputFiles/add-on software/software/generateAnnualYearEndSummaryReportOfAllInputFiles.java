@@ -11,6 +11,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
+ * @author: SYSON, MICHAEL B.
+ * @date created: 2018
+ * @last updated: 20201228
  */
 import java.util.*;
 import java.io.File;
@@ -20,6 +25,10 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
+
+//added by Mike, 20201228
+import java.text.ParsePosition;
+
 //import java.lang.Integer;
 //import commons-lang3-3.8.1;
 //import org.apache.commons.lang3.StringUtils;
@@ -297,6 +306,24 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 */
 			writer.print(convertDateToMonthYearInWords(dateValuesArrayInt[i])+"\t");
 			
+			//added by Mike, 20201228
+			if (dateContainer.get(dateValuesArrayInt[i])==null) {
+				writer.print(
+/*
+								treatmentCount+"\t"+						
+								consultationCount+"\t"+							
+								procedureCount+"\t"+
+								medicalCertificateCount+"\n"
+*/
+								"0"+"\t"+						
+								"0"+"\t"+							
+								"0"+"\t"+
+								"0"+"\n"
+							); 				   							
+
+				continue;
+			}
+			
 			double treatmentCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN];
 
 			//added by Mike, 20181218
@@ -492,12 +519,10 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 /*
 		//added by Mike, 202000124
 		SortedSet<String> sortedReferringMedicalDoctorTransactionCountKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
-
 		double totalSLRTreatmentCount=0;
 		double totalSLRConsultationCount=0;
 		double totalSLRProcedureCount=0;
 		double totalSLRMedicalCertificateCount=0;
-
 		for (String key : sortedReferringMedicalDoctorTransactionCountKeyset) {	
 			if (key.contains("SLR")) {			  
 				double slrTreatmentCount = referringDoctorContainer.get(key)[OUTPUT_NON_HMO_COUNT_COLUMN]+referringDoctorContainer.get(key)[OUTPUT_HMO_COUNT_COLUMN];
@@ -868,23 +893,41 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 		return output;
 	}	
 	
-	//added by Mike ,20200102
-	//1) input:
+	//added by Mike 20200102
+	//1.1) input:
 	//Apr-02-19
-	//2) output:
+	//1.2) output:
 	//format: yyyymm
 	//example: 202001
+	//added by Mike 202001228
+	//2.1) input:
+	//12/25/20
+	//2.2) output:
+	//format: yyyymm
+	//example: 202012
 	//TO-DO: -update: instructions for the computer automatically calculate and add "20"
 	private static int getYearMonthInInt(String date) {
+		//added by Mike, 20201227
 		StringBuffer sb = new StringBuffer(date);				
-		
-		String output = ("20").concat(sb.substring(sb.length()-2,sb.length()));
-		output = output.concat(convertMonthToNumericalString(sb.substring(0,3)));		
-		
+		String output;// = "202012";
+
+		//identify if correct input format
+		if (isNumeric(date.substring(0,3))) {					
+			//edited by Mike, 20201227
+//			String output = ("20").concat(sb.substring(sb.length()-2,sb.length()));		
+			output = ("20").concat(sb.substring(sb.length()-2,sb.length()));		
+			output = output.concat(convertMonthToNumericalString(sb.substring(0,3)));			
+		}
+		else {			
+			output = sb.substring(sb.length()-4,sb.length());		
+			output = output.concat(sb.substring(0,2));					
+		}
+
 //		System.out.println("output: "+output);
 		
 		return Integer.parseInt(output);
 	}
+
 	
 	//added by Mike, 20200108
 	//1) input:
@@ -972,7 +1015,6 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 							//removed by Mike, ,20200101
 /*							
 							columnValuesArray[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-
 							if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
 								columnValuesArray[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 							}
@@ -987,7 +1029,6 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 							//removed by Mike, ,20200101
 /*							
 							columnValuesArray[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-
 							if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
 								columnValuesArray[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 							}
@@ -1175,7 +1216,6 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 						//removed by Mike, 20200101
 /*
 						columnValuesArray[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-
 						if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
 							columnValuesArray[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 						}
@@ -1292,7 +1332,6 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 					//removed by Mike, 20200101
 /*
 					columnValuesArray[OUTPUT_NON_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-
 					if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
 						columnValuesArray[OUTPUT_NON_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 					}
@@ -1421,7 +1460,6 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 					//removed by Mike, 20200101
 /*
 					columnValuesArray[OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
-
 					if (inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
 						columnValuesArray[OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN] = Double.parseDouble(inputColumns[INPUT_NET_PF_COLUMN]);
 					}
@@ -1775,11 +1813,24 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 	private static void processInputFiles(String[] args, boolean isPhaseOne) throws Exception {
 		//edited by Mike, 20181030
 		for (int i=0; i<args.length; i++) {						
-			//added by Mike, 20181030
-			inputFilename = args[i].replaceAll(".txt","");			
+			//added by Mike, 20181030; edited by Mike, 20201228
+/*			inputFilename = args[i].replaceAll(".txt","");			
 			File f = new File(inputFilename+".txt");
+*/
+			File f;
+			//identify if file extension uses .txt
+			if (args[i].contains(".txt")) {
+				inputFilename = args[i].replaceAll(".txt","");			
+				f = new File(inputFilename+".txt");
+			}
+			//.csv
+			else {
+				inputFilename = args[i].replaceAll(".csv","");			
+				f = new File(inputFilename+".csv");				
+			}			
 
-			System.out.println("inputFilename: " + inputFilename);
+			System.out.println("inputFilename:"+inputFilename);
+
 			
 			if (inputFilename.toLowerCase().contains("consultation")) {
 				isConsultation=true;
@@ -2262,10 +2313,23 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 	//added by Mike, 20191230; edited by Mike, 20191231
 	private static void processAssetsInputFile(String[] args, String fileKeyword, ArrayList<String[]> containerArrayList) throws Exception {
 		for (int i=0; i<args.length; i++) {						
-			inputFilename = args[i].replaceAll(".txt","");			
+			//added by Mike, 20181030; edited by Mike, 20201228
+/*			inputFilename = args[i].replaceAll(".txt","");			
 			File f = new File(inputFilename+".txt");
+*/
+			File f;
+			//identify if file extension uses .txt
+			if (args[i].contains(".txt")) {
+				inputFilename = args[i].replaceAll(".txt","");			
+				f = new File(inputFilename+".txt");
+			}
+			//.csv
+			else {
+				inputFilename = args[i].replaceAll(".csv","");			
+				f = new File(inputFilename+".csv");				
+			}			
 
-			System.out.println("inputFilename: " + inputFilename);
+			System.out.println("inputFilename:"+inputFilename);
 			
 			//added by Mike, 20190207
 			if (inputFilename.contains("*")) {
@@ -2321,7 +2385,6 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 		for (int i=0; i<args.length; i++) {						
 			inputFilename = args[i].replaceAll(".txt","");			
 			File f = new File(inputFilename+".txt");
-
 			System.out.println("inputFilename: " + inputFilename);
 			
 			//added by Mike, 20190207
@@ -2352,14 +2415,11 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 				}
 				
 				String[] inputColumns = s.split("\t");					
-
 //				System.out.println(s);
-
 				//edited by Mike, 20190430
 				String[] hmoContainerArrayListValue = {inputColumns[INPUT_HMO_LIST_SUB_CLASSIFICATION_COLUMN].toUpperCase(),
 				inputColumns[INPUT_HMO_LIST_CLASSIFICATION_COLUMN].toUpperCase()};
 				hmoContainerArrayList.add(hmoContainerArrayListValue);
-
 //				if (isInDebugMode) {
 					rowCount++;
 					System.out.println("rowCount: "+rowCount);
@@ -2628,5 +2688,17 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 		}
 		
 		return inputString;
+	}
+
+	//added by Mike, 20201228
+	//Reference: https://stackoverflow.com/questions/1102891/how-to-check-if-a-string-is-numeric-in-java;
+	//last accessed: 20201227
+	//answer by: CraigTP, 20090709T0955
+	//edited by: Javad Besharati, 20190302T0927
+	public static boolean isNumeric(String str) {
+	  NumberFormat formatter = NumberFormat.getInstance();
+	  ParsePosition pos = new ParsePosition(0);
+	  formatter.parse(str, pos);
+	  return str.length() == pos.getIndex();
 	}
 }

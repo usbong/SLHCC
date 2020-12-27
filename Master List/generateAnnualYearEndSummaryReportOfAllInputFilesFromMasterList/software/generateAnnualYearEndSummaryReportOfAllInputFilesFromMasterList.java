@@ -494,7 +494,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 			totalNewPatientReferralTransactionCount += newPatientReferralTransactionCount;
 			totalConsultationPerDoctorCount += consultationCount;
 			totalProcedurePerDoctorCount += procedureCount;
-			totalMedicalCertificatePerDoctorCount += procedureCount;
+			//edited by Mike, 20201227
+			//totalMedicalCertificatePerDoctorCount += procedureCount;
+			totalMedicalCertificatePerDoctorCount += medicalCertificateCount;
 			
 			writer.print(
 							key + "\t" + 
@@ -824,6 +826,22 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	
 	//added by Mike, 20181216
 	private static void processMonthlyCount(HashMap<Integer, double[]> dateContainer, String[] inputColumns, int i, boolean isConsultation) {
+
+
+/*	//removed by Mike, 20201227
+//System.out.println("isConsultation: "+isConsultation);
+
+			if (isConsultation) {
+							//added by Mike, 20201227
+System.out.println("Hallo>>>"+inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN-INPUT_MASTER_LIST_OFFSET].toLowerCase());//.trim().contains("mc"));
+
+				if (inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN-INPUT_MASTER_LIST_OFFSET].toLowerCase().trim().contains("mc")) {
+					System.out.println("Hallo: "+inputColumns[INPUT_CONSULTATION_MEDICAL_CERTIFICATE_COLUMN-1].toLowerCase());
+				}
+
+			}
+*/
+
 		//				if (!referringDoctorContainer.containsKey(inputColumns[INPUT_REFERRING_DOCTOR_COLUMN-INPUT_MASTER_LIST_OFFSET])) {
 				if (!dateContainer.containsKey(dateValuesArrayInt[i])) {
 					columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
@@ -1028,7 +1046,8 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 					String hmoName = inputColumns[INPUT_CLASS_COLUMN-INPUT_MASTER_LIST_OFFSET].trim().toUpperCase();		
 					hmoName = processHmoNameWithHmoClassification(hmoName); //added by Mike, 20191230
 
-					System.out.println(">>>PT Treatment hmoName: " + hmoName);
+					//removed by Mike, 20201227
+//					System.out.println(">>>PT Treatment hmoName: " + hmoName);
 					
 					if (!hmoContainer.containsKey(hmoName)) {
 						columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
@@ -1072,8 +1091,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 
 					String hmoName = inputColumns[INPUT_CLASS_COLUMN-INPUT_MASTER_LIST_OFFSET+INPUT_CONSULTATION_OFFSET].trim().toUpperCase();
 					hmoName = processHmoNameWithHmoClassification(hmoName); //added by Mike, 20191230
-					
-					System.out.println(">>>Consultation hmoName: " + hmoName);
+	
+					//removed by Mike, 20201227
+//					System.out.println(">>>Consultation hmoName: " + hmoName);
 
 					if (!hmoContainer.containsKey(hmoName)) {
 						columnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];					
@@ -1663,6 +1683,8 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 			}
 			else {
 				INPUT_MASTER_LIST_OFFSET = 1;
+//				System.out.println("DITO inputFilename:"+inputFilename);
+
 			}
 						
 			//added by Mike, 20191230
@@ -1690,12 +1712,13 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				
 				String[] inputColumns = s.split("\t");					
 
+/*	//removed by Mike, 20201227
 				//added by Mike, 20201227
 				//blank row
 				if (inputColumns[0].equals("")) {
 					continue;
 				}
-
+*/
 				
 				//added by Mike, 20180412
 				if (dateValuesArray[i]==null) {
@@ -1998,10 +2021,11 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				if (containerType==REFERRING_DOCTOR_CONTAINER_TYPE) { //In this case, the numerical value should be less than 3.
 					threshold = 3;
 				}
-								
-				System.out.println("key: "+key);
+	
+				//removed by Mike, 20201227
+/*				System.out.println("key: "+key);
 				System.out.println("keyTwo: "+keyTwo);
-								
+*/								
 				if (myLevenshteinDistance.apply(key, keyTwo)<threshold) {
 					switch (containerType) {
 						case HMO_CONTAINER_TYPE:
@@ -2110,7 +2134,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		SortedSet<String> sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset = new TreeSet<String>(classificationContainerPerMedicalDoctor.keySet());
 		
 		for (String key : sortedclassificationContainerPerMedicalDoctorTransactionCountKeyset) {	
-			System.out.println(">>>> key: "+key);
+			//removed by Mike, 20201227
+			//System.out.println(">>>> key: "+key);
+			
 			consolidateKeysAndTheirValuesInContainer(classificationContainerPerMedicalDoctor.get(key), HMO_CLASSIFICATION_CONTAINER_PER_MEDICAL_DOCTOR_CONTAINER_TYPE);
 /*			consolidateKeysAndTheirValuesInContainer(classificationContainerPerMedicalDoctor.get(key), NON_HMO_CLASSIFICATION_CONTAINER_PER_MEDICAL_DOCTOR_CONTAINER_TYPE);
 */
@@ -2147,7 +2173,8 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				f = new File(inputFilename+".csv");				
 			}			
 
-			System.out.println("inputFilename:"+inputFilename);
+			//removed by Mike, 20201227
+//			System.out.println("inputFilename:"+inputFilename);
 	
 			
 			//added by Mike, 20190207

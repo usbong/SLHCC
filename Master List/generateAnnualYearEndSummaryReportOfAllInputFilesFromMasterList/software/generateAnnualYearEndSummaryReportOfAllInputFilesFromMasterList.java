@@ -11,6 +11,11 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *
+ * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
+ * @author: SYSON, MICHAEL B.
+ * @date created: 2018
+ * @last updated: 20201227
  */
 import java.util.*;
 import java.io.File;
@@ -20,6 +25,10 @@ import java.util.regex.Pattern;
 import java.util.regex.Matcher;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
+
+//added by Mike, 20201227
+import java.text.ParsePosition;
+
 //import java.lang.Integer;
 //import commons-lang3-3.8.1;
 //import org.apache.commons.lang3.StringUtils;
@@ -287,6 +296,24 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 //		for(int i=0; i<dateValuesArrayInt.length/2; i++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION
 			writer.print(convertDateToMonthYearInWords(dateValuesArrayInt[i])+"\t");
 			
+			//added by Mike, 20201227
+			if (dateContainer.get(dateValuesArrayInt[i])==null) {
+				writer.print(
+/*
+								treatmentCount+"\t"+						
+								consultationCount+"\t"+							
+								procedureCount+"\t"+
+								medicalCertificateCount+"\n"
+*/
+								"0"+"\t"+						
+								"0"+"\t"+							
+								"0"+"\t"+
+								"0"+"\n"
+							); 				   							
+
+				continue;
+			}
+			
 			double treatmentCount = dateContainer.get(dateValuesArrayInt[i])[OUTPUT_HMO_COUNT_COLUMN] + dateContainer.get(dateValuesArrayInt[i])[OUTPUT_NON_HMO_COUNT_COLUMN];
 
 			//added by Mike, 20181218
@@ -521,10 +548,10 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				); 				   							
 */
 		//--------------------------------------------------------------------
-		//edited by Mike, 20200101
+		//edited by Mike, 20200101; edited again by Mike, 20201227
 		//init table header names
-		writer.print("\nCONSULTATION COUNT under each CLASSIFICATION\n");
-		writer.print("MEDICAL DOCTOR NAME");
+		writer.print("\nCONSULTATION COUNT under each CLASSIFICATION:\n");
+		writer.print("MEDICAL DOCTOR NAME:");
 
 /*		SortedSet<String> sortedReferringMedicalDoctorTransactionCountKeyset = new TreeSet<String>(referringDoctorContainer.keySet());
 */
@@ -560,7 +587,11 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 					//edited by Mike, 20200101
 					//writer.print(classificationKey+"\t");			
 					if (!classificationKey.contains("HMO")) {
-						writer.print(classificationKey+"\t");
+						//edited by Mike, 20201227
+						//writer.print(classificationKey+"\t");
+						//System.out.println("classificationKey: "+classificationKey);
+						writer.print(classificationKey.replace("\"","")+":"+"\t");
+
 					}
 					else {
 						classificationKey = "HMO";
@@ -575,8 +606,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 					totalCountForEachClassification.put(classificationKey, 0);
 				}				
 
-				//added by Mike, 20200101
-				writer.print("HMO"+"\t");				
+				//added by Mike, 20200101; edited again by Mike, 20201227
+				//writer.print("HMO"+"\t");				
+				writer.print("HMO:"+"\t");				
 
 				writer.print("\n");
 				hasInitTableHeader=true;
@@ -682,12 +714,13 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 			//from Month 1 until 12 
 			iMonth = i+1;
 			output[i] = iYear*100 + iMonth;
+			
+//			System.out.println("yearMonth output: " + output[i]);			
 		}
 		
 		boolean hasYearMonth = false;
 
-		for(int k=0; k<dateValuesArrayInt.length/2; k++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION			
-
+		for(int k=0; k<dateValuesArrayInt.length/2; k++) { //divide by 2 because we have the same month-year for both PT TREATMENT and CONSULTATION
 			hasYearMonth = false;
 			for (int i=0; i<12; i++) {
 				if (dateValuesArrayInt[k]==output[i]) {
@@ -698,25 +731,44 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 			
 			if (!hasYearMonth) {
 				System.out.println("Wala ang taon at buwan na ito: " + dateValuesArrayInt[k]);
+				//added by Mike, 20201227; removed by Mike, 20201227
+//				System.out.println("Wala ang taon at buwan na ito: " + k);
 			}
 		}	
 
 		return output;
 	}	
 	
-	//added by Mike ,20200102
-	//1) input:
+	//added by Mike 20200102
+	//1.1) input:
 	//Apr-02-19
-	//2) output:
+	//1.2) output:
 	//format: yyyymm
 	//example: 202001
+	//added by Mike 202001227
+	//2.1) input:
+	//12/25/20
+	//2.2) output:
+	//format: yyyymm
+	//example: 202012
 	//TO-DO: -update: instructions for the computer automatically calculate and add "20"
 	private static int getYearMonthInInt(String date) {
+		//added by Mike, 20201227
 		StringBuffer sb = new StringBuffer(date);				
-		
-		String output = ("20").concat(sb.substring(sb.length()-2,sb.length()));
-		output = output.concat(convertMonthToNumericalString(sb.substring(0,3)));		
-		
+		String output;// = "202012";
+
+		//identify if correct input format
+		if (isNumeric(date.substring(0,3))) {					
+			//edited by Mike, 20201227
+//			String output = ("20").concat(sb.substring(sb.length()-2,sb.length()));		
+			output = ("20").concat(sb.substring(sb.length()-2,sb.length()));		
+			output = output.concat(convertMonthToNumericalString(sb.substring(0,3)));			
+		}
+		else {			
+			output = sb.substring(sb.length()-4,sb.length());		
+			output = output.concat(sb.substring(0,2));					
+		}
+
 //		System.out.println("output: "+output);
 		
 		return Integer.parseInt(output);
@@ -1581,12 +1633,24 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	private static void processInputFiles(String[] args, boolean isPhaseOne) throws Exception {
 		//edited by Mike, 20181030
 		for (int i=0; i<args.length; i++) {						
-			//added by Mike, 20181030
-			inputFilename = args[i].replaceAll(".txt","");			
+			//added by Mike, 20181030; edited by Mike, 20201227
+/*			inputFilename = args[i].replaceAll(".txt","");			
 			File f = new File(inputFilename+".txt");
+*/
+			File f;
+			//identify if file extension uses .txt
+			if (args[i].contains(".txt")) {
+				inputFilename = args[i].replaceAll(".txt","");			
+				f = new File(inputFilename+".txt");
+			}
+			//.csv
+			else {
+				inputFilename = args[i].replaceAll(".csv","");			
+				f = new File(inputFilename+".csv");				
+			}			
 
-			System.out.println("inputFilename: " + inputFilename);
-			
+			System.out.println("inputFilename:"+inputFilename);
+	
 			if (inputFilename.toLowerCase().contains("consultation")) {
 				isConsultation=true;
 			}
@@ -1600,7 +1664,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 			else {
 				INPUT_MASTER_LIST_OFFSET = 1;
 			}
-			
+						
 			//added by Mike, 20191230
 			if (inputFilename.toLowerCase().contains("assets")) {
 				continue;
@@ -1625,6 +1689,13 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 				}
 				
 				String[] inputColumns = s.split("\t");					
+
+				//added by Mike, 20201227
+				//blank row
+				if (inputColumns[0].equals("")) {
+					continue;
+				}
+
 				
 				//added by Mike, 20180412
 				if (dateValuesArray[i]==null) {
@@ -2060,10 +2131,24 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 	//added by Mike, 20191230; edited by Mike, 20191231
 	private static void processAssetsInputFile(String[] args, String fileKeyword, ArrayList<String[]> containerArrayList) throws Exception {
 		for (int i=0; i<args.length; i++) {						
-			inputFilename = args[i].replaceAll(".txt","");			
+			//edited by Mike, 20201227
+/*			inputFilename = args[i].replaceAll(".txt","");			
 			File f = new File(inputFilename+".txt");
+*/
+			File f;
+			//identify if file extension uses .txt
+			if (args[i].contains(".txt")) {
+				inputFilename = args[i].replaceAll(".txt","");			
+				f = new File(inputFilename+".txt");
+			}
+			//.csv
+			else {
+				inputFilename = args[i].replaceAll(".csv","");			
+				f = new File(inputFilename+".csv");				
+			}			
 
-			System.out.println("inputFilename: " + inputFilename);
+			System.out.println("inputFilename:"+inputFilename);
+	
 			
 			//added by Mike, 20190207
 			if (inputFilename.contains("*")) {
@@ -2423,5 +2508,17 @@ public class generateAnnualYearEndSummaryReportOfAllInputFilesFromMasterList {
 		}
 		
 		return inputString;
+	}
+
+	//added by Mike, 20201227
+	//Reference: https://stackoverflow.com/questions/1102891/how-to-check-if-a-string-is-numeric-in-java;
+	//last accessed: 20201227
+	//answer by: CraigTP, 20090709T0955
+	//edited by: Javad Besharati, 20190302T0927
+	public static boolean isNumeric(String str) {
+	  NumberFormat formatter = NumberFormat.getInstance();
+	  ParsePosition pos = new ParsePosition(0);
+	  formatter.parse(str, pos);
+	  return str.length() == pos.getIndex();
 	}
 }

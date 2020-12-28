@@ -15,7 +15,7 @@
  * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20201218
+ * @last updated: 20201228
  */
 
 import java.util.*;
@@ -142,12 +142,19 @@ public class generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputF
 				if (startDate==null) {
 					startDate = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);
 					endDate = startDate;
+					
+					//added by Mike, 20201228
+					startDate=startDate.replace("/-","/");
+					endDate=endDate.replace("/-","/");
 				}
 				else {
 					//edited by Mike, 20181121
 					//add this condition in case the input file does not have a date for each transaction; however, ideally, for input files 2018 onwards, each transaction should have a date
 					if (!inputColumns[INPUT_DATE_COLUMN].trim().equals("")) {
 						endDate = getMonthYear(inputColumns[INPUT_DATE_COLUMN]);
+
+						//added by Mike, 20201228
+						endDate=endDate.replace("/-","/");
 					}
 				}
 

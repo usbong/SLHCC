@@ -15,7 +15,7 @@
  * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20201228
+ * @last updated: 20201231
  */
 import java.util.*;
 import java.io.File;
@@ -401,6 +401,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 			double procedureCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_PROCEDURE_COUNT_COLUMN]; //added by Mike, 20190105		
 			double medicalCertificateCount = hmoContainer.get(key)[OUTPUT_CONSULTATION_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; //added by Mike, 20190107
 
+			//added by Mike, 20201231
+			key = key.replace(":","");
+
 			//added by Mike, 20200124
 			if(key.contains("SLR")) {
 				totalSLRTreatmentCount+=treatmentCount;
@@ -471,6 +474,8 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 			double procedureNONHMOCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_PROCEDURE_COUNT_COLUMN]; //added by Mike, 20190105		
 			double medicalCertificateNONHMOCount = nonHmoContainer.get(key)[OUTPUT_CONSULTATION_NON_HMO_MEDICAL_CERTIFICATE_COUNT_COLUMN]; //added by Mike, 20190107
 
+			//added by Mike, 20201231
+			key = key.replace(":","");
 
 			//added by Mike, 20200124
 			if(key.contains("WI") && key.contains("ROBLES")) {
@@ -512,10 +517,15 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 		totalMedicalCertificateNONHMOCount += totalSLRMedicalCertificateCount;
 
 
-		//added by Mike, 20200113
-		writer.print(
+		//added by Mike, 20200113; edited by Mike, 20201231
+/*		writer.print(
 				"HMO:\t"+totalTreatmentHMOCount+"\t"+totalConsultationHMOCount+"\t"+totalProcedureHMOCount+"\t"+totalMedicalCertificateHMOCount+"\n"
 				);					
+*/				
+		writer.print(
+				"HMO\t"+totalTreatmentHMOCount+"\t"+totalConsultationHMOCount+"\t"+totalProcedureHMOCount+"\t"+totalMedicalCertificateHMOCount+"\n"
+				);					
+
 /*
 		//added by Mike, 202000124
 		SortedSet<String> sortedReferringMedicalDoctorTransactionCountKeyset = new TreeSet<String>(referringDoctorContainer.keySet());

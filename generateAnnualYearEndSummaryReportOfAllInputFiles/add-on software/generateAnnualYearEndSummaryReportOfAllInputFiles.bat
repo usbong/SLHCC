@@ -18,4 +18,5 @@ cd..
 
 start "xl" excel.exe /e "generateAnnualReportWithMacro.xlsm" /p "myInputParam"
 
-PAUSE
+rem removed by Mike, 20210101
+rem PAUSE

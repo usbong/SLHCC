@@ -2,6 +2,15 @@ cd /d %1%
 set mainDirectory=%CD%
 cd /d %mainDirectory%
 
+rem added by Mike, 20210102
+rem note: if exist c:\folder\ del c:\folder\
+rem without "if exist", Computer via Command Prompt shall notify us that no "input" folder exists to delete
+rem "/Q" to remove "are you sure? Y/N"
+del /Q input
+mkdir input
+mkdir "input\consultation"
+mkdir "input\treatment"
+
 cd..
 
 copy "C:\Usbong\unit\workbooks\Consultation*.txt" "add-on software\input\consultation"

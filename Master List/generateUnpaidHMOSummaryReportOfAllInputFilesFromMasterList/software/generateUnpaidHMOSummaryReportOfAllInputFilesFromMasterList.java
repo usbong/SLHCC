@@ -253,7 +253,7 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 						consultationWriter.print(
 										transactionDateContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+"\t"+
 										transactionDateContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]+"\t"+
-										transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN]+"\t"+
+										autoAddCommaToNumber(Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN]))+"\t"+
 										transactionDateContainer.get(i)[OUTPUT_HMO_CLASS_COLUMN]+"\t"+
 		//								transactionDateContainer.get(i)[OUTPUT_HMO_APPROVAL_CODE_COLUMN]+"\n"
 										"\t\n"
@@ -264,7 +264,9 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 					totalUnpaidHMOFeeConsultation += Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN].replace("\"","").replace(",",""));
 				}
 			}
-			consultationWriter.print("TOTAL:\t\t"+totalUnpaidHMOFeeConsultation+"\n"); 	
+			//edited by Mike, 20210121
+//			consultationWriter.print("TOTAL:\t\t"+totalUnpaidHMOFeeConsultation+"\n"); 					
+			consultationWriter.print("TOTAL:\t\t"+autoAddCommaToNumber(totalUnpaidHMOFeeConsultation)+"\n"); 	
 			
 			//added by Mike, 20210121
 			if (slrTransactionContainer.size()>0) {
@@ -274,7 +276,7 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 					consultationWriter.print(
 									slrTransactionContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+"\t"+
 									slrTransactionContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]+"\t"+
-									slrTransactionContainer.get(i)[OUTPUT_HMO_FEE_COLUMN]+"\t"+
+									autoAddCommaToNumber(Double.parseDouble(slrTransactionContainer.get(i)[OUTPUT_HMO_FEE_COLUMN]))+"\t"+
 									slrTransactionContainer.get(i)[OUTPUT_HMO_CLASS_COLUMN]+"\t"+
 	//								slrTransactionContainer.get(i)[OUTPUT_HMO_APPROVAL_CODE_COLUMN]+"\n"
 									"\t\n"
@@ -283,7 +285,7 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 					 totalUnpaidSLRFeeConsultation += Double.parseDouble(slrTransactionContainer.get(i)[OUTPUT_HMO_FEE_COLUMN].replace("\"","").replace(",",""));						 
 				}
 
-				consultationWriter.print("TOTAL:\t\t"+totalUnpaidSLRFeeConsultation+"\n"); 	
+				consultationWriter.print("TOTAL:\t\t"+autoAddCommaToNumber(totalUnpaidSLRFeeConsultation)+"\n"); 	
 			}
 						
 			consultationWriter.close();		
@@ -301,7 +303,7 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 						treatmentWriter.print(
 										transactionDateContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+"\t"+
 										transactionDateContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]+"\t"+
-										transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN]+"\t"+
+										autoAddCommaToNumber(Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN]))+"\t"+
 										transactionDateContainer.get(i)[OUTPUT_HMO_CLASS_COLUMN]+"\t"+
 										transactionDateContainer.get(i)[OUTPUT_HMO_APPROVAL_CODE_COLUMN]+"\n"
 									); 				   											
@@ -310,7 +312,7 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 						totalUnpaidHMOFeeTreatment += Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN].replace("\"","").replace(",",""));
 					}
 				}
-				treatmentWriter.print("TOTAL:\t\t"+totalUnpaidHMOFeeTreatment+"\n"); 		
+				treatmentWriter.print("TOTAL:\t\t"+autoAddCommaToNumber(totalUnpaidHMOFeeTreatment)+"\n"); 		
 				
 		//		consultationWriter.close();		//removed by Mike, 20200217
 				treatmentWriter.close();
@@ -426,7 +428,54 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 		StringBuffer sb = new StringBuffer(date);				
 		return sb.substring(0,3).concat("-").concat(sb.substring(sb.length()-2,sb.length()));
 	}
-	
+
+	//added by Mike, 20210121
+	//note: comma removed when importing to LibreOfficeCalc as number, not text
+	//TO-DO: -add: second digit after the dot from left if no digit exists in that position
+	private static String autoAddCommaToNumber(Double dNumberInput) {
+		StringBuffer sbInput = new StringBuffer(""+dNumberInput);
+		StringBuffer sbOutput = new StringBuffer("");
+
+//		System.out.println("dNumberInput:"+dNumberInput);
+
+		boolean bIsPositionBeforeDotFromRight=false;
+		int iCountDigit=0;
+		String sValueAtPosition;
+
+//		System.out.println("sbInput.length():"+sbInput.length());
+
+		for (int iCount=sbInput.length(); iCount>0; iCount--) {
+//			System.out.println("value:"+sbInput.substring(iCount-1,iCount));
+			
+			sValueAtPosition=sbInput.substring(iCount-1,iCount);
+
+			if (sValueAtPosition.equals(".")) {
+				bIsPositionBeforeDotFromRight=true;
+			}
+						
+			if (bIsPositionBeforeDotFromRight) {
+				if (iCountDigit==3) {
+//					sValueAtPosition=sbInput.substring(iCount-1,iCount).replace(sValueAtPosition,","+sValueAtPosition);
+					sValueAtPosition=","+sValueAtPosition;
+					iCountDigit=0;
+				}				
+				iCountDigit=iCountDigit+1;
+			}
+			
+//			System.out.println("sValueAtPosition:"+sValueAtPosition);
+			
+			sbOutput.insert(0,sValueAtPosition);
+		}
+
+		//delete excess comma if exists in position 0 from left
+		String sOutput=sbOutput.substring(0,1).replace(",","").concat(sbOutput.substring(1));
+				
+//		System.out.println(sOutput);
+		
+		return sOutput; 
+//		return sbOutput.toString(); 
+	}
+
 	//added by Mike, 20181030
 	private static void makeFilePath(String filePath) {
 		File directory = new File(filePath);		

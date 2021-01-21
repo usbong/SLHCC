@@ -1,5 +1,5 @@
 /*
- * Copyright 2018~2020 Usbong Social Systems, Inc.
+ * Copyright 2018~2021 Usbong Social Systems, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -15,7 +15,7 @@
  * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20201106
+ * @last updated: 20210121
  *
  */
 import java.util.*;
@@ -102,12 +102,13 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 */
 
 	private static ArrayList<String[]> transactionDateContainer;	//added by Mike, 20190119
-
+/*  //removed by Mike, 20210121
 	private static HashMap<Integer, double[]> dateContainer;	//added by Mike, 201801205
 	private static HashMap<String, double[]> hmoContainer;	//added by Mike, 201801217
 	private static HashMap<String, double[]> nonHmoContainer;	//added by Mike, 201801217
 	private static HashMap<String, double[]> referringDoctorContainer; //added by Mike, 20181218
-
+*/
+	
 	private static String[] columnValuesStringArray; //added by Mike, 20190119
 	
 	private static double[] columnValuesArray;
@@ -212,6 +213,9 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 			consultationWriter = new PrintWriter("output/UnpaidHMOSummaryReportOutputConsultation" + medicalDoctorInput+".txt", "UTF-8");			
 			
 			transactionDateContainer = new ArrayList<String[]>();
+
+			//added by Mike, 20210121
+			ArrayList<String[]> slrTransactionContainer = new ArrayList<String[]>();
 			
 			//PART/COMPONENT/MODULE/PHASE 1
 			processInputFiles(args, true);	
@@ -224,12 +228,15 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 			//added by Mike, 20190122
 			double totalUnpaidHMOFeeConsultation = 0;
 //			double totalUnpaidHMOFeeTreatment = 0;
-			
+			double totalUnpaidSLRFeeConsultation = 0; //added by Mike, 20210121
+
 			//init table header names
 	//		writer.print("CONSULTATION\n");
 			consultationWriter.print("DATE:\tPATIENT NAME:\tFEE:\tCLASSIFICATION:\tAPPROVAL CODE:\tUNPAID REASON:\n"); 		
 			for(int i=0; i<transactionDateContainer.size(); i++) {
 				if (transactionDateContainer.get(i)[OUTPUT_HMO_FILE_TYPE_COLUMN].toLowerCase().trim().equals("consultation")){
+					//edited by Mike, 20210121
+/*					
 					consultationWriter.print(
 									transactionDateContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+"\t"+
 									transactionDateContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]+"\t"+
@@ -238,12 +245,47 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 	//								transactionDateContainer.get(i)[OUTPUT_HMO_APPROVAL_CODE_COLUMN]+"\n"
 									"\t\n"
 								); 				   											
-								
+*/
+					if (transactionDateContainer.get(i)[OUTPUT_HMO_CLASS_COLUMN].toLowerCase().trim().contains("slr")){												
+						slrTransactionContainer.add(transactionDateContainer.get(i));
+					}
+					else {
+						consultationWriter.print(
+										transactionDateContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+"\t"+
+										transactionDateContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]+"\t"+
+										transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN]+"\t"+
+										transactionDateContainer.get(i)[OUTPUT_HMO_CLASS_COLUMN]+"\t"+
+		//								transactionDateContainer.get(i)[OUTPUT_HMO_APPROVAL_CODE_COLUMN]+"\n"
+										"\t\n"
+									);
+					}
+
 					//added by Mike, 20190122
 					totalUnpaidHMOFeeConsultation += Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN].replace("\"","").replace(",",""));
 				}
 			}
-			consultationWriter.print("TOTAL:\t\t"+totalUnpaidHMOFeeConsultation+"\n"); 					
+			consultationWriter.print("TOTAL:\t\t"+totalUnpaidHMOFeeConsultation+"\n"); 	
+			
+			//added by Mike, 20210121
+			if (slrTransactionContainer.size()>0) {
+				consultationWriter.print("\nUnpaid SLR\n"); 	
+
+				for(int i=0; i<slrTransactionContainer.size(); i++) {
+					consultationWriter.print(
+									slrTransactionContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+"\t"+
+									slrTransactionContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]+"\t"+
+									slrTransactionContainer.get(i)[OUTPUT_HMO_FEE_COLUMN]+"\t"+
+									slrTransactionContainer.get(i)[OUTPUT_HMO_CLASS_COLUMN]+"\t"+
+	//								slrTransactionContainer.get(i)[OUTPUT_HMO_APPROVAL_CODE_COLUMN]+"\n"
+									"\t\n"
+								);			
+					
+					 totalUnpaidSLRFeeConsultation += Double.parseDouble(slrTransactionContainer.get(i)[OUTPUT_HMO_FEE_COLUMN].replace("\"","").replace(",",""));						 
+				}
+
+				consultationWriter.print("TOTAL:\t\t"+totalUnpaidSLRFeeConsultation+"\n"); 	
+			}
+						
 			consultationWriter.close();		
 
 			//added by Mike, 20200217

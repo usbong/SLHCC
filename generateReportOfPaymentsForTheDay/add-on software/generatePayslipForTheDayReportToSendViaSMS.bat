@@ -1,4 +1,17 @@
 @echo off
+REM Copyright 2020~2021 USBONG SOCIAL SYSTEMS, INC. (USBONG)
+REM  
+REM Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+REM http://www.apache.org/licenses/LICENSE-2.0
+REM  
+REM Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+REM
+REM Generate Payslip for the Day Report to Send via Short Messaging Service (SMS) message from Windows Personal Computer (PC)
+REM @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
+REM @author: SYSON, MICHAEL B.
+REM @date created: 2020
+REM @last updated: 20210221
+
 REM mainDirectory=$(pwd)
 set mainDirectory=%~dp0
 
@@ -63,7 +76,10 @@ echo %sInputFileLocation%
 rem java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient.jar;.\software\org.apache.httpcore.jar;.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ "%sInputFileLocation%\"Treatment"*%sMonthYear%"2020.txt"
 REM edited by Mike, 20200926
 REM java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient.jar;.\software\org.apache.httpcore.jar;.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ "%sInputFileLocation%"\Treatment"*"September*2020.txt"
-java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient.jar;.\software\org.apache.httpcore.jar;.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ "%sInputFileLocation%"\Treatment"*%sMonthYear%.txt"
+
+REM edited by Mike, 20210221
+REM java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient.jar;.\software\org.apache.httpcore.jar;.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ "%sInputFileLocation%"\Treatment"*%sMonthYear%.txt"
+java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient.jar;.\software\org.apache.httpcore.jar;.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ "%sInputFileLocation%"\Treatment"*%sMonthYear%.txt" "%sInputFileLocation%"\Consultation"*%sMonthYear%.txt"
 
 rem removed by Mike, 20200924
 rem cd ..

@@ -1,17 +1,19 @@
 /*
-  Copyright 2019~2020 Usbong Social Systems, Inc.
+  Copyright 2019~2021 USBONG SOCIAL SYSTEMS, INC. (USBONG)
   
   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
   http://www.apache.org/licenses/LICENSE-2.0
   
   Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
   
+  @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20201008
+  @date updated: 20210221
   
   Given:
   1) List with the details of the transactions for the day
+
   Output:
   1) Automatically process the transactions and send the details to a mobile telephone at the headquarters using Short Messaging Service (SMS)
   --> Example SMS Output (auto-generated from JSON format): 
@@ -111,15 +113,26 @@ public class UsbongSMSReportMain {
 	private static final int INPUT_CLASSIFICATION_COLUMN = 2;
 	private static final int INPUT_AMOUNT_PAID_COLUMN = 3;
 	private static final int INPUT_NET_PF_COLUMN = 4;
-
-	//added by Mike, 20190916
+	
+	//added by Mike, 20190916; edited by Mike, 20210221
+/*	//remove "final" keyword due to INPUT_WORKBOOK_FEE_COLUMN+INPUT_WORKBOOK_CONSULTATION_OFFSET, etc
+	//shall require a wider (horizontal) computer monitor to quickly verify and edit instructions
 	private static final int INPUT_WORKBOOK_DATE_COLUMN = 0;
 	private static final int INPUT_WORKBOOK_FEE_COLUMN = 5;
 	private static final int INPUT_WORKBOOK_CLASSIFICATION_COLUMN = 7;
 	private static final int INPUT_WORKBOOK_AMOUNT_PAID_COLUMN = 8;
 	private static final int INPUT_WORKBOOK_NET_PF_COLUMN = 9;
+*/
+	private static int INPUT_WORKBOOK_DATE_COLUMN = 0;
+	private static int INPUT_WORKBOOK_FEE_COLUMN = 5;
+	private static int INPUT_WORKBOOK_CLASSIFICATION_COLUMN = 7;
+	private static int INPUT_WORKBOOK_AMOUNT_PAID_COLUMN = 8;
+	private static int INPUT_WORKBOOK_NET_PF_COLUMN = 9;
 	
-/*	
+	//added by Mike, 20210221
+	private static final int INPUT_WORKBOOK_CONSULTATION_OFFSET = 1; //+1 to PT TREATMENT table header column name
+	
+	/*	
 	private static String TAG = "usbong.HTTPConnect.storeTransactionsListForTheDay";	
 	private static String TAG = "usbong.HTTPConnect.getTransactionsListForTheDay";	
 */
@@ -146,8 +159,11 @@ public class UsbongSMSReportMain {
 		serverIpAddress = args[0];
 */
 
-		main.processSendSMS(new String[]{args[1]});
-
+		//edited by Mike, 20210221
+//		main.processSendSMS(new String[]{args[1]}); //PT TREATMENT only
+		main.processSendSMS(args); //add CONSULTATION
+		
+		
 /* 		//removed by Mike, 20200916
 		//edited by Mike, 20190918		
 		if (isForUpload) {
@@ -160,6 +176,75 @@ public class UsbongSMSReportMain {
 	}
 
 	//added by Mike, 20200916
+	private void processSendSMS(String[] args) throws Exception {
+		//edited by Mike, 20210221
+		//JSONObject json = processPayslipInputForSendSMS(args);	
+		JSONObject[] json = new JSONObject[2];
+		//args start at 1; 0 : "http://localhost/"
+		json[0] = processPayslipInputForSendSMS(args[1]);	//PT TREATMENT
+		json[1] = processPayslipInputForSendSMS(args[2]);	//CONSULTATION
+
+/*		//edited by Mike, 20210221
+		//added by Mike, 20200917
+		if (json==null) {
+			 return;
+		}
+*/			
+		for (int iCount=0; iCount<2; iCount++) {
+			if (json[iCount]==null) {
+				 return;
+			}
+		}
+			
+		 //added by Mike, 20200917
+		 //write output file
+		 PrintWriter writer = new PrintWriter("output/smsReport"+getDateTodayISOFormat()+".txt", "UTF-8");
+		 //PrintWriter writer = new PrintWriter("");
+			
+		 //edited by Mike, 20200926
+//		 writer.print(json.toString());			
+		
+		 //edited by Mike, 20200929
+		 //TO-DO: -reverify: rounding method
+		 DecimalFormat df = new DecimalFormat("#.##");
+
+		//edited by Mike, 20201008
+//		 writer.print("SLHCC,");		
+		 writer.print("SLHCC,"+getDateTodayISOFormat()+",");		
+
+		 //added by Mike, 20210221
+		 //added new line 2 times
+		 writer.println(""); 
+		 writer.println("");
+
+		 for (int iCount=0; iCount<2; iCount++) {			 
+			 //note: for HTC Wildfire (year 2012) Android, SMS body value does not accept as input the length of select string of characters, e.g. "PT Treatment"
+			 //in its stead, we use "PT"
+			 if (json[iCount].getInt("payslip_type_id") == 1) {
+				//writer.print("Consultation,");		
+				writer.print("CON,");	
+			}
+			 else {
+				//writer.print("PT Treatment,");
+				writer.print("PT,");
+			 }
+
+			 writer.print("Total:"+json[iCount].getInt("iTotal")+",");		
+			 writer.print("CashTotalFee:"+df.format(json[iCount].getDouble("dCashTotalFee"))+",");		
+			 writer.print("CashTotalNetFee:"+df.format(json[iCount].getDouble("dCashTotalNetFee"))+",");		
+					
+			 writer.print("HMOTotalFee:"+df.format(json[iCount].getDouble("dHMOTotalFee"))+",");
+			 writer.print("HMOTotalNetFee:"+df.format(json[iCount].getDouble("dHMOTotalNetFee"))+"");			
+
+			 //added by Mike, 20210221
+			 //added new line 2 times
+			 writer.println(""); 
+			 writer.println("");
+		 }
+		 writer.close();
+	}	
+
+/* //edited by Mike, 20210221 //previous set of instructions	
 	private void processSendSMS(String[] args) throws Exception {
 		JSONObject json = processPayslipInputForSendSMS(args);	
 			
@@ -190,7 +275,14 @@ public class UsbongSMSReportMain {
 		 if (json.getInt("payslip_type_id") == 1) {
 			//writer.print("Consultation,");		
 			writer.print("CON,");	
-		 }
+
+			//added by Mike, 20210221
+			//INPUT_WORKBOOK_DATE_COLUMN += INPUT_WORKBOOK_CONSULTATION_OFFSET; //no need for OFFSET
+			INPUT_WORKBOOK_FEE_COLUMN += INPUT_WORKBOOK_CONSULTATION_OFFSET;
+			INPUT_WORKBOOK_CLASSIFICATION_COLUMN += INPUT_WORKBOOK_CONSULTATION_OFFSET;
+			INPUT_WORKBOOK_AMOUNT_PAID_COLUMN += INPUT_WORKBOOK_CONSULTATION_OFFSET;
+			INPUT_WORKBOOK_NET_PF_COLUMN += INPUT_WORKBOOK_CONSULTATION_OFFSET;
+		}
 		 else {
 			//writer.print("PT Treatment,");
 			writer.print("PT,");
@@ -205,6 +297,8 @@ public class UsbongSMSReportMain {
 					
 		 writer.close();
 	}	
+*/
+
 	
 	private void processUpload(String[] args) throws Exception {
 		JSONObject json = processPayslipInputForUpload(args);	
@@ -280,7 +374,9 @@ public class UsbongSMSReportMain {
 	
 	//added by Mike, 20200916	
 	//Note: Consultation and PT Treatment payslip inputs are processed separately
-	private JSONObject processPayslipInputForSendSMS(String[] args) throws Exception {
+	//edited by Mike, 20210221
+//	private JSONObject processPayslipInputForSendSMS(String[] args) throws Exception {
+	private JSONObject processPayslipInputForSendSMS(String sArg) throws Exception {	
 		JSONObject json = new JSONObject();
 //		json.put("myKey", "myValue");    
 
@@ -300,11 +396,14 @@ public class UsbongSMSReportMain {
 		double dCashTotalFee = 0.0;
 		double dCashTotalNetFee = 0.0;
 
-		//added by Mike, 20200921
-		System.out.println("args.length: "+args.length);
-
-		for (int i=0; i<args.length; i++) {									
+		//added by Mike, 20200921; removed by Mike, 20210221
+		//System.out.println("args.length: "+args.length);
+			
+		//edited by Mike, 20210221
+/*		for (int i=0; i<args.length; i++) {															
 			inputFilename = args[i].replaceAll(".txt","");			
+*/
+			inputFilename = sArg.replaceAll(".txt","");			
 			File f = new File(inputFilename+".txt");
 
 			//added by Mike, 20200921
@@ -318,8 +417,17 @@ public class UsbongSMSReportMain {
 
 			//added by Mike, 20190917
 			//note that the default payslip_type_id is 2, i.e. "PT Treatment"
-			if (inputFilename.contains("CONSULT")) {
+			//edited by Mike, 20210221
+//			if (inputFilename.contains("CONSULT")) {
+			if (inputFilename.toUpperCase().contains("CONSULT")) {
 				json.put("payslip_type_id", 1);    				
+								
+				//added by Mike, 20210221
+				//INPUT_WORKBOOK_DATE_COLUMN += INPUT_WORKBOOK_CONSULTATION_OFFSET; //no need for OFFSET
+				INPUT_WORKBOOK_FEE_COLUMN += INPUT_WORKBOOK_CONSULTATION_OFFSET;
+				INPUT_WORKBOOK_CLASSIFICATION_COLUMN += INPUT_WORKBOOK_CONSULTATION_OFFSET;
+				INPUT_WORKBOOK_AMOUNT_PAID_COLUMN += INPUT_WORKBOOK_CONSULTATION_OFFSET;
+				INPUT_WORKBOOK_NET_PF_COLUMN += INPUT_WORKBOOK_CONSULTATION_OFFSET;				
 			}			
 			else {
 				json.put("payslip_type_id", 2);    				
@@ -394,6 +502,8 @@ public class UsbongSMSReportMain {
 			  
 				//added by Mike, 20200916
 //				System.out.println(inputColumns[INPUT_WORKBOOK_DATE_COLUMN]);
+				//added by Mike, 20210221
+				//no need for CONSULTATION OFFSET 
 				if (!inputColumns[INPUT_WORKBOOK_DATE_COLUMN].equals(sDateToday)) {
 					rowCount++;
 					continue;
@@ -424,6 +534,177 @@ public class UsbongSMSReportMain {
 //					System.out.println("rowCount: "+rowCount);
 				}
 			}				
+		//removed by Mike, 20210221			
+/*		}
+*/		
+		//added by Mike, 20200916
+		json.put("dHMOTotalFee", dHMOTotalFee);
+		json.put("dHMOTotalNetFee", dHMOTotalNetFee);			
+		json.put("dCashTotalFee", dCashTotalFee);
+		json.put("dCashTotalNetFee", dCashTotalNetFee);
+		
+		//added by Mike, 20190812; edited by Mike, 20190815
+		json.put("iTotal", transactionCount);    				
+								
+		System.out.println("json: "+json.toString());
+		
+		return json;
+	}
+	
+	//edited by Mike, 20210221
+/*	
+	//Note: Consultation and PT Treatment payslip inputs are processed separately
+	private JSONObject processPayslipInputForSendSMS(String[] args) throws Exception {
+//		json.put("myKey", "myValue");    
+
+		String sDateToday = getDateToday();
+
+//		System.out.println("sDateToday: " + sDateToday);
+
+		//added by Mike, 20200930
+		DecimalFormat df = new DecimalFormat("#.##");
+
+		//added by Mike, 20190812
+		int transactionCount = 0; //start from zero
+
+		double dHMOTotalFee = 0.0;
+		double dHMOTotalNetFee = 0.0;
+
+		double dCashTotalFee = 0.0;
+		double dCashTotalNetFee = 0.0;
+
+		//added by Mike, 20200921
+		System.out.println("args.length: "+args.length);
+
+		for (int i=0; i<args.length; i++) {									
+			inputFilename = args[i].replaceAll(".txt","");			
+			File f = new File(inputFilename+".txt");
+
+			//added by Mike, 20200921
+			System.out.println("inputFilename: " + inputFilename);
+
+			//added by Mike, 20200917
+			if(!f.exists()) { 
+    			System.out.println("File does not exist: "+f.toString());
+    			return null;
+			}			
+
+			//added by Mike, 20190917
+			//note that the default payslip_type_id is 2, i.e. "PT Treatment"
+			if (inputFilename.contains("CONSULT")) {
+				json.put("payslip_type_id", 1);    				
+								
+				//added by Mike, 20210221
+				//INPUT_WORKBOOK_DATE_COLUMN += INPUT_WORKBOOK_CONSULTATION_OFFSET; //no need for OFFSET
+				INPUT_WORKBOOK_FEE_COLUMN += INPUT_WORKBOOK_CONSULTATION_OFFSET;
+				INPUT_WORKBOOK_CLASSIFICATION_COLUMN += INPUT_WORKBOOK_CONSULTATION_OFFSET;
+				INPUT_WORKBOOK_AMOUNT_PAID_COLUMN += INPUT_WORKBOOK_CONSULTATION_OFFSET;
+				INPUT_WORKBOOK_NET_PF_COLUMN += INPUT_WORKBOOK_CONSULTATION_OFFSET;				
+			}			
+			else {
+				json.put("payslip_type_id", 2);    				
+			}
+			
+			Scanner sc = new Scanner(new FileInputStream(f));				
+		
+			String s;		
+			
+			//edited by Mike, 20191012; removed by Mike, 20200919
+			//s=sc.nextLine(); 			
+			//s = new String(sc.nextLine().getBytes(), StandardCharsets.UTF_8);
+
+			//removed by Mike, 20200916
+			//edited by Mike, 20190917
+//			json.put("dateTimeStamp", s.trim());
+
+			//edited by Mike, 20191012
+			//s=sc.nextLine();
+			//removed by Mike, 20200919
+			//s = new String(sc.nextLine().getBytes(), StandardCharsets.UTF_8);
+
+//		//removed by Mike, 20200916			
+//			//edited by Mike, 20190917
+////			json.put("cashierPerson", s.trim().replace("\"",""));    
+	
+			if (isInDebugMode) {
+				rowCount=0;
+			}
+						
+			//count/compute the number-based values of inputColumns 
+			while (sc.hasNextLine()) {				
+			  //edited by Mike, 20191012
+				//s=sc.nextLine();
+				
+				//noted by Mike, 20200919
+				//note: skip table header row				
+				s = new String(sc.nextLine().getBytes(), StandardCharsets.UTF_8);
+
+			  System.out.println(s);
+
+				//if the row is blank
+				if (s.trim().equals("")) {
+					continue;
+				}
+				
+				//added by Mike, 20200916
+				if (rowCount==0) { //skip table header row
+					rowCount++;
+					continue;
+				}
+				
+				String[] inputColumns = s.split("\t");					
+
+				//System.out.println(s);
+				//json.put("myKey", "myValue");    
+
+				//removed by Mike, 20200916
+
+				//added by Mike, 20190812; edited by Mike, 20190816
+////				JSONObject transactionInJSONFormat = new JSONObject();
+////				transactionInJSONFormat.put(""+INPUT_OR_NUMBER_COLUMN, Integer.parseInt(inputColumns[INPUT_OR_NUMBER_COLUMN]));
+////				transactionInJSONFormat.put(""+INPUT_PATIENT_NAME_COLUMN, inputColumns[INPUT_PATIENT_NAME_COLUMN].replace("\"",""));
+////				transactionInJSONFormat.put(""+INPUT_CLASSIFICATION_COLUMN, inputColumns[INPUT_CLASSIFICATION_COLUMN]);
+////				transactionInJSONFormat.put(""+INPUT_AMOUNT_PAID_COLUMN, inputColumns[INPUT_AMOUNT_PAID_COLUMN]);
+////				transactionInJSONFormat.put(""+INPUT_NET_PF_COLUMN, inputColumns[INPUT_NET_PF_COLUMN]);
+//				//edited by Mike, 20190813
+////				json.put("i"+transactionCount, transactionInJSONFormat);    				
+
+
+			  
+				//added by Mike, 20200916
+//				System.out.println(inputColumns[INPUT_WORKBOOK_DATE_COLUMN]);
+				//added by Mike, 20210221
+				//no need for CONSULTATION OFFSET 
+				if (!inputColumns[INPUT_WORKBOOK_DATE_COLUMN].equals(sDateToday)) {
+					rowCount++;
+					continue;
+				}
+
+				
+				if (inputColumns[INPUT_WORKBOOK_CLASSIFICATION_COLUMN].contains("HMO")) {
+					//edited by Mike, 20200930
+////					dHMOTotalFee = dHMOTotalFee + Double.parseDouble(inputColumns[INPUT_WORKBOOK_AMOUNT_PAID_COLUMN]);
+////					dHMOTotalNetFee = dHMOTotalNetFee + Double.parseDouble(inputColumns[INPUT_WORKBOOK_NET_PF_COLUMN]);	
+
+					dHMOTotalFee = dHMOTotalFee + UsbongUtilsRound(Double.parseDouble(inputColumns[INPUT_WORKBOOK_AMOUNT_PAID_COLUMN]),2);
+					dHMOTotalNetFee = dHMOTotalNetFee + UsbongUtilsRound(Double.parseDouble(inputColumns[INPUT_WORKBOOK_NET_PF_COLUMN]),2);	
+				}
+				else {
+					//edited by Mike, 20200930
+////					dCashTotalFee = dCashTotalFee + Double.parseDouble(inputColumns[INPUT_WORKBOOK_AMOUNT_PAID_COLUMN]);
+////					dCashTotalNetFee = dCashTotalNetFee + Double.parseDouble(inputColumns[INPUT_WORKBOOK_NET_PF_COLUMN]);
+
+					dCashTotalFee = dCashTotalFee + UsbongUtilsRound(Double.parseDouble(inputColumns[INPUT_WORKBOOK_AMOUNT_PAID_COLUMN]),2);
+					dCashTotalNetFee = dCashTotalNetFee + UsbongUtilsRound(Double.parseDouble(inputColumns[INPUT_WORKBOOK_NET_PF_COLUMN]),2);
+				}
+	
+				transactionCount++;
+
+				if (isInDebugMode) {
+					rowCount++;
+//					System.out.println("rowCount: "+rowCount);
+				}
+			}				
 		}
 		
 		//added by Mike, 20200916
@@ -439,6 +720,7 @@ public class UsbongSMSReportMain {
 		
 		return json;
 	}
+*/	
 		
 	//added by Mike, 20190811; edited by Mike, 20190812
 	//Note: Consultation and PT Treatment payslip inputs are processed separately

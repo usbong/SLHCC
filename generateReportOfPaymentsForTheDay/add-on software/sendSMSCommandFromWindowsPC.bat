@@ -2,7 +2,7 @@
 REM Send Short Messaging Service (SMS) message from Windows Personal Computer (PC)
 REM author: SYSON, MICHAEL B.
 REM date created: 20200915
-REM last updated: 20210113
+REM last updated: 20210112
 REM
 REM Notes:
 REM 1) Download Android Software Development Kit (SDK) Platform Tools to execute Android Debug Bridge (ADB) Shell commands
@@ -46,6 +46,7 @@ rem echo %sYearToday%
 rem added by Mike, 20201002
 set myDate=%date:~10,4%-%date:~4,2%-%date:~7,2%
 rem set myDate="2020-10-01"
+rem set myDate="2021-01-04"
 echo %myDate%
 
 rem for %%i (type "D:\2020\add-on software\generatePayslipForTheDay\output\"smsReport2020-09-24.txt") do (set sSMSBodyValue=%%i)
@@ -62,27 +63,19 @@ rem for /f "delims=" %%V in ('type "D:\2020\add-on software\generatePayslipForTh
 
 rem edited by Mike, 20201002
 rem for /f "delims=" %%V in ('type "D:\2020\add-on software\generatePayslipForTheDay\output\smsReport"%sYearToday%-%sMonthToday%-%sDayToday%".txt"') do @set sSMSBodyValue=%%V
-
-rem added by Mike, 20210113
-rem output: 2021
-set myDateYear=%date:~10,4%
-
-rem edited by Mike, 20210113
 rem for /f "delims=" %%V in ('type "D:\2020\add-on software\generatePayslipForTheDay\output\smsReport%myDate%.txt"') do @set sSMSBodyValue=%%V
-for /f "delims=" %%V in ('type "D:\%myDateYear%\add-on software\generatePayslipForTheDay\output\smsReport%myDate%.txt"') do @set sSMSBodyValue=%%V
+for /f "delims=" %%V in ('type "D:\2021\add-on software\generatePayslipForTheDay\output\smsReport%myDate%.txt"') do @set sSMSBodyValue=%%V
 
 echo %sSMSBodyValue%
+
+rem set sSMSBodyValue=SLHCC,2021-01-04,PT,Total:8,CashTotalFee:1071.43,CashTotalNetFee:712.50,HMOTotalFee:3835.72,HMOTotalNetFee:2175.38
 
 REM update file location
 REM cd /home/unit_member/Documents/USBONG/Android/platform-tools
 rem cd "D:\2020\add-on software\sendReportViaSMS\platform-tools_r30.0.4-windows\platform-tools"
-rem edited by Mike, 20210113
+rem edited by Mike, 20210116
+set myDateYear=%date:~10,4%
 rem cd "D:\2020\add-on software\generatePayslipForTheDay\lib\platform-tools_r30.0.4-windows\platform-tools"
-
-rem edited by Mike, 20210113
-rem cd "D:\2020\add-on software\generatePayslipForTheDay\lib\platform-tools_r30.0.4-windows\platform-tools"
-rem cd "D:\2021\add-on software\generatePayslipForTheDay\lib\platform-tools_r30.0.4-windows\platform-tools"
-rem cd "D:\2021\add-on software\generatePayslipForTheDay\lib\platform-tools_r30.0.4-windows\platform-tools"
 cd "D:\%myDateYear%\add-on software\generatePayslipForTheDay\lib\platform-tools_r30.0.4-windows\platform-tools"
 
 rem adb shell am start -a android.intent.action.SENDTO -d sms:639299527263 --es sms_body "Kumusta!" --ez exit_on_sent true
@@ -92,4 +85,4 @@ adb shell am start -a android.intent.action.SENDTO -d sms:639299527263 --es sms_
 adb shell input keyevent 22
 rem adb shell input keyevent 66
 
-rem pause
+pause

@@ -1,6 +1,6 @@
 @echo off
 REM
-REM Copyright 2021 USBONG SOCIAL SYSTEMS, INC. (USBONG)
+REM Copyright 2020~2021 USBONG SOCIAL SYSTEMS, INC. (USBONG)
 REM 
 REM Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
 REM

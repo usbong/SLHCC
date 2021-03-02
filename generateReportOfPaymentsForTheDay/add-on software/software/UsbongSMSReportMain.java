@@ -9,7 +9,7 @@
   @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20210221
+  @date updated: 20210222
   
   Given:
   1) List with the details of the transactions for the day
@@ -212,18 +212,21 @@ public class UsbongSMSReportMain {
 //		 writer.print("SLHCC,");		
 		 writer.print("SLHCC,"+getDateTodayISOFormat()+",");		
 
+/* //removed by Mike, 20210222			 
 		 //added by Mike, 20210221
 		 //added new line 2 times
 		 writer.println(""); 
 		 writer.println("");
+*/
 
 		 for (int iCount=0; iCount<2; iCount++) {			 
 			 //note: for HTC Wildfire (year 2012) Android, SMS body value does not accept as input the length of select string of characters, e.g. "PT Treatment"
 			 //in its stead, we use "PT"
 			 if (json[iCount].getInt("payslip_type_id") == 1) {
 				//writer.print("Consultation,");		
-				writer.print("CON,");	
-			}
+				//writer.print("CON,");	//edited by Mike, 20210222
+				writer.print(",CON,");	
+				}
 			 else {
 				//writer.print("PT Treatment,");
 				writer.print("PT,");
@@ -236,10 +239,17 @@ public class UsbongSMSReportMain {
 			 writer.print("HMOTotalFee:"+df.format(json[iCount].getDouble("dHMOTotalFee"))+",");
 			 writer.print("HMOTotalNetFee:"+df.format(json[iCount].getDouble("dHMOTotalNetFee"))+"");			
 
+/* //removed by Mike, 20210222			 
 			 //added by Mike, 20210221
 			 //added new line 2 times
 			 writer.println(""); 
 			 writer.println("");
+*/
+			//added by Mike, 20210222
+			//note: write PT Treatment first, then Consultation
+			if (iCount==2) {//PT Treatment
+				writer.print(","); 			
+			}
 		 }
 		 writer.close();
 	}	

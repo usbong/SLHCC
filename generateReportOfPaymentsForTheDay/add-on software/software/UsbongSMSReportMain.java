@@ -9,7 +9,7 @@
   @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20210222
+  @date updated: 20210303
   
   Given:
   1) List with the details of the transactions for the day
@@ -144,6 +144,9 @@ public class UsbongSMSReportMain {
 */	
 	private URL url;
 	private HttpURLConnection conn;
+	
+	//added by Mike, 20210303
+	private String sMyDate;
 
 	public static void main(String[] args) throws Exception {
 //		JSONObject json = new JSONObject();
@@ -177,12 +180,16 @@ public class UsbongSMSReportMain {
 
 	//added by Mike, 20200916
 	private void processSendSMS(String[] args) throws Exception {
+		//added by Mike, 20210303
+		sMyDate = args[3];
+
 		//edited by Mike, 20210221
 		//JSONObject json = processPayslipInputForSendSMS(args);	
 		JSONObject[] json = new JSONObject[2];
 		//args start at 1; 0 : "http://localhost/"
 		json[0] = processPayslipInputForSendSMS(args[1]);	//PT TREATMENT
 		json[1] = processPayslipInputForSendSMS(args[2]);	//CONSULTATION
+
 
 /*		//edited by Mike, 20210221
 		//added by Mike, 20200917
@@ -358,27 +365,45 @@ public class UsbongSMSReportMain {
 	}
 
 	//added by Mike, 20200916
+	//output: M/D/YYYY, e.g. 3/1/2021
 	private String getDateToday() {
-//      DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
-      DateFormat dateFormat = new SimpleDateFormat("M/d/yyyy");
+	  //edited by Mike, 20210302   	  
+	  //sMyDate format: YYYY-MM-DD, e.g. 2021-03-03
+	  if ((sMyDate==null) || (sMyDate=="")) {		
+	//      DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
+		  DateFormat dateFormat = new SimpleDateFormat("M/d/yyyy");
 
-      Date date = new Date();
-  
-  		//removed by Mike, 20200917    
-//      System.out.println(dateFormat.format(date));	
-      
-      return dateFormat.format(date);
+		  Date date = new Date();
+	  
+			//removed by Mike, 20200917    
+	//      System.out.println(dateFormat.format(date));	
+
+		  return dateFormat.format(date);	
+	  }
+	  
+//    return output: "3/1/2021";
+//System.out.println("getDateMDYYYY(sMyDate): "+getDateMDYYYY(sMyDate));
+	  return getDateMDYYYY(sMyDate);	  
 	}	
 
 	//added by Mike, 20200917
+	//output: YYYY-MM-DD, e.g. 2021-03-03
 	private String getDateTodayISOFormat() {
-      DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
- //     DateFormat dateFormat = new SimpleDateFormat("M/d/yyyy");
+	  //edited by Mike, 20210302   	  
+	  //sMyDate format: YYYY-MM-DD, e.g. 2021-03-03
+	  if ((sMyDate==null) || (sMyDate=="")) {		
+		  DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
 
-      Date date = new Date();
- //     System.out.println(dateFormat.format(date));	
-      
-      return dateFormat.format(date);
+		  Date date = new Date();
+	 //     System.out.println(dateFormat.format(date));	
+		  
+	//edited by Mike, 20210302      
+	      return dateFormat.format(date);
+	  }
+	  
+//	  return output: "2021-03-01";
+//System.out.println("sMyDate: "+sMyDate);
+	  return sMyDate;
 	}	
 
 	
@@ -910,6 +935,17 @@ public class UsbongSMSReportMain {
 		
 		return dateStringPart2[1] + "/" + dateStringPart2[2] + "/" + dateStringPart2[0];
 	}	
+	
+	//added by Mike, 20210303
+	//input: 2021-03-01
+	//output: 3/1/2021
+	private String getDateMDYYYY(String dateTimeStamp) {
+		String[] dateStringPart1 = dateTimeStamp.split("T");		
+		String[] dateStringPart2 = dateStringPart1[0].split("-");		
+		
+		return dateStringPart2[1].substring(1) + "/" + dateStringPart2[2].substring(1) + "/" + dateStringPart2[0];
+	}	
+
 
 	//added by Mike, 20200930
 	//Reference: https://stackoverflow.com/questions/2808535/round-a-double-to-2-decimal-places;

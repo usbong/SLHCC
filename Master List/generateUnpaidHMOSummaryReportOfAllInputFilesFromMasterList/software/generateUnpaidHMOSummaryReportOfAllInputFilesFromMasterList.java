@@ -15,7 +15,7 @@
  * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20210121
+ * @last updated: 20210309
  *
  */
 import java.util.*;
@@ -65,6 +65,7 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 	private static String inputFilename = "input201801"; //without extension; default input file
 	
 	private static String medicalDoctorInput = ""; //added by Mike, 20200216
+	private static String medicalDoctorCompleteNameInput = ""; //added by Mike, 20210309
 	private static PrintWriter consultationWriter; //added by Mike, 20200217
 	
 	private static boolean hasProcessedPTTreatment = false; //added by Mike, 20200217
@@ -208,8 +209,11 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 				
 		//count/compute the number-based values of inputColumns 
 		while (sc.hasNextLine()) {
-			medicalDoctorInput=sc.nextLine();
-		
+			//edited by Mike, 20210309
+			medicalDoctorInput=sc.nextLine();			
+			medicalDoctorCompleteNameInput=medicalDoctorInput.split("\t")[1]; //added by Mike, 20210309
+			medicalDoctorInput=medicalDoctorInput.split("\t")[0]; //added by Mike, 20210309			
+			
 			consultationWriter = new PrintWriter("output/UnpaidHMOSummaryReportOutputConsultation" + medicalDoctorInput+".txt", "UTF-8");			
 			
 			transactionDateContainer = new ArrayList<String[]>();
@@ -221,9 +225,10 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 			processInputFiles(args, true);	
 			
 			//OUTPUT
-			//added by Mike, 20181118
-			consultationWriter.print("Unpaid HMO Summary Report (CONSULTATION)\n");
-			
+			//added by Mike, 20181118; edited by Mike, 20210309
+//			consultationWriter.print("Unpaid HMO Summary Report (CONSULTATION)\n");
+			consultationWriter.print("Unpaid HMO Summary Report (CONSULTATION): "+medicalDoctorCompleteNameInput+"\n");
+
 			//--------------------------------------------------------------------
 			//added by Mike, 20190122
 			double totalUnpaidHMOFeeConsultation = 0;
@@ -441,6 +446,7 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 		boolean bIsPositionBeforeDotFromRight=false;
 		int iCountDigit=0;
 		String sValueAtPosition;
+		int iDotPosition=0;
 
 //		System.out.println("sbInput.length():"+sbInput.length());
 
@@ -451,6 +457,7 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 
 			if (sValueAtPosition.equals(".")) {
 				bIsPositionBeforeDotFromRight=true;
+				iDotPosition=iCount-1;
 			}
 						
 			if (bIsPositionBeforeDotFromRight) {
@@ -469,7 +476,33 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 
 		//delete excess comma if exists in position 0 from left
 		String sOutput=sbOutput.substring(0,1).replace(",","").concat(sbOutput.substring(1));
-				
+
+		//added by Mike, 20210121
+		//verify that there are two digits after the dot from the left
+		sbOutput=new StringBuffer(sOutput);
+		
+		System.out.println("sbOutput:"+sbOutput.substring(iDotPosition+1));
+			
+		//example: 1,200.0
+		if (sbOutput.substring(iDotPosition+1).length()<2) {
+			sOutput=sOutput+"0";
+			//output: 1,200.00
+		}	
+/*	TO-DO: -update: this due to multiple dots
+		//example: 1,200.67
+		else if (sbOutput.substring(iDotPosition+1).length()==2) {
+			sOutput=sbOutput.substring(0,iDotPosition).concat("."+sbOutput.substring(iDotPosition+1));
+			//output: 1,200.67
+		}
+		//example: 1,200.678		
+		else {
+			System.out.println("sbOutputLength:"+sbOutput.substring(iDotPosition+1).length());
+
+			sOutput=sbOutput.substring(0,iDotPosition).concat("."+sbOutput.substring(iDotPosition+1));
+			//output: 1,200.67
+		}
+*/
+		
 //		System.out.println(sOutput);
 		
 		return sOutput; 

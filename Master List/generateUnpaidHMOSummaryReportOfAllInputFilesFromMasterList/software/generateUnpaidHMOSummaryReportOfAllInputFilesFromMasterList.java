@@ -15,7 +15,7 @@
  * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20210309
+ * @last updated: 20210415
  *
  */
 import java.util.*;
@@ -235,6 +235,9 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 //			double totalUnpaidHMOFeeTreatment = 0;
 			double totalUnpaidSLRFeeConsultation = 0; //added by Mike, 20210121
 
+			//added by Mike, 20210415
+			double totalUnpaidSLRFeeTreatment = 0;
+						
 			//init table header names
 	//		writer.print("CONSULTATION\n");
 			consultationWriter.print("DATE:\tPATIENT NAME:\tFEE:\tCLASSIFICATION:\tAPPROVAL CODE:\tUNPAID REASON:\n"); 		
@@ -289,11 +292,16 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 					
 					 totalUnpaidSLRFeeConsultation += Double.parseDouble(slrTransactionContainer.get(i)[OUTPUT_HMO_FEE_COLUMN].replace("\"","").replace(",",""));						 
 				}
-
+				
+				//added by Mike, 20210415
+				//includes SLR transactions in the total count
 				consultationWriter.print("TOTAL:\t\t"+autoAddCommaToNumber(totalUnpaidSLRFeeConsultation)+"\n"); 	
 			}
 						
 			consultationWriter.close();		
+			
+			//added by Mike, 20210415
+			slrTransactionContainer.clear();
 
 			//added by Mike, 20200217
 			if (medicalDoctorInput.equals("PEDRO")) {
@@ -305,19 +313,47 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 				treatmentWriter.print("DATE:\tPATIENT NAME:\tFEE:\tCLASSIFICATION:\tAPPROVAL CODE:\tUNPAID REASON:\n"); 		
 				for(int i=0; i<transactionDateContainer.size(); i++) {
 					if (transactionDateContainer.get(i)[OUTPUT_HMO_FILE_TYPE_COLUMN].toLowerCase().trim().equals("treatment")){
-						treatmentWriter.print(
-										transactionDateContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+"\t"+
-										transactionDateContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]+"\t"+
-										autoAddCommaToNumber(Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN]))+"\t"+
-										transactionDateContainer.get(i)[OUTPUT_HMO_CLASS_COLUMN]+"\t"+
-										transactionDateContainer.get(i)[OUTPUT_HMO_APPROVAL_CODE_COLUMN]+"\n"
-									); 				   											
-									
-						//added by Mike, 20190122
+						//edited by Mike, 20210415
+						if (transactionDateContainer.get(i)[OUTPUT_HMO_CLASS_COLUMN].toLowerCase().trim().contains("slr")){												
+							slrTransactionContainer.add(transactionDateContainer.get(i));
+						}
+						else {
+							treatmentWriter.print(
+											transactionDateContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+"\t"+
+											transactionDateContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]+"\t"+
+											autoAddCommaToNumber(Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN]))+"\t"+
+											transactionDateContainer.get(i)[OUTPUT_HMO_CLASS_COLUMN]+"\t"+
+											transactionDateContainer.get(i)[OUTPUT_HMO_APPROVAL_CODE_COLUMN]+"\n"
+										); 				   											
+						}
+
+						
+						//added by Mike, 20190122; added by Mike, 20210415
+						//includes SLR transactions in the total count						
 						totalUnpaidHMOFeeTreatment += Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN].replace("\"","").replace(",",""));
 					}
 				}
 				treatmentWriter.print("TOTAL:\t\t"+autoAddCommaToNumber(totalUnpaidHMOFeeTreatment)+"\n"); 		
+				
+				//added by Mike, 20210415
+				if (slrTransactionContainer.size()>0) {
+					treatmentWriter.print("\nUnpaid SLR\n"); 	
+
+					for(int i=0; i<slrTransactionContainer.size(); i++) {
+						treatmentWriter.print(
+										slrTransactionContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+"\t"+
+										slrTransactionContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]+"\t"+
+										autoAddCommaToNumber(Double.parseDouble(slrTransactionContainer.get(i)[OUTPUT_HMO_FEE_COLUMN]))+"\t"+
+										slrTransactionContainer.get(i)[OUTPUT_HMO_CLASS_COLUMN]+"\t"+
+		//								slrTransactionContainer.get(i)[OUTPUT_HMO_APPROVAL_CODE_COLUMN]+"\n"
+										"\t\n"
+									);			
+
+						 totalUnpaidSLRFeeTreatment += Double.parseDouble(slrTransactionContainer.get(i)[OUTPUT_HMO_FEE_COLUMN].replace("\"","").replace(",",""));						 
+					}
+
+					treatmentWriter.print("TOTAL:\t\t"+autoAddCommaToNumber(totalUnpaidSLRFeeTreatment)+"\n"); 	
+				}				
 				
 		//		consultationWriter.close();		//removed by Mike, 20200217
 				treatmentWriter.close();

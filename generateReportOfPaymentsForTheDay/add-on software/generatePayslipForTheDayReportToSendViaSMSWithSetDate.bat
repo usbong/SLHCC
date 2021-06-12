@@ -10,7 +10,7 @@ REM Generate Payslip for the Day Report to Send via Short Messaging Service (SMS
 REM @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
 REM @author: SYSON, MICHAEL B.
 REM @date created: 2020
-REM @last updated: 20210611
+REM @last updated: 20210612
 REM @website address: http://www.usbong.ph
 
 REM TO-DO: -update: this
@@ -45,31 +45,15 @@ REM TO-DO: -add: auto-identify sMonthYear
 
 REM edited by Mike, 20200926
 REM $sMonthYear=$(date +%B)" "$(date +%Y) REM Command using Linux Machine
-REM set sMonthYear="September" rem "2020"
-REM echo $sMonthYear
 
-set myYear=%date:~10,4%
-
-echo %myYear%
-
-rem reference: https://stackoverflow.com/questions/15469307/how-to-print-month-name-in-file-name-by-using-bat/48331435
-rem answer by: Aacini, 20130318, edited 20170724
-setlocal EnableDelayedExpansion
-set m=100
-for %%m in (January February March April May June July August September October November  December) do (
-   set /A m+=1
-   set month[!m:~-2!]=%%m
-)
-rem Change tokens=2 for DD/MM/YYYY date format
-rem edited by Mike, 20200921
-rem for /F "tokens=1 delims=/"  %%m in ("%date:%") do (
-for /F "tokens=1 delims=/"  %%m in ("%date:~4,2%") do (
-   set monthName=!month[%%m]!
-)
-echo %monthName%
-
-set sMonthYear=%monthName%"*"%myYear%
-echo %sMonthYear%
+REM added by Mike, 20210612
+REM TO-DO: -add: auto-identify
+REM date format: M/d/yyyy
+set sSetDate="6/12/2021"
+set sSetDateISOFormat="2021-06-12"
+set myYear="2021"
+rem no space between month and year
+set sMonthYear="June2021"
 
 REM Java command using Linux Machine
 REM java -cp ./software:./software/org.json.jar:./software/org.apache.httpclient.jar:./software/org.apache.httpcore.jar:./software/org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ ./input/*"$sMonthYear".txt
@@ -87,7 +71,12 @@ REM java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient
 
 REM edited by Mike, 20210221
 REM java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient.jar;.\software\org.apache.httpcore.jar;.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ "%sInputFileLocation%"\Treatment"*%sMonthYear%.txt"
-java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient.jar;.\software\org.apache.httpcore.jar;.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ "%sInputFileLocation%"\Treatment"*%sMonthYear%.txt" "%sInputFileLocation%"\Consultation"*%sMonthYear%.txt"
+
+REM edited by Mike, 20210612
+REM java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient.jar;.\software\org.apache.httpcore.jar;.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ "%sInputFileLocation%"\Treatment"*%sMonthYear%.txt" "%sInputFileLocation%"\Consultation"*%sMonthYear%.txt"
+
+java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient.jar;.\software\org.apache.httpcore.jar;.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ "%sInputFileLocation%"\Treatment"*%sMonthYear%.txt" "%sInputFileLocation%"\Consultation"*%sMonthYear%.txt" %sSetDate% %sSetDateISOFormat%
+
 
 rem removed by Mike, 20200924
 rem cd ..

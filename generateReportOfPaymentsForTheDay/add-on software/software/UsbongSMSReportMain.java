@@ -9,7 +9,7 @@
   @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20210222
+  @date updated: 20210612
   
   Given:
   1) List with the details of the transactions for the day
@@ -33,7 +33,10 @@
    
   3) To execute on Linux Terminal the add-on software with the JSON .jar file, i.e. json, use the following command:
    java -cp .:org.json.jar:org.apache.httpclient.jar:org.apache.httpcore.jar:org.apache.commons-logging.jar UsbongSMSReportMain
-   NOTE: We use ":" in Linux Terminal, and ";" in Windows Command Prompt.  
+   NOTE: We use ":" in Linux Terminal, and ";" in Windows Command Prompt. 
+   java -cp .;org.json.jar;org.apache.httpclient.jar;org.apache.httpcore.jar;org.apache.commons-logging.jar UsbongSMSReportMain
+
+   
   4) The JSON .jar file can be downloaded here:
    https://github.com/stleary/JSON-java; last accessed: 20190808
    
@@ -142,6 +145,11 @@ public class UsbongSMSReportMain {
 	private String columnName = "";
 	private String action = "";
 */	
+
+	//added by Mike, 20210612
+	private String sSetDate; //example: "6/12/2021"
+	private String sSetDateISOFormat; //example: "2021-06-12"
+
 	private URL url;
 	private HttpURLConnection conn;
 
@@ -177,12 +185,23 @@ public class UsbongSMSReportMain {
 
 	//added by Mike, 20200916
 	private void processSendSMS(String[] args) throws Exception {
+/*	//added by Mike, 20210612; removed by Mike, 20210612
+		System.out.println(">>>args[1]: " + args[1]);
+		System.out.println(">>>args[2]: " + args[2]);
+		System.out.println(">>>args[3]: " + args[3]);
+		System.out.println(">>>args[4]: " + args[4]);
+*/
 		//edited by Mike, 20210221
 		//JSONObject json = processPayslipInputForSendSMS(args);	
 		JSONObject[] json = new JSONObject[2];
 		//args start at 1; 0 : "http://localhost/"
 		json[0] = processPayslipInputForSendSMS(args[1]);	//PT TREATMENT
 		json[1] = processPayslipInputForSendSMS(args[2]);	//CONSULTATION
+
+		//added by Mike, 20210612	
+		sSetDate = args[3]; //example: "6/12/2021"		
+		sSetDateISOFormat = args[4]; //example: "2021-06-12"
+
 
 /*		//edited by Mike, 20210221
 		//added by Mike, 20200917
@@ -359,6 +378,11 @@ public class UsbongSMSReportMain {
 
 	//added by Mike, 20200916
 	private String getDateToday() {
+	  //added by Mike, 20210612
+	  if (sSetDate!=null) {
+		  return sSetDate;
+	  }
+		
 //      DateFormat dateFormat = new SimpleDateFormat("yyyy/MM/dd");
       DateFormat dateFormat = new SimpleDateFormat("M/d/yyyy");
 
@@ -372,6 +396,11 @@ public class UsbongSMSReportMain {
 
 	//added by Mike, 20200917
 	private String getDateTodayISOFormat() {
+	  //added by Mike, 20210612
+	  if (sSetDateISOFormat!=null) {
+		  return sSetDateISOFormat;
+	  }
+		
       DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
  //     DateFormat dateFormat = new SimpleDateFormat("M/d/yyyy");
 

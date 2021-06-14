@@ -10,7 +10,7 @@ REM Generate Payslip for the Day Report to Send via Short Messaging Service (SMS
 REM @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
 REM @author: SYSON, MICHAEL B.
 REM @date created: 2020
-REM @last updated: 20210612
+REM @last updated: 20210614
 REM @website address: http://www.usbong.ph
 
 REM TO-DO: -update: this
@@ -49,11 +49,11 @@ REM $sMonthYear=$(date +%B)" "$(date +%Y) REM Command using Linux Machine
 REM added by Mike, 20210612
 REM TO-DO: -add: auto-identify
 REM date format: M/d/yyyy
-set sSetDate="6/12/2021"
-set sSetDateISOFormat="2021-06-12"
-set myYear="2021"
-rem no space between month and year
-set sMonthYear="June2021"
+set sSetDate=6/9/2021
+set sSetDateISOFormat=2021-06-09
+set myYear=2021
+rem add * to due to space between month and year
+set sMonthYear=June"*"2021
 
 REM Java command using Linux Machine
 REM java -cp ./software:./software/org.json.jar:./software/org.apache.httpclient.jar:./software/org.apache.httpcore.jar:./software/org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ ./input/*"$sMonthYear".txt
@@ -64,6 +64,8 @@ REM C:\Usbong\unit\workbooks
 set sInputFileLocation="C:\Usbong\unit\workbooks"
 
 echo %sInputFileLocation%
+
+pause
 
 rem java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient.jar;.\software\org.apache.httpcore.jar;.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ "%sInputFileLocation%\"Treatment"*%sMonthYear%"2020.txt"
 REM edited by Mike, 20200926
@@ -97,4 +99,4 @@ rem adb shell am start -a android.intent.action.SENDTO -d sms:639299527263 --es 
 rem adb shell input keyevent 22
 rem adb shell input keyevent 66
 
-rem pause
+pause

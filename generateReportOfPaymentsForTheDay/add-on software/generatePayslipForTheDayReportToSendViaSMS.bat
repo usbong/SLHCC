@@ -10,7 +10,7 @@ REM Generate Payslip for the Day Report to Send via Short Messaging Service (SMS
 REM @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
 REM @author: SYSON, MICHAEL B.
 REM @date created: 2020
-REM @last updated: 20210221
+REM @last updated: 20210614
 
 REM mainDirectory=$(pwd)
 set mainDirectory=%~dp0
@@ -60,6 +60,9 @@ for /F "tokens=1 delims=/"  %%m in ("%date:~4,2%") do (
 )
 echo %monthName%
 
+rem edited by Mike, 20210611; removed by Mike, 20210611
+rem set monthName="June"
+
 set sMonthYear=%monthName%"*"%myYear%
 echo %sMonthYear%
 
@@ -79,7 +82,9 @@ REM java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient
 
 REM edited by Mike, 20210221
 REM java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient.jar;.\software\org.apache.httpcore.jar;.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ "%sInputFileLocation%"\Treatment"*%sMonthYear%.txt"
-java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient.jar;.\software\org.apache.httpcore.jar;.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ "%sInputFileLocation%"\Treatment"*%sMonthYear%.txt" "%sInputFileLocation%"\Consultation"*%sMonthYear%.txt"
+REM edited by Mike, 20210614
+REM java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient.jar;.\software\org.apache.httpcore.jar;.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ "%sInputFileLocation%"\Treatment"*%sMonthYear%.txt" "%sInputFileLocation%"\Consultation"*%sMonthYear%.txt"
+java -cp .\software;.\software\org.json.jar;.\software\org.apache.httpclient.jar;.\software\org.apache.httpcore.jar;.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ "%sInputFileLocation%"\Treatment"*%sMonthYear%.txt" "%sInputFileLocation%"\Consultation"*%sMonthYear%.txt" "" ""
 
 rem removed by Mike, 20200924
 rem cd ..

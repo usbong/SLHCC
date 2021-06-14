@@ -9,7 +9,7 @@
   @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20210612
+  @date updated: 20210614
   
   Given:
   1) List with the details of the transactions for the day
@@ -191,6 +191,11 @@ public class UsbongSMSReportMain {
 		System.out.println(">>>args[3]: " + args[3]);
 		System.out.println(">>>args[4]: " + args[4]);
 */
+
+		//added by Mike, 20210614
+		sSetDate = args[3]; //example: "6/12/2021"		
+		sSetDateISOFormat = args[4]; //example: "2021-06-12"
+
 		//edited by Mike, 20210221
 		//JSONObject json = processPayslipInputForSendSMS(args);	
 		JSONObject[] json = new JSONObject[2];
@@ -198,9 +203,6 @@ public class UsbongSMSReportMain {
 		json[0] = processPayslipInputForSendSMS(args[1]);	//PT TREATMENT
 		json[1] = processPayslipInputForSendSMS(args[2]);	//CONSULTATION
 
-		//added by Mike, 20210612	
-		sSetDate = args[3]; //example: "6/12/2021"		
-		sSetDateISOFormat = args[4]; //example: "2021-06-12"
 
 
 /*		//edited by Mike, 20210221
@@ -378,8 +380,8 @@ public class UsbongSMSReportMain {
 
 	//added by Mike, 20200916
 	private String getDateToday() {
-	  //added by Mike, 20210612
-	  if (sSetDate!=null) {
+	  //added by Mike, 20210612; edited by Mike, 20210614
+	  if ((sSetDate!=null) && (!sSetDate.equals("")){
 		  return sSetDate;
 	  }
 		
@@ -396,8 +398,8 @@ public class UsbongSMSReportMain {
 
 	//added by Mike, 20200917
 	private String getDateTodayISOFormat() {
-	  //added by Mike, 20210612
-	  if (sSetDateISOFormat!=null) {
+	  //added by Mike, 20210612; edited by Mike, 20210614
+	  if ((sSetDateISOFormat!=null) && (!sSetDateISOFormat.equals("")){		  
 		  return sSetDateISOFormat;
 	  }
 		

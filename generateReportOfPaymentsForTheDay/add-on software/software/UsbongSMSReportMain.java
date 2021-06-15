@@ -9,7 +9,7 @@
   @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
   @author: Michael Syson
   @date created: 20190807
-  @date updated: 20210614
+  @date updated: 20210615
   
   Given:
   1) List with the details of the transactions for the day
@@ -380,8 +380,8 @@ public class UsbongSMSReportMain {
 
 	//added by Mike, 20200916
 	private String getDateToday() {
-	  //added by Mike, 20210612; edited by Mike, 20210614
-	  if ((sSetDate!=null) && (!sSetDate.equals("")){
+	  //added by Mike, 20210612; edited by Mike, 20210615
+	  if ((sSetDate!=null) && (!sSetDate.equals(""))){
 		  return sSetDate;
 	  }
 		
@@ -398,8 +398,8 @@ public class UsbongSMSReportMain {
 
 	//added by Mike, 20200917
 	private String getDateTodayISOFormat() {
-	  //added by Mike, 20210612; edited by Mike, 20210614
-	  if ((sSetDateISOFormat!=null) && (!sSetDateISOFormat.equals("")){		  
+	  //added by Mike, 20210612; edited by Mike, 20210615
+	  if ((sSetDateISOFormat!=null) && (!sSetDateISOFormat.equals(""))){		  
 		  return sSetDateISOFormat;
 	  }
 		

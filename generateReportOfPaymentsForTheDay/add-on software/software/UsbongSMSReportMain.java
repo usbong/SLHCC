@@ -1,15 +1,16 @@
 /*
-  Copyright 2019~2021 USBONG SOCIAL SYSTEMS, INC. (USBONG)
+  Copyright 2019~2021 SYSON, MICHAEL B.
   
   Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
   http://www.apache.org/licenses/LICENSE-2.0
   
   Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
   
-  @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
-  @author: Michael Syson
+  @company: USBONG
+  @author: SYSON, MICHAEL B.
   @date created: 20190807
-  @date updated: 20210615
+  @date updated: 20210614
+  @website address: http://www.usbong.ph
   
   Given:
   1) List with the details of the transactions for the day
@@ -254,11 +255,17 @@ public class UsbongSMSReportMain {
 			 }
 
 			 writer.print("Total:"+json[iCount].getInt("iTotal")+",");		
+			 
+/*	//edited by Mike, 20210710
 			 writer.print("CashTotalFee:"+df.format(json[iCount].getDouble("dCashTotalFee"))+",");		
 			 writer.print("CashTotalNetFee:"+df.format(json[iCount].getDouble("dCashTotalNetFee"))+",");		
 					
 			 writer.print("HMOTotalFee:"+df.format(json[iCount].getDouble("dHMOTotalFee"))+",");
 			 writer.print("HMOTotalNetFee:"+df.format(json[iCount].getDouble("dHMOTotalNetFee"))+"");			
+*/
+			 writer.print("iCashTotalTransactionCount:"+df.format(json[iCount].getInt("iCashTotalTransactionCount"))+",");			
+			 writer.print("iHMOTotalTransactionCount:"+df.format(json[iCount].getInt("iHMOTotalTransactionCount"))+"");
+
 
 /* //removed by Mike, 20210222			 
 			 //added by Mike, 20210221
@@ -380,7 +387,7 @@ public class UsbongSMSReportMain {
 
 	//added by Mike, 20200916
 	private String getDateToday() {
-	  //added by Mike, 20210612; edited by Mike, 20210615
+	  //added by Mike, 20210612; edited by Mike, 20210614
 	  if ((sSetDate!=null) && (!sSetDate.equals(""))){
 		  return sSetDate;
 	  }
@@ -398,7 +405,7 @@ public class UsbongSMSReportMain {
 
 	//added by Mike, 20200917
 	private String getDateTodayISOFormat() {
-	  //added by Mike, 20210612; edited by Mike, 20210615
+	  //added by Mike, 20210612; edited by Mike, 20210614
 	  if ((sSetDateISOFormat!=null) && (!sSetDateISOFormat.equals(""))){		  
 		  return sSetDateISOFormat;
 	  }
@@ -430,7 +437,11 @@ public class UsbongSMSReportMain {
 
 		//added by Mike, 20190812
 		int transactionCount = 0; //start from zero
-
+		
+		//added by Mike, 20210710
+		int iHMOTotalTransactionCount = 0; //start from zero
+		int iCashTotalTransactionCount = 0; //start from zero
+		
 		double dHMOTotalFee = 0.0;
 		double dHMOTotalNetFee = 0.0;
 
@@ -558,6 +569,9 @@ public class UsbongSMSReportMain {
 */
 					dHMOTotalFee = dHMOTotalFee + UsbongUtilsRound(Double.parseDouble(inputColumns[INPUT_WORKBOOK_AMOUNT_PAID_COLUMN]),2);
 					dHMOTotalNetFee = dHMOTotalNetFee + UsbongUtilsRound(Double.parseDouble(inputColumns[INPUT_WORKBOOK_NET_PF_COLUMN]),2);	
+
+					//added by Mike, 20210710
+					iHMOTotalTransactionCount = iHMOTotalTransactionCount + 1;
 				}
 				else {
 					//edited by Mike, 20200930
@@ -566,6 +580,9 @@ public class UsbongSMSReportMain {
 */
 					dCashTotalFee = dCashTotalFee + UsbongUtilsRound(Double.parseDouble(inputColumns[INPUT_WORKBOOK_AMOUNT_PAID_COLUMN]),2);
 					dCashTotalNetFee = dCashTotalNetFee + UsbongUtilsRound(Double.parseDouble(inputColumns[INPUT_WORKBOOK_NET_PF_COLUMN]),2);
+					
+					//added by Mike, 20210710
+					iCashTotalTransactionCount = iCashTotalTransactionCount + 1;
 				}
 	
 				transactionCount++;
@@ -583,6 +600,10 @@ public class UsbongSMSReportMain {
 		json.put("dHMOTotalNetFee", dHMOTotalNetFee);			
 		json.put("dCashTotalFee", dCashTotalFee);
 		json.put("dCashTotalNetFee", dCashTotalNetFee);
+
+		//added by Mike, 20210710
+		json.put("iHMOTotalTransactionCount", iHMOTotalTransactionCount);
+		json.put("iCashTotalTransactionCount", iCashTotalTransactionCount);
 		
 		//added by Mike, 20190812; edited by Mike, 20190815
 		json.put("iTotal", transactionCount);    				

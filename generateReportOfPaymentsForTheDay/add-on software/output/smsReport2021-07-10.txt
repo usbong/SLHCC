@@ -1,0 +1,1 @@
+SLHCC,2021-07-10,PT,Total:10,iCashTotalTransactionCount:5,iHMOTotalTransactionCount:5,CON,Total:7,iCashTotalTransactionCount:3,iHMOTotalTransactionCount:4

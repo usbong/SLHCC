@@ -1,0 +1,1 @@
+SLHCC,2021-07-10,PT,Total:6,CashTotalFee:1250,CashTotalNetFee:787.5,HMOTotalFee:4000,HMOTotalNetFee:2205,CON,Total:0,CashTotalFee:0,CashTotalNetFee:0,HMOTotalFee:0,HMOTotalNetFee:0

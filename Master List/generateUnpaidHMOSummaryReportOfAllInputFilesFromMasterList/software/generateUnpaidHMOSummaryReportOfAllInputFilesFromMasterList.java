@@ -1,5 +1,5 @@
 /*
- * Copyright 2018~2021 Usbong Social Systems, Inc.
+ * Copyright 2018~2021 SYSON, MICHAEL B.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,10 +12,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
+ * @company: USBONG
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20210415
+ * @last updated: 20210714
+ * @website address: http://www.usbong.ph
  *
  */
 import java.util.*;
@@ -266,10 +267,14 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 		//								transactionDateContainer.get(i)[OUTPUT_HMO_APPROVAL_CODE_COLUMN]+"\n"
 										"\t\n"
 									);
+						
+						
+						//added by Mike, 20210714
+						totalUnpaidHMOFeeConsultation += Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN].replace("\"","").replace(",",""));						
 					}
 
-					//added by Mike, 20190122
-					totalUnpaidHMOFeeConsultation += Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN].replace("\"","").replace(",",""));
+					//added by Mike, 20190122; removed by Mike, 20210714
+					//totalUnpaidHMOFeeConsultation += Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN].replace("\"","").replace(",",""));
 				}
 			}
 			//edited by Mike, 20210121
@@ -517,7 +522,8 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 		//verify that there are two digits after the dot from the left
 		sbOutput=new StringBuffer(sOutput);
 		
-		System.out.println("sbOutput:"+sbOutput.substring(iDotPosition+1));
+		//removed by Mike, 20210714
+		//System.out.println("sbOutput:"+sbOutput.substring(iDotPosition+1));
 			
 		//example: 1,200.0
 		if (sbOutput.substring(iDotPosition+1).length()<2) {

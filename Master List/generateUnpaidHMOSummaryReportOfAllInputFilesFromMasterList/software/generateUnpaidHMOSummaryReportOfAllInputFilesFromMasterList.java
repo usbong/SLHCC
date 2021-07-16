@@ -798,11 +798,22 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 					SortedSet<String> sortedMedicalDoctorKeyset = new TreeSet<String>(medicalDoctorContainer.keySet());
 					StringBuffer sb = new StringBuffer(s);
 					DecimalFormat df = new DecimalFormat("#,###.00"); //"0.00"
-
+					int iMedicalDoctorRowCount = 0;
+					
 					for (String medicalDoctorKey : sortedMedicalDoctorKeyset) {													
 //						System.out.println(medicalDoctorKey+": "+medicalDoctorContainer.get(medicalDoctorKey)+"\n");
+
+						//edited by Mike, 20201716
+						//sb.append("<tr>\n");
+
+  						if (iMedicalDoctorRowCount % 2 == 0) { //even number
+						  sb.append("<tr class=\"rowEvenNumber\">");
+						}
+						else {
+						  sb.append("<tr>");
+						}				   										
+						iMedicalDoctorRowCount=iMedicalDoctorRowCount+1;
 						
-						sb.append("<tr>\n");
 						sb.append("<!-- Column 1 -->\n");
 						sb.append("<td>\n");
 						sb.append("<b>"+medicalDoctorKey+"</b>\n");

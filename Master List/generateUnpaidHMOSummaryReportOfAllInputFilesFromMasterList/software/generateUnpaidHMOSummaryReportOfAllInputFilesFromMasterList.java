@@ -15,7 +15,7 @@
  * @company: USBONG
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20210714
+ * @last updated: 20210716
  * @website address: http://www.usbong.ph
  *
  */
@@ -709,6 +709,12 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 					processUnpaidHMOCount(transactionDateContainer, inputColumns, isConsultation); //isConsultation = false
 				}
 			}		
+			
+			//added by Mike, 20210716
+			if (inDebugMode) {
+				rowCount++;
+				System.out.println("rowCount: "+rowCount);
+			}			
 		}		
 
 	}

@@ -45,16 +45,44 @@
 								text-align: center;
 						}
 						
-						table.consultation_census td
+						table.consultation_census
 						{
 							outline: thin solid;
+							text-align: left
+						}						
+
+						table
+						{
+							width: 55%;
+						}				
+						
+						td.tdUnpaidHMOTotalTableHeader
+						{
 							text-align: right
-						}
+						}					
+						
+						td.tdUnpaidHMOTotal
+						{
+							text-align: right
+						}								
 						
 						span.usbongWebsiteAddressSpan
 						{
 							/* color: rgb(83,128,34);*/ /* dark lime green rgb(103,157,43);*/
 							color: rgb(0,0,0); /* black */
+							font-weight: bold;
+						}
+						
+						span.spanReportHeaderTitle
+						{
+							background-color: rgb(0,255,0); /* lime green*/
+							font-size: 10pt;
+							font-weight: bold;
+						}
+
+						span.spanReportHeader
+						{
+							font-size: 10pt;
 							font-weight: bold;
 						}
 
@@ -86,15 +114,15 @@
 	<h3>
 	STA. LUCIA HEALTH CARE CENTRE: ORTHOPEDIC AND PHYSICAL THERAPY UNIT
 	</h3>
-	<h3>
-		<b>UNPAID HMO SUMMARY REPORT</b>
-	</h3>
+	<span class="spanReportHeaderTitle">UNPAID HMO SUMMARY REPORT</span>
+	<br/>
+	<span class="spanReportHeader">WORKBOOK LAST UPDATED: <?php echo $data['date'];?></span>
+
 	<div>
 		<table width="100%">
 		  <tr>
 			<td>
-			  <!-- Note that the date value must be in Month and Year, e.g. MARCH 2019 -->
-			  <b><span>CONSULTATION <?php echo $data['date'];?></span></b>
+			  <b><span>CONSULTATION</span></b>
 			</td>
 		  </tr>
 		</table>
@@ -111,7 +139,7 @@
 					<b><span>MEDICAL DOCTORS</span></b>
 				</td>
 				<!-- Column 2 -->
-				<td>
+				<td class='tdUnpaidHMOTotalTableHeader'>
 					<b><span>TOTAL UNPAID HMO FEE</span></b>
 				</td>
 				</tr>
@@ -122,7 +150,7 @@
 					<b><span><?php echo $data['medical_doctor_name'];?></span></b>						
 				</td>
 				<!-- Column 2 -->
-				<td>
+				<td class='tdUnpaidHMOTotal'>
 					<b><span><?php echo $data['total_unpaid_hmo_fee'];?></span></b>
 				</td>
 			</tr>

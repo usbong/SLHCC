@@ -29,6 +29,11 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 //import java.lang.Integer;
 
+//added by Mike, 20210716
+import java.util.Date; 
+import java.text.DateFormat; 
+import java.text.SimpleDateFormat;
+
 /*
 ' Given:
 ' 1) Encoding for the Month Input Worksheet
@@ -98,7 +103,10 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 	private static final int INPUT_CONSULTATION_NEW_OLD_COLUMN = 17;
 */	
 	private static final int INPUT_CONSULTATION_OFFSET = 1;
-		
+
+	//added by Mike, 20210716
+	private static HashMap<String, Double> medicalDoctorContainer;	
+	
 		
 /*	private static HashMap<String, double[]> referringDoctorContainer;	
 */
@@ -193,6 +201,9 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 //		medicalDoctorContainer = new HashMap<String, double[]>();
 		classificationContainerPerMedicalDoctor = new HashMap<String, HashMap<String, double[]>>();							
 */		
+		//added by Mike, 20210716
+		medicalDoctorContainer = new HashMap<String, Double>();
+		
 		//added by Mike, 20181116
 		startDate = null; //properly set the month and year in the output file of each input file
 		dateValuesArray = new String[args.length]; //added by Mike, 20180412
@@ -307,7 +318,11 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 			
 			//added by Mike, 20210415
 			slrTransactionContainer.clear();
-
+			
+			//added by Mike, 20210716
+			Double dTotalUnpaidFeeInput = totalUnpaidHMOFeeConsultation+totalUnpaidSLRFeeConsultation;
+			medicalDoctorContainer.put(medicalDoctorCompleteNameInput,dTotalUnpaidFeeInput);
+			
 			//added by Mike, 20200217
 			if (medicalDoctorInput.equals("PEDRO")) {
 				double totalUnpaidHMOFeeTreatment = 0;
@@ -730,6 +745,8 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 	
 	//added by Mike, 20210716
 	private static void autoGenerateUnpaidHMOSummaryReportOutputHTML(String[] args) throws Exception {
+		PrintWriter unpaidHMOSummaryReportHTMLWriter = new PrintWriter("output/UnpaidHMOSummaryReportOutput.html", "UTF-8");			
+				
 		String sFileExtension = ".html";
 
 		for (int i=0; i<args.length; i++) {
@@ -765,23 +782,56 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 				
 				//TO-DO: -update: this
 				
-				if (s.contains("<?php echo $data['date'];?>")) {
-					System.out.println(">>>>>> HALLO!");
+				if (s.contains("<?php echo $data['date'];?>")) {					
+					DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    				Date myDate = new Date();
+					
+					s=s.replace("<?php echo $data['date'];?>",dateFormat.format(myDate));
+					
+    				System.out.println(dateFormat.format(myDate));
+				}
+
+				//TO-DO: -add: PT Treatment
+				//TO-DO: -add: alternating row with gray background-color
+				
+				if (s.contains("<!-- Table Values Row 2 -->")) {					
+					SortedSet<String> sortedMedicalDoctorKeyset = new TreeSet<String>(medicalDoctorContainer.keySet());
+					StringBuffer sb = new StringBuffer(s);
+					DecimalFormat df = new DecimalFormat("#,###.00"); //"0.00"
+
+					for (String medicalDoctorKey : sortedMedicalDoctorKeyset) {													
+//						System.out.println(medicalDoctorKey+": "+medicalDoctorContainer.get(medicalDoctorKey)+"\n");
+						
+						sb.append("<tr>\n");
+						sb.append("<!-- Column 1 -->\n");
+						sb.append("<td>\n");
+						sb.append("<b>"+medicalDoctorKey+"</b>\n");
+						sb.append("</td>\n");
+						sb.append("<!-- Column 2 -->\n");
+						sb.append("<td class='tdUnpaidHMOTotal'>\n");
+						
+						if (medicalDoctorContainer.get(medicalDoctorKey)==0) {
+							sb.append("<b>0.00</b>\n");
+						}
+						else {
+							sb.append("<b>"+df.format(medicalDoctorContainer.get(medicalDoctorKey))+"</b>\n");
+						}
+						
+						sb.append("</td>\n");
+						sb.append("</tr>\n");
+					}					
+					s=sb.toString();
 				}
 				
+				unpaidHMOSummaryReportHTMLWriter.print(s+"\n");
+					
 				if (inDebugMode) {
 					rowCount++;
 					System.out.println("rowCount: "+rowCount);
 				}
-				
-
-			}		
+			}	
 			
-			//added by Mike, 20210716
-			if (inDebugMode) {
-				rowCount++;
-				System.out.println("rowCount: "+rowCount);
-			}			
+			unpaidHMOSummaryReportHTMLWriter.close();
 		}		
 	}	
 }

@@ -56,14 +56,25 @@
 							width: 55%;
 						}				
 						
+						tr.rowEvenNumber {
+							background-color: #dddddd; <!--#dddddd; = gray #95b3d7; = sky blue; use as row background color-->
+							border: 1pt solid #00ff00;		
+						}
+						
+						td.tdTableHeader
+						{
+							background-color: #00ff00; <!-- green-->
+						}												
+						
 						td.tdUnpaidHMOTotalTableHeader
 						{
+							background-color: #00ff00; <!-- green-->
 							text-align: right
 						}					
 						
 						td.tdUnpaidHMOTotal
 						{
-							text-align: right
+							text-align: right;
 						}								
 						
 						span.usbongWebsiteAddressSpan
@@ -135,7 +146,7 @@
 			<!-- Table Values Row 1 -->
 			<tr>
 				<!-- Column 1 -->
-				<td>
+				<td class='tdTableHeader'>
 					<b><span>MEDICAL DOCTORS</span></b>
 				</td>
 				<!-- Column 2 -->

@@ -1,0 +1,137 @@
+<!--
+' Copyright 2019~2021 SYSON, MICHAEL B.
+'
+' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+'
+' http://www.apache.org/licenses/LICENSE-2.0
+'
+' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+'
+' @company: USBONG
+' @author: SYSON, MICHAEL B.
+' @date created: 20210716
+' @date updated: 20210716
+' @website address: http://www.usbong.ph
+-->
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <style type="text/css">
+	/**/
+	        	body
+            {
+            	font-family: Arial;
+							font-size: 9pt;
+/* This makes the width of the output page that is displayed on a browser equal with that of the printed page. */
+							width: 670px 
+            }
+						
+						div.checkBox
+						{
+								border: 1.5pt solid black; height: 9pt; width: 9pt;
+								text-align: center;
+								float: left
+						}
+						
+						div.option
+						{
+								padding: 2pt;
+								display: inline-block;
+						}
+						
+						div.copyright
+						{
+								text-align: center;
+						}
+						
+						table.consultation_census td
+						{
+							outline: thin solid;
+							text-align: right
+						}
+						
+						span.usbongWebsiteAddressSpan
+						{
+							/* color: rgb(83,128,34);*/ /* dark lime green rgb(103,157,43);*/
+							color: rgb(0,0,0); /* black */
+							font-weight: bold;
+						}
+
+    /**/
+    </style>
+    <title>
+      STA. LUCIA HEALTH CARE CENTRE: ORTHOPEDIC AND PHYSICAL THERAPY UNIT
+    </title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <style type="text/css">
+    </style>
+  	<script>
+		function setCopyrightYear()
+		{
+			//added by Mike, 20210702
+			//reference: https://stackoverflow.com/questions/32540044/html-display-current-date/32540196;
+			//last accessed: 20210702
+			//answer by: Masood Ahmad, 20181030T1706
+//			window.onload = setInterval(clock,1000);
+//			function clock()
+			var d = new Date();
+			var year = d.getFullYear();
+							
+			document.getElementById("dateId").innerHTML=year;
+		}
+		</script>	
+  </head>
+  <body onload="setCopyrightYear()">
+	<h3>
+	STA. LUCIA HEALTH CARE CENTRE: ORTHOPEDIC AND PHYSICAL THERAPY UNIT
+	</h3>
+	<h3>
+		<b>UNPAID HMO SUMMARY REPORT</b>
+	</h3>
+	<div>
+		<table width="100%">
+		  <tr>
+			<td>
+			  <!-- Note that the date value must be in Month and Year, e.g. MARCH 2019 -->
+			  <b><span>CONSULTATION <?php echo $data['date'];?></span></b>
+			</td>
+		  </tr>
+		</table>
+	</div>
+	<br />
+	<!-- This portion of the page is divided into two columns -->
+	<div>
+		<table width="100%">
+			<!-- TABLE 1: SUMMARY FOR EACH MEDICAL DOCTOR PRESENT -->
+			<!-- Table Values Row 1 -->
+			<tr>
+				<!-- Column 1 -->
+				<td>
+					<b><span>MEDICAL DOCTORS</span></b>
+				</td>
+				<!-- Column 2 -->
+				<td>
+					<b><span>TOTAL UNPAID HMO FEE</span></b>
+				</td>
+				</tr>
+				<!-- Table Values Row 2 -->
+			<tr>
+				<!-- Column 1 -->
+				<td>
+					<b><span><?php echo $data['medical_doctor_name'];?></span></b>						
+				</td>
+				<!-- Column 2 -->
+				<td>
+					<b><span><?php echo $data['total_unpaid_hmo_fee'];?></span></b>
+				</td>
+			</tr>
+		</table>
+	</div>	
+	<br />
+	<br />
+	<div class="copyright">
+	© <span class="usbongWebsiteAddressSpan">www.usbong.ph </span>2011~<span id="dateId"></span>. All rights reserved.	
+	</div>		 
+  </body>
+</html>

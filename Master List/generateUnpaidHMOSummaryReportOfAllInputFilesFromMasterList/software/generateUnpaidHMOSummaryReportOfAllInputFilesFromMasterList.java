@@ -178,6 +178,12 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 	private static double[] classificationContainerColumnValuesArray = new double[OUTPUT_TOTAL_COLUMNS];
 	private static boolean hasSetClassificationContainerPerMedicalDoctor=false;
 	
+	//added by Mike, 20210716
+	private static double totalUnpaidHMOFeeConsultation;
+	private static double totalUnpaidSLRFeeConsultation;
+	private static double totalUnpaidHMOFeeTreatment;		
+	private static double totalUnpaidSLRFeeTreatment;		
+				
 	public static void main ( String[] args ) throws Exception
 	{					
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
@@ -214,11 +220,14 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 		//medicalDoctorInput = "CIELO"; //added by Mike, 20200216
 
 		File medicalDoctorInputFile = new File("assets/MedicalDoctorList.txt");
+
+		//added by Mike, 20210716
+		totalUnpaidHMOFeeTreatment=0;
 		
 		Scanner sc = new Scanner(new FileInputStream(medicalDoctorInputFile));				
 	
 		//medicalDoctorInput=sc.nextLine(); //skip the first row, which is the input file's table headers
-				
+
 		//count/compute the number-based values of inputColumns 
 		while (sc.hasNextLine()) {
 			//edited by Mike, 20210309
@@ -242,13 +251,13 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 			consultationWriter.print("Unpaid HMO Summary Report (CONSULTATION): "+medicalDoctorCompleteNameInput+"\n");
 
 			//--------------------------------------------------------------------
-			//added by Mike, 20190122
-			double totalUnpaidHMOFeeConsultation = 0;
+			//added by Mike, 20190122; edited by Mike, 20210715
+			totalUnpaidHMOFeeConsultation = 0;
 //			double totalUnpaidHMOFeeTreatment = 0;
-			double totalUnpaidSLRFeeConsultation = 0; //added by Mike, 20210121
+			totalUnpaidSLRFeeConsultation = 0; //added by Mike, 20210121
 
-			//added by Mike, 20210415
-			double totalUnpaidSLRFeeTreatment = 0;
+			//added by Mike, 20210415; edited by Mike, 20210715
+			totalUnpaidSLRFeeTreatment = 0;
 						
 			//init table header names
 	//		writer.print("CONSULTATION\n");
@@ -320,12 +329,14 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 			slrTransactionContainer.clear();
 			
 			//added by Mike, 20210716
-			Double dTotalUnpaidFeeInput = totalUnpaidHMOFeeConsultation+totalUnpaidSLRFeeConsultation;
+			double dTotalUnpaidFeeInput = totalUnpaidHMOFeeConsultation+totalUnpaidSLRFeeConsultation;
 			medicalDoctorContainer.put(medicalDoctorCompleteNameInput,dTotalUnpaidFeeInput);
 			
 			//added by Mike, 20200217
 			if (medicalDoctorInput.equals("PEDRO")) {
-				double totalUnpaidHMOFeeTreatment = 0;
+				//edited by Mike, 20210716
+				//double totalUnpaidHMOFeeTreatment = 0;
+				totalUnpaidHMOFeeTreatment = 0;
 
 				treatmentWriter.print("Unpaid HMO Summary Report (PT TREATMENT)\n");
 
@@ -790,9 +801,6 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 					
     				System.out.println(dateFormat.format(myDate));
 				}
-
-				//TO-DO: -add: PT Treatment
-				//TO-DO: -add: alternating row with gray background-color
 				
 				if (s.contains("<!-- Table Values Row 2 -->")) {					
 					SortedSet<String> sortedMedicalDoctorKeyset = new TreeSet<String>(medicalDoctorContainer.keySet());
@@ -830,7 +838,29 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 						
 						sb.append("</td>\n");
 						sb.append("</tr>\n");
-					}					
+					}		
+					
+					//PT Treatment
+					sb.append("<!-- PT TREATMENT -->\n");
+					sb.append("<!-- Column 1 -->\n");
+					sb.append("<td>\n");
+					sb.append("<b>PT TREATMENT</b>\n");
+					sb.append("</td>\n");
+					sb.append("<!-- Column 2 -->\n");
+					sb.append("<td class='tdUnpaidHMOTotal'>\n");
+
+					Double dTotalUnpaidHMOAndSLRTreatment=totalUnpaidHMOFeeTreatment+totalUnpaidSLRFeeTreatment;
+										
+					if (dTotalUnpaidHMOAndSLRTreatment==0) {
+						sb.append("<b>0.00</b>\n");
+					}
+					else {
+						sb.append("<b>"+df.format(dTotalUnpaidHMOAndSLRTreatment)+"</b>\n");
+					}
+
+					sb.append("</td>\n");
+					sb.append("</tr>\n");
+					
 					s=sb.toString();
 				}
 				

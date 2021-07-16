@@ -364,6 +364,10 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 				treatmentWriter.close();
 			}
 		}
+		
+		//added by Mike, 20210716
+		autoGenerateUnpaidHMOSummaryReportOutputHTML(args);
+		
 /*
 		//PART/COMPONENT/MODULE/PHASE 1
 		processInputFiles(args, true);
@@ -623,6 +627,12 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 //				inputFilename = args[i].replaceAll(".csv","");
 				sFileExtension = ".csv";
 			}
+			
+			//added by Mike, 20210716
+			else if (args[i].contains(".html")) {
+				continue;
+			}
+			
 			inputFilename = args[i].replaceAll(sFileExtension,"");			
 			File f = new File(inputFilename+sFileExtension);
 			
@@ -716,6 +726,62 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 				System.out.println("rowCount: "+rowCount);
 			}			
 		}		
-
 	}
+	
+	//added by Mike, 20210716
+	private static void autoGenerateUnpaidHMOSummaryReportOutputHTML(String[] args) throws Exception {
+		String sFileExtension = ".html";
+
+		for (int i=0; i<args.length; i++) {
+			if (args[i].contains(".html")) {
+				sFileExtension = ".html";
+			}
+			else {
+				continue;
+			}
+			
+			inputFilename = args[i].replaceAll(sFileExtension,"");			
+			File f = new File(inputFilename+sFileExtension);
+							
+			System.out.println("inputFilename: " + inputFilename);
+						
+			Scanner sc = new Scanner(new FileInputStream(f));				
+		
+			String s;		
+
+//			s=sc.nextLine(); //skip the first row, which is the input file's table headers
+	
+			if (inDebugMode) {
+				rowCount=0;
+			}
+						
+			while (sc.hasNextLine()) {
+				s=sc.nextLine();
+				
+				//if the row is blank
+				if (s.trim().equals("")) {
+					continue;
+				}
+				
+				//TO-DO: -update: this
+				
+				if (s.contains("<?php echo $data['date'];?>")) {
+					System.out.println(">>>>>> HALLO!");
+				}
+				
+				if (inDebugMode) {
+					rowCount++;
+					System.out.println("rowCount: "+rowCount);
+				}
+				
+
+			}		
+			
+			//added by Mike, 20210716
+			if (inDebugMode) {
+				rowCount++;
+				System.out.println("rowCount: "+rowCount);
+			}			
+		}		
+	}	
 }

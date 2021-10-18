@@ -15,7 +15,7 @@
  * @company: USBONG
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20211018
+ * @last updated: 20211019
  * @website address: http://www.usbong.ph
  *
  */
@@ -773,7 +773,7 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 							
 			System.out.println("inputFilename: " + inputFilename);
 						
-			Scanner sc = new Scanner(new FileInputStream(f));				
+			Scanner sc = new Scanner(new FileInputStream(f), "UTF-8");				
 		
 			String s;		
 
@@ -796,6 +796,7 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 				//Example: CONSULTATION2020OnlyVerifiedMacroEnabledMasterListV59_202001.txt
 
 				//TO-DO: -update: this				
+/* //edited by Mike, 20211019				
 				if (s.contains("<?php echo $data['date'];?>")) {					
 					DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     				Date myDate = new Date();
@@ -804,6 +805,12 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 					
     				System.out.println(dateFormat.format(myDate));
 				}
+*/
+				//get year based on first input file
+				//note: startDate value obtained from processInputFiles(...) Command
+				//example: startDate value = "01/-20", where 20 is year
+				//TO-DO: -update: this
+				s=s.replace("<?php echo $data['date'];?>","20"+startDate.substring(startDate.length()-2));
 				
 				if (s.contains("<!-- Table Values Row 2 -->")) {					
 					SortedSet<String> sortedMedicalDoctorKeyset = new TreeSet<String>(medicalDoctorContainer.keySet());

@@ -10,7 +10,7 @@
 ' @company: USBONG
 ' @author: SYSON, MICHAEL B.
 ' @date created: 20210716
-' @date updated: 20210716
+' @date updated: 20211019
 ' @website address: http://www.usbong.ph
 -->
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
@@ -127,13 +127,20 @@
 	</h3>
 	<span class="spanReportHeaderTitle">UNPAID HMO SUMMARY REPORT</span>
 	<br/>
+<!-- removed by Mike, 20211019
 	<span class="spanReportHeader">WORKBOOK LAST UPDATED: <?php echo $data['date'];?></span>
+-->
 
 	<div>
 		<table width="100%">
 		  <tr>
 			<td>
-			  <b><span>CONSULTATION</span></b>
+			  <b><span class="spanReportHeader">CONSULTATION & PT TREATMENT</span></b>
+			</td>
+		  </tr>
+		  <tr>
+			<td>
+			  <span class="spanReportHeader">WORKBOOK YEAR: <?php echo $data['date'];?></span>
 			</td>
 		  </tr>
 		</table>

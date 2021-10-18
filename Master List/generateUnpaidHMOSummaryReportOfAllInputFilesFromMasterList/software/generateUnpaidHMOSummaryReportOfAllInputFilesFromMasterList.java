@@ -15,7 +15,7 @@
  * @company: USBONG
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20210716
+ * @last updated: 20211018
  * @website address: http://www.usbong.ph
  *
  */
@@ -652,8 +652,7 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 			else */if (args[i].contains(".csv")) {
 //				inputFilename = args[i].replaceAll(".csv","");
 				sFileExtension = ".csv";
-			}
-			
+			}			
 			//added by Mike, 20210716
 			else if (args[i].contains(".html")) {
 				continue;
@@ -754,7 +753,8 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 		}		
 	}
 	
-	//added by Mike, 20210716
+	//added by Mike, 20210716; edited by Mike, 20211018
+	//TO-DO: -add: previous Total Unpaid HMO Fee
 	private static void autoGenerateUnpaidHMOSummaryReportOutputHTML(String[] args) throws Exception {
 		PrintWriter unpaidHMOSummaryReportHTMLWriter = new PrintWriter("output/UnpaidHMOSummaryReportOutput.html", "UTF-8");			
 				
@@ -791,8 +791,11 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 					continue;
 				}
 				
-				//TO-DO: -update: this
-				
+				//added by Mike, 20211018
+				//TO-DO: -add: start and end of year-month based on input files
+				//Example: CONSULTATION2020OnlyVerifiedMacroEnabledMasterListV59_202001.txt
+
+				//TO-DO: -update: this				
 				if (s.contains("<?php echo $data['date'];?>")) {					
 					DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
     				Date myDate = new Date();

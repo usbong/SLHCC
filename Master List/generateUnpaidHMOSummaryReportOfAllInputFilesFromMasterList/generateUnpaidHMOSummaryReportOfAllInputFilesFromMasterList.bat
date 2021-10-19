@@ -32,10 +32,19 @@ REM java -cp .\software: generateUnpaidHMOSummaryReportOfAllInputFilesFromMaster
 java -cp .\software; generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList input/treatment/*.txt input/consultation/*.txt assets/templates/generateUnpaidHMOSummaryReportOutputTemplate.html
 
 REM added by Mike, 20211019
+REM date format: DDD MM/DD/YYYY; example: Tue 10/19/2021
 set myYear=%date:~10,4%
-echo %myYear%
+REM echo %myYear%
+
+set myMonth=%date:~4,2%
+REM echo %myMonth%
+
+set myDay=%date:~7,2%
+REM echo %myDay%
+
+REM echo %date%
 
 REM /Y = Yes to Overwrite File if it exists
-copy /Y "output\UnpaidHMOSummaryReportOutput.html" "assets\report\UnpaidHMOSummaryReportOutputYear%myYear%.html"
+copy /Y "output\UnpaidHMOSummaryReportOutput.html" "assets\reports\UnpaidHMOSummaryReportOutputYear%myYear%V%myYear%%myMonth%%myDay%.html"
 
 PAUSE

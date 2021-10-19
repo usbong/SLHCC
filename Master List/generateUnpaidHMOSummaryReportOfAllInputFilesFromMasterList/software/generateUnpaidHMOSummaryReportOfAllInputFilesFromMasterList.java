@@ -182,8 +182,9 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 	private static double totalUnpaidHMOFeeConsultation;
 	private static double totalUnpaidSLRFeeConsultation;
 	private static double totalUnpaidHMOFeeTreatment;		
-	private static double totalUnpaidSLRFeeTreatment;		
-				
+	private static double totalUnpaidSLRFeeTreatment;	
+	private static double grandTotalFeeConsultationTreatment; //added by Mike, 20211019
+					
 	public static void main ( String[] args ) throws Exception
 	{					
 		makeFilePath("output"); //"output" is the folder where I've instructed the add-on software/application to store the output file			
@@ -301,6 +302,9 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 //			consultationWriter.print("TOTAL:\t\t"+totalUnpaidHMOFeeConsultation+"\n"); 					
 			consultationWriter.print("TOTAL:\t\t"+autoAddCommaToNumber(totalUnpaidHMOFeeConsultation)+"\n"); 	
 			
+			//added by Mike, 20211019
+			grandTotalFeeConsultationTreatment+=totalUnpaidHMOFeeConsultation;
+			
 			//added by Mike, 20210121
 			if (slrTransactionContainer.size()>0) {
 				consultationWriter.print("\nUnpaid SLR\n"); 	
@@ -321,6 +325,9 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 				//added by Mike, 20210415
 				//includes SLR transactions in the total count
 				consultationWriter.print("TOTAL:\t\t"+autoAddCommaToNumber(totalUnpaidSLRFeeConsultation)+"\n"); 	
+				
+				//added by Mike, 20211019
+				grandTotalFeeConsultationTreatment+=totalUnpaidSLRFeeConsultation;
 			}
 						
 			consultationWriter.close();		
@@ -365,6 +372,9 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 					}
 				}
 				treatmentWriter.print("TOTAL:\t\t"+autoAddCommaToNumber(totalUnpaidHMOFeeTreatment)+"\n"); 		
+
+				//added by Mike, 20211019
+				grandTotalFeeConsultationTreatment+=totalUnpaidHMOFeeTreatment;
 				
 				//added by Mike, 20210415
 				if (slrTransactionContainer.size()>0) {
@@ -384,6 +394,9 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 					}
 
 					treatmentWriter.print("TOTAL:\t\t"+autoAddCommaToNumber(totalUnpaidSLRFeeTreatment)+"\n"); 	
+
+					//added by Mike, 20211019
+					grandTotalFeeConsultationTreatment+=totalUnpaidSLRFeeTreatment;
 				}				
 				
 		//		consultationWriter.close();		//removed by Mike, 20200217
@@ -866,6 +879,30 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 					}
 					else {
 						sb.append("<b>"+df.format(dTotalUnpaidHMOAndSLRTreatment)+"</b>\n");
+					}
+
+					sb.append("</td>\n");
+					sb.append("</tr>\n");
+					
+					s=sb.toString();
+					
+					//added by Mike, 20211019
+					//GRAND TOTAL
+					sb.append("<!-- GRAND TOTAL -->\n");
+					sb.append("<!-- Column 1 -->\n");
+					sb.append("<td class='tdUnpaidHMOGrandTotal'>\n");
+					sb.append("<b>GRAND TOTAL</b>\n");
+					sb.append("</td>\n");
+					sb.append("<!-- Column 2 -->\n");
+					sb.append("<td class='tdUnpaidHMOGrandTotal'>\n");
+
+//					Double dTotalUnpaidHMOAndSLRTreatment=totalUnpaidHMOFeeTreatment+totalUnpaidSLRFeeTreatment;
+										
+					if (grandTotalFeeConsultationTreatment==0) {
+						sb.append("<b>0.00</b>\n");
+					}
+					else {
+						sb.append("<b>"+df.format(grandTotalFeeConsultationTreatment)+"</b>\n");
 					}
 
 					sb.append("</td>\n");

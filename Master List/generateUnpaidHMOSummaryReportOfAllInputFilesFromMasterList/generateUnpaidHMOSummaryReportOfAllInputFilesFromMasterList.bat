@@ -13,7 +13,7 @@ REM
 REM company: USBONG
 REM author: SYSON, MICHAEL B.
 REM date created: 20200217
-REM last updated: 20211018
+REM last updated: 20211019
 REM website address: http://www.usbong.ph
 REM
 REM Notes:
@@ -30,5 +30,12 @@ REM Windows Machine Command
 REM input .csv file format; update to use .txt file format if necessary
 REM java -cp .\software: generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList input/treatment/*.csv input/consultation/*.csv assets/templates/generateUnpaidHMOSummaryReportOutputTemplate.html
 java -cp .\software; generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList input/treatment/*.txt input/consultation/*.txt assets/templates/generateUnpaidHMOSummaryReportOutputTemplate.html
+
+REM added by Mike, 20211019
+set myYear=%date:~10,4%
+echo %myYear%
+
+REM /Y = Yes to Overwrite File if it exists
+copy /Y "output\UnpaidHMOSummaryReportOutput.html" "assets\report\UnpaidHMOSummaryReportOutputYear%myYear%.html"
 
 PAUSE

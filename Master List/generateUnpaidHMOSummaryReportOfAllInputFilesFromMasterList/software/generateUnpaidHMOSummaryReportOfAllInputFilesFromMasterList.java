@@ -15,7 +15,7 @@
  * @company: USBONG
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20211019
+ * @last updated: 20211020
  * @website address: http://www.usbong.ph
  *
  */
@@ -825,7 +825,7 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 				//TO-DO: -update: this
 				s=s.replace("<?php echo $data['date'];?>","20"+startDate.substring(startDate.length()-2));
 				
-				if (s.contains("<!-- Table Values Row 2 -->")) {					
+				if (s.contains("<!-- Table Values Row 2 -->")) {
 					SortedSet<String> sortedMedicalDoctorKeyset = new TreeSet<String>(medicalDoctorContainer.keySet());
 					StringBuffer sb = new StringBuffer(s);
 					DecimalFormat df = new DecimalFormat("#,###.00"); //"0.00"
@@ -838,10 +838,14 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 						//sb.append("<tr>\n");
 
   						if (iMedicalDoctorRowCount % 2 == 0) { //even number
-						  sb.append("<tr class=\"rowEvenNumber\">");
+						  //edited by Mike, 20211020
+//						  sb.append("<tr class=\"rowEvenNumber\">");
+						  sb.append("\n<tr class=\"rowEvenNumber\">\n");
 						}
 						else {
-						  sb.append("<tr>");
+						  //edited by Mike, 20211020
+//						  sb.append("<tr>");
+						  sb.append("<tr>\n");
 						}				   										
 						iMedicalDoctorRowCount=iMedicalDoctorRowCount+1;
 						
@@ -921,5 +925,5 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 			
 			unpaidHMOSummaryReportHTMLWriter.close();
 		}		
-	}	
+	}			
 }

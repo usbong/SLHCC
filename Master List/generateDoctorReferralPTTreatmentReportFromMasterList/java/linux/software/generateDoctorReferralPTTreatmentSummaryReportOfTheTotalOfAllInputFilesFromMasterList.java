@@ -15,7 +15,7 @@
  * @company: USBONG
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20211210; from 20201218
+ * @last updated: 20211211
  */
 
 import java.util.*;
@@ -144,6 +144,12 @@ public class generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputF
 /*			inputFilename = args[i].replaceAll(".txt","");			
 			File f = new File(inputFilename+".txt");
 */
+			
+			//added by Mike, 20211211
+			if (args[i].contains("assets")) {
+				continue;
+			}
+			
 			File f;
 			//identify if file extension uses .txt
 			if (args[i].contains(".txt")) {
@@ -571,14 +577,17 @@ public class generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputF
 */
 					
 //		System.out.println(">>>>>>> inputString: "+inputStringArray[0]);
+//		System.out.println(">>>>>>> inputString: "+inputString);
 
 		int threshold = 3; //3, instead of 2 for Medical Doctors
 
+//				System.out.println(">>>>>>> containerArrayList.size(): "+containerArrayList.size());
+		
 		for (int h=0; h<containerArrayList.size(); h++) {
 			hasKeywords=false;
 			subClassification = containerArrayList.get(h)[0]; 
 			classification = containerArrayList.get(h)[1];
-
+			
 			String[] s = subClassification.split(" ");
 			
 			for(int i=0; i<s.length; i++) {			
@@ -587,6 +596,11 @@ public class generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputF
 				for(k=0; k<inputStringArray.length; k++) {		
 					String key = inputStringArray[k].trim().toUpperCase();
 					String keyTwo = s[i].trim().toUpperCase();
+
+/*					
+System.out.println(">>key: "+key);					
+System.out.println(">>keyTwo: "+keyTwo);					
+*/
 					
 					if (key.equals(keyTwo)) {
 						hasKeywords=true;

@@ -18,7 +18,7 @@
 # company: USBONG
 # author: SYSON, MICHAEL B.
 # date created: 20211210
-# last updated: 20211210
+# last updated: 20211211
 #
 
 mainDirectory=$(pwd)
@@ -30,6 +30,6 @@ cd "$mainDirectory"
 # java -cp .\software:.\software\org.json.jar:.\software\org.apache.httpclient.jar:.\software\org.apache.httpcore.jar:.\software\org.apache.commons-logging.jar UsbongSMSReportMain http://localhost/ halimbawa
 
 # Java command using Linux Machine
-java -cp ./software:./software/org.apache.commons.text.jar generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputFilesFromMasterList ./input/*
+java -cp ./software:./software/org.apache.commons.text.jar generateDoctorReferralPTTreatmentSummaryReportOfTheTotalOfAllInputFilesFromMasterList ./assets/*.txt ./input/* 
 
 exit

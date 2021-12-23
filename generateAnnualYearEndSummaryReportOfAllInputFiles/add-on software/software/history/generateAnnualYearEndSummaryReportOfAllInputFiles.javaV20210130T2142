@@ -1,5 +1,5 @@
 /*
- * Copyright 2018~2021 SYSON, MICHAEL B.
+ * Copyright 2018~2020 Usbong Social Systems, Inc.
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at
@@ -12,11 +12,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  *
- * @company: USBONG
+ * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20211223; from 20201231
- * @website address: http://www.usbong.ph
+ * @last updated: 20201231
  */
 import java.util.*;
 import java.io.File;
@@ -83,11 +82,6 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 	private static boolean isInDebugMode = false; //true;
 	private static String inputFilename = "input201801"; //without extension; default input file
 	
-	//added by Mike, 20211223
-	//note: computer auto-identifies the value
-	//note: set this to 1 if input files do not adhere to the Master List format
-	private static int INPUT_MASTER_LIST_OFFSET = 0;//1; //added by Mike, 20200101; edited by Mike, 20211223
-
 	private static String startDate = null;
 	private static String endDate = null;
 	
@@ -117,12 +111,10 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 	private static final int INPUT_CONSULTATION_NEW_OLD_COLUMN = 17;
 */	
 	private static final int INPUT_CONSULTATION_OFFSET = 1;		
-
-/* //removed by Mike, 20211223
-	//note: set this to 1 if input files do not adhere to the Master List format
-	private static int INPUT_MASTER_LIST_OFFSET = 1; //0;//1; //added by Mike, 20200101; edited by Mike, 20211223
-*/
 	
+	//note: set this to 1 if input files do not adhere to the Master List format
+	private static int INPUT_MASTER_LIST_OFFSET = 0;//1; //added by Mike, 20200101
+		
 /*	private static HashMap<String, double[]> referringDoctorContainer;	
 */
 
@@ -872,9 +864,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 
 		return null;//error
 	}
-		
+	
 	private static String getMonthYear(String date) {
-		StringBuffer sb = new StringBuffer(date);						
+		StringBuffer sb = new StringBuffer(date);				
 		return sb.substring(0,3).concat("-").concat(sb.substring(sb.length()-2,sb.length()));
 	}
 
@@ -928,13 +920,9 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 		//added by Mike, 20201227
 		StringBuffer sb = new StringBuffer(date);				
 		String output;// = "202012";
-		
-		System.out.println("date: "+date);
 
 		//identify if correct input format
-		//edited by Mike, 20211223
-//		if (isNumeric(date.substring(0,3))) {					
-		if (!isNumeric(date.substring(0,3))) {					
+		if (isNumeric(date.substring(0,3))) {					
 			//edited by Mike, 20201227
 //			String output = ("20").concat(sb.substring(sb.length()-2,sb.length()));		
 			output = ("20").concat(sb.substring(sb.length()-2,sb.length()));		
@@ -945,33 +933,21 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 			output = output.concat(sb.substring(0,2));					
 		}
 
-		System.out.println("output: "+output);
+//		System.out.println("output: "+output);
 		
 		return Integer.parseInt(output);
 	}
+
 	
-	//added by Mike, 20200108; edited by Mike, 20211223
+	//added by Mike, 20200108
 	//1) input:
-	//format#1: m/d/yyyy
+	//format: m/d/yyyy
 	//example: 8/1/2019
-	//format#2: mmm-dd-yy
-	//example: Jan-04-21	
 	//2) output:
 	//format: yyyymm
 	//example: 202008
 	private static int getYearMonthInIntNotMasterList(String date) {
-		StringBuffer sb = new StringBuffer(date);			
-		
-		System.out.println(">>date: "+date);
-		
-		//added by Mike, 20211223
-		//example input: Jan-04-21
-		//example output: 202101
-		if (!isNumeric(sb.substring(0,3))) {		
-			System.out.println(">>>>>>DITO");
-			return getYearMonthInInt(date);
-		}	
-		
+		StringBuffer sb = new StringBuffer(date);				
 		String[] inputStringArray = date.split("/");			
 		
 		if (inputStringArray[0].length() == 1) {
@@ -1903,17 +1879,7 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 					continue;
 				}
 				
-				String[] inputColumns = s.split("\t");		
-
-/*
-				//TO-DO: -update: to auto-identify
-				//added by Mike, 20211223
-				//auto-verify if tab-delimited, OR comma-delimited
-				//NOT tab-delimited
-				if (inputColumns.length==1) {
-					inputColumns = s.split(",");		
-				}
-*/
+				String[] inputColumns = s.split("\t");					
 				
 				//added by Mike, 20180412
 				if (dateValuesArray[i]==null) {

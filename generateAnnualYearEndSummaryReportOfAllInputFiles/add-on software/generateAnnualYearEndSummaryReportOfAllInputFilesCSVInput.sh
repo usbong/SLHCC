@@ -14,7 +14,7 @@
 # limitations under the License.
 # 
 # Generate Annual Year End Summary Report of All Input Files (.csv format) 
-# from Unit workbook (non-Master List) using Linux Personal Computer (PC)
+# from Unit workbook (Master/non-Master List) using Linux Personal Computer (PC)
 #
 # company: USBONG
 # author: SYSON, MICHAEL B.
@@ -22,7 +22,8 @@
 # last updated: 20211223
 # website address: http://www.usbong.ph
 #
-
+# Reminder: input .csv file set to be Tab-delimited, NOT Comma-delimited
+# This is due to select input fields also use commas.
 
 mainDirectory=$(pwd)
 # echo $mainDirectory

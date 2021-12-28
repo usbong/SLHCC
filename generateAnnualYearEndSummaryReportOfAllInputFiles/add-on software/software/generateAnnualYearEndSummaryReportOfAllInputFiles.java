@@ -15,7 +15,7 @@
  * @company: USBONG
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20211223; from 20201231
+ * @last updated: 20211228
  * @website address: http://www.usbong.ph
  */
 import java.util.*;
@@ -931,10 +931,25 @@ public class generateAnnualYearEndSummaryReportOfAllInputFiles {
 		
 		System.out.println("date: "+date);
 
-		//identify if correct input format
-		//edited by Mike, 20211223
-//		if (isNumeric(date.substring(0,3))) {					
-		if (!isNumeric(date.substring(0,3))) {					
+		//added by Mike, 20211228
+//		date = date.replace("/","");
+			
+		//identify if correct input format; based on Month
+		//edited by Mike, 20211228
+		if (date.contains("/")) {
+			output = ("20").concat(sb.substring(sb.length()-2,sb.length()));
+			
+//			System.out.println("date"+date.split("/")[0]);
+			
+			if (date.split("/")[0].length()<2) {
+				output = output.concat("0" + date.split("/")[0]);
+			}
+			else {
+				output = output.concat(date.split("/")[0]);
+			}			
+		}
+		else if (isNumeric(date.substring(0,3))) {					
+//		if (!isNumeric(date.replace("/","").substring(0,3))) {					
 			//edited by Mike, 20201227
 //			String output = ("20").concat(sb.substring(sb.length()-2,sb.length()));		
 			output = ("20").concat(sb.substring(sb.length()-2,sb.length()));		

@@ -1,36 +1,20 @@
 /*
- * Copyright 2018~2020 Usbong Social Systems, Inc.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- * 
- *     http://www.apache.org/licenses/LICENSE-2.0
- *     
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-import java.util.*;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.PrintWriter;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
-import java.text.NumberFormat;
-import java.text.DecimalFormat;
-//import java.lang.Integer;
-//import commons-lang3-3.8.1;
-//import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.text.similarity.LevenshteinDistance;
-import java.util.Map.Entry; //added by Mike, 20190417
-import utils.IncidenceNumberComparator; //added by Mike, 20190418
-import utils.UsbongUtils; //added by Mike, 20190622
+ * Copyright 2019~2021 USBONG SOCIAL SYSTEMS, INC. (USBONG)
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
+ *
+ * @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
+ * @author: SYSON, MICHAEL B.
+ * @date created: 20190426
+ * @date updated: 20210131
+ * @website address: WWW.USBONG.PH
 
-/*
-' Given:
-' 1) Encoding for the Month Input Worksheet
+' Input:
+' 1) Worksheet for the Month`
 ' --> Saved/Exported as "Tab delimited" .txt file from Excel
 ' --> Example: input_201808.txt (where the date format is YYYYMM; based on ISO 8601)
 '
@@ -71,6 +55,27 @@ import utils.UsbongUtils; //added by Mike, 20190622
 ' 8) The documentation for the LevenshteinDistance can be viewed here:
 '   https://commons.apache.org/proper/commons-text/javadocs/api-release/org/apache/commons/text/similarity/LevenshteinDistance.html; last accessed: 20190123
 */ 
+
+
+import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.PrintWriter;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.text.NumberFormat;
+import java.text.DecimalFormat;
+//import java.lang.Integer;
+//import commons-lang3-3.8.1;
+//import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.similarity.LevenshteinDistance;
+import java.util.Map.Entry; //added by Mike, 20190417
+import utils.IncidenceNumberComparator; //added by Mike, 20190418
+import utils.UsbongUtils; //added by Mike, 20190622
+
+//added by Mike, 20210131
+import java.time.Year;
+import java.time.ZoneId;
 
 public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {	
 	private static boolean isInDebugMode = true; //edited by Mike, 20190131
@@ -2235,6 +2240,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				
 			//added by Mike, 20190426
 			s = s.replace("<?php echo $data['total_new_cases_count'];?>", "" + (int) totalDiagnosedCaseCount);				
+
+			//added by Mike, 20210131
+			s = s.replace("<?php echo date(\"Y\");?>", "" + Year.now(ZoneId.of("Asia/Manila")).getValue());
+
 			writer.print(s + "\n");		
 		}
 		
@@ -2437,6 +2446,9 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 
 			//added by Mike, 20200220
 			s = s.replace("-1", "");
+
+			//added by Mike, 20210131
+			s = s.replace("<?php echo date(\"Y\");?>", "" + Year.now(ZoneId.of("Asia/Manila")).getValue());
 			
 			writer.print(s + "\n");		
 		}
@@ -2629,7 +2641,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				}
 				s = s.concat("</span></b>");			
 			}
-			
+		
+			//added by Mike, 20210131
+			s = s.replace("<?php echo date(\"Y\");?>", "" + Year.now(ZoneId.of("Asia/Manila")).getValue());
+		
 			writer.print(s + "\n");
 		}
 		
@@ -3026,6 +3041,10 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				s = s.concat("</span></b>");			
 			}
 */			
+
+			//added by Mike, 20210131
+			s = s.replace("<?php echo date(\"Y\");?>", "" + Year.now(ZoneId.of("Asia/Manila")).getValue());
+
 			writer.print(s + "\n");
 		}
 		

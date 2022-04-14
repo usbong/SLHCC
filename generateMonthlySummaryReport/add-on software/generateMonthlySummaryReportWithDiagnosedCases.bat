@@ -1,5 +1,5 @@
 
-REM ' Copyright 2019~2021 USBONG SOCIAL SYSTEMS, INC. (USBONG)
+REM ' Copyright 2019~2022 SYSON, MICHAEL B.
 REM '
 REM ' Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You ' may obtain a copy of the License at
 REM '
@@ -7,11 +7,11 @@ REM ' http://www.apache.org/licenses/LICENSE-2.0
 REM '
 REM ' Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, ' WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing ' permissions and limitations under the License.
 REM '
-REM ' @company: USBONG SOCIAL SYSTEMS, INC. (USBONG)
+REM ' @company: USBONG
 REM ' @author: SYSON, MICHAEL B.
 REM ' @date created: 2019
-REM ' @date updated: 20210131
-REM ' @website address: WWW.USBONG.PH
+REM ' @date updated: 20220414; from 20210131
+REM ' @website address: http://www.usbong.ph
 
 cd /d %1%
 set mainDirectory=%CD%
@@ -23,8 +23,10 @@ copy *List.txt "tempListBeforeProcessing/"
 xcopy "tempListBeforeProcessing\*List.txt" "." /s /y
 
 cd %mainDirectory%
-		
-java -cp .\software;.\software\org.apache.commons.text.jar generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles input/treatment/*.txt input/consultation/*.txt assets/*.txt
+	
+REM edited by Mike, 20220414	
+REM java -cp .\software;.\software\org.apache.commons.text.jar generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles input/treatment/*.txt input/consultation/*.txt assets/*.txt
+java -cp .\software;.\software\org.apache.commons.text.jar generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles input/treatment/*.txt input/consultation/*.txt assets/KnownDiagnosedCasesList.txt
 
 cd assets/transactions/
 del *List.txt

@@ -86,7 +86,7 @@ OA/RA/Gouty arthritis	OSTEO ARTHRITIS (B) KNEES AND (B) HANDS
 OA/RA/Gouty arthritis	ankle
 Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p ORIF
 Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Plating
-Fx/S/p ORIF/Plating/Screws; Dislocation	IP Joint fracture-dislocation
+Fx/S/p ORIF/Plating/Screws; Dislocation	IP Joint fracture-dislocation ® Thumb
 Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Screws
 Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Dislocation
 Fx/S/p ORIF/Plating/Screws; Dislocation	UE

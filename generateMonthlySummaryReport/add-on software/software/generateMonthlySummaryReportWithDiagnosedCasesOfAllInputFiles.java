@@ -10,7 +10,7 @@
  * @company: USBONG
  * @author: SYSON, MICHAEL B.
  * @date created: 20190426
- * @date updated: 20220414; from 20210131
+ * @date updated: 20220605; from 20220414
  * @website address: http://www.usbong.ph
 
 ' Input:
@@ -1946,6 +1946,14 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 				
 				//added by Mike, 20220414
 				s = s.replace("-"," ");				
+
+/* //removed by Mike, 20220605
+				//added by Mike, 20220605
+				//note: change to space, i.e. " ", instead of "";
+				//due to example input: Fx/S/p ORIF/Plating/Screws;Dislocation
+				//output: Fx/S/p ORIF/Plating/Screws Dislocation
+				//s = s.replace(";"," ");
+*/				
 				
 				String[] inputColumns = s.split("\t");					
 
@@ -3344,8 +3352,11 @@ public class generateMonthlySummaryReportWithDiagnosedCasesOfAllInputFiles {
 		boolean hasKnownDiagnosedCaseKeywords=false;
 		
 		for (String inputString : sortedKeyset) {			
-			//added by Mike, 20190224
+			//added by Mike, 20190224; edited by Mike, 20220605
+			//String[] inputStringArray = inputString.replace("-"," ").replace(";"," ").split(" ");				
+			//edited by Mike, 20220605
 			String[] inputStringArray = inputString.replace("-"," ").split(" ");				
+
 //			System.out.println(">>>>>>> inputString: "+inputString);
 
 			//edited by Mike, 20190430

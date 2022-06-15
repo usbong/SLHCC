@@ -3,7 +3,7 @@
 ### ORTHOPEDIC & PHYSICAL THERAPY UNIT
 <b>Author:</b> Michael B. Syson</br>
 <b>Date Created:</b> 20171121</br>
-<b>Date Updated:</b> 20211019</br>
+<b>Date Updated:</b> 20220615; from 20211019</br>
 <b>Description:</b></br>
 This is a set of add-on software to automate computing tasks and the generation of reports using data from Microsoft EXCEL and LibreOffice CALC workbooks.</br>
 
@@ -32,7 +32,7 @@ To encrypt our Summary Reports in PDF (Portable Document Format), we have to do 
 Done!
 
 # Open Source Software License
-Copyright 2017~2021 SYSON, MICHAEL B.
+Copyright 2017~2022 SYSON, MICHAEL B.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 
@@ -43,5 +43,5 @@ Unless required by applicable law or agreed to in writing, software distributed 
 <b>company:</b> USBONG<br/>
 <b>author:</b> SYSON, MICHAEL B.<br/>
 <b>date created:</b> 20171121<br/>
-<b>last updated:</b> 20211019<br/>
+<b>last updated:</b> 20220615; from 20211019<br/>
 <b>website address:</b> http://www.usbong.ph<br/>

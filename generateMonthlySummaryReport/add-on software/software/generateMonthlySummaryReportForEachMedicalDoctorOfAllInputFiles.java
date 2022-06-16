@@ -10,7 +10,7 @@
  * @company: USBONG
  * @author: SYSON, MICHAEL B.
  * @date created: 20190426
- * @date updated: 20220615; from 20210131
+ * @date updated: 20220616; from 20220615
  * @website address: WWW.USBONG.PH
 
 'TO-DO: -update: this
@@ -222,6 +222,9 @@ public class generateMonthlySummaryReportForEachMedicalDoctorOfAllInputFiles {
 	//this is for both HMO and NON-HMO transactions
 	private static final int OUTPUT_TOTAL_COLUMNS = 25; //edited by Mike, 20190202
 
+	//added by Mike, 20220617
+	private static final int INPUT_TOTAL_COLUMNS_CONSULT = 17; 
+	
 	//PT TREATMENT
 	private static final int OUTPUT_HMO_COUNT_COLUMN = 0; //transaction count
 	private static final int OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN = 1;
@@ -3654,11 +3657,15 @@ System.out.println("iMedicalDoctorTransactionsRowCount: "+iMedicalDoctorTransact
 
 
 		for (String key : sortedMedicalDoctorTransactionCountKeyset) {					
-			System.out.println("medicalDoctor: "+key);			
+		  System.out.println("medicalDoctor: "+key);			
 
+		  try {
+		    	PrintWriter medicalDoctorConsultationListWriter = new PrintWriter("output/"+key+".csv", "UTF-8");	
+			
+			
 			//System.out.println("medicalDoctorTransactionsContainer SIZE: "+medicalDoctorTransactionsContainer.get(key).length); //output: 300 (max)
 
-			System.out.println("medicalDoctorTransactionsContainer.get(key)[0][0]: "+medicalDoctorTransactionsContainer.get(key)[0][0]);
+//			System.out.println("medicalDoctorTransactionsContainer.get(key)[0][0]: "+medicalDoctorTransactionsContainer.get(key)[0][0]);
 			
 			//TO-DO: -write: all non-NULL transaction rows in output file to be imported using MS EXCEL/LIBREOFFICE CALC
 			//note: using: JAVA VIRTUAL MACHINE; currently available activated MS OFFICE count NOT yet increased;
@@ -3666,8 +3673,33 @@ System.out.println("iMedicalDoctorTransactionsRowCount: "+iMedicalDoctorTransact
 			//output: null
 //			System.out.println("medicalDoctorTransactionsContainer.get(key)[0][0]: "+medicalDoctorTransactionsContainer.get(key)[299][0]);
 			
-			System.out.println("medicalDoctorTransactionsContainer.get(key)[0][0]: "+medicalDoctorTransactionsContainer.get(key)[4][0]);
+//			System.out.println("medicalDoctorTransactionsContainer.get(key)[0][0]: "+medicalDoctorTransactionsContainer.get(key)[4][0]);
+			
+			for (int iCount=0; iCount<MAX_TRANSACTIONS_PER_MEDICAL_DOCTOR; iCount++) {
+			  if (medicalDoctorTransactionsContainer.get(key)[iCount][0]==null) {
+				break;
+			  }
 
+			System.out.println("medicalDoctorTransactionsContainer.get(key)[0][0]: "+medicalDoctorTransactionsContainer.get(key)[iCount][0]);
+
+
+			  //TO-DO: -add: grand total per HMO, CASH, et cetera
+			  
+			  //in OUTPUT, separate each column using Tab	
+			  for (int iColumnCount=0; iColumnCount<INPUT_TOTAL_COLUMNS_CONSULT; iColumnCount++) {			  			  
+			    medicalDoctorConsultationListWriter.print(medicalDoctorTransactionsContainer.get(key)[iCount][iColumnCount] + "\t");
+			  }
+
+			    medicalDoctorConsultationListWriter.print("\n");
+
+			}
+			
+			medicalDoctorConsultationListWriter.close();
+
+		  }
+		  catch (Exception e) { //FileNotFoundException
+		    System.out.println("Printer Medical Doctor Consultation Writer Error: "+e);
+		  }
 		}
 	
 	}

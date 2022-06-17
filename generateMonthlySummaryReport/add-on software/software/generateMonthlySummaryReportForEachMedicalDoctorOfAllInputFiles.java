@@ -3687,12 +3687,22 @@ System.out.println("iMedicalDoctorTransactionsRowCount: "+iMedicalDoctorTransact
 
 			System.out.println("medicalDoctorTransactionsContainer.get(key)[0][0]: "+medicalDoctorTransactionsContainer.get(key)[iCount][0]);
 
-
-			  //TO-DO: -add: grand total per HMO, CASH, et cetera
 			  
 			  //in OUTPUT, separate each column using Tab	
-			  for (int iColumnCount=0; iColumnCount<INPUT_TOTAL_COLUMNS_CONSULT; iColumnCount++) {			  			  
-			    medicalDoctorConsultationListWriter.print(medicalDoctorTransactionsContainer.get(key)[iCount][iColumnCount] + "\t");
+			  for (int iColumnCount=0; iColumnCount<INPUT_TOTAL_COLUMNS_CONSULT; iColumnCount++) {			  			  	    
+			    //added by Mike, 20220617
+			    //no need to include COLUMNS, F(#4), L(#10), M(#11)
+			    
+			    if ((iColumnCount==5)||(iColumnCount==11)||(iColumnCount==12)) {
+
+			System.out.println(">>>>>>>>>>>>>>>>>DITO\n");
+			    			    
+			    	continue;
+			    }
+			    
+		    	    //edited by Mike, 20220617			    
+		    	    medicalDoctorConsultationListWriter.print(medicalDoctorTransactionsContainer.get(key)[iCount][iColumnCount] + "\t");
+			    
 			  }
 
 		if (medicalDoctorTransactionsContainer.get(key)[iCount][INPUT_CONSULTATION_CLASS_COLUMN].contains("HMO/")) {		
@@ -3707,13 +3717,24 @@ System.out.println("iMedicalDoctorTransactionsRowCount: "+iMedicalDoctorTransact
 			}
 			
 			//added by Mike, 20220617
+			
+			//TO-DO: -add: truncate number value
+			
 			//GRAND TOTAL (CASH & HMO) 
 			dGrandTotal=dHMOTotal+dCashTotal;
 
 			medicalDoctorConsultationListWriter.print("\n");			
+
+/* //edited by Mike, 20220617
 			medicalDoctorConsultationListWriter.print("Net Total PF (HMO): "+dHMOTotal+"\n");
 			medicalDoctorConsultationListWriter.print("Net Total PF (Cash): "+dCashTotal+"\n");			
 			medicalDoctorConsultationListWriter.print("Net GRAND Total PF: "+dGrandTotal+"\n");
+*/
+			//put in COLUMN F(#4): DIAGNOSIS
+			medicalDoctorConsultationListWriter.print("\t\t\t\t\t"+"Net Total PF (HMO): "+"\t\t\t\t"+dHMOTotal+"\n");
+			medicalDoctorConsultationListWriter.print("\t\t\t\t\t"+"Net Total PF (Cash): "+"\t\t\t\t"+dCashTotal+"\n");			
+			medicalDoctorConsultationListWriter.print("\t\t\t\t\t"+"Net GRAND Total PF: "+"\t\t\t\t"+dGrandTotal+"\n");
+
 
 			//--
 			

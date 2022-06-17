@@ -10,7 +10,7 @@
  * @company: USBONG
  * @author: SYSON, MICHAEL B.
  * @date created: 20190426
- * @date updated: 20220616; from 20220615
+ * @date updated: 20220617; from 20220616
  * @website address: WWW.USBONG.PH
 
 'TO-DO: -update: this
@@ -3651,13 +3651,18 @@ System.out.println("iMedicalDoctorTransactionsRowCount: "+iMedicalDoctorTransact
 	
 	private static void processWriteOutputFileConsultationMedicalDoctorReport() {
 		SortedSet<String> sortedMedicalDoctorTransactionCountKeyset = new TreeSet<String>(medicalDoctorContainer.keySet());
-
-
+		
 		System.out.println("medicalDoctorTransactionsContainer.size(): "+medicalDoctorTransactionsContainer.size());
 
 
 		for (String key : sortedMedicalDoctorTransactionCountKeyset) {					
 		  System.out.println("medicalDoctor: "+key);			
+
+		  //added by Mike, 20220617
+		  double dHMOTotal=0;		
+		  double dCashTotal=0;
+		  double dGrandTotal=0;
+
 
 		  try {
 		    	PrintWriter medicalDoctorConsultationListWriter = new PrintWriter("output/"+key+".csv", "UTF-8");	
@@ -3690,9 +3695,27 @@ System.out.println("iMedicalDoctorTransactionsRowCount: "+iMedicalDoctorTransact
 			    medicalDoctorConsultationListWriter.print(medicalDoctorTransactionsContainer.get(key)[iCount][iColumnCount] + "\t");
 			  }
 
-			    medicalDoctorConsultationListWriter.print("\n");
+		if (medicalDoctorTransactionsContainer.get(key)[iCount][INPUT_CONSULTATION_CLASS_COLUMN].contains("HMO/")) {		
+		  dHMOTotal+=Double.parseDouble(medicalDoctorTransactionsContainer.get(key)[iCount][INPUT_CONSULTATION_NET_PF_COLUMN]);	
+		}
+		else {
+		  dCashTotal+=Double.parseDouble(medicalDoctorTransactionsContainer.get(key)[iCount][INPUT_CONSULTATION_NET_PF_COLUMN]);
+		}	
+
+			  medicalDoctorConsultationListWriter.print("\n");
 
 			}
+			
+			//added by Mike, 20220617
+			//GRAND TOTAL (CASH & HMO) 
+			dGrandTotal=dHMOTotal+dCashTotal;
+
+			medicalDoctorConsultationListWriter.print("\n");			
+			medicalDoctorConsultationListWriter.print("Net Total PF (HMO): "+dHMOTotal+"\n");
+			medicalDoctorConsultationListWriter.print("Net Total PF (Cash): "+dCashTotal+"\n");			
+			medicalDoctorConsultationListWriter.print("Net GRAND Total PF: "+dGrandTotal+"\n");
+
+			//--
 			
 			medicalDoctorConsultationListWriter.close();
 

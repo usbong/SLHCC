@@ -39,6 +39,8 @@ STL LE	S/P ACL Reconstruction
 STL LE	ACL tear Medial and Lateral Meniscus ®
 STL LE	S/P ORIF Arthroplasty
 STL LE	PERONEAL SUBLUXATION (L)
+STL LE	MENISCUS TEAR(L)
+STL LE	® HAMSTRING STRAIN
 Cervical Disorder	Cervical Strain
 Cervical Disorder	Cervical OA
 Cervical Disorder	Strain (L) Neck
@@ -58,6 +60,8 @@ Cervical Disorder	C6
 Cervical Disorder	DEGENERATIVE DISC DISEASE
 Cervical Disorder	C7
 Cervical Disorder	Myofascial Pain Syndrome
+Cervical Disorder	Cervical Spasm
+Cervical Disorder	CervicalSpasm
 Lumbar disorder	Lumbar strain
 Lumbar disorder	lumbar radiculopathy
 Lumbar disorder	lumbar disc bulge
@@ -85,6 +89,9 @@ Lumbar disorder	FX Lumbar
 Lumbar disorder	SPONDYLOSIS
 Lumbar disorder	LUMBAGO
 Lumbar disorder	T/C SLIPPED DISC/LUMBAR
+Lumbar disorder	HMP L4L5 W/SCIATICA
+Lumbar disorder	LUMBO SACRAL STRAIN ®
+Lumbar disorder	OSTEOPOROSIS
 OA/RA/Gouty arthritis	OA
 OA/RA/Gouty arthritis	RA
 OA/RA/Gouty arthritis	Gouty arthritis
@@ -130,6 +137,8 @@ Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	adhesive capsul
 Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	A-C Joint Arthritis
 Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	AC joint Hypertrophy ®
 Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Rotator Cuff Tendinopathy
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	FROZEN SHOULDER(L)
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	ROTATOR CUFF TENDINITIS(B);CERVICALSPONDYLOSIS+MPS
 CVA	Decondition S/P CS
 CVA	CVA
 CP/Cerebral Palsy	CP

@@ -15,7 +15,7 @@
  * @company: USBONG
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20211020
+ * @last updated: 20220719; from 20211020
  * @website address: http://www.usbong.ph
  *
  */
@@ -131,7 +131,10 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 	private static final int OUTPUT_TOTAL_COLUMNS = 23; //edited by Mike, 20190107
 
 	//PT TREATMENT
-	private static final int OUTPUT_HMO_COUNT_COLUMN = 0; //transaction count
+	//edited by Mike, 20220719
+	//private static final int OUTPUT_HMO_COUNT_COLUMN = 0; //transaction count
+	private static final int OUTPUT_HMO_NOTES_COLUMN = 0; //transaction notes
+	
 	private static final int OUTPUT_HMO_TOTAL_NET_TREATMENT_FEE_COLUMN = 1;
 	private static final int OUTPUT_HMO_PAID_NET_TREATMENT_FEE_COLUMN = 2;
 	private static final int OUTPUT_HMO_UNPAID_NET_TREATMENT_FEE_COLUMN = 3;
@@ -356,13 +359,45 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 							slrTransactionContainer.add(transactionDateContainer.get(i));
 						}
 						else {
+						
+/* //edited by Mike, 20220719		
 							treatmentWriter.print(
 											transactionDateContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+"\t"+
 											transactionDateContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]+"\t"+
 											autoAddCommaToNumber(Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN]))+"\t"+
 											transactionDateContainer.get(i)[OUTPUT_HMO_CLASS_COLUMN]+"\t"+
 											transactionDateContainer.get(i)[OUTPUT_HMO_APPROVAL_CODE_COLUMN]+"\n"
-										); 				   											
+										); 				   
+*/
+
+
+//TO-DO: -add: underpayment amount
+
+System.out.println(">>>>" +transactionDateContainer.get(i)[OUTPUT_HMO_NOTES_COLUMN]);
+
+String sNoteUnderpayment="";
+if (transactionDateContainer.get(i)[OUTPUT_HMO_NOTES_COLUMN].toLowerCase().trim().contains("underpayment")) {
+
+/*	
+	treatmentWriter.print("underpayment");
+	treatmentWriter.close();
+	
+	System.out.println("underpayment!");
+	System.exit(0);
+*/	
+	sNoteUnderpayment="underpayment";
+}
+
+							treatmentWriter.print(
+											transactionDateContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+"\t"+
+											transactionDateContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]+"\t"+
+											autoAddCommaToNumber(Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN]))+"\t"+
+											transactionDateContainer.get(i)[OUTPUT_HMO_CLASS_COLUMN]+"\t"+
+																						transactionDateContainer.get(i)[OUTPUT_HMO_APPROVAL_CODE_COLUMN]+"\t"+
+																						
+sNoteUnderpayment+"\n"															
+										); 				   										
+																					
 						}
 
 						
@@ -611,6 +646,10 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 		columnValuesStringArray[OUTPUT_HMO_NAME_COLUMN] = inputColumns[INPUT_NAME_COLUMN];
 		columnValuesStringArray[OUTPUT_HMO_APPROVAL_CODE_COLUMN] = inputColumns[INPUT_APPROVAL_CODE_COLUMN];
 
+		//added by Mike, 20220719
+		columnValuesStringArray[OUTPUT_HMO_NOTES_COLUMN] = inputColumns[INPUT_NOTES_COLUMN];
+		
+	
 		//edited by Mike, 20181218
 		if (!isConsultation) {											
 			columnValuesStringArray[OUTPUT_HMO_FILE_TYPE_COLUMN] = "TREATMENT";
@@ -622,6 +661,12 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 				(inputColumns[INPUT_CLASS_COLUMN].contains("SLR"))) {
 				if (!inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
 					transactionDateContainer.add(columnValuesStringArray);
+				}
+				//added by Mike, 20220719
+				else {
+					if (inputColumns[INPUT_NOTES_COLUMN].contains("underpayment")) {
+						transactionDateContainer.add(columnValuesStringArray);
+					}
 				}
 			}
 		}
@@ -643,6 +688,13 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 					if (!inputColumns[INPUT_NOTES_COLUMN].contains("paid:")) {
 						transactionDateContainer.add(columnValuesStringArray);
 					}
+					//added by Mike, 20220719
+					else {
+						if (inputColumns[INPUT_NOTES_COLUMN].contains("underpayment")) {
+							transactionDateContainer.add(columnValuesStringArray);
+						}
+					}
+					
 				}							
 			}					
 		}

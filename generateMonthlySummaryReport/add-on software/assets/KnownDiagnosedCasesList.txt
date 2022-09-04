@@ -23,9 +23,14 @@ STL LE	Muscle Leg
 STL LE	Muscle Ankle
 STL LE	Partial ACL Tear
 STL LE	ACL injury
+STL LE	ACL(PARTIAL)AND MENISCAL TEAR®
 STL LE	PFPS
 STL LE	(L) Hamstrings Strain; (L) VMO Strain
 STL LE	Achilles Tendinitis
+STL LE	(L)Plantar Fascitis
+STL LE	ACL(Partial)And Meniscal Tear(R)
+STL LE	T/C Patellar chondromalacia
+STL LE	T/C Patellar Sublaxation
 STL LE	Achilles Bursitis
 STL LE	Peripheral Neuropathy LE
 STL LE	Lateral Meniscal Tear
@@ -38,6 +43,7 @@ STL LE	Patello Femoral Pain Syndrome
 STL LE	S/P ACL Reconstruction
 STL LE	ACL tear Medial and Lateral Meniscus ®
 STL LE	S/P ORIF Arthroplasty
+STL LE	RAPTURED TENDON AND ACHILLES ®
 STL LE	PERONEAL SUBLUXATION (L)
 STL LE	MENISCUS TEAR(L)
 STL LE	® HAMSTRING STRAIN
@@ -103,12 +109,14 @@ OA/RA/Gouty arthritis	ankle
 Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p ORIF
 Fx/S/p ORIF/Plating/Screws; Dislocation	Elbow Dislocation
 Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Plating
+Fx/S/p ORIF/Plating/Screws; Dislocation	Annual Lig.Recons.&ORIF Screw fixationof(L)Scaphoid
 Fx/S/p ORIF/Plating/Screws; Dislocation	IP Fracture-Dislocation ® Thumb
 Fx/S/p ORIF/Plating/Screws; Dislocation	IP Joint fracture-dislocation ® Thumb
 Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Screws
-Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Dislocation
-Fx/S/p ORIF/Plating/Screws; Dislocation	UE
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Dislocation	UE
 Fx/S/p ORIF/Plating/Screws; Dislocation	LE
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Dislocation	S/P ORIF Plating (L) HAND
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Dislocation	S/PORIF Plating (L) Ulna
 Fx/S/p ORIF/Plating/Screws; Dislocation	Patellar Dislocation
 Fx/S/p ORIF/Plating/Screws; Dislocation	S/P OR-TBW (L) Patella
 Fx/S/p ORIF/Plating/Screws; Dislocation	FX
@@ -116,6 +124,8 @@ Fx/S/p ORIF/Plating/Screws; Dislocation	Distal Clavicular Fracture
 Fx/S/p ORIF/Plating/Screws; Dislocation	S/P SH. Dislocation
 Fx/S/p ORIF/Plating/Screws; Dislocation	Fracture Humeral Neck (L)
 Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p ORIF/Plating/Screws
+Fx/S/p ORIF/Plating/Screws; Dislocation	S/P ORIF PLATING (L) HAND
+Fx/S/p ORIF/Plating/Screws; Dislocation	S/PORIF 
 Scoliosis	Scoliosis
 MPS	MPS
 CTS	(B) CTS
@@ -139,6 +149,8 @@ Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	AC joint Hypert
 Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Rotator Cuff Tendinopathy
 Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	FROZEN SHOULDER(L)
 Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	ROTATOR CUFF TENDINITIS(B);CERVICALSPONDYLOSIS+MPS
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Rotator Cuff Tendinitis(R)
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	ROTATOR CUFF TENDINITIS®
 CVA	Decondition S/P CS
 CVA	CVA
 CP/Cerebral Palsy	CP

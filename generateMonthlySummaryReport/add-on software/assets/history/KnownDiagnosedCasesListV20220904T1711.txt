@@ -1,0 +1,157 @@
+Classification	Sub-classification
+STL UE	Intercostal M Strain
+STL UE	Trapezius Strain
+STL UE	Intercostal MS Strain
+STL UE	Bicipital Tendinitis
+STL UE	Lateral Epicondylitis
+STL UE	Contusions
+STL UE	Bursitis
+STL UE	Muscle Sprain
+STL UE	Muscle strain shoulder
+STL UE	Muscle elbow
+STL UE	Muscle wrist
+STL UE	"® Lateral Epicondilytis, Brachioradialis Strain"
+STL UE	TFCC
+STL UE	Distal Radioulnar Strain
+STL UE	Medial Epicondylitis
+STL UE	Distal Radioulnar Joint (L) Wrist Sprain
+STL UE	Tricep Strain
+STL LE	Plantar Fascitis
+STL LE	Muscle Strain
+STL LE	Muscle Sprain Thigh
+STL LE	Muscle Leg
+STL LE	Muscle Ankle
+STL LE	Partial ACL Tear
+STL LE	ACL injury
+STL LE	ACL(PARTIAL)AND MENISCAL TEAR®
+STL LE	PFPS
+STL LE	(L) Hamstrings Strain; (L) VMO Strain
+STL LE	Achilles Tendinitis
+STL LE	(L)Plantar Fascitis
+STL LE	ACL(Partial)And Meniscal Tear(R)
+STL LE	T/C Patellar chondromalacia
+STL LE	T/C Patellar Sublaxation
+STL LE	Achilles Bursitis
+STL LE	Peripheral Neuropathy LE
+STL LE	Lateral Meniscal Tear
+STL LE	MCL Tear
+STL LE	Meniscus Tear
+STL LE	Vastus Lateralis Strain;MCL Sprain
+STL LE	Iliotibial Band Syndrome
+STL LE	Patellofemoral Pain Syndrome
+STL LE	Patello Femoral Pain Syndrome
+STL LE	S/P ACL Reconstruction
+STL LE	ACL tear Medial and Lateral Meniscus ®
+STL LE	S/P ORIF Arthroplasty
+STL LE	RAPTURED TENDON AND ACHILLES ®
+STL LE	PERONEAL SUBLUXATION (L)
+STL LE	MENISCUS TEAR(L)
+STL LE	® HAMSTRING STRAIN
+Cervical Disorder	Cervical Strain
+Cervical Disorder	Cervical OA
+Cervical Disorder	Strain (L) Neck
+Cervical Disorder	cervical Radiculopathy
+Cervical Disorder	Cervical spondylolysis
+Cervical Disorder	Cervical losis
+Cervical Disorder	Cervical listhesis
+Cervical Disorder	Cervical spasm
+Cervical Disorder	cervical Disc bulge
+Cervical Disorder	cervical
+Cervical Disorder	C1
+Cervical Disorder	C2
+Cervical Disorder	C3
+Cervical Disorder	C4
+Cervical Disorder	C5
+Cervical Disorder	C6
+Cervical Disorder	DEGENERATIVE DISC DISEASE
+Cervical Disorder	C7
+Cervical Disorder	Myofascial Pain Syndrome
+Cervical Disorder	Cervical Spasm
+Cervical Disorder	CervicalSpasm
+Lumbar disorder	Lumbar strain
+Lumbar disorder	lumbar radiculopathy
+Lumbar disorder	lumbar disc bulge
+Lumbar disorder	Coccygodinia
+Lumbar disorder	Lumbar spondylosis
+Lumbar disorder	Lumbar lolysis
+Lumbar disorder	Lumbar listhesis
+Lumbar disorder	Chronic LBP
+Lumbar disorder	Mechanical LBP
+Lumbar disorder	Lumbar OA
+Lumbar disorder	Lumbar Stenosis
+Lumbar disorder	Lumbar
+Lumbar disorder	Spondylolisthesis
+Lumbar disorder	L1
+Lumbar disorder	L2
+Lumbar disorder	L3
+Lumbar disorder	L4
+Lumbar disorder	L5
+Lumbar disorder	S1
+Lumbar disorder	S2
+Lumbar disorder	S3
+Lumbar disorder	S4
+Lumbar disorder	Piriformis Syndrome
+Lumbar disorder	FX Lumbar
+Lumbar disorder	SPONDYLOSIS
+Lumbar disorder	LUMBAGO
+Lumbar disorder	T/C SLIPPED DISC/LUMBAR
+Lumbar disorder	HMP L4L5 W/SCIATICA
+Lumbar disorder	LUMBO SACRAL STRAIN ®
+Lumbar disorder	OSTEOPOROSIS
+OA/RA/Gouty arthritis	OA
+OA/RA/Gouty arthritis	RA
+OA/RA/Gouty arthritis	Gouty arthritis
+OA/RA/Gouty arthritis	hip
+OA/RA/Gouty arthritis	knee
+OA/RA/Gouty arthritis	Post Traumatic Arthritis
+OA/RA/Gouty arthritis	OSTEO ARTHRITIS (B) KNEES AND (B) HANDS
+OA/RA/Gouty arthritis	ankle
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p ORIF
+Fx/S/p ORIF/Plating/Screws; Dislocation	Elbow Dislocation
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Plating
+Fx/S/p ORIF/Plating/Screws; Dislocation	Annual Lig.Recons.&ORIF Screw fixationof(L)Scaphoid
+Fx/S/p ORIF/Plating/Screws; Dislocation	IP Fracture-Dislocation ® Thumb
+Fx/S/p ORIF/Plating/Screws; Dislocation	IP Joint fracture-dislocation ® Thumb
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Screws
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Dislocation	UE
+Fx/S/p ORIF/Plating/Screws; Dislocation	LE
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Dislocation	S/P ORIF Plating (L) HAND
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p Dislocation	S/PORIF Plating (L) Ulna
+Fx/S/p ORIF/Plating/Screws; Dislocation	Patellar Dislocation
+Fx/S/p ORIF/Plating/Screws; Dislocation	S/P OR-TBW (L) Patella
+Fx/S/p ORIF/Plating/Screws; Dislocation	FX
+Fx/S/p ORIF/Plating/Screws; Dislocation	Distal Clavicular Fracture
+Fx/S/p ORIF/Plating/Screws; Dislocation	S/P SH. Dislocation
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fracture Humeral Neck (L)
+Fx/S/p ORIF/Plating/Screws; Dislocation	Fx/S/p ORIF/Plating/Screws
+Fx/S/p ORIF/Plating/Screws; Dislocation	S/P ORIF PLATING (L) HAND
+Fx/S/p ORIF/Plating/Screws; Dislocation	S/PORIF 
+Scoliosis	Scoliosis
+MPS	MPS
+CTS	(B) CTS
+CTS	(B)CTS
+CTS	CTS
+DQT	DQT
+Trigger Finger/Stenosing tenosynovitis	Trigger Finger
+Trigger Finger/Stenosing tenosynovitis	Stenosing tenosynovitis
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder impingement
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder rotator cuff tendinitis
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder adhesive capsulitis
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Shoulder
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	adhesive capsulitis
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Calcific Tendinitis
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Rotator Cuff Syndrome
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Tendinitis
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	impingement
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	adhesive capsulitis
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	A-C Joint Arthritis
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	AC joint Hypertrophy ®
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Rotator Cuff Tendinopathy
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	FROZEN SHOULDER(L)
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	ROTATOR CUFF TENDINITIS(B);CERVICALSPONDYLOSIS+MPS
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	Rotator Cuff Tendinitis(R)
+Shoulder impingement/rotator cuff tendinitis/adhesive capsulitis	ROTATOR CUFF TENDINITIS®
+CVA	Decondition S/P CS
+CVA	CVA
+CP/Cerebral Palsy	CP
+CP/Cerebral Palsy	Cerebral Palsy

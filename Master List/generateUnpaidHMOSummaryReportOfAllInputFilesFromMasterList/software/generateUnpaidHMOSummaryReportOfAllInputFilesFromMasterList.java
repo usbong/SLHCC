@@ -163,7 +163,7 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 	private static final int OUTPUT_HMO_CLASS_COLUMN = 20;
 	private static final int OUTPUT_HMO_FILE_TYPE_COLUMN = 21; //Consultation or PT Treatment?
 	private static final int OUTPUT_HMO_DATE_COLUMN = 22;
-
+		
 	private static boolean isConsultation;
 	
 	private static DecimalFormat df = new DecimalFormat("0.00"); //added by Mike, 20181105
@@ -192,9 +192,13 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 	//private static double dTotalUnderpaymentAmount;	
 	private static double dTotalFeePaidWithUnderpayment;
 	//added by Mike, 20220912	
-	private static double dTotalFeePaidWithUnderpaymentGlobal;
-	private static double dTotalUnpaidHMOFeeTreatmentWithUnderpaymentAmount;
-
+	private static double dConsultationMDTotalFeePaidWithUnderpayment;
+	private static double dTotalUnpaidHMOFeeWithUnderpaymentAmount;	
+	private static double dTotalUnpaidHMOFeeConsultationWithUnderpaymentAmount;	
+	private static String sNoteUnderpayment;
+	private static Double dNoteUnderpaymentAmount;
+	private static Double dFeePaidWithUnderpayment;
+	private static String sInputNote;
 	
 					
 	public static void main ( String[] args ) throws Exception
@@ -238,8 +242,7 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 		totalUnpaidHMOFeeTreatment=0;
 		
 		//added by Mike, 20220912
-		//TO-DO: -add: underpayment for consultation
-		dTotalUnpaidHMOFeeTreatmentWithUnderpaymentAmount=0.0;
+		dTotalUnpaidHMOFeeWithUnderpaymentAmount=0.0;
 		
 		
 		Scanner sc = new Scanner(new FileInputStream(medicalDoctorInputFile));				
@@ -279,10 +282,16 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 			
 			//added by Mike, 20220720
 			dTotalFeePaidWithUnderpayment=0.0;
+			//added by Mike, 20220912
+			dConsultationMDTotalFeePaidWithUnderpayment=0.0;
+						
 						
 			//init table header names
 	//		writer.print("CONSULTATION\n");
-			consultationWriter.print("DATE:\tPATIENT NAME:\tFEE:\tCLASSIFICATION:\tAPPROVAL CODE:\tUNPAID REASON:\n"); 		
+			//edited by Mike, 20220912
+			//consultationWriter.print("DATE:\tPATIENT NAME:\tFEE:\tCLASSIFICATION:\tAPPROVAL CODE:\tUNPAID REASON:\n"); 
+			consultationWriter.print("DATE:\tPATIENT NAME:\tFEE:\tCLASSIFICATION:\tAPPROVAL CODE:\tUNPAID REASON:\tUNDERPAYMENT\tPAID\n"); 
+								
 			for(int i=0; i<transactionDateContainer.size(); i++) {
 				if (transactionDateContainer.get(i)[OUTPUT_HMO_FILE_TYPE_COLUMN].toLowerCase().trim().equals("consultation")){
 					//edited by Mike, 20210121
@@ -300,6 +309,44 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 						slrTransactionContainer.add(transactionDateContainer.get(i));
 					}
 					else {
+						//added by Mike, 20220912
+						sNoteUnderpayment="";
+						dNoteUnderpaymentAmount=0.0;
+						dFeePaidWithUnderpayment=0.0;
+
+						sInputNote = transactionDateContainer.get(i)[OUTPUT_HMO_NOTES_COLUMN].toLowerCase().trim();
+					
+					
+					if (sInputNote.contains("underpayment")) {
+	sNoteUnderpayment="underpayment";
+	
+	String[] sInputNoteUnderpaymentArrayPartOne = sInputNote.split("underpayment");		
+	
+	if (sInputNoteUnderpaymentArrayPartOne[1]!=null) {		
+		//note: output error if empty string
+		//edited by Mike, 20220912
+//		dNoteUnderpaymentAmount=Double.parseDouble(sInputNoteUnderpaymentArrayPartOne[1].trim().replace("\"","").split(" ")[0]);
+		dNoteUnderpaymentAmount=Double.parseDouble(sInputNoteUnderpaymentArrayPartOne[1].trim().replace("\"","").replace(";"," ").split(" ")[0]);
+
+		
+		dFeePaidWithUnderpayment= (Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN])-dNoteUnderpaymentAmount);
+
+		sNoteUnderpayment="underpayment\t"+dNoteUnderpaymentAmount+"\t"+dFeePaidWithUnderpayment+"\t";
+
+	System.out.println("Consultation workbook: underpayment! "+transactionDateContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+" "+transactionDateContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]);
+
+
+		//edited by Mike, 20220912
+		//dTotalFeePaidWithUnderpayment+=dFeePaidWithUnderpayment;
+		dConsultationMDTotalFeePaidWithUnderpayment+=dFeePaidWithUnderpayment;
+	}	
+	else {
+		sNoteUnderpayment="REVERIFY AMOUNT!\t";
+	}
+}
+
+	
+/* //edited by Mike, 20220912					
 						consultationWriter.print(
 										transactionDateContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+"\t"+
 										transactionDateContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]+"\t"+
@@ -308,7 +355,17 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 		//								transactionDateContainer.get(i)[OUTPUT_HMO_APPROVAL_CODE_COLUMN]+"\n"
 										"\t\n"
 									);
-						
+*/
+
+						consultationWriter.print(
+										transactionDateContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+"\t"+
+										transactionDateContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]+"\t"+
+										autoAddCommaToNumber(Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN]))+"\t"+
+										transactionDateContainer.get(i)[OUTPUT_HMO_CLASS_COLUMN]+"\t"+
+sNoteUnderpayment+"\n"
+									);
+									
+									
 						
 						//added by Mike, 20210714
 						totalUnpaidHMOFeeConsultation += Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN].replace("\"","").replace(",",""));						
@@ -318,12 +375,27 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 					//totalUnpaidHMOFeeConsultation += Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN].replace("\"","").replace(",",""));
 				}
 			}
+			
+
+/* //edited by Mike, 20220912			
 			//edited by Mike, 20210121
 //			consultationWriter.print("TOTAL:\t\t"+totalUnpaidHMOFeeConsultation+"\n"); 					
 			consultationWriter.print("TOTAL:\t\t"+autoAddCommaToNumber(totalUnpaidHMOFeeConsultation)+"\n"); 	
+*/
+
+
+			dTotalUnpaidHMOFeeConsultationWithUnderpaymentAmount=totalUnpaidHMOFeeConsultation-dConsultationMDTotalFeePaidWithUnderpayment;
+
+			consultationWriter.print("TOTAL:\t\t"+autoAddCommaToNumber(totalUnpaidHMOFeeConsultation)+"\t"+
+						"-"+autoAddCommaToNumber(dConsultationMDTotalFeePaidWithUnderpayment)+"\t"+
+						autoAddCommaToNumber(dTotalUnpaidHMOFeeConsultationWithUnderpaymentAmount)+"\t"+
+						"\n"); 	
 			
-			//added by Mike, 20211019
-			grandTotalFeeConsultationTreatment+=totalUnpaidHMOFeeConsultation;
+			//added by Mike, 20211019; edited by Mike, 20220912
+			//grandTotalFeeConsultationTreatment+=totalUnpaidHMOFeeConsultation;
+			
+			grandTotalFeeConsultationTreatment+=dTotalUnpaidHMOFeeConsultationWithUnderpaymentAmount;
+						
 			
 			//added by Mike, 20210121
 			if (slrTransactionContainer.size()>0) {
@@ -355,9 +427,14 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 			//added by Mike, 20210415
 			slrTransactionContainer.clear();
 			
-			//added by Mike, 20210716
-			double dTotalUnpaidFeeInput = totalUnpaidHMOFeeConsultation+totalUnpaidSLRFeeConsultation;
+			//added by Mike, 20210716; edited by Mike, 20220912
+/*			
+			double dTotalUnpaidFeeInput = totalUnpaidHMOFeeConsultation+totalUnpaidSLRFeeConsultation;			
 			medicalDoctorContainer.put(medicalDoctorCompleteNameInput,dTotalUnpaidFeeInput);
+*/
+			double dTotalUnpaidFeeInput = dTotalUnpaidHMOFeeConsultationWithUnderpaymentAmount+totalUnpaidSLRFeeConsultation;			
+			medicalDoctorContainer.put(medicalDoctorCompleteNameInput,dTotalUnpaidFeeInput);
+
 			
 			//added by Mike, 20200217
 			if (medicalDoctorInput.equals("PEDRO")) {
@@ -394,11 +471,19 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 
 System.out.println(">>>>" +transactionDateContainer.get(i)[OUTPUT_HMO_NOTES_COLUMN]);
 
+/* //edited by Mike, 20220912
 String sNoteUnderpayment="";
 Double dNoteUnderpaymentAmount=0.0;
 Double dFeePaidWithUnderpayment=0.0;
 
 String sInputNote = transactionDateContainer.get(i)[OUTPUT_HMO_NOTES_COLUMN].toLowerCase().trim();
+*/
+sNoteUnderpayment="";
+dNoteUnderpaymentAmount=0.0;
+dFeePaidWithUnderpayment=0.0;
+
+sInputNote = transactionDateContainer.get(i)[OUTPUT_HMO_NOTES_COLUMN].toLowerCase().trim();
+
 
 //edited by Mike, 20220720
 //if (transactionDateContainer.get(i)[OUTPUT_HMO_NOTES_COLUMN].toLowerCase().trim().contains("underpayment")) {
@@ -422,7 +507,9 @@ if (sInputNote.contains("underpayment")) {
 	if (sInputNoteUnderpaymentArrayPartOne[1]!=null) {
 		
 		//note: output error if empty string
-		dNoteUnderpaymentAmount=Double.parseDouble(sInputNoteUnderpaymentArrayPartOne[1].trim().replace("\"","").split(" ")[0]);
+		//edited by Mike, 20220912
+//		dNoteUnderpaymentAmount=Double.parseDouble(sInputNoteUnderpaymentArrayPartOne[1].trim().replace("\"","").split(" ")[0]);
+		dNoteUnderpaymentAmount=Double.parseDouble(sInputNoteUnderpaymentArrayPartOne[1].trim().replace("\"","").replace(";"," ").split(" ")[0]);
 		
 		dFeePaidWithUnderpayment= (Double.parseDouble(transactionDateContainer.get(i)[OUTPUT_HMO_FEE_COLUMN])-dNoteUnderpaymentAmount);
 
@@ -432,7 +519,7 @@ if (sInputNote.contains("underpayment")) {
 		sNoteUnderpayment="underpayment\t"+dNoteUnderpaymentAmount+"\t"+dFeePaidWithUnderpayment+"\t";
 
 	System.out.println("PT workbook: underpayment! "+transactionDateContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+" "+transactionDateContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]);
-
+		
 		dTotalFeePaidWithUnderpayment+=dFeePaidWithUnderpayment;
 	}	
 	else {
@@ -463,17 +550,17 @@ sNoteUnderpayment+"\n"
 				//treatmentWriter.print("TOTAL:\t\t"+autoAddCommaToNumber(totalUnpaidHMOFeeTreatment)+"\n"); 		
 				
 				//edited by Mike, 20220912
-//double dTotalUnpaidHMOFeeTreatmentWithUnderpaymentAmount=totalUnpaidHMOFeeTreatment-dTotalFeePaidWithUnderpayment;
-dTotalUnpaidHMOFeeTreatmentWithUnderpaymentAmount=totalUnpaidHMOFeeTreatment-dTotalFeePaidWithUnderpayment;
+//double dTotalUnpaidHMOFeeWithUnderpaymentAmount=totalUnpaidHMOFeeTreatment-dTotalFeePaidWithUnderpayment;
+dTotalUnpaidHMOFeeWithUnderpaymentAmount=totalUnpaidHMOFeeTreatment-dTotalFeePaidWithUnderpayment;
 
 					treatmentWriter.print("TOTAL:\t\t"+autoAddCommaToNumber(totalUnpaidHMOFeeTreatment)+"\t"+
 						"-"+autoAddCommaToNumber(dTotalFeePaidWithUnderpayment)+"\t"+
-						autoAddCommaToNumber(dTotalUnpaidHMOFeeTreatmentWithUnderpaymentAmount)+"\t"+
+						autoAddCommaToNumber(dTotalUnpaidHMOFeeWithUnderpaymentAmount)+"\t"+
 						"\n"); 	
 
 				//added by Mike, 20211019; edited by Mike, 20220720
 				//grandTotalFeeConsultationTreatment+=totalUnpaidHMOFeeTreatment;
-				grandTotalFeeConsultationTreatment+=dTotalUnpaidHMOFeeTreatmentWithUnderpaymentAmount;
+				grandTotalFeeConsultationTreatment+=dTotalUnpaidHMOFeeWithUnderpaymentAmount;
 
 				
 				//added by Mike, 20210415
@@ -998,8 +1085,8 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 					//Double dTotalUnpaidHMOAndSLRTreatment=totalUnpaidHMOFeeTreatment+totalUnpaidSLRFeeTreatment;
 
 					//added  by Mike, 20220912
-					//dTotalUnpaidHMOFeeTreatmentWithUnderpaymentAmount
-					Double dTotalUnpaidHMOAndSLRTreatment=dTotalUnpaidHMOFeeTreatmentWithUnderpaymentAmount+totalUnpaidSLRFeeTreatment;
+					//dTotalUnpaidHMOFeeWithUnderpaymentAmount
+					Double dTotalUnpaidHMOAndSLRTreatment=dTotalUnpaidHMOFeeWithUnderpaymentAmount+totalUnpaidSLRFeeTreatment;
 					
 					if (dTotalUnpaidHMOAndSLRTreatment==0) {
 						sb.append("<b>0.00</b>\n");

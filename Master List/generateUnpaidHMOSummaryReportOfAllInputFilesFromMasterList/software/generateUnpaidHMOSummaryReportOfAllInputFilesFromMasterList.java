@@ -15,7 +15,7 @@
  * @company: USBONG
  * @author: SYSON, MICHAEL B.
  * @date created: 2018
- * @last updated: 20220720; from 20220719
+ * @last updated: 20220912; from 20220720
  * @website address: http://www.usbong.ph
  *
  */
@@ -191,6 +191,10 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 	//added by Mike, 20220720
 	//private static double dTotalUnderpaymentAmount;	
 	private static double dTotalFeePaidWithUnderpayment;
+	//added by Mike, 20220912	
+	private static double dTotalFeePaidWithUnderpaymentGlobal;
+	private static double dTotalUnpaidHMOFeeTreatmentWithUnderpaymentAmount;
+
 	
 					
 	public static void main ( String[] args ) throws Exception
@@ -232,6 +236,11 @@ public class generateUnpaidHMOSummaryReportOfAllInputFilesFromMasterList {
 
 		//added by Mike, 20210716
 		totalUnpaidHMOFeeTreatment=0;
+		
+		//added by Mike, 20220912
+		//TO-DO: -add: underpayment for consultation
+		dTotalUnpaidHMOFeeTreatmentWithUnderpaymentAmount=0.0;
+		
 		
 		Scanner sc = new Scanner(new FileInputStream(medicalDoctorInputFile));				
 	
@@ -425,7 +434,6 @@ if (sInputNote.contains("underpayment")) {
 	System.out.println("PT workbook: underpayment! "+transactionDateContainer.get(i)[OUTPUT_HMO_DATE_COLUMN]+" "+transactionDateContainer.get(i)[OUTPUT_HMO_NAME_COLUMN]);
 
 		dTotalFeePaidWithUnderpayment+=dFeePaidWithUnderpayment;
-
 	}	
 	else {
 		sNoteUnderpayment="REVERIFY AMOUNT!\t";
@@ -453,8 +461,10 @@ sNoteUnderpayment+"\n"
 
 				//edited by Mike, 20220720
 				//treatmentWriter.print("TOTAL:\t\t"+autoAddCommaToNumber(totalUnpaidHMOFeeTreatment)+"\n"); 		
-
-double dTotalUnpaidHMOFeeTreatmentWithUnderpaymentAmount=totalUnpaidHMOFeeTreatment-dTotalFeePaidWithUnderpayment;
+				
+				//edited by Mike, 20220912
+//double dTotalUnpaidHMOFeeTreatmentWithUnderpaymentAmount=totalUnpaidHMOFeeTreatment-dTotalFeePaidWithUnderpayment;
+dTotalUnpaidHMOFeeTreatmentWithUnderpaymentAmount=totalUnpaidHMOFeeTreatment-dTotalFeePaidWithUnderpayment;
 
 					treatmentWriter.print("TOTAL:\t\t"+autoAddCommaToNumber(totalUnpaidHMOFeeTreatment)+"\t"+
 						"-"+autoAddCommaToNumber(dTotalFeePaidWithUnderpayment)+"\t"+
@@ -983,8 +993,14 @@ if ((inputColumns[INPUT_CONSULTATION_MEDICAL_DOCTOR_COLUMN].toUpperCase().trim()
 					sb.append("<!-- Column 2 -->\n");
 					sb.append("<td class='tdUnpaidHMOTotal'>\n");
 
-					Double dTotalUnpaidHMOAndSLRTreatment=totalUnpaidHMOFeeTreatment+totalUnpaidSLRFeeTreatment;
-										
+
+					//edited by Mike, 20220912
+					//Double dTotalUnpaidHMOAndSLRTreatment=totalUnpaidHMOFeeTreatment+totalUnpaidSLRFeeTreatment;
+
+					//added  by Mike, 20220912
+					//dTotalUnpaidHMOFeeTreatmentWithUnderpaymentAmount
+					Double dTotalUnpaidHMOAndSLRTreatment=dTotalUnpaidHMOFeeTreatmentWithUnderpaymentAmount+totalUnpaidSLRFeeTreatment;
+					
 					if (dTotalUnpaidHMOAndSLRTreatment==0) {
 						sb.append("<b>0.00</b>\n");
 					}
